@@ -1,5 +1,9 @@
 % Voicebox: Speech Processing Toolbox for MATLAB
-% Function names have been prefixed "v_" to avoid name conflicts
+%
+% Function names have been prefixed "v_" to avoid name conflicts; the
+% unprefixed aliases will be removed in a future version. Use the function
+% v_voicebox_update to update old code (be default updates all .m files in the
+% current folder.
 %
 % Audio File Input/Output
 %   v_readwav       - Read a WAV file
@@ -12,8 +16,8 @@
 %   v_readcnx       - Raed BT Connex database files
 %   v_readau        - Read AU files (from SUN)
 %   v_readflac      - Read FLAC files
-%   v_wavread       - Emulation of legacy MATLAB function to read a WAV file
-%   v_wavwrite      - Emulation of legacy MATLAB function to write a WAV file
+%   wavread       - Emulation of legacy MATLAB function to read a WAV file
+%   wavwrite      - Emulation of legacy MATLAB function to write a WAV file
 %
 % Frequency Scales
 %   v_frq2bark      - Convert Hz to the Bark frequency scale
@@ -210,6 +214,7 @@
 %   v_unixwhich     - Search the WINDOWS system path for an executable program (like UNIX which)
 %   v_voicebox      - Global installation-dependent parameters
 %   v_winenvar      - Obtain WINDOWS environment variables
+%   v_voicebox_update - Update matlab files in the current folder to include the v_ prefix where needed
 %
 % Utility Functions
 %   v_atan2sc       - arctangent function that returns the sin and cos of the angle
