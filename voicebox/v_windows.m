@@ -1,5 +1,7 @@
 function w = v_windows(wtype,n,mode,p,ov)
 %WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
+% Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';
+%        (2) w=v_windows(2,n); % same as w=hanning(n)';
 %
 % Inputs:   WTYPE  is a string specifying the window type (see below)
 %           N      is the number of output points to generate (actually FLOOR(N))
@@ -9,27 +11,27 @@ function w = v_windows(wtype,n,mode,p,ov)
 %           OV      is the overlap in samples between succesive windows (must be H<=N/2 and
 %                  used only for the 'o' option) [default floor(N/2)]
 %
-% Outputs:  W(N)   is the output window. If no output is specified, a graph
+% Outputs:  W(1,N)   is the output window. If no output is specified, a graph
 %                  of the window and its frequency response will be drawn.
 %
-% The WTYPE input specifies one of the following window types (see [1]):
+% The WTYPE input specifies one of the following window types (either name, short or code can be used):
 %
-%       Name      Params
-%    'blackman'
-%    'cauchy'        1
-%    'cos'           1      cos window to the power P [default P=1]
-%    'dolph'         1      Dolph-Chebyshev window with sideband attenuation P dB [default P=50]
-%    'gaussian'	     1      truncated at +-P std deviations [default P=3]
-%    'hamming'
-%    'hanning'              also called "hann" or "von hann"
-%    'harris3'	            3-term blackman-harris with 67dB sidelobes
-%    'harris4'	            4-term blackman-harris with 92dB sidelobes
-%    'kaiser'	     1      with parameter P (often called beta) [default P=8]
-%    'rectangle'
-%    'triangle'      1      triangle to the power P [default P=1]
-%    'tukey'         1      cosine tapered 0<P<1 [default P=0.5]
-%    'vorbis'               perfect reconstruction window from [2] (use mode='sE2')
-%    'rsqvorbis'            raised squared vorbis with lower sidelobes (use mode='sdD2')
+%       Name     Short Code  Params
+%    'blackman'   'b'    6
+%    'cauchy'     'y'   13     1
+%    'cos'        'c'   10     1      cos window to the power P [default P=1]
+%    'dolph'      'd'   14     1      Dolph-Chebyshev window with sideband attenuation P dB [default P=50]
+%    'gaussian'	  'g'   12     1      truncated at +-P std deviations [default P=3]
+%    'hamming'    'm'    3
+%    'hanning'    'n'    2            also called "hann" or "von hann"
+%    'harris3'	  '3'    4            3-term blackman-harris with 67dB sidelobes
+%    'harris4'	  '4'    5            4-term blackman-harris with 92dB sidelobes
+%    'kaiser'	  'k'   11     1      with parameter P (often called beta) [default P=8]
+%    'rectangle'  'r'    1
+%    'triangle'   't'    9     1      triangle to the power P [default P=1]
+%    'tukey'      'u'   15     1      cosine tapered 0<P<1 [default P=0.5]
+%    'vorbis'     'v'    7            perfect reconstruction window from [2] (use mode='sE2')
+%    'rsqvorbis'  'w'    8            raised squared vorbis with lower sidelobes (use mode='sdD2')
 %
 % Window equivalences:
 %
@@ -142,8 +144,15 @@ function w = v_windows(wtype,n,mode,p,ov)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;   % mode  w,  h,  c  [normal windows]
+persistent wnam wnami wnamp
+if isempty(wnam)
+    wnam={'rectangle','hanning','hamming','harris3','harris4','blackman',...
+        'vorbis','rsqvorbis','triangle','cos','kaiser','gaussian',...
+        'cauchy','dolph','tukey','r','n','m','3','4','b','v','w','t','c','k','g','y','d','u'};
+    wnami=[1:15 1:15];
+    wnamp=[0 0 0 0 0 0 0 0 1 1 1 1 1 1 1]; % parameters required
+end
+kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    % mode  w,  h,  c  [normal windows]
     -1 0 1 0; 0 0 2 0; 0 1 2 1;       % modes lw, lh, lc
     -1 2 1 0; 0 0 2 -2; 0 1 2 -1;     % modes rw, rh, rc
     -1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    % modes bw, bh, bc
@@ -155,7 +164,7 @@ if nargin<2
 end
 if nargin<3 || isempty(mode) || ~ischar(mode)
     mode='uw';
-end;
+end
 mm=zeros(1,length(mode)+1);
 ll='hc lrbns';
 for i=1:8
@@ -164,10 +173,7 @@ end
 wtype=lower(wtype);
 k=1+3*max(mm)-min(mm);
 if k<4
-    switch wtype                % check if window goes all the way to zero
-        case {'hanning','triangle','blackman','cos','tukey','vorbis'}
-            k=k+12;
-    end
+    k=k+12*any(wtype==[2 6 7 9 10 15]);
 end
 if any(mode=='o') % need to convolve with rectangle
     if nargin<5 || ~numel(h)
@@ -186,78 +192,58 @@ ks=kk(k,1)*fn+kk(k,2);
 v=((0:2:2*fn-2)+ks)/kp;
 
 % now make the window
-np=0;
+if ischar(wtype)
+    wtype=wnami(find(strcmp(wtype,wnam),1));
+end
 switch wtype
-    case 'hanning'
-        w = 0.5+0.5*cos(pi*v);
-        
-    case 'cos'
+    case 1 % 'rectangle'
+        w = ones(size(v));     
+    case 2 % 'hanning'
+        w = 0.5+0.5*cos(pi*v);             
+    case 3 % 'hamming'
+        w = 0.54+0.46*cos(pi*v);        
+    case 4 % 'harris3'
+        w = 0.42323 + 0.49755*cos(pi*v) + 0.07922*cos(2*pi*v);        
+    case 5 % 'harris4'
+        w = 0.35875 + 0.48829*cos(pi*v) + 0.14128*cos(2*pi*v) + 0.01168*cos(3*pi*v);        
+    case 6 % 'blackman'
+        w = 0.42+0.5*cos(pi*v) + 0.08*cos(2*pi*v);        
+    case 7 % 'vorbis'
+        w = sin(0.25*pi*(1+cos(pi*v)));        
+    case 8 % 'rsqvorbis'
+        w = 0.571-0.429*cos(0.5*pi*(1+cos(pi*v)));        
+    case 9 % 'triangle'
         if nargin<4, p=1; end;
-        np=1;               % number of parameters = 1
-        w = cos(0.5*pi*v).^p(1);
-        
-    case 'dolph'
+        w = 1-abs(v).^p(1);
+    case 10 % 'cos'
+        if nargin<4, p=1; end;
+        w = cos(0.5*pi*v).^p(1);        
+    case 11 % 'kaiser'
+        if nargin<4, p=8; end;
+        w=besseli(0,p*sqrt(1-v.^2))/besseli(0,p(1));        
+    case 12 % 'gaussian'
+        if nargin<4, p=3; end;
+        w=exp(-0.5*p(1)^2*(v.*v));     
+    case 13 % 'cauchy'
+        if nargin<4, p=1; end;
+        w = (1+(p(1)*v).^2).^-1;
+    case 14 % 'dolph'
         if nargin<4, p=50; end;
-        np=1;               % number of parameters = 1
         if rem(ks+kp,2)     % for shifted windows, we generate twice as many points
             w=chebwin(2*kp+1,abs(p(1)));
             w=w((1:2:2*fn)+round(ks+kp));
         else
             w=chebwin(kp+1,abs(p(1)));
             w=w((1:fn)+round((ks+kp)/2));
-        end
-        
-    case 'tukey'
+        end        
+    case 15 % 'tukey'
         if nargin<4, p=0.5; end;
-        np=1;               % number of parameters = 1
         if p(1)>0
             p(1)=min(p(1),1);
             w = 0.5+0.5*cos(pi*max(1+(abs(v)-1)/p(1),0));
         else
             w = ones(size(v));
-        end
-        
-    case 'cauchy'
-        if nargin<4, p=1; end;
-        np=1;               % number of parameters = 1
-        w = (1+(p(1)*v).^2).^-1;
-        
-    case 'rectangle'
-        w = ones(size(v));
-        
-    case 'triangle'
-        if nargin<4, p=1; end;
-        np=1;               % number of parameters = 1
-        w = 1-abs(v).^p(1);
-        
-    case 'gaussian'
-        if nargin<4, p=3; end;
-        w=exp(-0.5*p(1)^2*(v.*v));
-        np=1;
-        
-    case 'kaiser'
-        if nargin<4, p=8; end;
-        w=besseli(0,p*sqrt(1-v.^2))/besseli(0,p(1));
-        np=1;
-        
-    case 'hamming'
-        w = 0.54+0.46*cos(pi*v);
-        
-    case 'blackman'
-        w = 0.42+0.5*cos(pi*v) + 0.08*cos(2*pi*v);
-        
-    case 'harris3'
-        w = 0.42323 + 0.49755*cos(pi*v) + 0.07922*cos(2*pi*v);
-        
-    case 'harris4'
-        w = 0.35875 + 0.48829*cos(pi*v) + 0.14128*cos(2*pi*v) + 0.01168*cos(3*pi*v);
-        
-    case 'vorbis'
-        w = sin(0.25*pi*(1+cos(pi*v)));
-        
-    case 'rsqvorbis'
-        w = 0.571-0.429*cos(0.5*pi*(1+cos(pi*v)));
-        
+        end    
     otherwise
         error(sprintf('Unknown window type: %s', wtype));
 end;
@@ -290,13 +276,13 @@ end
 if any(mode=='q')
     w=sqrt(w);
 end
-
 if ~nargout
     v_windinfo(w,n);
+    np=wnamp(wtype); % number of parameters
     if np>0
-        title(sprintf('%s (%s ) window  - mode=''%s''',wtype,sprintf(' %g',p(1:np)),mode));
+        title(sprintf('%s (%s ) window  - mode=''%s''',wnam{wtype},sprintf(' %g',p(1:np)),mode));
     else
-        title(sprintf('%s window - mode=''%s''',wtype,mode));
+        title(sprintf('%s window - mode=''%s''',wnam{wtype},mode));
     end
-end;
+end
 
