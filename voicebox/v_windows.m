@@ -107,6 +107,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 %   vorbis     sE2      2,9,15      -21dB     1.3      1.8      1.4 used in Vorbis
 %   hamming    sE4      3,4,5       -43dB     1.3      1.8      1.4
 %   hanning    sE4      3,4,5       -31dB     1.4      2.0      1.5
+% The integer following D or E in the mod string should match the overlap factor
 %
 % References:
 %  [1]  F. J. Harris. On the use of windows for harmonic analysis with the
@@ -159,8 +160,8 @@ kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    % mode  w,  h,  c  [normal windows]
     -1 1 1 1; 0 0 2 0; 0 1 2 1;       % modes nw, nh, nc
     -1 1 1 0; 0 0 2 -1; 0 1 2 0;];    % modes sw, sh, sc
 
-if nargin<2
-    n=256;
+if nargin<2 || isempty(n)
+    n=2520; % 2^3 * 3^2 * 5 * 7
 end
 if nargin<3 || isempty(mode) || ~ischar(mode)
     mode='uw';
