@@ -1,6 +1,6 @@
 function [ar,e,k]=v_lpcauto(s,p,t,w,m)
 %LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)
-% Usage: (1) [ar,e]=w_lpcauto(x,p,[],'r','e'); same as lpc(x,p);
+% Usage: (1) [ar,e]=v_lpcauto(x,p,[],'r','e'); same as lpc(x,p);
 
 %  Inputs:
 %     s(ns,nch)  is the input signal (ns samples, nch channels)
@@ -86,7 +86,7 @@ if nargin < 2 || isempty(p)
     p=12;
 end
 if nargin < 3 || isempty(t)
-    t=length(s); % default frame is entire signal
+    t=ns; % default frame is entire signal
 end
 if nargin <4 || isempty(w)
     w='m'; % default to Hamming window
