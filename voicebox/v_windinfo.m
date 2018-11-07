@@ -205,7 +205,7 @@ if ~nargout
     end
     if length(x.cola2)>3
         tcola2=sprintf(',%d',x.cola2(1:3));
-        tcola2=[tcola ',…'];
+        tcola2=[tcola2 ',…'];
     else
         tcola2=sprintf(',%d',x.cola2);
     end
