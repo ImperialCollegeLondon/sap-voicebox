@@ -1,0 +1,243 @@
+1.00 released on Tue 30 Mar 1993
+	shorten.h changed to allow ANSI prototypes
+	insertion of Steve Lowes fixes for PC compatibility
+	Inclusion of the file laplacian.tex
+	Typo in man page fixed (hl -> lh)
+1.01 released on Tue 06 Apr 1993
+	Inclusion of the file change.log
+	Documentation of the default byte order
+	Setjmp() moved so as to only be used in embedded applications
+	Bug in casting to long in word_get() fixed
+1.02 released on Thu 08 Apr 1993
+	sizech.c removed in line with allowing sizeof(int) == 2
+	variable nsd in vario.c:uvar_put() changed to unsigned long
+	variable uvar in vario.c:var_get() changed to unsigned long
+	constant 1 changed to 1L in vario.c:var_put()
+	log(0.0) avoided in lpc.c for pathological cases
+	check inserted for predictor order being less than the block size
+	if NEED_TO_GUARANTEE_LPC_STABILITY is defined, it will do just that
+1.03 released on Mon 12 Apr 1993
+	resetopt() added to getopt.c and called before getopt() in shorten.c
+	tables in bitshift.h changed from int to char to reduce executable size
+	option -d added to discard header bytes on compression/decompression
+	wav2lpc() fixed so that the returned value "resn" is non-negative
+1.04 released on Fri 07 May 1993
+	check added to ensure that the lpc order is less than the buffersize
+1.05 released on Sat 08 May 1993
+	option -d fixed to work with pipe input and discard on decompression
+	bitshift.h removed from the distribution to reduce the size
+	types uchar and schar typedef'ed in shorten.h and used in bitshift.h
+1.06 released on Tue 11 May 1993
+	try to preserve the mode, owner, group, atime and mtime of UNIX files
+	input file in unlinked if output file was written successfully
+	array.c created to contan pmalloc() and long2d() which error check
+1.07 released on Thu 13 May 1993
+	added the file INSTALL to give installation instructions
+	fixed a few function declarations that were missing
+	internal movement within shorten.c in prepration for lossy coding
+	changed test file to be real speech
+	change from shar to tar.Z format for distribution
+	new typdefs ulong and ushort for the obvious things
+	pmalloc and long2d now take arguments of type ulong
+1.08 released on Fri 18 Jun 1993
+	better function prototyping (gcc style) in shorten.h
+	uchar ushort ulong now #defined to avoid warnings if typedef exists
+1.09 released on Thu 01 Jul 1993
+	provisional implementation of -q and -r flags - not finalised
+	getc_exit and putc_exit macros used in shorten.c
+	-a for version 2 now copies verbatim (checking for the magic number)
+	various changes and additions to sphere.c from Jon Fiscus
+	getopt functions/variables have hs_ prepended to avoid system conflict
+	dupfileinfo.c renamed to be dupfinfo.c - less than eight characters
+	memory allocation in fixio.c and vario.c tied up for embedded use
+1.10 released on Mon 04 Oct 1993
+	updated man page for -q and -r
+	exit routines now use varargs and are less verbose
+	bitshift now prints longs to bitshift.h as %ld
+	shn109.exe included for the first time
+1.11 released on Mon 08 Nov 1993
+	hsgetopt.h deleted - obsoleted by correct definitions in shorten.h
+	division by zero for null input avoided in lpc.c
+1.12 released on Wed 23 Feb 1994
+	out by one bug in lpc.c internal array sizes fixed (-p 64 now works)
+	magic and version (0 ... 7) numbers merged for SPHERE header parsing
+	decompression starts when the magic number is found
+	option -a now allows for alignment prior to during decoding
+1.13 released on Mon 11 Apr 1994
+	dupfinfo.c - utime() now called before chmod() and chown()
+	prototpye for malloc changed to unsigned long
+	readme.dos created for DOS specific problems
+	support for stdargs added if HAVE_STDARG_H defined on compilation
+	exit.c - fprintf(stderr, ": "); perror(NULL) changed to perror("\0")
+	main.c - DOS pipe output hacked by opening fd 1 "wb" with no buffer
+	fixio.c - optimisation test for nchan == 0 changed to nchan == 1
+	shorten.c - changed abs() for labs() as arguements are long, not int
+	lots of non-functional disambiguation to keep DOS compilation quiet
+	bitshift.c renamed to mkbshift.c and bitshift.h hardwired in for DOS
+	shorten.exe included in the distribution
+	releases now made with mkrelease, *.tar.Z, *.tar.gz. *.zip
+1.14 released on Mon 08 Aug 1994
+	ulaw files are now lossy coded by internally converting to linear
+	better treatment of LPC quantisation errors from version 2
+	slightly better -h screen
+	default nmean is 4 as from version 2
+	fixed stupid bug that corrupted the zip version of shorten.exe
+1.15 released on Wed 24 Aug 1994
+	ICASSP94 support code deleted
+	lpc.c: now pass non-zero mean signal and offset
+	shorten.c: massive internal reorganisation of compression section
+	shorten.c: reasonable mean correction when in lossy mode from V 2.0
+1.16 released on Mon 29 Aug 1994
+	stdlib.h and string.h now assumed to exist
+	lpc.c: fix bug which malloced too few bytes (introduced in 1.16)
+1.17 released on Wed 31 Aug 1994
+1.18 released on Sat 03 Sep 1994 (by mistake)
+	lossy compression to a given segmental SNR is now supported (-n)
+	man page rewritten and updated to support lossy compression
+	the au file type option is has been renamed ulaw (au is still valid)
+	filetimes on the DOS release now match those on the UNIX release
+	v2: maximum lpc order searched is the best previous value plus two
+	PC compilation moved from XT/tcc to 486/gcc and Makefile.dos deleted
+1.19 released on Mon 03 Oct 1994
+	spurious labs() in poly.c swapped for abs
+	change all #ifdef unix for #ifndef MSDOS as djgpp #defs unix
+1.20 released on Mon 17 Oct 1994
+	bcc supported again as the executable is smaller (so labs() is back)
+1.21 released on Mon 14 Nov 1994
+	option -l implemented to print the contents of the LICENSE file
+	technical report 156 added as files tr156.tex and tr156.ps
+	man page updated
+	support added for the WATCOM compiler from fred@masterd.fdn.org
+	mkrelease and Change.log renamed to release and change.log
+	shorten.c: very minor change in lossy coding with -n (2.0 -> 25.0/12.0)
+	MSDOS stdin/stdout binary mode fiddling moved from main.c to shorten.c
+	linear2ulaw(int) changed to linear2ulaw(long)
+	old XT compatable executable renamed shorten.086
+1.22 released on Tue 10 Jan 1995
+	shorten.c: bug with FN_ZERO fixed - no longer look for more bitshifts
+	exit.c: basic_exit() - delete output file if abnormal termination
+	shorten.1: warn about lossy coding of unsigned data with offset
+	shorten.c: new flag, -u, maps both ulaw zeros onto the positive zero
+	v2: new type for lossless ulaw, TYPE_AU2, for two zero ulaw data
+1.23 released on Fri 14 Jul 1995
+	minor documenation changes
+2.0  released on Sun 27 Aug 1995
+	lpc.c: round quantised coefficents to the nearest integer
+	*.c: numerous casts to avoid warnings with Visual C/C++
+	shorten.1: changed format of bit table
+	ulaw.c: replaced with Sulawalaw.c
+	alaw support: much like ulaw except no zero merge or fancy bitshift()
+	shorten.c: help screen left shifted by six chars to accomodate "alaw,"
+	Limited WINDOWS support added
+	slight optimisation when frame is all zero (don't change bitshift)
+	shorten.c: bug fixed when FN_QLPC called after FN_ZERO
+	fixio.c:signed values close to max were converted to min when quantised
+	BUGFIX_RELEASE definition moved from Makefile to shorten.h
+	old ANNOUNCE file deleted and minor changes to INSTALL
+	shorten.mak:  Default DOS compiler changed from BCC to MS Visual C++
+	Makefile/release:  now take BUGFIX_RELEASE from shorten.h
+	Makefile: no longer delete bitshift.h on clean/spotless
+2.1  released on Mon 26 Feb 1996
+	lpc.c: a bug disabled the early stopping on the search for LP order
+	shorten.c: silly bug in ordering of arguments in a rare printf()
+	shorten.c: redundant variable/storage buffer1 removed
+	shorten.1: Document bugs in the tech report on Rice coding
+	-t is now honoured (where possible) to convert file types on decode
+	Makefile updated to be more package friendly (James Christie)
+2.2  released on Mon 10 Mar 1997
+        New -t option "wav" for RIFF WAVE files (automatic selection of -t)
+	-t wav now the default - man page and shntest updated, mvs_s16 renamed
+	script release renamed mkRelease to avoid MS VC++ name conflict
+	setjump() bugfixes for embedded operation (Martin Saxon)
+	New windows DLL operation (Martin Saxon)
+2.3  released on Thu 04 Sep 1997
+	exit.c: system dependence on *sys_errlist[] changed to strerror()
+	SHORTEN.086, SHORTEN.EXE and shortn32.exe removed
+	Some Debian support
+2.3a released on Fri 26 Feb 1999	
+3.0  released on Fri 29 Sep 2000
+	Seek table extensions by Wayne Stielau
+	Unix backport of seek table extensions by Jason Jordan
+	Debian support improvements by Caleb Epstein
+3.1  released on Tue 10 Oct 2000
+	Seek table append option 'fixed'
+	Documentation updated
+3.2  released on Sat 13 Jan 2001
+	Added '-i' switch to display whether a file contains seek information
+	Cleaned up endian-conversion code
+	Fixed a file naming bug - now, when only an input file name is given,
+	output files are named according to the following rules:
+
+		If shortening a file:
+
+			If the input file name ends in .wav, then change
+			extension to .shn; otherwise, append .shn to the
+			input file name.  Examples:
+
+				file.wav  ->  file.shn
+				file.ext  ->  file.ext.shn
+
+		If extracting a file:
+
+			If the input file name ends in .shn, then change
+			extension to .wav; otherwise, append .wav to the
+			input file name.
+
+				file.shn  ->  file.wav
+				file.ext  ->  file.ext.wav
+
+	When the caller specifies -v2 on the command line, seek tables are
+	not generated (neither appended nor created in separate files).
+	The default behavior is to generate/append seek tables.
+3.3  released on Sun 12 Aug 2001
+	Converted to autoconf/automake build system
+	Made seek table code 64-bit clean
+	Changed seek table data structures to compensate for compilers that don't
+	  properly implement #pragma pack(1)
+	Various minor cleanups/updates that don't impact the shorten algorithm
+3.4  released on Sun 10 Feb 2002
+	Fix for reading/writing binary data on stdin/stdout for operating systems
+	  that do not have a single '\x0A' as a line separator (Frank Klemm)
+	Shorten now refuses to input data from or output data to a tty
+	Fixed crash when trying to create seek tables from a non-shorten file
+	-s and -S options can now create seek table files from data read on stdin
+	  (with -s, output filename is 'stdin.skt')
+	Seek tables are now appended to non-stdout output file when reading
+	  uncompressed data from stdin (e.g. shorten - outfile.shn < data.wav)
+3.5.0  released on Mon 18 Nov 2002
+	Support for compression of AIFF files contributed by Brian Willoughby of
+	  Sound Consulting
+	Changed file naming convention during extraction - when only an input file
+	  name is given, output files are named according to the following rules:
+
+			If the input file name contains more than one '.' and
+			ends in .shn, then drop the .shn; otherwise, if the input
+			file name ends in .shn, then change the extension to .wav;
+			otherwise, append .wav to the input file name.
+
+				file.aiff.shn  ->  file.aiff
+				file.aiff.ext  ->  file.aiff.ext.wav
+				file.shn       ->  file.wav
+				file.ext       ->  file.ext.wav
+
+	  This change was made so that non-wav files would be properly named after
+	  shortening and unshortening.  For example, 'shorten file.aiff' creates
+	  file.aiff.shn, and with the change above, 'shorten -x file.aiff.shn'
+	  will now create file.aiff (instead of file.aiff.wav).
+3.5.1  released Wed 12 Feb 2003
+	Minor AIFF spec compliance updates
+3.5.2  released Sun 28 Mar 2004
+	Fixed seek table permissions bug when creating seek-enabled files from
+	  read-only input files
+3.6.0  released Mon 03 May 2004
+	Fixed a seek table bug which, in rare cases, caused seek tables for certain
+	  files (e.g. ones that end with silence) to be generated incorrectly.  Seek
+	  tables created with the -k, -s or -S options are not affected.  To help
+	  distinguish older, possibly buggy seek tables from newer ones, the seek
+	  table revision number has been bumped from 0 to 1.  Thanks to Peter Kunath
+	  for the report and the fix.
+	Updated the '-i' option to determine whether a file is an external seek
+	  table file, a file with seek tables appended, or neither.  If seek tables
+	  are present, the seek table revision number is now shown.
+3.6.1  released Mon 19 Mar 2007
+	Shorten is now a native Windows executable (Cygwin is no longer needed)

@@ -1,0 +1,2 @@
+1. append seek tables to compressed data written to stdout
+   (this will require an overhaul of the seek table code)

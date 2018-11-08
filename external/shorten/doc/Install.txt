@@ -1,0 +1,55 @@
+shorten for DOS/Windows
+-----------------------
+
+shorten was built as a native DOS/Windows console application using the MinGW
+toolkit, available at <http://www.mingw.org/>.
+
+
+============
+Installation
+============
+
+To install shorten, first extract the files contained in the distribution .zip
+file to a temporary directory, and copy shorten.exe to any directory that is
+in your PATH.  To find out what directories are in your PATH, open a DOS prompt
+and type:
+
+  C:\> echo %PATH%
+
+Any of the listed directories will do, but perhaps the best choice is one of the
+Windows directories, e.g. C:\Windows, C:\Windows\Command, C:\Windows\System,
+C:\WinNT, C:\WinNT\System32, et cetera.  Of course, yours may be different than
+these, and there may be more than one Windows directory listed.
+
+To make sure shorten working correctly, go to the DOS prompt and type:
+
+  C:\> shorten -v
+
+If that doesn't work, you may need to add the extension:
+
+  C:\> shorten.exe -v
+
+You should see shorten's version information (verify that it shows the correct
+version - if not, then you probably have an outdated copy of shorten.exe
+somewhere on your hard drive that you need to remove).  If you don't see the
+version information, or if you get a message saying that the command was not
+found, then shorten is not installed correctly.
+
+
+=====
+Usage
+=====
+
+To use shorten, simply invoke it from a DOS prompt as follows:
+
+  C:\> shorten
+
+To learn more about shorten command-line parameters and how to use its various
+modes, see the shorten.txt or shorten.pdf files included in this distribution.
+
+
+==================
+Document revision:
+==================
+
+$Id: INSTALL.mingw,v 1.2 2006/12/23 06:10:11 jason Exp $

@@ -1,0 +1,30 @@
+shorten - fast compression for waveform files
+
+
+Installation
+------------
+
+Instructions on how to build and install shorten are contained in the INSTALL
+file.  Be sure to read it, especially if you have any problems, as it will
+contain important notes related to building and installing.  However, for most
+people this process will be as simple as:
+
+% ./configure
+% make                      (or gmake, if your make is not GNU - see INSTALL)
+% make check                (IMPORTANT - please do not skip this step!  **)
+% su -c "make install"      (or install-strip, where strip is supported)
+
+
+** If you get an error here, please contact Jason Jordan <shnutils@freeshell.org>.
+   Please paste the output of 'make check' into your email, and be prepared to
+   run some additional tests for me if needed.  :-)
+
+
+Documentation
+-------------
+
+A mostly-complete description of shorten and its command-line arguments are
+contained in the man page ("man shorten").
+
+To see what changes were made since previous releases, consult the ChangeLog
+file.

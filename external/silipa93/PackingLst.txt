@@ -1,0 +1,34 @@
+Packing List
+
+SIL Encore IPA93 Fonts version 2.0
+
+This compressed archive file should contain the following files:
+
+
+  README.TXT		Information the user should read first
+
+DOCS
+  IPA93KYBD.PDF		IPA Keyman keyboard layout
+  IPA93.PDF		IPA characters and access codes
+  PACKINGLST.TXT	This file
+
+UTILS
+  RTF_FIX.DOT		Document template for converting to/from Macintosh
+  IPA93X5.KMX		Keyman keyboard (to be installed)
+                        Keyman website: http://www.tavultesoft.com
+
+FONTS
+  ipa93dr.ttf		SIlDoulos IPA93 Regular
+  ipa93db.ttf		SIlDoulos IPA93 Bold
+  ipa93di.ttf		SIlDoulos IPA93 Italic
+  ipa93dc.ttf		SIlDoulos IPA93 Bold Italic
+  ipa93sr.ttf		SILSophia IPA93 Regular
+  ipa93sb.ttf		SILSophia IPA93 Bold
+  ipa93si.ttf		SILSophia IPA93 Italic
+  ipa93sc.ttf		SILSophia IPA93 Bold Italic
+  ipa93mr.ttf		SILManuscript IPA93 Regular
+  ipa93mb.ttf		SILManuscript IPA93 Bold
+  ipa93mi.ttf		SILManuscript IPA93 Italic
+  ipa93mc.ttf		SILManuscript IPA93 Bold Italic
+
+ 
