@@ -113,10 +113,13 @@ if isempty(PP)
     end
     
     [fnp,fnn,fne]=fileparts(mfilename('fullpath'));
-    if exist(PP.shorten)~=2        % check that shorten executable exists
-        PP.shorten=fullfile(fnp,'shorten.exe'); % next try local directory
-        if exist(PP.shorten)~=2        % check if it exists in local directory
-            PP.shorten='shorten.exe'; % finally assume it is on the search path
+    if exist(PP.shorten,'file')~=2        % check that shorten executable exists
+        PP.shorten=fullfile(fnp,'shorten.exe','file'); % next try local directory
+        if exist(PP.shorten,'file')~=2        % check if it exists in local directory
+            PP.shorten=fullfile(fnp(1:end-9),'external\shorten\shorten.exe'); % check if it exists in ..\external\shorten directory
+            if exist(PP.shorten,'file')~=2
+                PP.shorten='shorten.exe'; % finally assume it is on the search path
+            end
         end
     end
     
