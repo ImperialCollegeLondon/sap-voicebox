@@ -131,7 +131,7 @@ if nargout
         end
     end
 
-    if isempty(ffx{4});
+    if isempty(ffx{4})
         fseek(fid,0,-1);
         str=char(fread(fid,16)');
         if str(8) ~= 10 || str(16) ~= 10, fclose(fid); error('File does not begin with a SPHERE header'); end
