@@ -1,0 +1,24 @@
+# These files are text and should be normalized (convert between crlf and lf)
+*.txt     text
+*.md      text
+*.m       text
+*.wrd     text
+*.c       text
+*.h       text
+*.sh      text
+*.tex     text
+
+# These files should be treated as binary
+*.png     binary
+*.jpg     binary
+*.wav     binary
+*.egg     binary
+*.ttf     binary
+*.pdf     binary
+*.dot     binary
+*.doc     binary
+*.zip     binary
+*.docx    binary
+*.kmx     binary
+*.exe     binary
+*.aiff    binary
