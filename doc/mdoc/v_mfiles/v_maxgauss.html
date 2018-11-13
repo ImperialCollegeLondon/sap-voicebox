@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_maxgauss</title>
+  <meta name="keywords" content="v_maxgauss">
+  <meta name="description" content="MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_maxgauss.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_maxgauss
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [u,v,p,r] = v_maxgauss(m,c,d) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)
+
+ Inputs:
+       m(N,1) is the mean vector of length N
+       c(N,N) is Covariance matrix (or c(N,1) is vector of covariances)
+       d(N,K) is Covariance w.r.t some other variables
+
+ Outputs:
+       u is mean(max(x)) where x is the random variable of length N
+       v is var(max(x))
+       p(N,1) is prob of each element being the max
+       r(1,K) is covariance between max(x) and the variables corresponding to the columns of d
+
+ To find the min instead of max, just negate m and u.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [u,v,p,r] = v_maxgauss(m,c,d)</a>
+0002 <span class="comment">%MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:</span>
+0005 <span class="comment">%       m(N,1) is the mean vector of length N</span>
+0006 <span class="comment">%       c(N,N) is Covariance matrix (or c(N,1) is vector of covariances)</span>
+0007 <span class="comment">%       d(N,K) is Covariance w.r.t some other variables</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs:</span>
+0010 <span class="comment">%       u is mean(max(x)) where x is the random variable of length N</span>
+0011 <span class="comment">%       v is var(max(x))</span>
+0012 <span class="comment">%       p(N,1) is prob of each element being the max</span>
+0013 <span class="comment">%       r(1,K) is covariance between max(x) and the variables corresponding to the columns of d</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% To find the min instead of max, just negate m and u.</span>
+0016 
+0017 <span class="comment">% The algorithm combines the elements of m in pairs in sequence as suggested</span>
+0018 <span class="comment">% in [1]. Errors are introduced because max(x(i),x(j)) is wrongly assumed to be</span>
+0019 <span class="comment">% gaussian. To minimize the errors, we use a greedy algorithm (approximately as</span>
+0020 <span class="comment">% in [2]) in which the chosen pair has the greatest imbalance in selection probability.</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Refs: [1] C. E. Clark. The greatest of a finite set of random variables.</span>
+0024 <span class="comment">%           Operations Research, 9(2):145–162, March 1961.</span>
+0025 <span class="comment">%       [2] D. Sinha, H. Zhou, and N. V. Shenoy.</span>
+0026 <span class="comment">%           Advances in Computation of the Maximum of a Set of Gaussian Random Variables.</span>
+0027 <span class="comment">%           IEEE Trans Computer-Aided Design of Integrated Circuits and Systems,</span>
+0028 <span class="comment">%           26(8):1522–1533, Aug. 2007. doi: 10.1109/TCAD.2007.893544.</span>
+0029 
+0030 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0031 <span class="comment">%      Version: $Id: v_maxgauss.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0034 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0038 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0039 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0040 <span class="comment">%   (at your option) any later version.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0043 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0044 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0045 <span class="comment">%   GNU General Public License for more details.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0048 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0049 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 nrh=-sqrt(0.5);
+0053 kpd=sqrt(0.5/pi);
+0054 m=m(:);
+0055 nm=length(m);
+0056 <span class="keyword">if</span> nargin&lt;2
+0057     c=eye(nm);
+0058 <span class="keyword">elseif</span> numel(c)==nm
+0059     c=diag(c);
+0060 <span class="keyword">end</span>
+0061 p=eye(nm);
+0062 ix=find(m==-Inf);       <span class="comment">% remove negative infinities immediately</span>
+0063 <span class="keyword">if</span> ~isempty(ix)
+0064     m(ix)=[];
+0065     c(ix,:)=[];
+0066     c(:,ix)=[];
+0067     p(:,ix)=[];
+0068     nm=length(m);
+0069 <span class="keyword">end</span>
+0070 ix=0:nm^2-1;                        <span class="comment">% index for nm x nm matrix elements (from 0)</span>
+0071 ix = ix(ix&lt;(nm+1)*floor(ix/nm));    <span class="comment">% only keep the strict upper triangle</span>
+0072 mij=zeros(2,1);                     <span class="comment">% store for means</span>
+0073 <span class="keyword">while</span> nm&gt;1
+0074 
+0075     <span class="comment">% calculate scaled differences in means</span>
+0076 
+0077     gm=m(:,ones(1,nm));
+0078     gm = gm-gm.';               <span class="comment">% find the difference between all pairs of means</span>
+0079     gm=gm(ix+1);                <span class="comment">% only keep the strict upper triangular elements</span>
+0080     cd=diag(c);
+0081     gv=cd(:,ones(1,nm))-c;
+0082     gv=gv+gv.';
+0083     gv=gv(ix+1);                <span class="comment">% These are the corresponding variance sums</span>
+0084     jx=find(gv&lt;=0);
+0085     <span class="keyword">if</span> ~isempty(jx)             <span class="comment">% special case: two variables differ by a constant</span>
+0086         jx=jx(1);               <span class="comment">% take first pair for which this is true</span>
+0087         j=floor(ix(jx)/nm);
+0088         i=ix(jx)-nm*j+1;
+0089         j=j+1;
+0090         dm=gm(jx);
+0091         <span class="keyword">if</span> dm&gt;0                 <span class="comment">% if x(i)&gt;x(j) then abolish j</span>
+0092             m(j)=[];
+0093             c(j,:)=[];
+0094             c(:,j)=[];
+0095             p(:,j)=[];
+0096         <span class="keyword">else</span>                    <span class="comment">% if x(i)&lt;=x(j) then abolish i</span>
+0097             m(i)=[];
+0098             c(i,:)=[];
+0099             c(:,i)=[];
+0100             p(:,i)=[];
+0101         <span class="keyword">end</span>
+0102     <span class="keyword">else</span>
+0103         <span class="comment">% select the pair of variables with the the highest ratio of</span>
+0104         <span class="comment">% squared difference in means to sum of variances and combine into a single variable</span>
+0105         [gg,jx]=max(gm.^2./gv);         <span class="comment">% jx indicates which pair to combine</span>
+0106         j=floor(ix(jx)/nm);             <span class="comment">% convert jx into (i,j) pair</span>
+0107         i=ix(jx)-nm*j+1;
+0108         j=j+1;                          <span class="comment">% combine variables i and j</span>
+0109         dm=gm(jx);                      <span class="comment">% mean of x(i)-x(j)</span>
+0110         ds=sqrt(gv(jx));                <span class="comment">% std dev of x(i)-x(j)</span>
+0111         dms=dm/ds;
+0112         q = 0.5 * erfc(nrh*dms);        <span class="comment">% q =normcdf(dm,0,ds) = Phi(dms) = prob x(i) &gt; x(j)</span>
+0113         f=kpd*exp(-0.5*dms^2);          <span class="comment">% f=phi(dms)=ds*normpdf(dm,0,ds)</span>
+0114         mij(1)=m(i);
+0115         mij(2)=m(j);
+0116         u=dm*q+mij(2)+ds*f;                                         <span class="comment">% mean of max{x(i),x(j)}</span>
+0117         v=(mij(1)+mij(2)-u)*u +cd(i)*q+cd(j)*(1-q)-mij(1)*mij(2);   <span class="comment">% variance of max{x(i),x(j)}</span>
+0118 
+0119         <span class="comment">% replace x(i) with max{x(i),x(j)}</span>
+0120 
+0121         m(i)=u;
+0122         c(i,:)=q*c(i,:)+(1-q)*c(j,:);
+0123         c(:,i)=c(i,:).';
+0124         c(i,i)=v;
+0125         p(:,i)=q*p(:,i)+(1-q)*p(:,j);
+0126         
+0127         <span class="comment">% now abolish x(j)</span>
+0128         
+0129         m(j)=[];
+0130         c(j,:)=[];
+0131         c(:,j)=[];
+0132         p(:,j)=[];
+0133     <span class="keyword">end</span>
+0134 
+0135     ix=ix(1:(nm-1)*(nm-2)/2);
+0136     ix=ix-floor(ix/nm);
+0137     nm=nm-1;
+0138 <span class="keyword">end</span>         <span class="comment">% main while loop</span>
+0139 u=m(1);
+0140 v=c(1);
+0141 p=p/sum(p);     <span class="comment">% force sum=1</span>
+0142 <span class="keyword">if</span> nargin&gt;2
+0143     r=p.'*d;
+0144 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

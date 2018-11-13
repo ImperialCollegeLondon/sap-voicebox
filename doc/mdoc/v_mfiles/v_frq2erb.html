@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_frq2erb</title>
+  <meta name="keywords" content="v_frq2erb">
+  <meta name="description" content="FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_frq2erb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_frq2erb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [erb,bnd] = v_frq2erb(frq) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)
+    erb = v_frq2erb(frq) converts a vector of frequencies (in Hz)
+    to the corresponding values on the ERB-rate scale on which
+      the human ear has roughly constant resolution as judged by
+      psychophysical measurements of the cochlear filters. The
+   inverse function is v_erb2frq.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [erb,bnd] = v_frq2erb(frq)</a>
+0002 <span class="comment">%FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</span>
+0003 <span class="comment">%    erb = v_frq2erb(frq) converts a vector of frequencies (in Hz)</span>
+0004 <span class="comment">%    to the corresponding values on the ERB-rate scale on which</span>
+0005 <span class="comment">%      the human ear has roughly constant resolution as judged by</span>
+0006 <span class="comment">%      psychophysical measurements of the cochlear filters. The</span>
+0007 <span class="comment">%   inverse function is v_erb2frq.</span>
+0008 
+0009 <span class="comment">%   The erb scale is measured using the notched-noise method [3].</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%    We have df/de = 6.23*f^2 + 93.39*f + 28.52</span>
+0012 <span class="comment">%    where the above expression gives the Equivalent Rectangular</span>
+0013 <span class="comment">%    Bandwidth (ERB)in Hz  of a human auditory filter with a centre</span>
+0014 <span class="comment">%    frequency of f kHz.</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%    By integrating the reciprocal of the above expression, we</span>
+0017 <span class="comment">%    get:</span>
+0018 <span class="comment">%        e = a ln((f/p-1)/(f/q-1))</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%    where p and q are the roots of the equation: -0.312 and -14.7</span>
+0021 <span class="comment">%      and a = 1000/(6.23*(p-q)) = 11.17268</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%    We actually implement e as</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%        e = a ln (h - k/(f+c))</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%    where k = 1000(q - q^2/p) = 676170.42</span>
+0028 <span class="comment">%         h = q/p = 47.065</span>
+0029 <span class="comment">%          c = -1000q = 14678.49</span>
+0030 <span class="comment">%    and f is in Hz</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%    References:</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%      [1] B.C.J.Moore &amp; B.R.Glasberg &quot;Suggested formula for</span>
+0035 <span class="comment">%          calculating auditory-filter bandwidth and excitation</span>
+0036 <span class="comment">%          patterns&quot;, J Acoust Soc America V74, pp 750-753, 1983</span>
+0037 <span class="comment">%      [2] O. Ghitza, &quot;Auditory Models &amp; Human Performance in Tasks</span>
+0038 <span class="comment">%          related to Speech Coding &amp; Speech Recognition&quot;,</span>
+0039 <span class="comment">%          IEEE Trans on Speech &amp; Audio Processing, Vol 2,</span>
+0040 <span class="comment">%          pp 115-132, Jan 1994</span>
+0041 <span class="comment">%     [3] R. D. Patterson. Auditory filter shapes derived with noise</span>
+0042 <span class="comment">%         stimuli. J. Acoust. Soc. Amer., 59: 640–654, 1976.</span>
+0043 
+0044 <span class="comment">%      Copyright (C) Mike Brookes 1998-2015</span>
+0045 <span class="comment">%      Version: $Id: v_frq2erb.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0048 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0052 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0053 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0054 <span class="comment">%   (at your option) any later version.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0057 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0058 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0059 <span class="comment">%   GNU General Public License for more details.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0062 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0063 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0065 <span class="keyword">persistent</span> u a h k c
+0066 <span class="keyword">if</span> ~numel(u)
+0067     u=[6.23e-6 93.39e-3 28.52];
+0068     p=sort(roots(u));               <span class="comment">% p=[-14678.5 -311.9]</span>
+0069     a=1e6/(6.23*(p(2)-p(1)));       <span class="comment">% a=11.17</span>
+0070     c=p(1);                         <span class="comment">% c=-14678.5</span>
+0071     k = p(1) - p(1)^2/p(2);         <span class="comment">% k=676170.42</span>
+0072     h=p(1)/p(2);                    <span class="comment">% h=47.065</span>
+0073 <span class="keyword">end</span>
+0074 g=abs(frq);
+0075 <span class="comment">% erb=11.17268*sign(frq).*log(1+46.06538*g./(g+14678.49));</span>
+0076 erb=a*sign(frq).*log(h-k./(g-c));
+0077 bnd=polyval(u,g);
+0078 <span class="keyword">if</span> ~nargout
+0079     plot(frq,erb,<span class="string">'-x'</span>);
+0080     xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0081     ylabel([<span class="string">'Frequency ('</span> <a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a> <span class="string">'Erb-rate)'</span>]);
+0082 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

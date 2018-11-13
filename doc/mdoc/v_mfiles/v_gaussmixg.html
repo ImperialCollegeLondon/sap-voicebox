@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmixg</title>
+  <meta name="keywords" content="v_gaussmixg">
+  <meta name="description" content="GAUSSMIXG global mean, variance and mode of a GMM">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gaussmixg.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gaussmixg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAUSSMIXG global mean, variance and mode of a GMM</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GAUSSMIXG global mean, variance and mode of a GMM
+
+ Usage: (1) v_gaussmixg(m,v,w)               % plot the mean and mode positions of a GMM
+        (2) [mg,vg]=v_gaussmixg(m,v,w)       % find global mean and covariance of a GMM
+        (3) [mg,vg,pg]=v_gaussmixg(m,v,w)    % find global mean,covariance and mode of a GMM
+        (4) [mg,vg,pg,pv]=v_gaussmixg(m,v,w) % ... also find log probability of the peak
+
+  Inputs:  M(k,p) = mixture means for pg(p)
+           V(k,p) or V(p,p,k) variances (diagonal or full)
+           W(k,1) = mixture weights
+           N      = maximum number of modes to find [default 1]
+
+ Outputs: MG(1,p) = global mean
+          VG(p,p) = global covariance
+          PG(N,p) = sorted list of N modes
+          PV(N,1) = log pdf at the modes PG(N,p) (in decreasing order)
+
+  This routine finds the global mean and covariance matrix of a Gaussian Mixture (GMM). It also
+  attempts to find up to N local maxima using a combination of the fixed point and quadratic
+  Newton-Raphson algorithms from [1]. Currently, N must be less than or equal to the number of
+  mixtures K. In general the PDF surface of a GMM can be very complicated with many local maxima [2]
+  and, as discussed in [1,2], this algorithm is not guaranteed to find the N highest. In [2], it is
+  conjectured that the number of local maxima is &lt;=K for the following cases (a) P=1, (b) all
+  mixture covariance matrices are equal and (c) all mixture covariance matrices are multiples of
+  the identity.
+
+ Refs:
+   [1]    M. Á. Carreira-Perpiñán. Mode-finding for mixtures of gaussian distributions.
+       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318–1323, 2000. doi: 10.1109/34.888716.
+   [2] M. Á. Carreira-Perpiñán and C. K. I. Williams. On the number of modes of a gaussian mixture.
+       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625–640,
+       Isle of Skye, June 2003. doi: 10.1007/3-540-44935-3_44.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>	GAUSSMIXD marginal and conditional Gaussian mixture densities</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)</a>
+0002 <span class="comment">%GAUSSMIXG global mean, variance and mode of a GMM</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) v_gaussmixg(m,v,w)               % plot the mean and mode positions of a GMM</span>
+0005 <span class="comment">%        (2) [mg,vg]=v_gaussmixg(m,v,w)       % find global mean and covariance of a GMM</span>
+0006 <span class="comment">%        (3) [mg,vg,pg]=v_gaussmixg(m,v,w)    % find global mean,covariance and mode of a GMM</span>
+0007 <span class="comment">%        (4) [mg,vg,pg,pv]=v_gaussmixg(m,v,w) % ... also find log probability of the peak</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs:  M(k,p) = mixture means for pg(p)</span>
+0010 <span class="comment">%           V(k,p) or V(p,p,k) variances (diagonal or full)</span>
+0011 <span class="comment">%           W(k,1) = mixture weights</span>
+0012 <span class="comment">%           N      = maximum number of modes to find [default 1]</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Outputs: MG(1,p) = global mean</span>
+0015 <span class="comment">%          VG(p,p) = global covariance</span>
+0016 <span class="comment">%          PG(N,p) = sorted list of N modes</span>
+0017 <span class="comment">%          PV(N,1) = log pdf at the modes PG(N,p) (in decreasing order)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%  This routine finds the global mean and covariance matrix of a Gaussian Mixture (GMM). It also</span>
+0020 <span class="comment">%  attempts to find up to N local maxima using a combination of the fixed point and quadratic</span>
+0021 <span class="comment">%  Newton-Raphson algorithms from [1]. Currently, N must be less than or equal to the number of</span>
+0022 <span class="comment">%  mixtures K. In general the PDF surface of a GMM can be very complicated with many local maxima [2]</span>
+0023 <span class="comment">%  and, as discussed in [1,2], this algorithm is not guaranteed to find the N highest. In [2], it is</span>
+0024 <span class="comment">%  conjectured that the number of local maxima is &lt;=K for the following cases (a) P=1, (b) all</span>
+0025 <span class="comment">%  mixture covariance matrices are equal and (c) all mixture covariance matrices are multiples of</span>
+0026 <span class="comment">%  the identity.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Refs:</span>
+0029 <span class="comment">%   [1]    M. Á. Carreira-Perpiñán. Mode-finding for mixtures of gaussian distributions.</span>
+0030 <span class="comment">%       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318–1323, 2000. doi: 10.1109/34.888716.</span>
+0031 <span class="comment">%   [2] M. Á. Carreira-Perpiñán and C. K. I. Williams. On the number of modes of a gaussian mixture.</span>
+0032 <span class="comment">%       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625–640,</span>
+0033 <span class="comment">%       Isle of Skye, June 2003. doi: 10.1007/3-540-44935-3_44.</span>
+0034 
+0035 <span class="comment">% Bugs/Suggestions:</span>
+0036 <span class="comment">% (1) Sometimes the mode is not found, e.g. m=[0 1; 1 0];v=[.01 10; 10 .01];</span>
+0037 <span class="comment">%     has a true mode near (0,0). Could add to the list of mode candidates</span>
+0038 <span class="comment">%     all the pairwise intersections of the mixtures.</span>
+0039 <span class="comment">%     Another is: m=[0 0; 10 0.3]; v=[1 1; 1000 .001];</span>
+0040 <span class="comment">% (2) When merging candidates, we should keep the one with the highest probability</span>
+0041 <span class="comment">% (3) could preserve the fixed arrays between calls if p and/or k are unchanged</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">% See also: v_gaussmix, v_gaussmixd, v_gaussmixp, v_randvec</span>
+0044 
+0045 <span class="comment">%      Copyright (C) Mike Brookes 2000-2012</span>
+0046 <span class="comment">%      Version: $Id: v_gaussmixg.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0049 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0052 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0053 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0054 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0055 <span class="comment">%   (at your option) any later version.</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0058 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0059 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0060 <span class="comment">%   GNU General Public License for more details.</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0063 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0064 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0065 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0066 <span class="comment">% Algorithm parameters</span>
+0067 nfp=2;          <span class="comment">% number of fixed point iterations to do at start</span>
+0068 maxloop=60;     <span class="comment">% maximum number of iterations</span>
+0069 ssf=0.1;        <span class="comment">% factor when calculating minimum mode separation</span>
+0070 <span class="comment">%Sort out arguments</span>
+0071 [k,p]=size(m);
+0072 <span class="keyword">if</span> nargin&lt;4
+0073     n=1;
+0074     <span class="keyword">if</span> nargin&lt;3
+0075         w=ones(k,1);
+0076         <span class="keyword">if</span> nargin&lt;2
+0077             v=ones(k,p);
+0078         <span class="keyword">end</span>
+0079     <span class="keyword">end</span>
+0080 <span class="keyword">end</span>
+0081 <span class="keyword">if</span> ~nargout
+0082     <span class="keyword">if</span> nargin&lt;4
+0083         n=k;
+0084     <span class="keyword">end</span>
+0085     nao=4;
+0086 <span class="keyword">else</span>
+0087     nao=nargout;
+0088 <span class="keyword">end</span>
+0089 
+0090 full=numel(size(v))&gt;2 || k==1 &amp;&amp; numel(v)&gt;p; <span class="comment">% test for full covariance matrices</span>
+0091 <span class="keyword">if</span> full &amp;&amp; p==1   <span class="comment">% if p=1 then we force diagonal covariance matrices</span>
+0092     v=reshape(v,1,k)';
+0093     full=false;
+0094 <span class="keyword">end</span>
+0095 w=w/sum(w);  <span class="comment">% force w to sum to unity</span>
+0096 <span class="comment">% calculate the global mean and covariance</span>
+0097 mg=w.'*m;
+0098 mz=m-mg(ones(k,1),:);   <span class="comment">% means relative to global mean</span>
+0099 <span class="keyword">if</span> nao&gt;2                <span class="comment">% need to calculate the modes</span>
+0100     nx=k;               <span class="comment">% number of pg values initially</span>
+0101     kk=reshape(repmat(1:nx,k,1),k*nx,1); <span class="comment">% [1 1 1 2 2 2 ... nx nx nx]'</span>
+0102     km=repmat(1:k,1,nx)'; <span class="comment">% [1:k 1:k ... 1:k]'</span>
+0103     <span class="comment">% sort out indexing for all data value pairs; needed to eliminate duplicates</span>
+0104     nxp=nx*(nx-1)/2;
+0105     ja=(1:nxp)';
+0106     jb=floor((3+sqrt(8*ja-3))/2);       <span class="comment">% [2 3 3 4 4 4 ... nx]'</span>
+0107     ja=ja-(jb.^2-3*jb+2)/2;             <span class="comment">% [1 1:2 1:3 ... 1:nx-1]'</span>
+0108     jc=ones(nxp,1);
+0109     <span class="comment">% sort out indexing for vectorized upper triagular matrix</span>
+0110     npu=p*(p+1)/2;                      <span class="comment">% number of distinct elements in a symmetrial (p,p) matrix</span>
+0111     kw=1:npu;
+0112     ku=floor((1+sqrt(8*kw-3))/2);       <span class="comment">% [1 2 2 3 3 3 ... p]</span>
+0113     kv=kw-(ku.^2-ku)/2;                 <span class="comment">% [1 1:2 1:3 ... 1:p]</span>
+0114     zpp=zeros(p,p);
+0115     zpp(kv+p*(ku-1))=kw;
+0116     zpp(ku+p*(kv-1))=kw;
+0117     kw=reshape(zpp,1,[]);               <span class="comment">% maps vectorized upper triangular to vectorized full matrix</span>
+0118     kp=repmat(1:p,1,p);                 <span class="comment">% row indices for a (p,p) matrix as a row vector</span>
+0119     kq=reshape(repmat(1:p,p,1),1,p^2);  <span class="comment">% col indices for a (p,p) matrix as a row vector</span>
+0120     kr=p*kp-p+kq;                       <span class="comment">% transpose indexing for a vectorized (p,p) matrix</span>
+0121     kd=1:p+1:p^2;                       <span class="comment">% diagonal indices of a (p,p) matrix</span>
+0122     <span class="comment">% unity vectors to make efficient replication</span>
+0123     wk=ones(k,1);
+0124     wnx=ones(nx,1);
+0125     <span class="keyword">if</span> full
+0126         vg=mz.'*(mz.*w(:,ones(1,p)))+reshape(reshape(v,p^2,k)*w,p,p);
+0127         <span class="comment">% now determine the mode</span>
+0128         vi=zeros(p*k,p);                    <span class="comment">% stack of k inverse cov matrices each size p*p times -0.5</span>
+0129         vim=zeros(p*k,1);                   <span class="comment">% stack of k vectors of the form -0.5*inv(vt)*m</span>
+0130         mtk=vim;                             <span class="comment">% stack of k vectors of the form m</span>
+0131         lvm=zeros(k,1);
+0132         wpk=repmat((1:p)',k,1);
+0133         <span class="keyword">for</span> i=1:k    <span class="comment">% loop for each mixture</span>
+0134             [uvk,dvk]=eig(v(:,:,i));      <span class="comment">% find eigenvalues</span>
+0135             dvk=diag(dvk);
+0136             <span class="keyword">if</span>(any(dvk&lt;=0))
+0137                 error(<span class="string">'Covariance matrix for mixture %d is not positive definite'</span>,i);
+0138             <span class="keyword">end</span>
+0139             vik=-0.5*uvk*diag(dvk.^(-1))*uvk';   <span class="comment">% calculate inverse including -0.5 factor</span>
+0140             vi((i-1)*p+(1:p),:)=vik;           <span class="comment">% vi contains all mixture inverses stacked on top of each other</span>
+0141             vim((i-1)*p+(1:p))=vik*m(i,:)';   <span class="comment">% vim contains vi*m for all mixtures stacked on top of each other</span>
+0142             mtk((i-1)*p+(1:p))=m(i,:)';       <span class="comment">% mtk contains all mixture means stacked on top of each other</span>
+0143             lvm(i)=log(w(i))-0.5*sum(log(dvk));       <span class="comment">% vm contains the weighted sqrt of det(vi) for each mixture</span>
+0144         <span class="keyword">end</span>
+0145         vif=reshape(permute(reshape(vi,p,k,p),[2 1 3]),k,p^2); <span class="comment">% each covariance matrix as a vectorized row</span>
+0146         vimf=reshape(vim,p,k)'; <span class="comment">% vi*m as a row for each mixture</span>
+0147         ss=sqrt(min(v(repmat(kd,k,1)+repmat(p^2*(0:k-1)',1,p)),[],1))*ssf/sqrt(p);   <span class="comment">% minimum separation of modes [this is a conservative guess]</span>
+0148     <span class="keyword">else</span>
+0149         vg=mz.'*(mz.*w(:,ones(1,p)))+diag(w.'*v);
+0150         <span class="comment">% now determine the mode</span>
+0151         vi=-0.5*v.^(-1);                <span class="comment">% vi(k,p) = data-independent scale factor in exponent</span>
+0152         vi2=vi(:,ku).*vi(:,kv);         <span class="comment">% vi2(k,npu) = upper triangular Hessian data dependent term</span>
+0153         lvm=log(w)-0.5*sum(log(v),2);   <span class="comment">% log of external scale factor (excluding -0.5*p*log(2pi) term)</span>
+0154         vim=vi.*m;
+0155         vim2=vim(:,ku).*vim(:,kv);      <span class="comment">% vim2(k,npu) = upper triangular Hessian data independent term</span>
+0156         vimvi=vim(:,kp).*vi(:,kq);      <span class="comment">% vimvi(k,p^2) = vectorized Hessian term</span>
+0157         ss=sqrt(min(v,[],1))*ssf/sqrt(p);   <span class="comment">% minimum separation of modes [this is a conservative guess]</span>
+0158     <span class="keyword">end</span>
+0159     pgf=zeros(nx,p);                    <span class="comment">% space for fixed point update</span>
+0160     sv=0.01*ss;                         <span class="comment">% convergence threshold</span>
+0161     pg=m;  <span class="comment">% initialize mode candidates to mixture means</span>
+0162     i=1;   <span class="comment">% loop counter</span>
+0163     <span class="comment">%     gx=zeros(nx,p);   %%%%%%%%%%%% temp</span>
+0164     <span class="keyword">while</span> i&lt;=maxloop
+0165         <span class="comment">%         pg00=pg0;   %%%%%%%%%%%% temp</span>
+0166         pg0=pg;                         <span class="comment">% save previous mode candidates pg(nx,p)</span>
+0167         <span class="keyword">if</span> full
+0168             py=reshape(sum(reshape((vi*pg'-vim(:,wnx)).*(pg(:,wpk)'-mtk(:,wnx)),p,nx*k),1),k,nx)+lvm(:,wnx);
+0169             mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0170             px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0171             ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0172             px=(px./ps(wk,:))';             <span class="comment">% px(nx,k) = relative mixture probabilities for each data point (rows sum to 1)</span>
+0173             <span class="comment">% calculate the fixed point update</span>
+0174             pxvif=px*vif;    <span class="comment">% pxvif(nx,p^2)</span>
+0175             pxvimf=px*vimf;  <span class="comment">% pxvimf(nx,p)</span>
+0176             <span class="keyword">for</span> j=1:nx
+0177                 pgf(j,:)=pxvimf(j,:)/reshape(pxvif(j,:),p,p);
+0178             <span class="keyword">end</span>
+0179         <span class="keyword">else</span>
+0180             py=reshape(sum((pg(kk,:)-m(km,:)).^2.*vi(km,:),2),k,nx)+lvm(:,wnx);
+0181             mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0182             px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0183             ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0184             px=(px./ps(wk,:))';             <span class="comment">% px(nx,k) = relative mixture probabilities for each data point (rows sum to 1)</span>
+0185             <span class="comment">% calculate the fixed point update</span>
+0186             pxvim=px*vim;
+0187             pxvi=px*vi;
+0188             pgf=pxvim./pxvi;       <span class="comment">% fixed point update for all points</span>
+0189         <span class="keyword">end</span>
+0190         <span class="keyword">if</span> i&gt;nfp
+0191             <span class="comment">% calculate gradient and Hessian; see [1] equations (4) and (5)</span>
+0192             lp=log(ps)+mx;              <span class="comment">% log prob of each data point</span>
+0193             <span class="keyword">if</span> full
+0194                 <span class="comment">%                 gx0=gx;   %%%%%%%%%%%% temp</span>
+0195                 gx=pxvimf-reshape(sum(repmat(pg,p,1).*reshape(pxvif,[],p),2),nx,p);
+0196                 vimpg=repmat(vimf,nx,1)-reshape(permute(reshape(pg*vi',nx,p,k),[3 1 2]),[],p); <span class="comment">% vimpg(k*nx,p)</span>
+0197                 hx1=2*reshape(sum(reshape(repmat(reshape(px',[],1),1,npu).*vimpg(:,ku).*vimpg(:,kv),k,[]),1),nx,[]);
+0198                 hx=pxvif+hx1(:,kw);
+0199             <span class="keyword">else</span>
+0200                 gx=pxvim-pxvi.*pg;               <span class="comment">% gradient for each data point (one row per point)</span>
+0201                 hx1=px*vim2+(px*vi2).*pg(:,ku).*pg(:,kv);
+0202                 hx2=(px*(vimvi)).*pg(:,kq);
+0203                 hx=2*(hx1(:,kw)-hx2-hx2(:,kr));
+0204                 hx(:,kd)=hx(:,kd)+pxvi;
+0205             <span class="keyword">end</span>
+0206             hx=reshape(hx',p,p,nx);
+0207             <span class="keyword">for</span> j=1:nx
+0208                 <span class="keyword">if</span> all(eig(hx(:,:,j))&lt;0)  <span class="comment">% if positive definite</span>
+0209                     pg(j,:)=pg(j,:)+gx(j,:)/hx(:,:,j); <span class="comment">% do a Newton-Raphson update</span>
+0210                     <span class="keyword">if</span> full
+0211                         pyj=sum(reshape((vi*pg(j,:)'-vim).*(pg(j,wpk)'-mtk),p,k),1)'+lvm;
+0212                     <span class="keyword">else</span>
+0213                         pyj=sum((repmat(pg(j,:),k,1)-m).^2.*vi,2)+lvm;
+0214                     <span class="keyword">end</span>
+0215                     mxj=max(pyj);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0216                     pxj=exp(pyj-mxj);            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0217                     psj=sum(pxj,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0218                     lpj=log(psj)+mxj;              <span class="comment">% log prob of updated data point</span>
+0219                     <span class="keyword">if</span> lpj&lt;lp(j)       <span class="comment">% check if the probability has decreased</span>
+0220                         pg(j,:)=pgf(j,:);   <span class="comment">% if so, do fixed point update</span>
+0221                     <span class="keyword">end</span>
+0222                 <span class="keyword">else</span>
+0223                     pg(j,:)=pgf(j,:);   <span class="comment">% else do fixed point update</span>
+0224                 <span class="keyword">end</span>
+0225             <span class="keyword">end</span>
+0226         <span class="keyword">else</span>
+0227             pg=pgf;       <span class="comment">% fixed point update for all points</span>
+0228         <span class="keyword">end</span>
+0229         <span class="keyword">if</span> all(all(abs(pg-pg0)&lt;sv(wnx,:))) &amp;&amp; i+2&lt;maxloop
+0230             maxloop=min(maxloop,i+2);        <span class="comment">% two more loops if converged if converged</span>
+0231         <span class="keyword">end</span>
+0232         <span class="comment">%         [all(pg==pgf,2) pg [i; repmat(NaN,nx-1,1)] pg-pg0]  %debug: [fixed-point x-mode iteration delta-x]</span>
+0233         jd=all(abs(pg(jb,:)-pg(ja,:))&lt;ss(jc,:),2);   <span class="comment">% find duplicate modes</span>
+0234         <span class="keyword">if</span> any(jd)
+0235             jx=sparse([(1:nx)';ja;jb],[(1:nx)';jb;ja],[wnx;jd;jd]);   <span class="comment">% neighbour matrix</span>
+0236             kx=any((jx*jx)&gt;0 &amp; ~jx,2);  <span class="comment">% find chains that  are not fully connected</span>
+0237             <span class="keyword">while</span> any(kx)
+0238                 kx=any(jx(:,kx),2);     <span class="comment">% destroy all links connected to these chains</span>
+0239                 jx(kx,:)=0;
+0240                 jx(:,kx)=0;
+0241                 <span class="comment">% jx(kx,kx)=1;</span>
+0242                 kx=any((jx*jx)&gt;0 &amp; ~jx,2);
+0243             <span class="keyword">end</span>
+0244             jx([1:nx+1:nx*nx (ja+(jb-1)*nx)'])=0; <span class="comment">% reset the upper triangle + diagonal</span>
+0245             pg(any(jx,2),:)=[];   <span class="comment">% delete the duplicates</span>
+0246             <span class="comment">% update nx and anything that depends on it</span>
+0247             nx=size(pg,1);
+0248             pgf=zeros(nx,p);                    <span class="comment">% space for fixed point update</span>
+0249             wnx=ones(nx,1);
+0250             nxp=nx*(nx-1)/2;
+0251             ja=ja(1:nxp);
+0252             jb=jb(1:nxp);
+0253             kk=reshape(repmat(1:nx,k,1),k*nx,1); <span class="comment">% [1 1 1 2 2 2 ... nx nx nx]'</span>
+0254             km=reshape(repmat(1:k,1,nx),k*nx,1); <span class="comment">% [1:k 1:k ... 1:k]'</span>
+0255             jc=ones(nxp,1);
+0256         <span class="keyword">end</span>
+0257         i=i+1;
+0258     <span class="keyword">end</span>
+0259     <span class="comment">%     calculate the log pdf at each mode</span>
+0260     <span class="keyword">if</span> full
+0261         py=reshape(sum(reshape((vi*pg'-vim(:,wnx)).*(pg(:,wpk)'-mtk(:,wnx)),p,nx*k),1),k,nx)+lvm(:,wnx);
+0262         mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0263         px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0264         ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0265     <span class="keyword">else</span>
+0266         py=reshape(sum((pg(kk,:)-m(km,:)).^2.*vi(km,:),2),k,nx)+lvm(:,wnx);
+0267         mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0268         px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0269         ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0270     <span class="keyword">end</span>
+0271     [pv,ix]=sort((log(ps)+mx)'-0.5*p*log(2*pi),<span class="string">'descend'</span>);
+0272     pg=pg(ix,:);
+0273     <span class="keyword">if</span> n&lt;numel(pv) <span class="comment">% only keep the first n modes</span>
+0274         pg=pg(1:n,:);
+0275         pv=pv(1:n);
+0276     <span class="keyword">end</span>
+0277 <span class="keyword">elseif</span> nao&gt;1
+0278     <span class="keyword">if</span> full
+0279         vg=mz.'*(mz.*w(:,ones(1,p)))+reshape(reshape(v,p^2,k)*w,p,p);
+0280     <span class="keyword">else</span>
+0281         vg=mz.'*(mz.*w(:,ones(1,p)))+diag(w.'*v);
+0282     <span class="keyword">end</span>
+0283 <span class="keyword">end</span>
+0284 
+0285 <span class="keyword">if</span> ~nargout
+0286     <span class="comment">% now plot the result</span>
+0287     clf;
+0288     pg1=pg(1,:);
+0289     lpm=<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(mg,m,v,w);
+0290     lpp=pv(1);
+0291     <span class="keyword">switch</span> p
+0292         <span class="keyword">case</span> 1
+0293             <a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>([],m,v,w);
+0294             hold on;
+0295             ylim=get(gca,<span class="string">'ylim'</span>)';
+0296             plot([mg mg]',ylim,<span class="string">'-k'</span>,[mg mg; mg mg]+[-1 1; -1 1]*sqrt(vg),ylim,<span class="string">':k'</span>);
+0297             plot(pg(1),pv(1),<span class="string">'^k'</span>);
+0298             <span class="keyword">if</span> numel(pg)&gt;1
+0299                 plot(pg(2:end),pv(2:end),<span class="string">'xk'</span>);
+0300             <span class="keyword">end</span>
+0301             hold off;
+0302             title(sprintf(<span class="string">'Mean+-sd = %.3g+-%.3g LogP = %.3g, Mode\\Delta = %.3g LogP = %.3g'</span>,mg,sqrt(vg),lpm,pg1,lpp));
+0303             xlabel(<span class="string">'x'</span>);
+0304         <span class="keyword">case</span> 2
+0305             <a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>([],m,v,w);
+0306             hold on;
+0307             t=linspace(0,2*pi,100);
+0308             xysd=chol(vg)'*[cos(t); sin(t)]+repmat(mg',1,length(t));
+0309             plot(xysd(1,:),xysd(2,:),<span class="string">':k'</span>,mg(1),mg(2),<span class="string">'ok'</span>);
+0310             plot(pg(1,1),pg(1,2),<span class="string">'^k'</span>);
+0311             <span class="keyword">if</span> numel(pv)&gt;1
+0312                 plot(pg(2:<span class="keyword">end</span>,1),pg(2:<span class="keyword">end</span>,2),<span class="string">'xk'</span>);
+0313             <span class="keyword">end</span>
+0314             hold off;
+0315             title(sprintf(<span class="string">'Mean = (%.3g,%.3g) LogP = %.3g, Mode:\\Delta = (%.3g,%.3g) LogP = %.3g'</span>,mg,lpm,pg1,pv(1)));
+0316             xlabel(<span class="string">'x'</span>);
+0317             ylabel(<span class="string">'y'</span>);
+0318         <span class="keyword">otherwise</span>
+0319             nx=200;
+0320             nc=ceil(sqrt(p/2));
+0321             nr=ceil(p/nc);
+0322             sdx=sqrt(diag(vg))';  <span class="comment">% std deviation</span>
+0323             minx=min([mg; pg],[],1)-1.5*sdx;
+0324             maxx=max([mg; pg],[],1)+1.5*sdx;
+0325             ix=2:p; <span class="comment">% selected indices</span>
+0326             <span class="keyword">for</span> i=1:p
+0327                 xi=linspace(minx(i),maxx(i),nx)';
+0328                 [mm,vm,wm]=<a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>(mg(ix),m,v,w,[],ix);
+0329                 ym=<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(xi,mm,vm,wm')+lpm-gaussmixp(mg(i),mm,vm,wm');
+0330                 [mp,vp,wp]=<a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>(pg(1,ix),m,v,w,[],ix);
+0331                 yp=<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(xi,mp,vp,wp')+lpp-gaussmixp(pg1(i),mp,vp,wp');
+0332                 subplot(nr,nc,i);
+0333                 plot(xi,ym,<span class="string">'-k'</span>,mg(i),lpm,<span class="string">'ok'</span>,xi,yp,<span class="string">':b'</span>,pg1(i),lpp,<span class="string">'^b'</span>);
+0334                 <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1 -1 -1.05]);
+0335                 hold on
+0336                 plot([mg(i) mg(i)],get(gca,<span class="string">'ylim'</span>),<span class="string">'-k'</span>);
+0337                 hold off
+0338                 xlabel(sprintf(<span class="string">'x[%d], Mean = %.3g, Mode\\Delta = %.3g'</span>,i,mg(i),pg1(i)));
+0339                 <span class="keyword">if</span> i==1
+0340                     title(sprintf(<span class="string">'Log Prob: Mean = %.3g, Mode\\Delta = %.3g'</span>,lpm,lpp));
+0341                 <span class="keyword">end</span>
+0342                 ix(i)=i;
+0343             <span class="keyword">end</span>
+0344     <span class="keyword">end</span>
+0345 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

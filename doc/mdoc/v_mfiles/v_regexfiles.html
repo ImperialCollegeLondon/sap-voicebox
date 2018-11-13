@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_regexfiles</title>
+  <meta name="keywords" content="v_regexfiles">
+  <meta name="description" content="REGEXFILES recursively searches for files matching a pattern tok=(regex,root)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_regexfiles.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_regexfiles
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>REGEXFILES recursively searches for files matching a pattern tok=(regex,root)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function tok=v_regexfiles(regex,root,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">REGEXFILES recursively searches for files matching a pattern tok=(regex,root)
+
+ Usage:  (1) v_regexfiles('\.m$')      % find all files *.m in current folder tree
+
+ Inputs:
+         regex  regular expression giving the pattern to match (not including root path)
+         root   path to initial folder [default: current folder]
+         m      'n'   % non recursive search
+
+ Outputs:
+          tok   cell array listing the file paths (not including the root)
+
+ Regular expressions:
+    Each character matches itself except for +?.*^$()[]{}|\
+    Precede these by \ to avoid their special meanings
+    Use '/' for the separator in file paths
+         .       Any single character, including white space
+         [xyz]   Any character contained within the brackets: x or y or z
+         [^xyz]  Any character not contained within the brackets: anything but x or y or z
+         [x-z]   Any character in the range of x through z
+         \s      Any white-space character; equivalent to [ \f\n\r\t\v]
+         \S      Any non-whitespace character; equivalent to [^ \f\n\r\t\v]
+         \w      Any alphabetic, numeric, or underscore character; equivalent to [a-zA-Z_0-9]
+         \W      Any character that is not alphabetic, numeric, or underscore; equivalent to [^a-zA-Z_0-9]
+         \d      Any numeric digit; equivalent to [0-9]
+         \D      Any nondigit character; equivalent to [^0-9]
+         \oN or \o{N}  Character of octal value N
+         \xN or \x{N}  Character of hexadecimal value N
+
+         (...)   Group 
+         cat|dog Alternatives 'cat' or 'dog'
+         ^       match start of full file name (if first character)
+         $       match end of full file name (if last character)
+         \&lt;      match start of word
+         \&gt;      match end of word
+         ?       match preceeding character 0 or 1 times
+         *       match preceeding character or group &gt;=0 times
+         +       match preceeding character or group &gt;=1 times
+         {m}     match preceeding character or group exactly m times
+         {m,}    match preceeding character or group &gt;=m  times
+         {m,n}   match preceeding character or group &gt;=m and &lt;=n times</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_voicebox_update.html" class="code" title="function n=v_voicebox_update(fn,m)">v_voicebox_update</a>	update v_voicebox calls by prefixing with 'v_'</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function tok=v_regexfiles(regex,root,m)</a>
+0002 <span class="comment">%REGEXFILES recursively searches for files matching a pattern tok=(regex,root)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:  (1) v_regexfiles('\.m$')      % find all files *.m in current folder tree</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">%         regex  regular expression giving the pattern to match (not including root path)</span>
+0008 <span class="comment">%         root   path to initial folder [default: current folder]</span>
+0009 <span class="comment">%         m      'n'   % non recursive search</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Outputs:</span>
+0012 <span class="comment">%          tok   cell array listing the file paths (not including the root)</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Regular expressions:</span>
+0015 <span class="comment">%    Each character matches itself except for +?.*^$()[]{}|\</span>
+0016 <span class="comment">%    Precede these by \ to avoid their special meanings</span>
+0017 <span class="comment">%    Use '/' for the separator in file paths</span>
+0018 <span class="comment">%         .       Any single character, including white space</span>
+0019 <span class="comment">%         [xyz]   Any character contained within the brackets: x or y or z</span>
+0020 <span class="comment">%         [^xyz]  Any character not contained within the brackets: anything but x or y or z</span>
+0021 <span class="comment">%         [x-z]   Any character in the range of x through z</span>
+0022 <span class="comment">%         \s      Any white-space character; equivalent to [ \f\n\r\t\v]</span>
+0023 <span class="comment">%         \S      Any non-whitespace character; equivalent to [^ \f\n\r\t\v]</span>
+0024 <span class="comment">%         \w      Any alphabetic, numeric, or underscore character; equivalent to [a-zA-Z_0-9]</span>
+0025 <span class="comment">%         \W      Any character that is not alphabetic, numeric, or underscore; equivalent to [^a-zA-Z_0-9]</span>
+0026 <span class="comment">%         \d      Any numeric digit; equivalent to [0-9]</span>
+0027 <span class="comment">%         \D      Any nondigit character; equivalent to [^0-9]</span>
+0028 <span class="comment">%         \oN or \o{N}  Character of octal value N</span>
+0029 <span class="comment">%         \xN or \x{N}  Character of hexadecimal value N</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%         (...)   Group</span>
+0032 <span class="comment">%         cat|dog Alternatives 'cat' or 'dog'</span>
+0033 <span class="comment">%         ^       match start of full file name (if first character)</span>
+0034 <span class="comment">%         $       match end of full file name (if last character)</span>
+0035 <span class="comment">%         \&lt;      match start of word</span>
+0036 <span class="comment">%         \&gt;      match end of word</span>
+0037 <span class="comment">%         ?       match preceeding character 0 or 1 times</span>
+0038 <span class="comment">%         *       match preceeding character or group &gt;=0 times</span>
+0039 <span class="comment">%         +       match preceeding character or group &gt;=1 times</span>
+0040 <span class="comment">%         {m}     match preceeding character or group exactly m times</span>
+0041 <span class="comment">%         {m,}    match preceeding character or group &gt;=m  times</span>
+0042 <span class="comment">%         {m,n}   match preceeding character or group &gt;=m and &lt;=n times</span>
+0043 
+0044 <span class="comment">%      Copyright (C) Mike Brookes 2010</span>
+0045 <span class="comment">%      Version: $Id: v_regexfiles.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0048 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0052 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0053 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0054 <span class="comment">%   (at your option) any later version.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0057 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0058 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0059 <span class="comment">%   GNU General Public License for more details.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0062 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0063 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0065 <span class="comment">% root='Z:/dmb/data\speech/timit/TRAIN/DR1';</span>
+0066 <span class="comment">% regex='^FD.*\.wav$';</span>
+0067 <span class="keyword">if</span> nargin&lt;3 || isempty(m)
+0068     m=<span class="string">''</span>;
+0069 <span class="keyword">end</span>
+0070     <span class="keyword">if</span> nargin&lt;2 || isempty(root)
+0071     root=<span class="string">'./'</span>;
+0072 <span class="keyword">end</span>
+0073 <span class="keyword">if</span> isempty(regex)
+0074     regex=<span class="string">'.*'</span>;
+0075 <span class="keyword">end</span>
+0076 root(root==<span class="string">'\'</span>)=<span class="string">'/'</span>; <span class="comment">% use forward slash everywhere</span>
+0077 <span class="keyword">if</span> ~isempty(root) &amp;&amp; root(end)==<span class="string">'/'</span>
+0078     root(end)=[]; <span class="comment">% remove a final '/'</span>
+0079 <span class="keyword">end</span>
+0080 dirlist{1}=<span class="string">''</span>; <span class="comment">% list of sub directories to process (e.g. '/xx/yy')</span>
+0081 ntok=0;
+0082 tok=cell(0);
+0083 rec=~any(m==<span class="string">'n'</span>); <span class="comment">% recursive search</span>
+0084 <span class="keyword">while</span> ~isempty(dirlist)
+0085     dd=dir([root dirlist{1}]);
+0086     <span class="keyword">for</span> i=1:length(dd)
+0087         name=dd(i).name;
+0088         full=[dirlist{1} <span class="string">'/'</span> name];
+0089         <span class="keyword">if</span> dd(i).isdir
+0090             <span class="keyword">if</span> rec &amp;&amp; name(1)~=<span class="string">'.'</span>   <span class="comment">% ignore directories starting with '.'</span>
+0091                 dirlist{end+1}=full;
+0092             <span class="keyword">end</span>
+0093         <span class="keyword">else</span>
+0094             full(1)=[]; <span class="comment">% remove leading '/'</span>
+0095             <span class="keyword">if</span> ~isempty(regexpi(full,regex));
+0096                 ntok=ntok+1;
+0097                 tok{ntok,1}=full;
+0098             <span class="keyword">end</span>
+0099         <span class="keyword">end</span>
+0100     <span class="keyword">end</span>
+0101     dirlist(1)=[];  <span class="comment">% remove this directory from the list</span>
+0102 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

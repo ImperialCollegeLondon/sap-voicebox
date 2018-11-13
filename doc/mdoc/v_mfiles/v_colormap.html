@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_colormap</title>
+  <meta name="keywords" content="v_colormap">
+  <meta name="description" content="V_COLORMAP set and plot color map">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_colormap.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_colormap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_COLORMAP set and plot color map</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [rgb,y,l]=v_colormap(map,m,n,p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_COLORMAP set and plot color map
+
+   Usage: (1) v_colormap([],'g'); % plot the current color map
+          (2) v_colormap([],'',256); % intepolate the current color map to 256 entries
+          (3) v_colormap('copper','y'); % make copper color map linear in luminance
+          (4) v_colormap('copper','L'); % make copper color map linear in lightness^2
+
+  Inputs:
+           map  Either an (r,3) array specifying the RGB colourmap entries
+                or else a string specifying a bult-in colour map. Use []
+                to leave the colour map unchanged.
+                Standard maps are:
+                   'Jet','HSV','Hot','Cool','Spring','Summer','Autumn',
+                   'Winter','Gray','Bone','Copper','Pink','Lines','Parula'
+                Additional maps, all with 64 entries, are:
+                   'v_thermliny'  thermal scale that is linear in luminance
+                                  Varies from black through blue, red, yellow to white.
+                                  Luminance varies linearly from black to white.
+                   'v_bipliny'    bipolar scale that is linear in luminance
+                                  Negative values are blue/turquoise and postive value are orange/yellow.
+                                  Luminance varies linearly from black to white with zero at 50.8% gray.
+                   'v_bipveey'    bipolar scale that is V-shaped in luminance
+                                  Negative values are blue/turqoise and positive values are red/yellow.
+                                  Luminance is proportional to absolute value with zero=black.
+                For the two bipolar scales, zero corresponds to entry 33 and so the range of values
+                is -32:31 or, equivalently, either -1 to +0.96875 or -1.0323 to +1.
+
+             m  Mode string:
+                   'g' to plot information about the color map
+                   'y' to force luminance^p to be linear or V-shaped (two linear segments)
+                   'l' to force lightness^p to be linear or V-shaped (two linear segments)
+                   'Y' like 'y' but with default p=0.667
+                   'L' like 'l' but with default p=2
+                   'f' flips the map to reverse its order
+                   'b' make maximum luminance 0.05 (or 0.1 for 'B')
+                   'w' make maximum luminance 0.95 (or 0.9 for 'W')
+
+             n  the number of entries in the colourmap or the number in
+                each linearly-interpolated segment excluding the entry shared
+                with the previous segment. The total number of entries is n=sum(n).
+                For modes 'y','Y','l','L' the number of segments must be 1
+                or 2; otherwise the number of segments must be 1 or r-1.
+
+             p  power law to use for linearized luminance or lightness [default p=1]
+                see the description of 'y' and 'l' for its effect
+
+ Outputs:
+           rgb  RGB color map entries; one per row.
+                All values will be in the range 0 to 1
+
+             y  column vector of luminance values
+
+             l  column vector of lightness values (lightness is the perceived brightness)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>	V_COLORMAP set and plot color map</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>	V_COLORMAP set and plot color map</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [rgb,y,l]=v_colormap(map,m,n,p)</a>
+0002 <span class="comment">%V_COLORMAP set and plot color map</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   Usage: (1) v_colormap([],'g'); % plot the current color map</span>
+0005 <span class="comment">%          (2) v_colormap([],'',256); % intepolate the current color map to 256 entries</span>
+0006 <span class="comment">%          (3) v_colormap('copper','y'); % make copper color map linear in luminance</span>
+0007 <span class="comment">%          (4) v_colormap('copper','L'); % make copper color map linear in lightness^2</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs:</span>
+0010 <span class="comment">%           map  Either an (r,3) array specifying the RGB colourmap entries</span>
+0011 <span class="comment">%                or else a string specifying a bult-in colour map. Use []</span>
+0012 <span class="comment">%                to leave the colour map unchanged.</span>
+0013 <span class="comment">%                Standard maps are:</span>
+0014 <span class="comment">%                   'Jet','HSV','Hot','Cool','Spring','Summer','Autumn',</span>
+0015 <span class="comment">%                   'Winter','Gray','Bone','Copper','Pink','Lines','Parula'</span>
+0016 <span class="comment">%                Additional maps, all with 64 entries, are:</span>
+0017 <span class="comment">%                   'v_thermliny'  thermal scale that is linear in luminance</span>
+0018 <span class="comment">%                                  Varies from black through blue, red, yellow to white.</span>
+0019 <span class="comment">%                                  Luminance varies linearly from black to white.</span>
+0020 <span class="comment">%                   'v_bipliny'    bipolar scale that is linear in luminance</span>
+0021 <span class="comment">%                                  Negative values are blue/turquoise and postive value are orange/yellow.</span>
+0022 <span class="comment">%                                  Luminance varies linearly from black to white with zero at 50.8% gray.</span>
+0023 <span class="comment">%                   'v_bipveey'    bipolar scale that is V-shaped in luminance</span>
+0024 <span class="comment">%                                  Negative values are blue/turqoise and positive values are red/yellow.</span>
+0025 <span class="comment">%                                  Luminance is proportional to absolute value with zero=black.</span>
+0026 <span class="comment">%                For the two bipolar scales, zero corresponds to entry 33 and so the range of values</span>
+0027 <span class="comment">%                is -32:31 or, equivalently, either -1 to +0.96875 or -1.0323 to +1.</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%             m  Mode string:</span>
+0030 <span class="comment">%                   'g' to plot information about the color map</span>
+0031 <span class="comment">%                   'y' to force luminance^p to be linear or V-shaped (two linear segments)</span>
+0032 <span class="comment">%                   'l' to force lightness^p to be linear or V-shaped (two linear segments)</span>
+0033 <span class="comment">%                   'Y' like 'y' but with default p=0.667</span>
+0034 <span class="comment">%                   'L' like 'l' but with default p=2</span>
+0035 <span class="comment">%                   'f' flips the map to reverse its order</span>
+0036 <span class="comment">%                   'b' make maximum luminance 0.05 (or 0.1 for 'B')</span>
+0037 <span class="comment">%                   'w' make maximum luminance 0.95 (or 0.9 for 'W')</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%             n  the number of entries in the colourmap or the number in</span>
+0040 <span class="comment">%                each linearly-interpolated segment excluding the entry shared</span>
+0041 <span class="comment">%                with the previous segment. The total number of entries is n=sum(n).</span>
+0042 <span class="comment">%                For modes 'y','Y','l','L' the number of segments must be 1</span>
+0043 <span class="comment">%                or 2; otherwise the number of segments must be 1 or r-1.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%             p  power law to use for linearized luminance or lightness [default p=1]</span>
+0046 <span class="comment">%                see the description of 'y' and 'l' for its effect</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% Outputs:</span>
+0049 <span class="comment">%           rgb  RGB color map entries; one per row.</span>
+0050 <span class="comment">%                All values will be in the range 0 to 1</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%             y  column vector of luminance values</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%             l  column vector of lightness values (lightness is the perceived brightness)</span>
+0055 
+0056 <span class="comment">% Bugs/Suggestions:</span>
+0057 <span class="comment">% (1) add option to exclude black from the colormap</span>
+0058 
+0059 <span class="comment">%      Copyright (C) Mike Brookes 2012-2018</span>
+0060 <span class="comment">%      Version: $Id: v_colormap.m 10866 2018-09-21 17:32:44Z dmb $</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0063 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0064 <span class="comment">%</span>
+0065 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0066 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0067 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0068 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0069 <span class="comment">%   (at your option) any later version.</span>
+0070 <span class="comment">%</span>
+0071 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0072 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0073 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0074 <span class="comment">%   GNU General Public License for more details.</span>
+0075 <span class="comment">%</span>
+0076 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0077 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0078 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0079 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0080 <span class="keyword">persistent</span> maps nams mcal modes nszs pows la lb lc lci laci lk lq yv
+0081 <span class="keyword">if</span> isempty(maps)
+0082     lk=(6/29)^3;
+0083     la=841/108;
+0084     lb=4/29;
+0085     lc=1.16;
+0086     lq=la*lc*lk;
+0087     lci=1/lc;
+0088     laci=lci/la;
+0089     <span class="comment">%     yv=inv([1.0 0.956 0.621; 1.0 -0.272 -0.647; 1.0 -1.106 1.703]);</span>
+0090     <span class="comment">%     yv=yv(:,1);</span>
+0091     yv=[0.2126; 0.7152; 0.0722];
+0092     nams={<span class="string">'v_thermliny'</span>,<span class="string">'v_bipliny'</span>,<span class="string">'v_bipveey'</span>};
+0093     <span class="comment">% modified thermal with better grayscale linearity</span>
+0094     mcal=[1 1 1]; <span class="comment">% +1 if need to calculate maps entry</span>
+0095     modes={<span class="string">'y'</span> <span class="string">'y'</span> <span class="string">'y'</span>}; <span class="comment">% modes for map calculation</span>
+0096     nszs={64 64 [33 31]};  <span class="comment">% sizes for maps</span>
+0097     pows=[1 1 1];  <span class="comment">% powers for maps</span>
+0098     maps{1}=[0 0 0; 72 0 167; 252 83 16; 255 249 0; 255 255 255]/255;
+0099     <span class="comment">% bipolar map with grayscale linearity</span>
+0100     maps{2}=[0 0 0; 0 2 203; 1 101 226; 128 128 128; 252 153 12; 252 245 0; 252 249 18; 252 252 252]/252;
+0101     maps{3}=[0 0.95 1; 0 0 0.9; 0 0 0; 0.5 0 0; 0.80 0.78 0];
+0102 <span class="keyword">end</span>
+0103 <span class="keyword">if</span> nargin&lt;2
+0104     m=<span class="string">''</span>;
+0105 <span class="keyword">end</span>
+0106 <span class="keyword">if</span> nargin&lt;4
+0107     <span class="keyword">if</span> any(m==<span class="string">'Y'</span>)
+0108         p=2/3;
+0109     <span class="keyword">elseif</span> any(m==<span class="string">'L'</span>)
+0110         p=2;
+0111     <span class="keyword">else</span>
+0112         p=1;  <span class="comment">% power to raise lightness/luminance to</span>
+0113     <span class="keyword">end</span>
+0114 <span class="keyword">end</span>
+0115 pr=1/p;
+0116 um=m;
+0117 m=lower(m);   <span class="comment">% convert mode letters to lower case</span>
+0118 gotmap= nargin==0 || numel(map)==0;   <span class="comment">% already got the map</span>
+0119 <span class="keyword">if</span> ~gotmap &amp;&amp; ischar(map)   <span class="comment">% if map given as a string</span>
+0120     ix=find(strcmpi(map,nams),1); <span class="comment">% check if it is one of ours</span>
+0121     <span class="keyword">if</span> numel(ix)
+0122         <span class="keyword">if</span> mcal(ix)  <span class="comment">% need to calculate the map the first time around</span>
+0123             maps{ix}=<a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>(maps{ix},modes{ix},nszs{ix},pows(ix));
+0124             mcal(ix)=0;  <span class="comment">% don't calculate it again</span>
+0125         <span class="keyword">end</span>
+0126         colormap(maps{ix});
+0127     <span class="keyword">else</span>
+0128         colormap(map); <span class="comment">% not one of ours - just pass it on to standard colormap function</span>
+0129     <span class="keyword">end</span>
+0130     gotmap=1;
+0131 <span class="keyword">end</span>
+0132 <span class="keyword">if</span> any(m==<span class="string">'y'</span>) ||  any(m==<span class="string">'l'</span>) || (nargin&gt;2 &amp;&amp; numel(n)&gt;0) <span class="comment">% need to do linear interpolation</span>
+0133     <span class="keyword">if</span> gotmap
+0134         map=colormap;  <span class="comment">% linearly interpolate the existing map</span>
+0135     <span class="keyword">end</span>
+0136     nm=size(map,1);
+0137     <span class="keyword">if</span> any(m==<span class="string">'y'</span>) ||  any(m==<span class="string">'l'</span>)
+0138         y=map*yv;  <span class="comment">% convert map to luminance</span>
+0139         up=y(2:nm)&gt;y(1:nm-1); <span class="comment">% find increasing</span>
+0140         ex=up(1:nm-2)~=up(2:nm-1); <span class="comment">% +1 for a peak or valley</span>
+0141         yd=2*up(1)-1; <span class="comment">% +1 if y initially increasing</span>
+0142         <span class="keyword">switch</span> sum(ex)
+0143             <span class="keyword">case</span> 0 <span class="comment">% monotonic</span>
+0144                 <span class="keyword">if</span> nargin&lt;3
+0145                     r=nm;
+0146                 <span class="keyword">else</span>
+0147                     r=n(1);
+0148                 <span class="keyword">end</span>
+0149                 <span class="keyword">if</span> any(m==<span class="string">'y'</span>)
+0150                     l=y([1 nm]).^p;
+0151                     tt=(l(1)+(0:r-1)'*(l(2)-l(1))/(r-1)).^pr; <span class="comment">% target luminances</span>
+0152                 <span class="keyword">else</span>
+0153                     tt=y([1 nm]');
+0154                     l=(lc*(la*tt+(tt&gt;lk).*(tt.^(1/3)-la*tt-lb))).^p;
+0155                     tt=(l(1)+(0:r-1)'*(l(2)-l(1))/(r-1)).^pr; <span class="comment">% target lightnesses</span>
+0156                     tt=laci*tt+(tt&gt;lq).*((lci*tt+lb).^3-laci*tt); <span class="comment">% target luminances</span>
+0157                 <span class="keyword">end</span>
+0158                 [ss,ix]=sort([tt;y]*yd);
+0159             <span class="keyword">case</span> 1 <span class="comment">% V-shaped</span>
+0160                 ipk=find(ex,1)+1;  <span class="comment">% position of peak/valley in y</span>
+0161                 <span class="keyword">if</span> nargin&lt;3
+0162                     n=[ipk nm-ipk];  <span class="comment">% size of linear segments</span>
+0163                 <span class="keyword">end</span>
+0164                 r=n(1)+n(2);  <span class="comment">% total size of map</span>
+0165                 <span class="keyword">if</span> any(m==<span class="string">'y'</span>)
+0166                     l=y([1 ipk nm]).^p;
+0167                     tt=(l(2)+[(1-n(1):0)*(l(2)-l(1))/(n(1)-1) (1:n(2))*(l(3)-l(2))/(n(2))]').^pr; <span class="comment">% target luminances</span>
+0168                 <span class="keyword">else</span>
+0169                     tt=y([1 ipk nm]');
+0170                     l=(lc*(la*tt+(tt&gt;lk).*(tt.^(1/3)-la*tt-lb))).^p;
+0171                     tt=(l(2)+[(1-n(1):0)*(l(2)-l(1))/(n(1)-1) (1:n(2))*(l(3)-l(2))/(n(2))]').^pr; <span class="comment">% target lightnesses</span>
+0172                     tt=laci*tt+(tt&gt;lq).*((lci*tt+lb).^3-laci*tt); <span class="comment">% target luminances</span>
+0173                 <span class="keyword">end</span>
+0174                 [ss,ix]=sort([tt(1:n(1))-y(ipk); y(ipk)-tt(n(1)+1:r);y(1:ipk)-y(ipk); y(ipk)-y(ipk+1:nm)]*yd);
+0175             <span class="keyword">otherwise</span>
+0176                 error(<span class="string">'luminance has more than two monotonic segments'</span>);
+0177         <span class="keyword">end</span>
+0178     <span class="keyword">else</span>                <span class="comment">% just linearly interpolate the given values</span>
+0179         <span class="keyword">if</span> numel(n)==nm-1
+0180             r=sum(n);
+0181             y=[1;cumsum(n(:))];
+0182         <span class="keyword">else</span>
+0183             r=n(1);
+0184             y=1+(0:nm-1)'*(r-1)/(nm-1);
+0185         <span class="keyword">end</span>
+0186         tt=(1:r)';
+0187         [ss,ix]=sort([tt;y]);
+0188     <span class="keyword">end</span>
+0189     jx=zeros(size(ix));
+0190     jx(ix)=1:numel(jx);
+0191     jx=min(max(jx(1:r)-(1:r)',1),nm-1);
+0192     al=(tt-y(jx))./(y(jx+1)-y(jx)); <span class="comment">% fraction of upper sample to include</span>
+0193     map=map(jx,:)+(map(jx+1,:)-map(jx,:)).*al(:,ones(1,3));
+0194     colormap(map);
+0195     gotmap=1;
+0196 <span class="keyword">end</span>
+0197 <span class="keyword">if</span> ~gotmap
+0198     colormap(map);  <span class="comment">% directly specified numerical map</span>
+0199 <span class="keyword">end</span>
+0200 <span class="keyword">if</span> any(m==<span class="string">'f'</span>)
+0201     rgb=colormap; <span class="comment">% get output values from the current colourmap</span>
+0202     colormap(rgb(end:-1:1,:))
+0203 <span class="keyword">end</span>
+0204 rgb=colormap; <span class="comment">% get output values from the current colourmap</span>
+0205 y=rgb*yv;  <span class="comment">% convert RGB to luminance</span>
+0206 minyt=0.05*(any(m==<span class="string">'b'</span>)+any(um==<span class="string">'B'</span>)); <span class="comment">% target minimum luminance</span>
+0207 maxyt=1-0.05*(any(m==<span class="string">'w'</span>)+any(um==<span class="string">'W'</span>)); <span class="comment">% target maximum luminance</span>
+0208 maxy=max(y);
+0209 miny=min(y);
+0210 <span class="keyword">if</span> maxy&gt;maxyt || miny&lt;minyt
+0211     maxy=max(maxy,maxyt);
+0212     miny=min(miny,minyt);
+0213     rgb=(rgb-miny)*(maxyt-minyt)/(maxy-miny)+minyt;
+0214     colormap(rgb);
+0215     y=rgb*yv;  <span class="comment">% convert RGB to luminance</span>
+0216 <span class="keyword">end</span>
+0217 l=lc*(la*y+(y&gt;lk).*(y.^(1/3)-la*y-lb)); <span class="comment">% convert luminance to lightness</span>
+0218 <span class="keyword">if</span> any(m==<span class="string">'g'</span>)
+0219     sp=[1 2 2];
+0220     ssp=sum(sp);
+0221     axw=0.05;
+0222     nc=size(rgb,1);  <span class="comment">% size of color map</span>
+0223     hsv=rgb2hsv(rgb);
+0224     subplot(ssp,1,sp(1)+(1:sp(2)));
+0225     plot(1:nc,y,<span class="string">'-k'</span>);
+0226     hold on
+0227     plot(1:nc,rgb(:,1),<span class="string">'-r'</span>);
+0228     plot(1:nc,rgb(:,2),<span class="string">'-g'</span>);
+0229     plot(1:nc,rgb(:,3),<span class="string">'-b'</span>);
+0230     hold off
+0231     axis([0.5 nc+0.5 -axw 1+axw]);
+0232     ylabel(<span class="string">'RGB + Y'</span>);
+0233     subplot(ssp,1,sp(1)+sp(2)+1:ssp);
+0234     plot(1:nc,l,<span class="string">'-k'</span>);
+0235     hold on
+0236     plot(1:nc,hsv(:,1),<span class="string">'-r'</span>);
+0237     plot(1:nc,hsv(:,2),<span class="string">'-g'</span>);
+0238     plot(1:nc,hsv(:,3),<span class="string">'-b'</span>);
+0239     hold off
+0240     axis([0.5 nc+0.5 -axw 1+axw]);
+0241     ylabel(<span class="string">'HSV + L*'</span>);
+0242     subplot(ssp,1,1:sp(1));
+0243     image(permute(reshape([rgb y(:,[1 1 1])],[nc,3,2]),[3 1 2]));
+0244     set(gca,<span class="string">'YTick'</span>,[]);
+0245 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

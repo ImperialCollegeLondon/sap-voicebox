@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_ldatrace</title>
+  <meta name="keywords" content="v_ldatrace">
+  <meta name="description" content="LDATRACE Calculates an LDA transform to maximize trace discriminant [a,f,B,W]=(b,w,n,c)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_ldatrace.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_ldatrace
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LDATRACE Calculates an LDA transform to maximize trace discriminant [a,f,B,W]=(b,w,n,c)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [a,f,B,W]=v_ldatrace(b,w,n,c) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LDATRACE Calculates an LDA transform to maximize trace discriminant [a,f,B,W]=(b,w,n,c)
+ If a feature vector X can come from one of several class and W and B are respectively
+ the within-class and between-class covariance matrices, then the generalized Fisher discriminant
+ F=trace(W\B) is a measure of how well the feature vector discriminates between the classes.
+ If we choose a rectangular (tall, skinny) transformation matrix, we can define a smaller
+ feature vector Y=A'*X. The aim of this routine is to choose A to maximize the Fisher
+ discriminant. We assume that W is positive definite and B is positive semi-definite.
+ The input argument C allows the uset to pre-specify some of the columns of A.
+
+ Inputs:
+     w[m,m] = within class covariance matrix of x
+     b[m,m] = between class covariance matrix of x [default = I]
+     n is the number of columns in output matrix A [default = M]
+     c[m,r] specifies the first few columns of A to be predefined values [default = null)
+
+ Outputs:
+     a[m,n] is the transformation matrix: y=a'*x
+     f[n,1] gives the incremental gain in f value for successive columns of A 
+     B(n,n) gives the between-class covariance matrix of y
+     W[n,n] gives the within-class covariance matrix of y</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [a,f,B,W]=v_ldatrace(b,w,n,c)</a>
+0002 <span class="comment">%LDATRACE Calculates an LDA transform to maximize trace discriminant [a,f,B,W]=(b,w,n,c)</span>
+0003 <span class="comment">% If a feature vector X can come from one of several class and W and B are respectively</span>
+0004 <span class="comment">% the within-class and between-class covariance matrices, then the generalized Fisher discriminant</span>
+0005 <span class="comment">% F=trace(W\B) is a measure of how well the feature vector discriminates between the classes.</span>
+0006 <span class="comment">% If we choose a rectangular (tall, skinny) transformation matrix, we can define a smaller</span>
+0007 <span class="comment">% feature vector Y=A'*X. The aim of this routine is to choose A to maximize the Fisher</span>
+0008 <span class="comment">% discriminant. We assume that W is positive definite and B is positive semi-definite.</span>
+0009 <span class="comment">% The input argument C allows the uset to pre-specify some of the columns of A.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Inputs:</span>
+0012 <span class="comment">%     w[m,m] = within class covariance matrix of x</span>
+0013 <span class="comment">%     b[m,m] = between class covariance matrix of x [default = I]</span>
+0014 <span class="comment">%     n is the number of columns in output matrix A [default = M]</span>
+0015 <span class="comment">%     c[m,r] specifies the first few columns of A to be predefined values [default = null)</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Outputs:</span>
+0018 <span class="comment">%     a[m,n] is the transformation matrix: y=a'*x</span>
+0019 <span class="comment">%     f[n,1] gives the incremental gain in f value for successive columns of A</span>
+0020 <span class="comment">%     B(n,n) gives the between-class covariance matrix of y</span>
+0021 <span class="comment">%     W[n,n] gives the within-class covariance matrix of y</span>
+0022 
+0023 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0024 <span class="comment">%      Version: $Id: v_ldatrace.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0027 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0030 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0031 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0032 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0033 <span class="comment">%   (at your option) any later version.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0036 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0037 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0038 <span class="comment">%   GNU General Public License for more details.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0041 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0042 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 
+0045 m=size(b,1);    <span class="comment">% dimension of data vectors</span>
+0046 <span class="keyword">if</span> nargin&lt;4
+0047     r=0;
+0048     <span class="keyword">if</span> nargin&lt;3
+0049         n=m;
+0050         <span class="keyword">if</span> nargin&lt;2
+0051             w=eye(m);
+0052         <span class="keyword">end</span>
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">else</span>
+0055     r=size(c,2);    <span class="comment">% number of columns that are pre-specified</span>
+0056 <span class="keyword">end</span>
+0057 <span class="keyword">if</span> r
+0058     <span class="keyword">if</span> n&gt;r          <span class="comment">% need to find additional vectors</span>
+0059         g=chol(w);
+0060         v=g\null(c'*g');
+0061         [p,l,q]=svd(v'*b*v);
+0062         a(:,r+1:n)=v*p(:,1:n-r);
+0063         a(:,1:r)=c;
+0064     <span class="keyword">else</span>
+0065         a=c;        <span class="comment">% no new vectors to find</span>
+0066     <span class="keyword">end</span>
+0067     <span class="keyword">if</span> nargout&gt;1
+0068         ari=a/triu(qr(chol(a'*w*a))); <span class="comment">% matrix a must be of full rank</span>
+0069         f=diag(ari'*b*ari);
+0070     <span class="keyword">end</span>
+0071 <span class="keyword">else</span>
+0072     [g,d]=eig(b,w,<span class="string">'qz'</span>);
+0073     [ds,is]=sort(-diag(d));
+0074     a=g(:,is(1:n));
+0075     <span class="keyword">if</span> nargout&gt;1
+0076         f=-ds(1:n);
+0077     <span class="keyword">end</span>
+0078 <span class="keyword">end</span>
+0079 <span class="keyword">if</span> nargout &gt; 2
+0080     B=a'*b*a;
+0081     <span class="keyword">if</span> nargout &gt; 3
+0082         W=a'*w*a;
+0083     <span class="keyword">end</span>
+0084     
+0085 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmixd</title>
+  <meta name="keywords" content="v_gaussmixd">
+  <meta name="description" content="GAUSSMIXD marginal and conditional Gaussian mixture densities">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gaussmixd.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gaussmixd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAUSSMIXD marginal and conditional Gaussian mixture densities</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GAUSSMIXD marginal and conditional Gaussian mixture densities
+
+ Usage: (1) [mz,vz,wz]=v_gaussmixd(y,m,v,w); % If {m,v,w} has dimension p, then y specifies
+                                           % elements 1:q and {mz,vz,wz} is a GMM for elements q+1:p
+        (2) [mz,vz,wz]=v_gaussmixd(y,m,v,w,[],[1 3 4]);    % y specifies elements 1,3,4 and {mz,vz,wz}
+                                                       % is a GMM for the remaining elements
+
+ Inputs: Input mixture: k mixtures, p dimensions
+         Output mixture: k mixtures, r dimensions
+         Conditioning data: n data values, q dimensions
+
+   Y(n,q) = conditioning input data: x*a'+ b'= y
+   M(k,p) = mixture means for x(p)
+   V(k,p) or V(p,p,k) variances (diagonal or full)
+   W(k,1) = mixture weights
+   A(q,p) = conditioning transformation: y=x*A'+ B' (where y and x are row vectors).
+   B(q,1)   If A is omitted or null, y=x*I(B,:)' where I is the identity matrix.
+            If B is also omitted or null, y=x*I(1:q,:)'.
+   F(r,p) = output transformation z = x*F'+G'  (where z and x are row vectors).
+   G(r,1)   If F is omitted or null, z = x*f' where I is the identity matrix.
+            If G is also omitted or null, z=x*I(q+1:p,:)' or, if A was also null,
+            the complement of y.
+
+ Outputs (if 1 or 2 outputs specified):
+
+   MZ(n,r) = Global mean of z for each y
+   VZ(r,r,n) Global full covariances of z (now dependent on y)
+
+ Outputs (if 3 outputs specified):
+
+   MZ(k,r,n) = mixture means of z for each y
+   VZ(k,r) or VZ(r,r,k) variances of z (diagonal or full); surprisingly it is independent of y
+   WZ(n,k)
+
+ The output mixture covariances will be diagonal if either r=1 or else the following three
+ conditions are all true:
+  (a) the input mixture covariances are diagonal and
+  (b) matrix A has at most one non-zero element in any row or column and
+  (c) matrix F has at most one non-zero element in any column
+
+ Several of the output variables can be squeezed if r=1 but this is not done automatically.
+
+ This routine can be used for inference: if you train a GMM on p-dimensional data
+ then, if y(n,q) contains observations of the first q components, then z=v_gaussmixd(y,m,v,w)
+ will return the estimated values of the remaining p-q components.
+
+ See also: <a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>, <a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>, <a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>, <a href="v_randvec.html" class="code" title="function x=v_randvec(n,m,c,w,mode)">v_randvec</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>	GAUSSMIXG global mean, variance and mode of a GMM</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)</a>
+0002 <span class="comment">%GAUSSMIXD marginal and conditional Gaussian mixture densities</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) [mz,vz,wz]=v_gaussmixd(y,m,v,w); % If {m,v,w} has dimension p, then y specifies</span>
+0005 <span class="comment">%                                           % elements 1:q and {mz,vz,wz} is a GMM for elements q+1:p</span>
+0006 <span class="comment">%        (2) [mz,vz,wz]=v_gaussmixd(y,m,v,w,[],[1 3 4]);    % y specifies elements 1,3,4 and {mz,vz,wz}</span>
+0007 <span class="comment">%                                                       % is a GMM for the remaining elements</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs: Input mixture: k mixtures, p dimensions</span>
+0010 <span class="comment">%         Output mixture: k mixtures, r dimensions</span>
+0011 <span class="comment">%         Conditioning data: n data values, q dimensions</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%   Y(n,q) = conditioning input data: x*a'+ b'= y</span>
+0014 <span class="comment">%   M(k,p) = mixture means for x(p)</span>
+0015 <span class="comment">%   V(k,p) or V(p,p,k) variances (diagonal or full)</span>
+0016 <span class="comment">%   W(k,1) = mixture weights</span>
+0017 <span class="comment">%   A(q,p) = conditioning transformation: y=x*A'+ B' (where y and x are row vectors).</span>
+0018 <span class="comment">%   B(q,1)   If A is omitted or null, y=x*I(B,:)' where I is the identity matrix.</span>
+0019 <span class="comment">%            If B is also omitted or null, y=x*I(1:q,:)'.</span>
+0020 <span class="comment">%   F(r,p) = output transformation z = x*F'+G'  (where z and x are row vectors).</span>
+0021 <span class="comment">%   G(r,1)   If F is omitted or null, z = x*f' where I is the identity matrix.</span>
+0022 <span class="comment">%            If G is also omitted or null, z=x*I(q+1:p,:)' or, if A was also null,</span>
+0023 <span class="comment">%            the complement of y.</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Outputs (if 1 or 2 outputs specified):</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   MZ(n,r) = Global mean of z for each y</span>
+0028 <span class="comment">%   VZ(r,r,n) Global full covariances of z (now dependent on y)</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% Outputs (if 3 outputs specified):</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   MZ(k,r,n) = mixture means of z for each y</span>
+0033 <span class="comment">%   VZ(k,r) or VZ(r,r,k) variances of z (diagonal or full); surprisingly it is independent of y</span>
+0034 <span class="comment">%   WZ(n,k)</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% The output mixture covariances will be diagonal if either r=1 or else the following three</span>
+0037 <span class="comment">% conditions are all true:</span>
+0038 <span class="comment">%  (a) the input mixture covariances are diagonal and</span>
+0039 <span class="comment">%  (b) matrix A has at most one non-zero element in any row or column and</span>
+0040 <span class="comment">%  (c) matrix F has at most one non-zero element in any column</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% Several of the output variables can be squeezed if r=1 but this is not done automatically.</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% This routine can be used for inference: if you train a GMM on p-dimensional data</span>
+0045 <span class="comment">% then, if y(n,q) contains observations of the first q components, then z=v_gaussmixd(y,m,v,w)</span>
+0046 <span class="comment">% will return the estimated values of the remaining p-q components.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% See also: v_gaussmix, v_gaussmixg, v_gaussmixp, v_randvec</span>
+0049 
+0050 <span class="comment">%      Copyright (C) Mike Brookes 2000-2012</span>
+0051 <span class="comment">%      Version: $Id: v_gaussmixd.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0054 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0057 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0058 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0059 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0060 <span class="comment">%   (at your option) any later version.</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0063 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0064 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0065 <span class="comment">%   GNU General Public License for more details.</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0068 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0069 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0070 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0071 
+0072 [n,q]=size(y);
+0073 [k,p]=size(m);
+0074 <span class="comment">% We set fv=1 if input V contains full covariance matrices with dimensions V(r,r,k).</span>
+0075 <span class="comment">% This is true either if V has &gt;2 dimensions or V=V(r,r) and r&gt;k</span>
+0076 fv=ndims(v)&gt;2 || size(v,1)&gt;k; <span class="comment">% full covariance matrix is supplied</span>
+0077 anull=nargin&lt;5 || isempty(a); <span class="comment">% no A matrix specified</span>
+0078 <span class="keyword">if</span> anull
+0079     a=eye(p);
+0080     <span class="keyword">if</span> nargin&lt;6 || isempty(b)
+0081         b=1:q;
+0082     <span class="keyword">end</span>
+0083     a=a(b,:);
+0084     b0=b;  <span class="comment">% save row selection</span>
+0085     b=zeros(q,1);
+0086 <span class="keyword">elseif</span> nargin&lt;6 || isempty(b)
+0087     b=zeros(q,1);
+0088 <span class="keyword">end</span>
+0089 <span class="keyword">if</span> nargin&lt;7 || isempty(f)
+0090     f=eye(p);
+0091     <span class="keyword">if</span> nargin&lt;8 || isempty(g)
+0092         <span class="keyword">if</span> anull
+0093             f(b0,:)=[];
+0094         <span class="keyword">else</span>
+0095             f=f(q+1:<span class="keyword">end</span>,:);
+0096         <span class="keyword">end</span>
+0097     <span class="keyword">else</span>
+0098         f=f(g,:);  <span class="comment">% G selects the output variables</span>
+0099     <span class="keyword">end</span>
+0100     r=size(f,1);
+0101     g=zeros(r,1);
+0102 <span class="keyword">elseif</span> nargin&lt;8 || isempty(g)
+0103     r=size(f,1);
+0104     g=zeros(r,1);
+0105 <span class="keyword">else</span>
+0106     r=size(f,1);
+0107 <span class="keyword">end</span>
+0108 
+0109 yb=y-repmat(b',n,1);                 <span class="comment">% remove the b term</span>
+0110 [lp,wz]=<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(yb,m,v,w,a);     <span class="comment">% find mixture weights</span>
+0111 mz=zeros(n,r,k);
+0112 ma=a~=0;                            <span class="comment">% check for sparse a and f matrices (common case)</span>
+0113 mf=f~=0;
+0114 <span class="comment">% We set dvo=1 if the output mixture covariances are structurally</span>
+0115 <span class="comment">% diagonal. This is the case if either:</span>
+0116 <span class="comment">% (1) r=1 since in this case they are scalar values, or else</span>
+0117 <span class="comment">% (2) the following three conditions are all true:</span>
+0118 <span class="comment">%     (a) the input mixture covariances are diagonal and</span>
+0119 <span class="comment">%     (b) matrix A has at most one non-zero element in any row or column and</span>
+0120 <span class="comment">%     (c) matrix F has at most one non-zero element in any column</span>
+0121 dvo=r==1 || (~fv &amp;&amp; all(sum(ma,1)&lt;=1) &amp;&amp; all(sum(ma,2)&lt;=1) &amp;&amp; all(sum(mf,1)&lt;=1));
+0122 <span class="keyword">if</span> dvo    <span class="comment">% structurally diagonal output covariances</span>
+0123     vz=zeros(k,r); <span class="comment">% diagonal output variances (one row per mixture) independent of y</span>
+0124     <span class="keyword">for</span> i=1:k                               <span class="comment">% loop for each mixture</span>
+0125         <span class="keyword">if</span> fv
+0126             vi=v(:,:,i);
+0127         <span class="keyword">else</span>
+0128             vi=diag(v(i,:));                <span class="comment">% convert to full covariance matrices</span>
+0129         <span class="keyword">end</span>
+0130         hi=vi*a'/(a*vi*a');                 <span class="comment">% regression coefficient matrix (p#q]</span>
+0131         vz(i,:)=diag(f*(vi-hi*a*vi)*f')';   <span class="comment">% variance of z (independent of y)</span>
+0132         mi=m(i,:);                          <span class="comment">% input mean for mixure i</span>
+0133         m0=(mi-mi*a'*hi')*f'+g';            <span class="comment">% y-independent part of mean</span>
+0134         mz(:,:,i)=(repmat(m0,n,1)+yb*hi'*f'); <span class="comment">% mean for each y</span>
+0135     <span class="keyword">end</span>
+0136 <span class="keyword">else</span>
+0137     vz=zeros(r,r,k);
+0138     <span class="keyword">for</span> i=1:k                               <span class="comment">% loop for each mixture</span>
+0139         <span class="keyword">if</span> fv
+0140             vi=v(:,:,i);
+0141         <span class="keyword">else</span>
+0142             vi=diag(v(i,:));                <span class="comment">% convert to full covariance matrices</span>
+0143         <span class="keyword">end</span>
+0144         hi=vi*a'/(a*vi*a');                 <span class="comment">% regression coefficient matrix (p#q]</span>
+0145         vz(:,:,i)=f*(vi-hi*a*vi)*f';        <span class="comment">% variance of z (independent of y)</span>
+0146         mi=m(i,:);                          <span class="comment">% input mean for mixure i</span>
+0147         m0=(mi-mi*a'*hi')*f'+g';            <span class="comment">% y-independent part of mean</span>
+0148         mz(:,:,i)=(repmat(m0,n,1)+yb*hi'*f'); <span class="comment">% mean for each y</span>
+0149     <span class="keyword">end</span>
+0150 <span class="keyword">end</span>
+0151 <span class="keyword">if</span> nargout&lt;3
+0152     mt=reshape(sum(reshape(mz,n*r,k).*repmat(wz,r,1),2),n,r);       <span class="comment">% global mean</span>
+0153     <span class="keyword">if</span> nargout&gt;1        <span class="comment">% need to calculate global variance as well</span>
+0154         <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0155         <span class="comment">% We calculate the global covariance by adding up the weighted mixture</span>
+0156         <span class="comment">% covariances corrected for the fact that the mixture mean does not equal</span>
+0157         <span class="comment">% the global mean.</span>
+0158         <span class="comment">% To save calculations, we calculate only the lower triangle of the</span>
+0159         <span class="comment">% symmetric covariance matrix and then expand it at the end into a full matrix.</span>
+0160         <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0161         rl=r*(r+1)/2;   <span class="comment">% number of elements in lower triangular covariance matrix</span>
+0162         lix=1:r^2;
+0163         cix=repmat(1:r,r,1);
+0164         rix=cix';
+0165         lix(cix&gt;rix)=[];                                        <span class="comment">% index of lower triangular elements</span>
+0166         rlix=rix(lix);
+0167         clix=cix(lix);
+0168         lixi=zeros(r,r);
+0169         lixi(lix)=1:rl;
+0170         lixi=lixi';
+0171         lixi(lix)=1:rl;                                        <span class="comment">% reverse index to build full matrices</span>
+0172 
+0173         vt=zeros(n,rl);                <span class="comment">% reserve space for lower triangular output covariances</span>
+0174         <span class="keyword">for</span> i=1:k
+0175             <span class="keyword">if</span> dvo
+0176                 vi=diag(vz(i,:));
+0177             <span class="keyword">else</span>
+0178                 vi=vz(:,:,i);
+0179             <span class="keyword">end</span>
+0180             mzt=mz(:,:,i)-mt;
+0181             vt=vt+repmat(wz(:,i),1,r^2).*(repmat(vi(lix),n,1)+mzt(:,rlix).*mzt(:,clix));
+0182         <span class="keyword">end</span>
+0183         vz=permute(reshape(vt(:,lixi),[n,r,r]),[2 3 1]);
+0184     <span class="keyword">end</span>
+0185     mz=mt;
+0186 <span class="keyword">else</span>
+0187     mz=permute(mz,3:-1:1);
+0188 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

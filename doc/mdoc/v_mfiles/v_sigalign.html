@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_sigalign</title>
+  <meta name="keywords" content="v_sigalign">
+  <meta name="description" content="SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_sigalign.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_sigalign
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)
+ Inputs:
+            m  mode
+                 u = unity gain
+                 g = find optimal gain [default]
+                 a = A-weight the signals
+                 b = weight signals by BS-468
+                 s = find delay to maximize the correlation coefficient between r and s [default]
+                 S = find delay to maximize the energy of the component of r in s
+                 p = plot result
+            s  test signal
+            r  reference signal
+         maxd  [+-max] or [min max] delay allowed in samples or fractions of length(r)
+               default is maximum that ensures at least 50% of r or s in the overlap
+           fs  sample frequency (only used for filtering and plotting)
+
+ Outputs:
+            d = optimum delay to apply to r
+            g = optimal gain to apply to r
+           rr = g*r(* -d)  [zero padded to match s if ss output is not given]
+           ss = s truncated if necessary to martch to the length of rr</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)</a>
+0002 <span class="comment">%SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</span>
+0003 <span class="comment">% Inputs:</span>
+0004 <span class="comment">%            m  mode</span>
+0005 <span class="comment">%                 u = unity gain</span>
+0006 <span class="comment">%                 g = find optimal gain [default]</span>
+0007 <span class="comment">%                 a = A-weight the signals</span>
+0008 <span class="comment">%                 b = weight signals by BS-468</span>
+0009 <span class="comment">%                 s = find delay to maximize the correlation coefficient between r and s [default]</span>
+0010 <span class="comment">%                 S = find delay to maximize the energy of the component of r in s</span>
+0011 <span class="comment">%                 p = plot result</span>
+0012 <span class="comment">%            s  test signal</span>
+0013 <span class="comment">%            r  reference signal</span>
+0014 <span class="comment">%         maxd  [+-max] or [min max] delay allowed in samples or fractions of length(r)</span>
+0015 <span class="comment">%               default is maximum that ensures at least 50% of r or s in the overlap</span>
+0016 <span class="comment">%           fs  sample frequency (only used for filtering and plotting)</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% Outputs:</span>
+0019 <span class="comment">%            d = optimum delay to apply to r</span>
+0020 <span class="comment">%            g = optimal gain to apply to r</span>
+0021 <span class="comment">%           rr = g*r(* -d)  [zero padded to match s if ss output is not given]</span>
+0022 <span class="comment">%           ss = s truncated if necessary to martch to the length of rr</span>
+0023 
+0024 
+0025 <span class="comment">%      Copyright (C) Mike Brookes 2011</span>
+0026 <span class="comment">%      Version: $Id: v_sigalign.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0029 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0032 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0033 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0034 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0035 <span class="comment">%   (at your option) any later version.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0038 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0039 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0040 <span class="comment">%   GNU General Public License for more details.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0043 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0044 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 
+0047 <span class="comment">% Bugs/Suggestions</span>
+0048 <span class="comment">% 1. add option to calculate a DC offset</span>
+0049 <span class="comment">% 2. optionally find optimal fractional time shift</span>
+0050 <span class="comment">% 3. split long signals into chunks to reduce memory requirements</span>
+0051 
+0052 ns=length(s);
+0053 nr=length(r);
+0054 <span class="keyword">if</span> numel(s)~=ns || numel(r)~=nr
+0055     error(<span class="string">'Inputs cannot be matrices'</span>);
+0056 <span class="keyword">end</span>
+0057 s=s(:);
+0058 r=r(:);
+0059 <span class="keyword">if</span> nargin&lt;3
+0060     maxd=[];
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">switch</span> numel(maxd)
+0063     <span class="keyword">case</span> 0
+0064         <span class="keyword">if</span> nr&lt;ns
+0065             lmm=[-0.25*nr ns-0.75*nr];
+0066         <span class="keyword">else</span>
+0067             lmm=[-0.25*ns nr-0.75*ns];
+0068         <span class="keyword">end</span>
+0069     <span class="keyword">case</span> 1
+0070         lmm=[-maxd maxd];
+0071     <span class="keyword">otherwise</span>
+0072         lmm=maxd(1:2);
+0073 <span class="keyword">end</span>
+0074 lmm=round(lmm.*(1+(nr-1)*(abs(lmm)&lt;1)));  <span class="comment">% convert fractions of nr to samples</span>
+0075 lmin=lmm(1);
+0076 lmax=lmm(2);
+0077 lags=lmax-lmin+1;
+0078 <span class="keyword">if</span> lags&lt;=0
+0079     error(<span class="string">'Invalid lag limits'</span>);
+0080 <span class="keyword">end</span>
+0081 <span class="keyword">if</span> nargin&lt;4 || ~numel(m)
+0082     m=<span class="string">'gs'</span>;
+0083 <span class="keyword">end</span>
+0084 <span class="keyword">if</span> nargin&lt;5 || ~numel(fs)
+0085     fs=[];
+0086 <span class="keyword">else</span>
+0087     <span class="keyword">if</span> any(m==<span class="string">'a'</span>)
+0088         [b,a]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(2,<span class="string">'z'</span>,fs);
+0089         s=filter(b,a,s);
+0090         r=filter(b,a,r);
+0091     <span class="keyword">elseif</span> any(m==<span class="string">'b'</span>)
+0092         [b,a]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(8,<span class="string">'z'</span>,fs);
+0093         s=filter(b,a,s);
+0094         r=filter(b,a,r);
+0095     <span class="keyword">end</span>
+0096 <span class="keyword">end</span>
+0097 
+0098 <span class="comment">% now do cross correlation</span>
+0099 
+0100 rxi=max(1,1-lmin);   <span class="comment">% first reference sample needed</span>
+0101 rxj=min(nr,ns-lmax); <span class="comment">% last reference sample needed</span>
+0102 nrx=rxj-rxi+1;          <span class="comment">% length of reference segment</span>
+0103 <span class="keyword">if</span> nrx&lt;1
+0104     error(<span class="string">'Reference signal too short'</span>);
+0105 <span class="keyword">end</span>
+0106 fl=2^nextpow2(lmax-lmin+nrx);
+0107 sxi=max(1,rxi+lmin); <span class="comment">% first signal sample needed</span>
+0108 sxj=min(ns,rxj+lmax); <span class="comment">% last signal sample needed</span>
+0109 rs=<a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>(<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>([s(sxi:sxj); zeros(fl-sxj+sxi-1,1)]).*conj(<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>([r(rxi:rxj); zeros(fl-rxj+rxi-1,1)])));
+0110 rsu=rs(1:lags);
+0111 ssq=cumsum(s(sxi:sxj).^2);
+0112 ssqd=[ssq(nrx); ssq(nrx+1:lmax-lmin+nrx)-ssq(1:lmax-lmin)];
+0113 <span class="keyword">if</span> any (m==<span class="string">'S'</span>) <span class="comment">% maximize energy of common component</span>
+0114     [cmx,icx]=max(abs(rsu)); <span class="comment">% maximize cross correlation</span>
+0115 <span class="keyword">else</span>
+0116     [cmx,icx]=max(rsu.^2./ssqd); <span class="comment">% maximize correlation coefficient</span>
+0117 <span class="keyword">end</span>
+0118 d=icx-1+lmin;
+0119 ia=max(1,d+1); <span class="comment">% first sample of s in common region</span>
+0120 ja=min(ns,d+nr); <span class="comment">% last sample of s in common region</span>
+0121 ija=ia:ja;
+0122 ijad=ija-d;
+0123 rr=r(ijad);
+0124 ss=s(ija);
+0125 <span class="keyword">if</span> any (m==<span class="string">'u'</span>)
+0126     g=1;
+0127 <span class="keyword">else</span>
+0128 g=sum(rr.*ss)/sum(rr.^2);   <span class="comment">% gain to apply to r</span>
+0129 <span class="keyword">end</span>
+0130 rr=rr*g;
+0131 <span class="keyword">if</span> ~nargout || any(m==<span class="string">'p'</span>)
+0132     xco=sum(rr.*ss)/sqrt(sum(rr.^2)*sum(ss.^2));
+0133     snr=sum(rr.^2)/sum((rr-ss).^2);
+0134     <span class="keyword">if</span> numel(fs)==1
+0135         tun=<span class="string">'s'</span>;
+0136     <span class="keyword">else</span>
+0137         tun=<span class="string">'samples'</span>;
+0138         fs=1;
+0139     <span class="keyword">end</span>
+0140     subplot(311);
+0141     plot(ija/fs,rr);
+0142     pm=<span class="string">'+-'</span>;
+0143     title(sprintf(<span class="string">'Ref delay = %.2g %s, %cGain = %.2g dB, Xcorr = %.2g, SNR = %.2g dB'</span>,d/fs,tun,pm(1+(g&lt;0)),20*log10(g),xco,10*log10(snr)));
+0144     ylabel(<span class="string">'Reference'</span>);
+0145     set(gca,<span class="string">'XLim'</span>,ija([1 end])/fs);
+0146     axh(2)=gca;
+0147     subplot(312);
+0148     plot(ija/fs,ss);
+0149     ylabel(<span class="string">'Signal'</span>);
+0150     set(gca,<span class="string">'XLim'</span>,ija([1 end])/fs);
+0151     axh(1)=gca;
+0152     subplot(313);
+0153     plot(ija/fs,ss-rr);
+0154     ylabel(<span class="string">'Residual'</span>);
+0155     xlabel(sprintf(<span class="string">'Time (%s)'</span>,tun));
+0156     set(gca,<span class="string">'XLim'</span>,ija([1 end])/fs);
+0157     axh(3)=gca;
+0158     linkaxes(axh(1:3),<span class="string">'x'</span>);
+0159 <span class="keyword">end</span>
+0160 <span class="keyword">if</span> nargout==3
+0161     rr=[zeros(ia-1,1); rr; zeros(ns-ja,1)]; <span class="comment">% force to be the size of s</span>
+0162 <span class="keyword">end</span>
+0163 
+0164 
+0165</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

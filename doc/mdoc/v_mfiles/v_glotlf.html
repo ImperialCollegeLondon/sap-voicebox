@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_glotlf</title>
+  <meta name="keywords" content="v_glotlf">
+  <meta name="description" content="GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_glotlf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_glotlf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [u,q]=v_glotlf(d,t,p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)
+  Usage: (1) f0=100;                % frequency in Hz
+             t=linspace(0,0.1,100); % time axis
+             u=v_glotlf(0,t*f0)       % glottal waveform using default parameters
+
+         (2) v_glotlf(1,[],[0.6 0.2 0.25]); % plot graph if no output argument
+
+  Inputs:  d selects which derivative of the flow waveform to calculate; 0&lt;=d&lt;=3 [0]
+           t is a vector of time instants at which to calculate the
+             waveform. Time units are in fractions of a cycle.
+           p is a vector, [te, E0/Ee, 1-tp/te], defining the waveform [0.6 0.1 0.2]
+             See below for the parameter meanings.
+             The peak negative value of the flow derivative is Ug'(te) = -Ee
+             The peak flow occurs at tp.
+
+ Outputs:  u the output waveform
+           q a structure with the following fields taken from Fig 2 of [1]:
+                q.Up       peak value of Ug occurs at tp            [0.979]
+                q.E0=1     gain in open phase (always 1)            [1]
+                q.Ei       peak value of Ug' occurs at ti           [3.57]
+                q.Ee       min value of Ug' is -Ee and occurs at te [10]
+                q.alpha    exponent coefficient in open phase       [4.42]
+                q.epsilon  exponent coefficient in return phase     [22.4]
+                q.omega    angular frequency in open phase (=pi/tp) [6.55]
+                q.t0=0     start time (always 0)                    [0]
+                q.ti       time of peak in Ug'                      [0.33]  
+                q.tp       time of peak in Ug                       [0.48]
+                q.te       time of peak negative value in Ug'       [0.6]
+                q.ta       initial slope of return phase is Ee/ta   [0.045]
+                q.tc=1     cycle end tiem (always 1)                [1]
+
+             Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]          
+             Note that for the return phase in Fig. 2 is wrong; the correct equation is (11).
+             The value of epsilon is chosen to ensure the flow derivative, Ug'(t), integrates to zero.
+
+ Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]
+
+ References
+ [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1–13, 1985.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>	TEXTHVC - write text on graph with specified alignment and colour</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [u,q]=v_glotlf(d,t,p)</a>
+0002 <span class="comment">%GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</span>
+0003 <span class="comment">%  Usage: (1) f0=100;                % frequency in Hz</span>
+0004 <span class="comment">%             t=linspace(0,0.1,100); % time axis</span>
+0005 <span class="comment">%             u=v_glotlf(0,t*f0)       % glottal waveform using default parameters</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%         (2) v_glotlf(1,[],[0.6 0.2 0.25]); % plot graph if no output argument</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs:  d selects which derivative of the flow waveform to calculate; 0&lt;=d&lt;=3 [0]</span>
+0010 <span class="comment">%           t is a vector of time instants at which to calculate the</span>
+0011 <span class="comment">%             waveform. Time units are in fractions of a cycle.</span>
+0012 <span class="comment">%           p is a vector, [te, E0/Ee, 1-tp/te], defining the waveform [0.6 0.1 0.2]</span>
+0013 <span class="comment">%             See below for the parameter meanings.</span>
+0014 <span class="comment">%             The peak negative value of the flow derivative is Ug'(te) = -Ee</span>
+0015 <span class="comment">%             The peak flow occurs at tp.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Outputs:  u the output waveform</span>
+0018 <span class="comment">%           q a structure with the following fields taken from Fig 2 of [1]:</span>
+0019 <span class="comment">%                q.Up       peak value of Ug occurs at tp            [0.979]</span>
+0020 <span class="comment">%                q.E0=1     gain in open phase (always 1)            [1]</span>
+0021 <span class="comment">%                q.Ei       peak value of Ug' occurs at ti           [3.57]</span>
+0022 <span class="comment">%                q.Ee       min value of Ug' is -Ee and occurs at te [10]</span>
+0023 <span class="comment">%                q.alpha    exponent coefficient in open phase       [4.42]</span>
+0024 <span class="comment">%                q.epsilon  exponent coefficient in return phase     [22.4]</span>
+0025 <span class="comment">%                q.omega    angular frequency in open phase (=pi/tp) [6.55]</span>
+0026 <span class="comment">%                q.t0=0     start time (always 0)                    [0]</span>
+0027 <span class="comment">%                q.ti       time of peak in Ug'                      [0.33]</span>
+0028 <span class="comment">%                q.tp       time of peak in Ug                       [0.48]</span>
+0029 <span class="comment">%                q.te       time of peak negative value in Ug'       [0.6]</span>
+0030 <span class="comment">%                q.ta       initial slope of return phase is Ee/ta   [0.045]</span>
+0031 <span class="comment">%                q.tc=1     cycle end tiem (always 1)                [1]</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%             Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]</span>
+0034 <span class="comment">%             Note that for the return phase in Fig. 2 is wrong; the correct equation is (11).</span>
+0035 <span class="comment">%             The value of epsilon is chosen to ensure the flow derivative, Ug'(t), integrates to zero.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% References</span>
+0040 <span class="comment">% [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1–13, 1985.</span>
+0041 
+0042 <span class="comment">%      Copyright (C) Mike Brookes 1998-2017</span>
+0043 <span class="comment">%      Version: $Id: v_glotlf.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0046 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0049 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0050 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0051 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0052 <span class="comment">%   (at your option) any later version.</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0055 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0056 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0057 <span class="comment">%   GNU General Public License for more details.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0060 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0061 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0062 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0063 
+0064 <span class="keyword">if</span> nargin&lt;1 || isempty(d)
+0065     d=0;                        <span class="comment">% default output is Ug(t)</span>
+0066 <span class="keyword">end</span>
+0067 <span class="keyword">if</span> nargin &lt; 2 || isempty(t)
+0068     tt=(0:99)'/100;             <span class="comment">% default time axis</span>
+0069 <span class="keyword">else</span>
+0070     tt=t-floor(t);              <span class="comment">% only interested in th fractional part of t</span>
+0071 <span class="keyword">end</span>
+0072 u=zeros(size(tt));              <span class="comment">% space for output</span>
+0073 de=[0.6 0.1 0.2]';              <span class="comment">% default parameters</span>
+0074 <span class="keyword">if</span> nargin &lt; 3 || isempty(p)
+0075     p=de;
+0076 <span class="keyword">elseif</span> length(p)&lt;2
+0077     p=[p(:); de(length(p)+1:2)];
+0078 <span class="keyword">end</span>
+0079 
+0080 <span class="comment">% Calculate the parameters in terms of ugd(t), the glottal flow derivative</span>
+0081 
+0082 te=p(1);                        <span class="comment">% t_e from [1]. ugd(te) is the negative peak.</span>
+0083 mtc=te-1;                       <span class="comment">% -1 times duration of return phase</span>
+0084 e0=1;                           <span class="comment">% E0 from [1]</span>
+0085 wa=pi/(te*(1-p(3)));            <span class="comment">% omega_g from [1]</span>
+0086 a=-log(-p(2)*sin(wa*te))/te;    <span class="comment">% alpha from [1]</span>
+0087 inta=e0*((wa/tan(wa*te)-a)/p(2)+wa)/(a^2+wa^2); <span class="comment">% integral of first portion of waveform (0&lt;t&lt;te)</span>
+0088 
+0089 <span class="comment">% if inta&lt;0 we should reduce p(2)</span>
+0090 <span class="comment">% if inta&gt;0.5*p(2)*(1-te) we should increase p(2)</span>
+0091 
+0092 rb0=p(2)*inta;  <span class="comment">% initial time constant neglects the offset; correct if rb&lt;&lt;(1-te)</span>
+0093 rb=rb0;         <span class="comment">% rb is closure time constant = 1/epsilon in [1]</span>
+0094 
+0095 <span class="comment">% Use Newton to determine closure time constant, rb, that flow starts and ends at zero.</span>
+0096 
+0097 <span class="keyword">for</span> i=1:4
+0098     kk=1-exp(mtc/rb);
+0099     err=rb+mtc*(1/kk-1)-rb0;
+0100     derr=1-(1-kk)*(mtc/rb/kk)^2;
+0101     rb=rb-err/derr;               <span class="comment">% rb is closure time constant = 1/epsilon in [1]</span>
+0102 <span class="keyword">end</span>
+0103 e1=1/(p(2)*(1-exp(mtc/rb)));
+0104 ta=tt&lt;te;
+0105 tb=~ta;
+0106 <span class="keyword">if</span> d==0                                 <span class="comment">% output Ug(t)</span>
+0107     u(ta)=e0*(exp(a*tt(ta)).*(a*sin(wa*tt(ta))-wa*cos(wa*tt(ta)))+wa)/(a^2+wa^2);
+0108     u(tb)=e1*(exp(mtc/rb)*(tt(tb)-1-rb)+exp((te-tt(tb))/rb)*rb);
+0109     ylab=<span class="string">'u(t)'</span>;
+0110 <span class="keyword">elseif</span> d==1                             <span class="comment">% output Ug'(t)</span>
+0111     u(ta)=e0*exp(a*tt(ta)).*sin(wa*tt(ta));
+0112     u(tb)=e1*(exp(mtc/rb)-exp((te-tt(tb))/rb));
+0113     ylab=<span class="string">'u''(t)'</span>;
+0114 <span class="keyword">elseif</span> d==2                             <span class="comment">% output Ug''(t)</span>
+0115     u(ta)=e0*exp(a*tt(ta)).*(a*sin(wa*tt(ta))+wa*cos(wa*tt(ta)));
+0116     u(tb)=e1*exp((te-tt(tb))/rb)/rb;
+0117     ylab=<span class="string">'u''''(t)'</span>;
+0118 <span class="keyword">else</span>
+0119     error(<span class="string">'Derivative must be 0,1 or 2'</span>);
+0120 <span class="keyword">end</span>
+0121 <span class="keyword">if</span> nargout~=1
+0122     ti=(pi+atan(-wa/a))/wa;             <span class="comment">% time of peak in Ug'</span>
+0123     tp=pi/wa;                           <span class="comment">% time of peak in Ug</span>
+0124     q.Up=e0*wa*(exp(a*tp)+1)/(a^2+wa^2); <span class="comment">% peak value of Ug occurs at tp</span>
+0125     q.E0=1;                             <span class="comment">% gain in open phase (always 1)</span>
+0126     q.Ei=e0*exp(a*ti).*sin(wa*ti);      <span class="comment">% peak value of Ug' occurs at ti</span>
+0127     q.Ee=1/p(2);                        <span class="comment">% note ugd(te)=-Ee</span>
+0128     q.alpha=a;                          <span class="comment">% exponent coefficient in open phase</span>
+0129     q.epsilon=1/rb;                     <span class="comment">% exponent coefficient in return phase</span>
+0130     q.omega=wa;                         <span class="comment">% angular frequency in open phase (=pi/tp)</span>
+0131     q.t0=0;                             <span class="comment">% start of cycle</span>
+0132     q.ti=ti;                            <span class="comment">% time of peak in Ug'</span>
+0133     q.tp=tp;                            <span class="comment">% time of peak in Ug</span>
+0134     q.te=te;                            <span class="comment">% time of peak negative value in Ug'</span>
+0135     q.ta=rb/(p(2)*e1);                  <span class="comment">% initial slope of return phase is Ee/ta</span>
+0136     q.tc=1;                             <span class="comment">% end of cycle</span>
+0137 <span class="keyword">end</span>
+0138 <span class="keyword">if</span> ~nargout
+0139     plot(tt,u,<span class="string">'-b'</span>,[tt(1) tt(end)],[0 0],<span class="string">':k'</span>);
+0140     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0141     xlim=get(gca,<span class="string">'xlim'</span>);
+0142     ylim=get(gca,<span class="string">'ylim'</span>);
+0143     hold on
+0144     plot([1;1]*[q.ti q.tp q.te],ylim,<span class="string">':k'</span>);
+0145     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(q.ti,0,<span class="string">' ti'</span>,<span class="string">'lbk'</span>);
+0146     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(q.tp,0,<span class="string">' tp'</span>,<span class="string">'lbk'</span>);
+0147     <span class="keyword">if</span> d==0
+0148         plot(xlim,[1;1]*q.Up,<span class="string">':k'</span>);
+0149         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,q.Up,<span class="string">' Up'</span>,<span class="string">'ltk'</span>);
+0150         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(te,0,<span class="string">' te'</span>,<span class="string">'lbk'</span>);
+0151     <span class="keyword">elseif</span> d==1
+0152         plot(xlim,[1;1]*[q.Ei -q.Ee],<span class="string">':k'</span>);
+0153         plot([te te+q.ta te+q.ta],[-q.Ee 0 ylim(2)],<span class="string">':k'</span>);
+0154         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(te,0,<span class="string">' te'</span>,<span class="string">'rtk'</span>);
+0155         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(te+q.ta,0,<span class="string">' te+ta'</span>,<span class="string">'lbk'</span>);
+0156         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,-q.Ee,<span class="string">' –Ee'</span>,<span class="string">'lbk'</span>);
+0157         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,q.Ei,<span class="string">' Ei'</span>,<span class="string">'ltk'</span>);
+0158     <span class="keyword">elseif</span> d==2
+0159         plot(xlim,[1;1]*q.Ee/q.ta,<span class="string">':k'</span>);
+0160         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,q.Ee/q.ta,<span class="string">' Ee/ta'</span>,<span class="string">'ltk'</span>);
+0161         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(te,0,<span class="string">' te'</span>,<span class="string">'lbk'</span>);
+0162     <span class="keyword">end</span>
+0163     hold off
+0164     xlabel(<span class="string">'Fraction of period'</span>);
+0165     ylabel(ylab);
+0166 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

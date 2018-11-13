@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_frq2mel</title>
+  <meta name="keywords" content="v_frq2mel">
+  <meta name="description" content="FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_frq2mel.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_frq2mel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [mel,mr] = v_frq2mel(frq) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
+    [mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)
+    to the corresponding values on the Mel scale which corresponds
+    to the perceived pitch of a tone.
+   mr gives the corresponding gradients in Hz/mel.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	SPENDRED          Speech Enhancement and Dereverberation by Doire</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mel,mr] = v_frq2mel(frq)</a>
+0002 <span class="comment">%FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</span>
+0003 <span class="comment">%    [mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)</span>
+0004 <span class="comment">%    to the corresponding values on the Mel scale which corresponds</span>
+0005 <span class="comment">%    to the perceived pitch of a tone.</span>
+0006 <span class="comment">%   mr gives the corresponding gradients in Hz/mel.</span>
+0007 
+0008 <span class="comment">%    The relationship between mel and frq is given by [1]:</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%    m = ln(1 + f/700) * 1000 / ln(1+1000/700)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%      This means that m(1000) = 1000</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%    References:</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%     [1] J. Makhoul and L. Cosell. &quot;Lpcw: An lpc vocoder with</span>
+0017 <span class="comment">%         linear predictive spectral warping&quot;, In Proc IEEE Intl</span>
+0018 <span class="comment">%         Conf Acoustics, Speech and Signal Processing, volume 1,</span>
+0019 <span class="comment">%         pages 466–469, 1976. doi: 10.1109/ICASSP.1976.1170013.</span>
+0020 <span class="comment">%      [2] S. S. Stevens &amp; J. Volkman &quot;The relation of pitch to</span>
+0021 <span class="comment">%          frequency&quot;, American J of Psychology, V 53, p329 1940</span>
+0022 <span class="comment">%      [3] C. G. M. Fant, &quot;Acoustic description &amp; classification</span>
+0023 <span class="comment">%          of phonetic units&quot;, Ericsson Tchnics, No 1 1959</span>
+0024 <span class="comment">%          (reprinted in &quot;Speech Sounds &amp; Features&quot;, MIT Press 1973)</span>
+0025 <span class="comment">%      [4] S. B. Davis &amp; P. Mermelstein, &quot;Comparison of parametric</span>
+0026 <span class="comment">%          representations for monosyllabic word recognition in</span>
+0027 <span class="comment">%          continuously spoken sentences&quot;, IEEE ASSP, V 28,</span>
+0028 <span class="comment">%          pp 357-366 Aug 1980</span>
+0029 <span class="comment">%      [5] J. R. Deller Jr, J. G. Proakis, J. H. L. Hansen,</span>
+0030 <span class="comment">%          &quot;Discrete-Time Processing of Speech Signals&quot;, p380,</span>
+0031 <span class="comment">%          Macmillan 1993</span>
+0032 
+0033 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
+0034 <span class="comment">%      Version: $Id: v_frq2mel.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0037 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0040 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0041 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0042 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0043 <span class="comment">%   (at your option) any later version.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0046 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0047 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0048 <span class="comment">%   GNU General Public License for more details.</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0051 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0052 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0053 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0054 <span class="keyword">persistent</span> k
+0055 <span class="keyword">if</span> isempty(k)
+0056     k=1000/log(1+1000/700); <span class="comment">%  1127.01048</span>
+0057 <span class="keyword">end</span>
+0058 af=abs(frq);
+0059 mel = sign(frq).*log(1+af/700)*k;
+0060 mr=(700+af)/k;
+0061 <span class="keyword">if</span> ~nargout
+0062     plot(frq,mel,<span class="string">'-x'</span>);
+0063     xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0064     ylabel([<span class="string">'Frequency ('</span> <a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a> <span class="string">'Mel)'</span>]);
+0065 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

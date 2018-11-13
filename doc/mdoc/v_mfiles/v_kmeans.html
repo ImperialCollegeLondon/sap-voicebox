@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_kmeans</title>
+  <meta name="keywords" content="v_kmeans">
+  <meta name="description" content="V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_kmeans.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_kmeans
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,g,j,gg] = v_kmeans(d,k,x0,l) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)
+
+  Inputs:
+
+    D(N,P)  contains N data vectors of dimension P
+    K       is number of centres required
+    X0(K,P) are the initial centres (optional)
+     
+      or alternatively
+
+    X0      gives the initialization method
+            'f'   pick K random elements of D as the initial centres [default]
+            'p'   randomly divide D into K sets and choose the centroids
+    L       gives max number of iterations (use 0 if you just want to calculate G and J)
+
+  Outputs:
+
+    X(K,P)  is output row vectors (omitted if L=0)
+    G       is mean square error
+    J(N)    indicates which centre each data vector belongs to
+    GG(L)   gives the mean square error at the start of each iteration (omitted if L=0)
+
+ It is often a good idea to scale the input data so that it has equal variance in each
+ dimension before calling V_KMEANS.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>	GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</li><li><a href="v_kmeanlbg.html" class="code" title="function [x,esq,j] = v_kmeanlbg(d,k)">v_kmeanlbg</a>	KMEANLBG Vector quantisation using the Linde-Buzo-Gray algorithm [X,ESQ,J]=(D,K)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,g,j,gg] = v_kmeans(d,k,x0,l)</a>
+0002 <span class="comment">%V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    D(N,P)  contains N data vectors of dimension P</span>
+0007 <span class="comment">%    K       is number of centres required</span>
+0008 <span class="comment">%    X0(K,P) are the initial centres (optional)</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%      or alternatively</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%    X0      gives the initialization method</span>
+0013 <span class="comment">%            'f'   pick K random elements of D as the initial centres [default]</span>
+0014 <span class="comment">%            'p'   randomly divide D into K sets and choose the centroids</span>
+0015 <span class="comment">%    L       gives max number of iterations (use 0 if you just want to calculate G and J)</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%  Outputs:</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%    X(K,P)  is output row vectors (omitted if L=0)</span>
+0020 <span class="comment">%    G       is mean square error</span>
+0021 <span class="comment">%    J(N)    indicates which centre each data vector belongs to</span>
+0022 <span class="comment">%    GG(L)   gives the mean square error at the start of each iteration (omitted if L=0)</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% It is often a good idea to scale the input data so that it has equal variance in each</span>
+0025 <span class="comment">% dimension before calling V_KMEANS.</span>
+0026 
+0027 <span class="comment">%  Originally based on a routine by Chuck Anderson, anderson@cs.colostate.edu, 1996</span>
+0028 
+0029 
+0030 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
+0031 <span class="comment">%      Version: $Id: v_kmeans.m 4497 2014-04-23 10:28:55Z dmb $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0034 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0038 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0039 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0040 <span class="comment">%   (at your option) any later version.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0043 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0044 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0045 <span class="comment">%   GNU General Public License for more details.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0048 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0049 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 memsize=voicebox(<span class="string">'memsize'</span>); 
+0053 [n,p] = size(d);
+0054 nb=min(n,max(1,floor(memsize/(8*p*k))));    <span class="comment">% block size for testing data points</span>
+0055 nl=ceil(n/nb);                  <span class="comment">% number of blocks</span>
+0056 <span class="keyword">if</span> nargin&lt;4
+0057     l=300;                  <span class="comment">% very large max iteration count</span>
+0058     <span class="keyword">if</span> nargin&lt;3
+0059         x0=<span class="string">'f'</span>;             <span class="comment">% use 'f' initialization mode</span>
+0060     <span class="keyword">end</span>
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span> ischar(x0)
+0063     <span class="keyword">if</span> k&lt;n
+0064         <span class="keyword">if</span> any(x0)==<span class="string">'p'</span>                  <span class="comment">% Initialize using a random partition</span>
+0065             ix=ceil(rand(1,n)*k);       <span class="comment">% allocate to random clusters</span>
+0066             ix(rnsubset(k,n))=1:k;      <span class="comment">% but force at least one point per cluster</span>
+0067             x=zeros(k,p);
+0068             <span class="keyword">for</span> i=1:k
+0069                 x(i,:)=mean(d(ix==i,:),1);
+0070             <span class="keyword">end</span>
+0071         <span class="keyword">else</span>                                <span class="comment">% Forgy initialization: choose k random points [default]</span>
+0072             x=d(rnsubset(k,n),:);         <span class="comment">% sample k centres without replacement</span>
+0073         <span class="keyword">end</span>
+0074     <span class="keyword">else</span>
+0075         x=d(mod((1:k)-1,n)+1,:);    <span class="comment">% just include all points several times</span>
+0076     <span class="keyword">end</span>
+0077 <span class="keyword">else</span>
+0078     x=x0;
+0079 <span class="keyword">end</span>
+0080 m=zeros(n,1);           <span class="comment">% minimum distance to a centre</span>
+0081 j=zeros(n,1);           <span class="comment">% index of closest centre</span>
+0082 gg=zeros(l,1);
+0083 wp=ones(1,p);
+0084 kk=1:p;
+0085 kk=kk(ones(n,1),:);
+0086 kk=kk(:);
+0087 
+0088 <span class="keyword">if</span> l&gt;0
+0089     <span class="keyword">for</span> ll=1:l                 <span class="comment">% loop until x==y causes a break</span>
+0090         
+0091         <span class="comment">% find closest centre to each data point [m(:),j(:)] = distance, index</span>
+0092         
+0093         ix=1;
+0094         jx=n-nl*nb;
+0095         <span class="keyword">for</span> il=1:nl
+0096             jx=jx+nb;        <span class="comment">% increment upper limit</span>
+0097             ii=ix:jx;
+0098             z = disteusq(d(ii,:),x,<span class="string">'x'</span>);
+0099             [m(ii),j(ii)] = min(z,[],2);
+0100             ix=jx+1;
+0101         <span class="keyword">end</span>
+0102         y = x;              <span class="comment">% save old centre list</span>
+0103         
+0104         <span class="comment">% calculate new centres as the mean of their assigned data values (or zero for unused centres)</span>
+0105         
+0106         nd=full(sparse(j,1,1,k,1));         <span class="comment">% number of points allocated to each centre</span>
+0107         md=max(nd,1);                       <span class="comment">% remove zeros</span>
+0108         jj=j(:,wp);
+0109         x=full(sparse(jj(:),kk,d(:),k,p))./md(:,wp);    <span class="comment">% calculate the new means</span>
+0110         fx=find(nd==0);
+0111         
+0112         <span class="comment">% if any centres are unused, assign them to data values that are not exactly on centres</span>
+0113         <span class="comment">% choose randomly if there are more such points than needed</span>
+0114         
+0115         <span class="keyword">if</span> ~isempty(fx)
+0116             q=find(m~=0);
+0117             <span class="keyword">if</span> length(q)&lt;=length(fx)
+0118                 x(fx(1:length(q)),:)=d(q,:);
+0119             <span class="keyword">else</span>
+0120                 <span class="keyword">if</span> length(fx)&gt;1
+0121                     [rr,ri]=sort(rand(length(q),1));
+0122                     x(fx,:)=d(q(ri(1:length(fx))),:);
+0123                 <span class="keyword">else</span>
+0124                     x(fx,:) = d(q(ceil(rand(1)*length(q))),:);
+0125                 <span class="keyword">end</span>
+0126             <span class="keyword">end</span>
+0127         <span class="keyword">end</span>
+0128         
+0129         <span class="comment">% quit if the centres are unchanged</span>
+0130         
+0131         gg(ll)=sum(m,1);
+0132         <span class="keyword">if</span> x==y
+0133             <span class="keyword">break</span>
+0134         <span class="keyword">end</span>
+0135     <span class="keyword">end</span>
+0136     gg=gg(1:ll)/n;
+0137 <span class="comment">%     ll % *** DEBUG ***</span>
+0138 <span class="comment">%     gg' % *** DEBUG ***</span>
+0139     g=gg(end);
+0140 <span class="keyword">else</span>            <span class="comment">% if l==0 then just calculate G and J (but rename as X and G)</span>
+0141     ix=1;
+0142     jx=n-nl*nb;
+0143     <span class="keyword">for</span> il=1:nl
+0144         jx=jx+nb;        <span class="comment">% increment upper limit</span>
+0145         ii=ix:jx;
+0146         z = disteusq(d(ii,:),x,<span class="string">'x'</span>);
+0147         [m(ii),j(ii)] = min(z,[],2);
+0148         ix=jx+1;
+0149     <span class="keyword">end</span>
+0150     x=sum(m,1)/n;
+0151     g=j;
+0152 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

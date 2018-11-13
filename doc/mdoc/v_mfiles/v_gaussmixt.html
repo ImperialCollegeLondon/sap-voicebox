@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmixt</title>
+  <meta name="keywords" content="v_gaussmixt">
+  <meta name="description" content="GAUSSMIXT Multiply two GMM pdfs">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gaussmixt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gaussmixt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAUSSMIXT Multiply two GMM pdfs</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [m,v,w]=v_gaussmixt(m1,v1,w1,m2,v2,w2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GAUSSMIXT Multiply two GMM pdfs
+
+ Inputs: Input mixtures: k1,k2 mixtures, p dimensions
+
+   M(k1,p) = mixture means for mixture 1
+   V(k1,p) or V(p,p,k1) variances (diagonal or full)
+   W(k1,1) = mixture weights
+   M(k2,p) = mixture means for mixture 2
+   V(k2,p) or V(p,p,k2) variances (diagonal or full)
+   W(k2,1) = mixture weights
+
+ Outputs:
+
+   M(k1*k2,p) = mixture means
+   V(k1*k2,p) or V(p,p,k1*k2) if p&gt;1 and at least one input has full covariance matrix
+   W(k1*k2,1) = mixture weights
+
+ See also: <a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>, <a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>, <a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>, <a href="v_randvec.html" class="code" title="function x=v_randvec(n,m,c,w,mode)">v_randvec</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,v,w]=v_gaussmixt(m1,v1,w1,m2,v2,w2)</a>
+0002 <span class="comment">%GAUSSMIXT Multiply two GMM pdfs</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: Input mixtures: k1,k2 mixtures, p dimensions</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   M(k1,p) = mixture means for mixture 1</span>
+0007 <span class="comment">%   V(k1,p) or V(p,p,k1) variances (diagonal or full)</span>
+0008 <span class="comment">%   W(k1,1) = mixture weights</span>
+0009 <span class="comment">%   M(k2,p) = mixture means for mixture 2</span>
+0010 <span class="comment">%   V(k2,p) or V(p,p,k2) variances (diagonal or full)</span>
+0011 <span class="comment">%   W(k2,1) = mixture weights</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Outputs:</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%   M(k1*k2,p) = mixture means</span>
+0016 <span class="comment">%   V(k1*k2,p) or V(p,p,k1*k2) if p&gt;1 and at least one input has full covariance matrix</span>
+0017 <span class="comment">%   W(k1*k2,1) = mixture weights</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% See also: v_gaussmix, v_gaussmixg, v_gaussmixp, v_randvec</span>
+0020 
+0021 <span class="comment">%      Copyright (C) Mike Brookes 2000-2012</span>
+0022 <span class="comment">%      Version: $Id: v_gaussmixt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0025 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0028 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0029 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0030 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0031 <span class="comment">%   (at your option) any later version.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0034 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0035 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0036 <span class="comment">%   GNU General Public License for more details.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0039 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0040 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0042 <span class="keyword">persistent</span> r13 r21 r22 r31 r312 r112 r1223 r321 ch1h r122 r124
+0043 <span class="keyword">if</span> isempty(r21)
+0044     r13=[1 3];
+0045     r21=[2 1];
+0046     r22=[2 2];
+0047     r31=[3 1];
+0048     r112=[1 1 2];
+0049     r122=[1 2 2];
+0050     r124=[1 2 4];
+0051     r312=[3 1 2];
+0052     r321=[3 2 1];
+0053     r1223=[1 2 2 3];
+0054     ch1h=[-0.5; 1; -0.5];
+0055 <span class="keyword">end</span>
+0056 [k1,p]=size(m1);
+0057 [k2,p2]=size(m2);
+0058 f1=ndims(v1)&gt;2 || size(v1,1)&gt;k1; <span class="comment">% full covariance matrix is supplied</span>
+0059 f2=ndims(v2)&gt;2 || size(v2,1)&gt;k2; <span class="comment">% full covariance matrix is supplied</span>
+0060 <span class="comment">% ff=f1+2*f2;</span>
+0061 <span class="keyword">if</span> p~=p2
+0062     error(<span class="string">'mixtures must have the same vector dimension'</span>);
+0063 <span class="keyword">end</span>
+0064 k=k1*k2;
+0065 j1=repmat((1:k1)',k2,1);
+0066 j2=reshape(repmat(1:k2,k1,1),k,1);
+0067 <span class="keyword">if</span> p==1
+0068     <span class="comment">% display('1D vectors');</span>
+0069     p1=1./v1(:);
+0070     p2=1./v2(:);
+0071     v=1./(p1(j1)+p2(j2));
+0072     s1=p1.*m1;
+0073     s2=p2.*m2;
+0074     m=v.*(s1(j1)+s2(j2));
+0075     v12=v1(j1)+v2(j2);
+0076     wx=-0.5*(m1(j1)-m2(j2)).^2./v12(:);
+0077     wx=wx-max(wx); <span class="comment">% normalize to avoid underflow</span>
+0078     w=w1(j1).*w2(j2).*exp(wx)./sqrt(v12(:));
+0079     w=w/sum(w);
+0080 <span class="keyword">else</span>
+0081     <span class="keyword">if</span> ~f1 &amp;&amp; ~f2 <span class="comment">% both diagonal covariances</span>
+0082         <span class="comment">% display('both diagonal');</span>
+0083         p1=1./v1;
+0084         p2=1./v2;
+0085         v=1./(p1(j1,:)+p2(j2,:));
+0086         s1=p1.*m1;
+0087         s2=p2.*m2;
+0088         m=v.*(s1(j1,:)+s2(j2,:));
+0089         v12=v1(j1,:)+v2(j2,:);
+0090         wx=-0.5*sum((m1(j1,:)-m2(j2,:)).^2./v12,2);
+0091         wx=wx-max(wx); <span class="comment">% normalize to avoid underflow</span>
+0092         w=w1(j1).*w2(j2).*exp(wx)./sqrt(prod(v12,2));
+0093         w=w/sum(w);
+0094     <span class="keyword">else</span> <span class="comment">% at least one full covariances</span>
+0095         m=zeros(k,p);
+0096         v=zeros(p,p,k);
+0097         w=zeros(k,1);
+0098         wx=w;
+0099         idp=1:p+1:p*p; <span class="comment">% diagonal elements of p x p matrix</span>
+0100         <span class="keyword">if</span> p==2                 <span class="comment">% special code for 2D vectors</span>
+0101             <span class="keyword">if</span> ~f2  <span class="comment">% GMM 2 is diagonal</span>
+0102                 <span class="comment">% display('2D GMM 2 diagonal');</span>
+0103                 p2=1./v2;
+0104                 pm2=p2.*m2;
+0105                 vx1=permute(v1,r312);
+0106                 vx1=vx1(:,r124);
+0107                 px1=vx1./repmat((vx1(:,1).*vx1(:,3)-vx1(:,2).^2),1,3); <span class="comment">% [a b; b c] -&gt; [c -b a]</span>
+0108                 pm1=m1.*px1(:,r31)-m1(:,r21).*px1(:,r22);
+0109                 px=px1(j1,:);
+0110                 px(:,r31)=px(:,r31)+p2(j2,:);  <span class="comment">% add onto diagonal elements</span>
+0111                 vijx=vx1(j1,:);
+0112                 vijx(:,r13)=vijx(:,r13)+v2(j2,:);  <span class="comment">% add onto diagonal elements</span>
+0113             <span class="keyword">elseif</span> ~f1 <span class="comment">% GMM 1 is diagonal</span>
+0114                 <span class="comment">% display('2D GMM 1 diagonal');</span>
+0115                 p1=1./v1;
+0116                 pm1=p1.*m1;
+0117                 vx2=permute(v2,r312);
+0118                 vx2=vx2(:,r124);
+0119                 px2=vx2./repmat((vx2(:,1).*vx2(:,3)-vx2(:,2).^2),1,3); <span class="comment">% [a b; b c] -&gt; [c -b a]</span>
+0120                 pm2=m2.*px2(:,r31)-m2(:,r21).*px2(:,r22);
+0121                 px=px2(j2,:);
+0122                 px(:,r31)=px(:,r31)+p1(j1,:);  <span class="comment">% add onto diagonal elements</span>
+0123                 vijx=vx2(j2,:);
+0124                 vijx(:,r13)=vijx(:,r13)+v1(j1,:);  <span class="comment">% add onto diagonal elements</span>
+0125             <span class="keyword">else</span> <span class="comment">% both full covariances</span>
+0126                 <span class="comment">% display('2D both full');</span>
+0127                 vx1=permute(v1,r312);
+0128                 vx1=vx1(:,r124); <span class="comment">% make each 2 x 2 matrix into a row [a b; b c] -&gt; [a b c]</span>
+0129                 px1=vx1./repmat((vx1(:,1).*vx1(:,3)-vx1(:,2).^2),1,3); <span class="comment">% [a b; b c] -&gt; [c -b a]</span>
+0130                 vx2=permute(v2,r312);
+0131                 vx2=vx2(:,r124);
+0132                 px2=vx2./repmat((vx2(:,1).*vx2(:,3)-vx2(:,2).^2),1,3); <span class="comment">% [a b; b c] -&gt; [c -b a]</span>
+0133                 pm1=m1.*px1(:,r31)-m1(:,r21).*px1(:,r22);
+0134                 pm2=m2.*px2(:,r31)-m2(:,r21).*px2(:,r22);
+0135                 px=px1(j1,:)+px2(j2,:);
+0136                 vijx=vx1(j1,:)+vx2(j2,:);
+0137             <span class="keyword">end</span>
+0138             vx=px./repmat((px(:,1).*px(:,3)-px(:,2).^2),1,3);   <span class="comment">% divide by determinant to get inverse</span>
+0139             m=pm1(j1,:)+pm2(j2,:);
+0140             m=m.*vx(:,r13)+m(:,r21).*vx(:,r22);                 <span class="comment">% multiple by 2 x 2 matrix vx</span>
+0141             v=reshape(vx(:,r1223)',[2 2 k]);                    <span class="comment">% convert vx to a 3D array of 2 x 2 matrices</span>
+0142             m12=m1(j1,:)-m2(j2,:);                              <span class="comment">% subtract means to calculate weight exponent</span>
+0143             dij=vijx(:,1).*vijx(:,3)-vijx(:,2).^2;              <span class="comment">% determinant of V1+V2</span>
+0144             wx=m12(:,r112).*m12(:,r122).*vijx(:,r321)*ch1h./dij;<span class="comment">% exponent of weight</span>
+0145             w=w1(j1).*w2(j2)./sqrt(dij);                        <span class="comment">% weight is w*exp(wx)</span>
+0146         <span class="keyword">else</span>
+0147             <span class="keyword">if</span> ~f2  <span class="comment">% GMM 2 is diagonal</span>
+0148                 <span class="comment">% display('GMM 2 diagonal');</span>
+0149                 p2=1./v2;
+0150                 pm2=p2.*m2;
+0151                 <span class="keyword">for</span> i=1:k1
+0152                     v1i=v1(:,:,i);
+0153                     p1i=inv(v1i);
+0154                     m1i=m1(i,:);
+0155                     pm1i=m1i*p1i;
+0156                     w1i=w1(i);
+0157                     ix=i;
+0158                     <span class="keyword">for</span> j=1:k2
+0159                         pij=p1i;
+0160                         pij(idp)=pij(idp)+p2(j,:);
+0161                         vix=inv(pij);
+0162                         vij=v1i;
+0163                         vij(idp)=vij(idp)+v2(j,:);
+0164                         v(:,:,ix)=vix;
+0165                         m(ix,:)=(pm2(j,:)+pm1i)*vix;
+0166                         m12=m2(j,:)-m1i;
+0167                         wx(ix)=-0.5*m12/vij*m12';           <span class="comment">% exponent of weight</span>
+0168                         w(ix)=w2(j)*w1i/sqrt(det(vij));     <span class="comment">% weight is w*exp(wx)</span>
+0169                         ix=ix+k1;
+0170                     <span class="keyword">end</span>
+0171                 <span class="keyword">end</span>
+0172             <span class="keyword">elseif</span> ~f1 <span class="comment">% GMM 1 is diagonal</span>
+0173                 <span class="comment">% display('GMM 1 diagonal');</span>
+0174                 p1=1./v1;
+0175                 pm1=p1.*m1;
+0176                 ix=1;
+0177                 <span class="keyword">for</span> j=1:k2
+0178                     v2j=v2(:,:,j);
+0179                     p2j=inv(v2j);
+0180                     m2j=m2(j,:);
+0181                     pm2j=m2j*p2j;
+0182                     w2j=w2(j);
+0183                     <span class="keyword">for</span> i=1:k1
+0184                         pij=p2j;
+0185                         pij(idp)=pij(idp)+p1(i,:);
+0186                         vix=inv(pij);
+0187                         vij=v2j;
+0188                         vij(idp)=vij(idp)+v1(i,:);
+0189                         v(:,:,ix)=vix;
+0190                         m(ix,:)=(pm1(i,:)+pm2j)*vix;
+0191                         m12=m1(i,:)-m2j;
+0192                         wx(ix)=-0.5*m12/vij*m12';           <span class="comment">% exponent of weight</span>
+0193                         w(ix)=w1(i)*w2j/sqrt(det(vij));     <span class="comment">% weight is w*exp(wx)</span>
+0194                         ix=ix+1;
+0195                     <span class="keyword">end</span>
+0196                 <span class="keyword">end</span>
+0197             <span class="keyword">else</span> <span class="comment">% both full covariances</span>
+0198                 <span class="comment">% display('both full');</span>
+0199                 p1=zeros(p,p,k1);
+0200                 pm1=zeros(k1,p);
+0201                 <span class="keyword">for</span> i=1:k1
+0202                     p1i=inv(v1(:,:,i));
+0203                     p1(:,:,i)=p1i;
+0204                     pm1(i,:)=m1(i,:)*p1i;
+0205                 <span class="keyword">end</span>
+0206                 ix=1;
+0207                 <span class="keyword">for</span> j=1:k2
+0208                     v2j=v2(:,:,j);
+0209                     p2j=inv(v2j);
+0210                     m2j=m2(j,:);
+0211                     pm2j=m2j*p2j;
+0212                     w2j=w2(j);
+0213                     <span class="keyword">for</span> i=1:k1
+0214                         pij=p1(:,:,i)+p2j;
+0215                         vix=inv(pij);
+0216                         v(:,:,ix)=vix;
+0217                         vij=v1(:,:,i)+v2j;
+0218                         m(ix,:)=(pm1(i,:)+pm2j)*vix;
+0219                         m12=m1(i,:)-m2j;
+0220                         wx(ix)=-0.5*m12/vij*m12';           <span class="comment">% exponent of weight</span>
+0221                         w(ix)=w1(i)*w2j/sqrt(det(vij));     <span class="comment">% weight is w*exp(wx)</span>
+0222                         ix=ix+1;
+0223                     <span class="keyword">end</span>
+0224                 <span class="keyword">end</span>
+0225             <span class="keyword">end</span>
+0226             
+0227         <span class="keyword">end</span>
+0228         wx=wx-max(wx);              <span class="comment">% adjust exponents to avoid underflow</span>
+0229         w=w.*exp(wx);               <span class="comment">% calculate weights</span>
+0230         w=w/sum(w);                 <span class="comment">% normalize weights to sum to unity</span>
+0231         <span class="keyword">if</span> k==1
+0232             v=reshape(v,size(v,1),size(v,2)); <span class="comment">% squeeze last dimension of v if possible</span>
+0233         <span class="keyword">end</span>
+0234     <span class="keyword">end</span>
+0235 <span class="keyword">end</span>
+0236 <span class="keyword">if</span> ~nargout
+0237     <span class="keyword">if</span> p==1
+0238         nxx=256; <span class="comment">% number of points to plot</span>
+0239         nsd=3; <span class="comment">% number of std deviations</span>
+0240         sd=sqrt([v1(:);v2(:);v]);
+0241         ma=[m1;m2;m];
+0242         xax=linspace(min(ma-nsd*sd),max(ma+nsd*sd),nxx);
+0243         plot(xax,<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(xax(:),m1,v1,w1),<span class="string">'--b'</span>);
+0244         hold on
+0245         plot(xax,<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(xax(:),m2,v2,w2),<span class="string">':r'</span>);
+0246         plot(xax,<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(xax(:),m,v,w),<span class="string">'-k'</span>);
+0247         hold off
+0248         ylabel(<span class="string">'Log probability density'</span>);
+0249         legend(<span class="string">'Mix 1'</span>,<span class="string">'Mix 2'</span>,<span class="string">'Product'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>);
+0250         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1 -1 -1.05]);
+0251     <span class="keyword">elseif</span> p==2
+0252         nxx=128; <span class="comment">% number of points to plot</span>
+0253         nsd=3;
+0254         <span class="keyword">if</span> f1
+0255             s1=sqrt([v1(1:4:end)' v1(4:4:end)']); <span class="comment">% extract diagonal elements only</span>
+0256         <span class="keyword">else</span>
+0257             s1=sqrt(v1);
+0258         <span class="keyword">end</span>
+0259         <span class="keyword">if</span> f2
+0260             s2=sqrt([v2(1:4:end)' v2(4:4:end)']); <span class="comment">% extract diagonal elements only</span>
+0261         <span class="keyword">else</span>
+0262             s2=sqrt(v2);
+0263         <span class="keyword">end</span>
+0264         <span class="keyword">if</span> ndims(v)&gt;2 || size(v,1)&gt;k
+0265             s3=sqrt([v(1:4:end)' v(4:4:end)']); <span class="comment">% extract diagonal elements only</span>
+0266         <span class="keyword">else</span>
+0267             s3=sqrt(v);
+0268         <span class="keyword">end</span>
+0269         mal=[m1;m2;m];
+0270         sal=[s1;s2;s3];
+0271         xax=linspace(min(mal(:,1)-nsd*sal(:,1)),max(mal(:,1)+nsd*sal(:,1)),nxx);
+0272         yax=linspace(min(mal(:,2)-nsd*sal(:,2)),max(mal(:,2)+nsd*sal(:,2)),nxx);
+0273         xx(:,:,1)=repmat(xax',1,nxx);
+0274         xx(:,:,2)=repmat(yax,nxx,1);
+0275         xx=reshape(xx,nxx^2,2);
+0276         subplot(2,2,1);
+0277         imagesc(xax,yax,reshape(gaussmixp(xx,m1,v1,w1),nxx,nxx)');
+0278         axis <span class="string">'xy'</span>;
+0279         title(<span class="string">'Input Mix 1'</span>);
+0280         subplot(2,2,2);
+0281         imagesc(xax,yax,reshape(gaussmixp(xx,m2,v2,w2),nxx,nxx)');
+0282         axis <span class="string">'xy'</span>;
+0283         title(<span class="string">'Input Mix 2'</span>);
+0284         subplot(2,2,3);
+0285         imagesc(xax,yax,reshape(gaussmixp(xx,m,v,w),nxx,nxx)');
+0286         axis <span class="string">'xy'</span>;
+0287         title(<span class="string">'Product GMM'</span>);
+0288     <span class="keyword">end</span>
+0289 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

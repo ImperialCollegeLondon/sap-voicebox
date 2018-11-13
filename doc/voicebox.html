@@ -1,0 +1,1154 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<head>
+<meta http-equiv="Content-Language" content="en-gb" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>VOICEBOX</title>
+</head>
+
+<body>
+
+<h1>VOICEBOX: Speech Processing Toolbox for MATLAB</h1>
+<h2>Introduction</h2>
+<p>VOICEBOX is a speech processing toolbox consists of MATLAB routines that are 
+maintained by and mostly written by
+<a href="http://www.ee.ic.ac.uk/hp/staff/dmb/dmb.html">Mike Brookes</a>,
+<a href="http://www.ee.ic.ac.uk/">Department of Electrical &amp; Electronic 
+Engineering</a>, <a href="http://www.ic.ac.uk/">Imperial College</a>, Exhibition 
+Road, London SW7 2BT, UK. Several of the routines require MATLAB V6.5 or above 
+and require (normally slight) modification to work with earlier versions.</p>
+<p>The routines are available as a GitHub repository or a <a href="voicebox.zip">zip archive</a> 
+and are made available under the terms of the <a href="copying.txt">GNU Public 
+License</a>. To avoid conflicts, all routine names begin with a &quot;v_&quot; prefix. 
+For compatibility with legacy code, aliased versions without the prefix are included 
+but these are likely to be removed in the future (the 
+routine <a href="mdoc/v_mfiles/v_voicebox_update.html">v_voicebox_update.m</a> is included to update 
+legacy code to the new names).</p>
+<h2>Installation</h2>
+<ol>
+	<li>Pull the GitHub repository or unzip the zip archive into a suitable 
+	folder, e.g. C:\sap-voicebox</li>
+	<li>Start MATLAB, click &quot;Set Path&quot;, click &quot;Add Folder ...&quot;, navigate to
+	<a href="file:///C:/sap-voicebox/voicebox">C:\sap-voicebox\voicebox</a>, 
+	click &quot;Select Folder&quot; then click &quot;Save&quot;.</li>
+	<li>[Optional] The routine <a href="mdoc/v_mfiles/v_voicebox.html">v_voicebox.m</a> 
+	contains various installation-dependent parameters which may need to be 
+	altered before using the toolbox. In particular it contains a number of 
+	default directory paths indicating where temporary files should be created, 
+	where speech data normally resides, etc. You can override the defaults by 
+	editing <a href="mdoc/v_mfiles/v_voicebox.html">
+v_voicebox.m</a> directly or, 
+more conveniently, by setting an environment variable VOICEBOX to the path of an 
+initializing m-file. See the comments in <a href="mdoc/v_mfiles/v_voicebox.html">v_
+voicebox.m</a> for a fuller description.</li>
+	<li>[Optional] You may find it convenient to install the non-unicode IPA 
+	phonetic symbol fonts developed by <a href="http://www.sil.org/">SIL</a> 
+	which are in the <a href="file:///C:/sap-voicebox/external/silipa93">
+	C:\sap-voicebox\external\silipa93</a> folder.</li>
+	<li>[Optional] The folder
+	<a href="file:///C:/work/GitHub/sap-voicebox/external/shorten">
+	C:\work\GitHub\sap-voicebox\external\shorten</a> contains the source code 
+	and compiled executable for the <a href="../helpers/shorten.zip">SHORTEN</a> program written by Tony Robinson and SoftSound 
+Limited <a href="http://www.softsound.com">www.softsound.com</a>. This is needed 
+	for reading compressed SPHERE format files. You may wish to move it 
+	elsewhere but, if so, you will need to edit <a href="mdoc/v_mfiles/v_voicebox.html">v_voicebox.m</a> 
+	to give its location.</li>
+</ol>
+<p>Please send any comments, suggestions, bug reports etc to
+<a href="mailto:mike.brookes@ic.ac.uk">mike.brookes@ic.ac.uk</a>.</p>
+<hr />
+<h2><a href="mdoc/v_mfiles/Contents.html">Toolbox Contents</a></h2>
+<hr />
+<dl>
+	<dt><a href="#file">Audio File Input/Output</a></dt>
+	<dd>Read and write WAV and other speech file formats</dd>
+	<dt><a href="#frequency">Frequency Scales</a></dt>
+	<dd>Convert between Hz, Mel, Erb and MIDI frequency scales</dd>
+	<dt><a href="#fourier">Fourier/DCT/Hartley Transforms</a></dt>
+	<dd>Various related transforms</dd>
+	<dt><a href="#random">Random Number and Probability Distributions</a></dt>
+	<dd>Generate random vectors and noise signals</dd>
+	<dt><a href="#distance">Vector Distances</a></dt>
+	<dd>Calculate distances between vector lists</dd>
+	<dt><a href="#analysis">Speech Analysis</a></dt>
+	<dd>Active level estimation, Spectrograms</dd>
+	<dt><a href="#lpc">LPC Analysis of Speech</a></dt>
+	<dd>Linear Predictive Coding routines</dd>
+	<dt><a href="#synthesis">Speech Synthesis</a></dt>
+	<dd>Text-to-speech synthesis and glottal waveform models</dd>
+	<dt><a href="#enhance">Speech Enhancement</a></dt>
+	<dd>Spectral noise subtraction</dd>
+	<dt><a href="#coding">Speech Coding</a></dt>
+	<dd>PCM coding, Vector quantisation</dd>
+	<dt><a href="#recog">Speech Recognition</a></dt>
+	<dd>Front-end processing for recognition</dd>
+	<dt><a href="#sigproc">Signal Processing</a></dt>
+	<dd>Miscellaneous signal processing functions</dd>
+	<dt><a href="#infotheory">Information Theory</a></dt>
+	<dd>Routines for entropy calculation and symbol codes</dd>
+	<dt><a href="#compvision">Computer Vision</a></dt>
+	<dd>Routines for 3D rotation</dd>
+	<dt><a href="#Print">Printing and Display Functions</a></dt>
+	<dd>Utilities for printing and graphics</dd>
+	<dt><a href="#Parameters">Voicebox Parameters and System Interface</a></dt>
+	<dd>Get or set VOICEBOX and WINDOWS system parameters</dd>
+	<dt><a href="#utility">Utility Functions</a></dt>
+	<dd>Miscellaneous utility functions</dd>
+</dl>
+<hr /><hr />
+<h2><a name="file" id="file">Audio File Input/Output</a></h2>
+<blockquote>
+	<p>Routines are available to read and, in some cases write, a variety of 
+	file formats:</p>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="55"><b>Read</b></td>
+			<td width="55"><b>Write</b></td>
+			<td width="30"><b>Suffix</b></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_readwav.html">v_readwav</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_writewav.html">v_writewav</a></td>
+			<td width="30">.wav</td>
+			<td>These routines allow an arbitrary number of channels and can 
+			deal with linear PCM (any precision up to 32 bits), A-law PCM, 
+			Mu-law PCM and Floating point formats. Large files can be read and 
+			written in small chunks.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/wavread.html">wavread</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/wavwrite.html">wavwrite</a></td>
+			<td width="30">.wav</td>
+			<td>Emulations of legacy MATLAB WAV file routines</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_readhtk.html">v_readhtk</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_writehtk.html">v_writehtk</a></td>
+			<td width="30">.htk</td>
+			<td>Read and write waveform and parameter files used by Microsoft&#39;s 
+			Hidden Markov Toolkit.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_readsfs.html">v_readsfs</a></td>
+			<td width="55">&nbsp;</td>
+			<td width="30">.sfs</td>
+			<td>Speech Filing system files from Mark Huckvale at UCL.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_readsph.html">v_readsph</a></td>
+			<td width="55">&nbsp;</td>
+			<td width="30">.sph</td>
+			<td>NIST Sphere format files (including TIMIT). Needs
+			<a href="../helpers/shorten.zip">SHORTEN</a> for compressed files.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_readaif.html">v_readaif</a></td>
+			<td width="55">&nbsp;</td>
+			<td width="30">.aif</td>
+			<td>AIFF format (Audio Interchange File Format) used by Mac users.</td>
+		</tr>
+		<tr>
+			<td><a href="mdoc/v_mfiles/v_readcnx.html">v_readcnx</a></td>
+			<td>&nbsp;</td>
+			<td>cnx</td>
+			<td>Read Connex database files (from BT)</td>
+		</tr>
+		<tr>
+			<td><a href="mdoc/v_mfiles/v_readau.html">v_readau</a></td>
+			<td>&nbsp;</td>
+			<td>au</td>
+			<td>Read AV audio files (from Sun)</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="frequency" id="frequency">Frequency Scale Conversion</a></h2>
+<div style="margin-left: 2em">
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="55"><b>From</b> <em>f</em></td>
+			<td width="55"><b>To</b> <em>f</em></td>
+			<td width="30"><b>Scale</b></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_frq2bark.html">v_frq2bark</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_bark2frq.html">v_bark2frq</a></td>
+			<td width="30">bark</td>
+			<td>The <i>bark</i> scale is based on critical bands and masking in 
+			the human ear.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_frq2cent.html">v_frq2cent</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_cent2frq.html">v_cent2frq</a></td>
+			<td width="30">erb</td>
+			<td>The <em>cent</em> scale is in increments of 0.01 semitones.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_frq2erb.html">v_frq2erb</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_erb2frq.html">v_erb2frq</a></td>
+			<td width="30">erb</td>
+			<td>The <i>erb</i> scale is based on the equivalent rectangular 
+			bandwidths of the human ear.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_frq2mel.html">v_frq2mel</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_mel2frq.html">v_mel2frq</a></td>
+			<td width="30">mel</td>
+			<td>The <i>mel scale</i> is based on the human perception of 
+			sinewave pitch.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_frq2midi.html">v_frq2midi</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_midi2frq.html">v_midi2frq</a></td>
+			<td width="30">midi</td>
+			<td>The <i>midi standard</i> specifies a numbering of <i>semitones</i> 
+			with middle C being 60. They can use the normal equal tempered scale 
+			or else the pythagorean scale of just intonation. They will in 
+			addition output note names in a character format.</td>
+		</tr>
+	</table>
+</div>
+<hr />
+<h2><a name="fourier" id="fourier">Fourier, DCT and Hartley Transforms</a></h2>
+<div style="margin-left: 2em">
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="55"><b>Forward</b></td>
+			<td width="55"><b>Inverse</b></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_rfft.html">v_rfft</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_irfft.html">v_irfft</a></td>
+			<td>Forward and inverse discrete fourier transforms on real data. 
+			Only the first half of the conjugate symmetric transform is 
+			generated. For even length data, the inverse routine is 
+			asumptotically twice as fast as the built-in MATLAB routine.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_rsfft.html">v_rsfft</a></td>
+			<td width="55">&nbsp;</td>
+			<td>Forward transform of real, symmetric data to give the first half 
+			only of the real, symmetric transform.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_zoomfft.html">v_zoomfft</a></td>
+			<td width="55">&nbsp;</td>
+			<td>Calculate the discrete fourier transform at an arbitrary set of 
+			linearly spaced frequencies. Can be used to zoom into a subset of 
+			the full frequency range.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_rdct.html">v_rdct</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_irdct.html">v_irdct</a></td>
+			<td>Forward and inverse discrete cosine transform on real data.</td>
+		</tr>
+		<tr>
+			<td width="55"><a href="mdoc/v_mfiles/v_rhartley.html">v_rhartley</a></td>
+			<td width="55"><a href="mdoc/v_mfiles/v_rhartley.html">v_rhartley</a></td>
+			<td>Hartley transform on real data (forward and inverse transforms 
+			are the same).</td>
+		</tr>
+	</table>
+</div>
+<hr />
+<h2><a name="random" id="random">Random Numbers and Probability Distributions</a></h2>
+<ul>
+	<li>
+	<h3>Random Number Generation</h3>
+	<table width="100%" border="0" cellpadding="2" height="124">
+		<tr>
+			<td width="69" valign="top" height="19">
+			<a href="mdoc/v_mfiles/v_randvec.html">v_randvec</a></td>
+			<td width="861" height="19">generates random vectors from gaussian 
+			or lognormal mixture distributions.</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_randiscr.html">v_
+			randiscr</a></td>
+			<td height="19">generates discrete random values with a specified 
+			probability vector</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_stdspectrum.html">v_
+			stdspectrum</a></td>
+			<td height="19">generates noise samples or filter coefficients for a 
+			variety of standard spectra including: A, B, C or BS468 weighting, 
+			USASI noise, POTS spectrum, LTASS, Internal masking noise (from SII 
+			spec)</td>
+		</tr>
+		<tr>
+			<td width="69" height="18"><a href="mdoc/v_mfiles/v_randfilt.html">v_
+			randfilt</a></td>
+			<td height="18">generates filtered gaussian noise without any 
+			startup transients.</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_rnsubset.html">v_
+			rnsubset</a></td>
+			<td height="19">selects a random subset of <i>k</i> elements from 
+			the numbers 1:<i>n</i></td>
+		</tr>
+	</table>
+	</li>
+</ul>
+<ul>
+	<li>
+	<h3>Probability Density Functions</h3>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_lognmpdf.html">v_
+			lognmpdf</a> </td>
+			<td width="861">calculates the pdf of a lognormal distribution</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmix.html">v_gaussmix</a></td>
+			<td>generates a multivariate Gaussian mixture model (GMM) from 
+			training data</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmixd.html">v_gaussmixd</a></td>
+			<td>determines marginal and conditional distributions from a GMM and 
+			can be used to perform inference on unobserved variables.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmixg.html">v_gaussmixg</a></td>
+			<td>calculates the global mean, covariance matrix and mode of a GMM</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmixm.html">v_gaussmixm</a></td>
+			<td>estimates the mean and variance of the magnitude of a GMM vector 
+			variate</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmixk.html">v_gaussmixk</a></td>
+			<td>calculates the Kulback-Leibler Divergence, D(f||g), between two 
+			GMMs</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmixp.html">v_gaussmixp</a></td>
+			<td>calculates and plots full and marginal log probability and 
+			relative mixture probabilities from a GMM</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gaussmixt.html">v_gaussmixt</a></td>
+			<td>multiplies two GMMs together</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_normcdflog.html">v_normcdflog</a></td>
+			<td>calculates the log of the normal cdf without underflow issues</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_chimv.html">v_chimv</a></td>
+			<td>approximates the mean and variance of a non-central chi 
+			distribution</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_vonmisespdf.html">v_vonmisespdf</a></td>
+			<td>calculate the pdf of the Von Mises (circular normal) 
+			distribution</td>
+		</tr>
+	</table>
+	</li>
+</ul>
+<ul>
+	<li>
+	<h3>Miscellaneous</h3>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_berk2prob.html">v_
+			berk2prob</a></td>
+			<td width="861">convert Berkson matrix to probability</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gausprod.html">v_gausprod</a></td>
+			<td>calculates the product of two gaussian distributions</td>
+		</tr>
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_histndim.html">v_
+			histndim</a></td>
+			<td width="861">calculates an n-dimensional histogram (and plots a 
+			2-D one)</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_pdfmoments.html">v_pdfmoments</a></td>
+			<td>convert between central moments, raw moments and cumulants</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gausprod.html">v_maxgauss</a></td>
+			<td>calculates the mean and variance of the maximum element of a 
+			gaussian vector</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_prob2berk.html">v_prob2berk</a></td>
+			<td>convert probability matrix to Berksons</td>
+		</tr>
+	</table>
+	</li>
+</ul>
+<hr />
+<h2><a name="distance" id="distance">Vector Distance</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_disteusq.html">v_
+			disteusq</a></td>
+			<td width="861">calculates the squared euclidean distance between 
+			all pairs of rows of two matrices.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_distitar.html">v_distitar</a></td>
+			<td>calculates the Itakura spectral distances between sets of AR 
+			coefficients.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_distitpf.html">v_distitpf</a></td>
+			<td>calculates the Itakura spectral distances between power spectra.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_distisar.html">v_distisar</a></td>
+			<td>calculates the Itakura-Saito spectral distances between sets of 
+			AR coefficients.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_distispf.html">v_distispf</a></td>
+			<td>calculates the Itakura-Saito spectral distances between power 
+			spectra.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_distchar.html">v_distchar</a></td>
+			<td>calculates the COSH spectral distances between sets of AR 
+			coefficients.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_distchpf.html">v_distchpf</a></td>
+			<td>calculates the COSH spectral distances between power spectra.</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="analysis" id="analysis">Speech Analysis</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_activlev.html">v_activlev</a></td>
+			<td>calculates the active level of a speech segment according to 
+			ITU-T recommendation P.56.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_activlevg.html">v_activlevg</a></td>
+			<td>calculates the active level of a speech segment robustly to 
+			added noise</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_dypsa.html">v_dypsa</a></td>
+			<td>estimates the glottal closure instants from the speech waveform.</td>
+		</tr>
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_enframe.html">v_
+			enframe</a></td>
+			<td width="861">can be used to split a signal up into frames. It can 
+			optionally apply a window to each frame.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_correlogram.html">v_correlogram</a></td>
+			<td>Calculates a 3D correlogram [slowly]</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_ewgrpdel.html">v_ewgrpdel</a></td>
+			<td>calculates the energy-weighted group delay waveform.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_fram2wav.html">v_fram2wav</a></td>
+			<td>interpolates a sequence of frame-based value into a waveform</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_filtbankm.html">v_filtbankm</a></td>
+			<td>Transformation matrix for a linear/mel/erb/bark-spaced 
+			filterbank from dft output</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_fxpefac.html">v_fxpefac</a></td>
+			<td>PEFAC pitch tracker</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_fxrapt.html">v_fxrapt</a></td>
+			<td>is an implementation of the RAPT pitch tracker by David Talkin.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_gammabank.html">v_gammabank</a></td>
+			<td>Determine a bank of IIR gammatone filters</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_importsii.html">v_importsii</a></td>
+			<td>calculate the SII importance function</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfilesmos2pesqi.html">v_mos2pesq</a></td>
+			<td>Convert MOS values to PESQ speech quality scores</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_overlapadd.html">v_overlapadd</a></td>
+			<td>Join frames up using overlap-add processing. Commonly used with 
+			enframe.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_pesq2mos.html">v_pesq2mos</a></td>
+			<td>Convert PESQ speech quality scores to MOS values</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_phon2sone.html">v_phon2sone</a></td>
+			<td>Convert signal levels from phons to sones</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_psycdigit.html">v_psycdigit</a></td>
+			<td>experimental estimation of monotonic/unimodal psychometric 
+			function using TIDIGITS</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_psycest.html">v_psycest</a></td>
+			<td>experimental estimation of monotonic psychometric function</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_psycestu.html">v_psycestu</a></td>
+			<td>experimental estimation of unimodal psychometric function</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_psychofunc.html">v_psychofunc</a></td>
+			<td>calculate psychometric function</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_sigma.html">v_sigma</a></td>
+			<td>estimate glottal opening and closure instants from the 
+			laryngograph/EGG waveform</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_snrseg.html">v_snrseg</a></td>
+			<td>calculate segmental SNR and global SNR relative to a reference 
+			signal</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_sone2phon.html">v_sone2phon</a></td>
+			<td>Convert signal levels from sones to phons</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_soundspeed.html">v_soundspeed</a></td>
+			<td>gives the speed of sound as a function of temperature</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_spgrambw.html">v_spgrambw</a></td>
+			<td>draws a spectrogram with many options. See
+			<a href="tutorial/spgrambw/spgram_tut.pdf">tutorial</a>.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_txalign.html">v_txalign</a></td>
+			<td>finds the best alignment (in a least squares sense) between two 
+			sets of time markers (e.g. glottal closure instants).</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_vadsohn.html">v_vadsohn</a></td>
+			<td>voice activity detector</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_ppmvu.html">v_ppmvu</a></td>
+			<td>Calculate the PPM, VU or EBU levels of a signal</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="lpc" id="lpc">LPC Analysis of Speech</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top">&nbsp;<br />
+			</td>
+			<td width="861">The 
+			routines relating to LPC are described in more detail on
+			<a href="lpc.html">another page</a>. A large number of
+			<a href="lpc.html">conversion routines</a> are included for changing 
+			the form of the LPC coefficients (e.g. AR coefficients, reflection 
+			coefficients etc.): these are of the form lpcxx2yy where xx and yy 
+			denote the coefficient sets.</td>
+		</tr>
+		<tr>
+			<td width="69" style="height: 25px"><a href="mdoc/v_mfiles/v_ccwarpf.html">v_ccwarpf</a></td>
+			<td style="height: 25px">performs frequency warping in the complex cepstrum domain.</td>
+		</tr>
+		<tr>
+			<td width="69" style="height: 25px"><a href="mdoc/v_mfiles/v_lpcauto.html">v_
+			lpcauto</a></td>
+			<td style="height: 25px">Perform autocorrelation LPC analysis</td>
+		</tr>
+		<tr>
+			<td width="69">
+			<a href="mdoc/v_mfiles/v_lpccovar.html">v_lpccovar</a></td>
+			<td>perform covariance LPC analysis</td>
+		</tr>
+		<tr>
+			<td width="69" style="height: 26px"><a href="mdoc/v_mfiles/v_lpcbwexp.html">v_lpcbwexp</a></td>
+			<td style="height: 26px">performs bandwidth expansion on an LPC filter.</td>
+		</tr>
+		<tr>
+			<td width="69" style="height: 25px"><a href="mdoc/v_mfiles/v_lpcifilt.html">v_lpcifilt</a></td>
+			<td style="height: 25px">performs inverse filtering to estimate the glottal waveform from 
+			the speech signal and the lpc coefficients.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_lpcrand.html">v_lpcrand</a></td>
+			<td>can be used to generate random, stable filters for testing 
+			purposes.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_lpcrr2am.html">v_lpcrr2am</a></td>
+			<td>calculates LPC filters for all orders up to a given maximum.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_lpcstable.html">v_lpcstable</a></td>
+			<td>determines filter stability and forces filter stability</td>
+		</tr>
+		</table>
+</blockquote>
+<hr />
+<h2><a name="synthesis" id="synthesis">Speech Synthesis</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_sapisynth.html">v_
+			sapisynth</a></td>
+			<td width="861">Text-to-speech synthesis (TTS) of a string or matrix 
+			entries</td>
+		</tr>
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_glotros.html">v_
+			glotros</a></td>
+			<td width="861">Calculates the Rosenberg model of the glottal flow 
+			waveform</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_glotlf.html">v_glotlf</a></td>
+			<td>Calculates the Liljencrants-Fant model of the glottal flow 
+			waveform</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="enhance" id="enhance">Speech Enhancement</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_estnoiseg.html">v_
+			estnoiseg</a></td>
+			<td width="861">uses an MMSE algorithm to estimate the noise 
+			spectrum from a noisy speech signal that has been divided into 
+			frames.</td>
+		</tr>
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_estnoisem.html">v_
+			estnoisem</a></td>
+			<td width="861">uses a minimum-statistics algorithm to estimate the 
+			noise spectrum from a noisy speech signal that has been divided into 
+			frames.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_specsub.html">v_specsub</a></td>
+			<td>performs speech enhancement using spectral subtraction</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_spendred.html">v_spendred</a></td>
+			<td>performs speech enhancement and dereverberation</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_ssubmmse.html">v_ssubmmse</a></td>
+			<td>performs speech enhancement using the MMSE or log MMSE criteria</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_ssubmmsev.html">v_ssubmmsev</a></td>
+			<td>performs speech enhancement using the MMSE or log MMSE criteria 
+			with VAD-based noise estimate</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="coding" id="coding">Speech Coding</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_lin2pcma.html">v_
+			lin2pcma</a></td>
+			<td width="861">converts an audio waveform to 8-bit A-law PCM format</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_lin2pcmu.html">v_lin2pcmu</a></td>
+			<td>converts an audio waveform to 8-bit mu-law PCM format</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_pcma2lin.html">v_pcma2lin</a></td>
+			<td>converts 8-bit A-law PCM to a waveform</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_pcmu2lin.html">v_pcmu2lin</a></td>
+			<td>converts 8-bit mu-law PCM to a waveform</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_kmeanlbg.html">v_kmeanlbg</a></td>
+			<td>vector quantisation using the LBG algorithm</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_kmeanhar.html">v_kmeanhar</a></td>
+			<td>vector quantisation using the K-harmonic means algorithm</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_potsband.html">v_potsband</a></td>
+			<td>calculates a bandpass filter corresponding to the standard 
+			telephone passband.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_kmeans.html">v_kmeans</a></td>
+			<td>vector quantisation using the K-means algorithm</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="recog" id="recog">Speech Recognition</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_melcepst.html">v_
+			melcepst</a></td>
+			<td width="861">implements a mel-cepstrum front end for a recogniser</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_melbankm.html">v_melbankm</a></td>
+			<td>constructs a bandpass filterbank with mel-spaced centre 
+			frequencies</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_cep2pow.html">v_cep2pow</a></td>
+			<td>converts multivariate Gaussian means and covariances from the 
+			log power or cepstral domain to the power domain</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_pow2cep.html">v_pow2cep</a></td>
+			<td>converts multivariate Gaussian means and covariances from the 
+			power domain to the log power or cepstral domain</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_ldatrace.html">v_ldatrace</a></td>
+			<td>performs Linear Discriminant Analysis with optional constraints 
+			on the transform matrix</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="sigproc" id="sigproc"></a>Signal Processing</h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_convfft.html">v_convfft</a></td>
+			<td width="861">1-dimensional convolution/corrolation using FFT</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_ditherq.html">v_ditherq</a></td>
+			<td width="861">adds dither and quantizes a signal</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_dlyapsq.html">v_dlyapsq</a></td>
+			<td>solves the discrete lyapunov equation using an efficient square 
+			root algorithm</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_filterbank.html">v_filterbank</a></td>
+			<td>Apply a bank of IIR filters to a signal</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_maxfilt.html">v_maxfilt</a></td>
+			<td>performs running maximum filter</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_meansqtf.html">v_meansqtf</a></td>
+			<td>calculates the output power of a rational filter with a white 
+			noise input</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_momfilt.html">v_momfilt</a></td>
+			<td>generate running moments from a signal</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_sigalign.html">v_sigalign</a></td>
+			<td>align a clean reference with a noise signal and find optimum 
+			gain</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_schmitt.html">v_schmitt</a></td>
+			<td>passes a signal through a schmitt trigger having hysteresis</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_teager.html">v_teager</a></td>
+			<td>calculate the Teager energy waveform</td>
+		</tr>
+		</table>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_addnoise.html">v_addnoise</a></td>
+			<td width="861">add noise to a signal at a chosen SNR</td>
+		</tr>
+	</table>
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_findpeaks.html">v_findpeaks</a></td>
+			<td width="861">finds the peaks in a signal</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_windows.html">v_windows</a></td>
+			<td>generates window functions</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_windinfo.html">v_windinfo</a></td>
+			<td>calculate window properties and figures of merit</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_zerocros.html">v_zerocros</a></td>
+			<td>finds the zero crossings of a signal with interpolation</td>
+		</tr>
+	</table>
+</blockquote>
+<hr />
+<h2><a name="infotheory" id="infotheory">Information Theory</a></h2>
+<div style="margin-left: 2em">
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_huffman.html">v_huffman</a></td>
+			<td width="861">calculates optimum D-ary symbol code from a 
+			probability mass vector</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_entropy.html">v_entropy</a></td>
+			<td>calculates entropy and conditional entropy for discrete and 
+			continuous distributions</td>
+		</tr>
+	</table>
+</div>
+<hr />
+<h2><a name="compvision">Computer Vision</a></h2>
+<div style="margin-left: 2em">
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_imagehomog.html">v_imagehomog</a></td>
+			<td width="861">Apply a homography transformation to an image with 
+			bilinear interpolation</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_polygonarea.html">v_polygonarea</a></td>
+			<td width="861">Calculates the area of a polygon</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_polygonwind.html">v_polygonwind</a></td>
+			<td width="861">Determines whether points are inside or outside a 
+			polygon</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_polygonxline.html">v_polygonxline</a></td>
+			<td width="861">Determines where a line crosses a polygon</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_qrabs.html">v_qrabs</a></td>
+			<td width="861">Absolute value of a real quaternion</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_qrdivide.html">v_qrdivide</a></td>
+			<td width="861">divide two real quaternions (or invert one)</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_qrdotdiv.html">v_qrdotdiv</a></td>
+			<td width="861">elmentwise division of two real quaternion arrays</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_qrdotmult.html">v_qrdotmult</a></td>
+			<td width="861">elmentwise multiplication of two real quaternion 
+			arrays</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_qrmult.html">v_qrmult</a>&nbsp;</td>
+			<td width="861">multiply two real quaternion arrays</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_qrpermute.html">v_qrpermute</a></td>
+			<td width="861">permute the indices of a quaternion array</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_rectifyhomog.html">v_rectifyhomog</a></td>
+			<td width="861">Apply rectifing homographies to a set of cameras to 
+			make their optical axes parallel</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="rotation.html">rot--2--</a></td>
+			<td width="861">converts between the following representations of 
+			rotations: rotation matrix (ro), euler angles (eu), axis of rotation 
+			(ax), plane of rotation (pl), real quaternion vector (qr), real 
+			quaternion matrix (mr), complex quaternion vector (qc), complex 
+			quaternion matrix (mc). A detailed description is given
+			<a href="rotation.html">here</a>.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_rotqrmean.html">v_rotqrmean</a></td>
+			<td width="861">Find the average of several rotation quaternions</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_rotqrvec.html">v_rotqrvec</a></td>
+			<td width="861">Apply a quaternion rotation to an array of 3D 
+			vectors</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_skew3d.html">v_skew3d</a></td>
+			<td width="861">Convert between vectors and skew symmetric matrices: 
+			3x3 matrix &lt;-&gt; 3x1 vector and 4x4 Plucker matrix &lt;-&gt; 6x1 vector.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_sphrharm.html">v_sphrharm</a></td>
+			<td width="861">forward and inverse spherical harmonic transform 
+			using uniform, Gaussian or arbitrary inclination (elevation) grids 
+			and a uniform azimuth grid.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_upolyhedron.html">v_upolyhedron</a></td>
+			<td width="861">Calculate the vertex coordinates and other 
+			characteristics of a uniform polyhedron</td>
+		</tr>
+	</table>
+</div>
+<hr />
+<h2><a name="Print" id="Print">Printing and Display Functions</a></h2>
+<div style="margin-left: 2em">
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_axisenlarge.html">v_axisenlarge</a></td>
+			<td width="861">enlarge the axes of a figure slightly</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_bitsprec.html">v_bitsprec</a></td>
+			<td>rounds values to a precision of n bits</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_cblabel.html">v_cblabel</a></td>
+			<td>add a label to the colourbar</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_figbolden.html">v_figbolden</a></td>
+			<td width="861">makes the lines on a figure bold, enlarges font 
+			sizes and adjusts colours for printing clearly</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_fig2emf.html">v_fig2emf</a></td>
+			<td width="861">optionally makes the lines on a figure bold and then 
+			saves in windows metafile format</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_fig2pdf.html">v_fig2pdf</a></td>
+			<td width="861">optionally makes the lines on a figure bold and then 
+			saves in ps, eps or pdf format</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_frac2bin.html">v_frac2bin</a></td>
+			<td>converts numbers to fixed-point binary strings</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_lambda2rgb.html">v_lambda2rgb</a></td>
+			<td>convert wavelength to an RGB or XYZ triplet</td>
+		</tr>
+		<tr>
+			<td width="69" style="height: 25px"><a href="mdoc/v_mfiles/v_sprintcpx.html">v_sprintcpx</a></td>
+			<td style="height: 25px">prints a the real and imaginary parts of a complex number</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_sprintsi.html">v_sprintsi</a></td>
+			<td>prints a value with the correct standard SI multiplier (e.g. 
+			2100 prints as 2.1 k)</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_texthvc.html">v_texthvc</a></td>
+			<td>add text to plots with specified alignment and colour</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_tilefigs.html">v_tilefigs</a></td>
+			<td>arrange all figures on the screen</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_colormap.html">v_colormap</a></td>
+			<td>set and display colormap information including colormaps that 
+			print well in monochrome</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_xticksi.html">v_xticksi</a></td>
+			<td>Label the x-axis tick marks using SI multipliers for large and 
+			small values. Particularly useful for logarithmic plots. </td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_yticksi.html">v_yticksi</a></td>
+			<td>Label the y-axis tick marks using SI multipliers for large and 
+			small values. Particularly useful for logarithmic plots.</td>
+		</tr>
+		<tr>
+			<td width="69">&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+</div>
+<hr />
+<h2><a name="Parameters" id="Parameters">Voicebox Parameters and System 
+Interface</a></h2>
+<div style="margin-left: 2em">
+	<table width="100%" border="0" cellpadding="2">
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_hostipinfo.html">v_
+			hostipinfo</a></td>
+			<td width="861">Gives information about computer name and internet 
+			connections</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_regexfiles.html">v_regexfiles</a></td>
+			<td width="861">Recursively find files that match a regular 
+			expression pattern</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_unixwhich.html">v_unixwhich</a></td>
+			<td width="861">searches the WINDOWS system path for an executable 
+			(like UNIX which command)</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_voicebox.html">v_voicebox</a></td>
+			<td width="861">contains a number of installation-dependent global 
+			parameters and is likely to need editing for each particular setup.</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_voicebox_update.html">v_voicebox_update</a></td>
+			<td width="861">update old code to new names by inserting a &quot;v_&quot; 
+			prefix where needed</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_winenvar.html">v_winenvar</a></td>
+			<td>Obtains WINDOWS environment variables</td>
+		</tr>
+	</table>
+</div>
+<hr />
+<h2><a name="utility" id="utility">Utility Functions</a></h2>
+<blockquote>
+	<table width="100%" border="0" cellpadding="2" height="323">
+		<tr>
+			<td height="18"><a href="mdoc/v_mfiles/v_atan2sc.html">v_atan2sc</a></td>
+			<td height="18">arctangent function that returns the sin and cos of 
+			the angle</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_besselratio.html">v_besselratio</a></td>
+			<td height="19">calculate the Bessel function ratio: 
+			besseli(v+1,x)./besseli(v,x)</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_bitsprec.html">v_bitsprec</a></td>
+			<td height="19">Rounds values to a precision of n bits</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_choosenk.html">v_choosenk</a></td>
+			<td height="19">all possible ways of choosing k elements out of the 
+			numbers 1:n without duplications</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_choosrnk.html">v_choosrnk</a></td>
+			<td height="19">all possible ways of choosing k elements out of the 
+			numbers 1:n with duplications allowed</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_dlyapsq.html">v_dlyapsq</a></td>
+			<td height="19">Solve the discrete lyapunov equation</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_dualdiag.html">v_
+			dualdiag</a></td>
+			<td height="19">simultaneously diagonalises two matrices: this is 
+			useful in computing LDA or IMELDA transforms.</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_finishat.html">v_finishat</a></td>
+			<td height="19">Estimate the finishing time of a long loop</td>
+		</tr>
+		<tr>
+			<td width="69" style="height: 19px">
+			<a href="mdoc/v_mfiles/v_fopenmkd.html">v_fopenmkd</a></td>
+			<td style="height: 19px">Equivalent to FOPEN() but creates any 
+			missing directories/folders</td>
+		</tr>
+		<tr>
+			<td width="69" height="19">
+			<a href="mdoc/v_mfiles/v_gammalns.html">v_gammalns</a></td>
+			<td height="19">Calculates log(gamma(x)) for signed real-valued x</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_hypergeom1f1.html">v_
+			hypergeom1f1</a></td>
+			<td height="19">Confluent Hypergeometric Function (Kummer&#39;s M 
+			function)</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_logsum.html">v_logsum</a></td>
+			<td height="19">calculates log(sum(exp(x))) without overflow 
+			problems.</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_minspane.html">v_minspane</a></td>
+			<td height="19">Calculates the minimum spanning tree (a.k.a. 
+			shortest spanning tree) of a set of n-dimensional points</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_mintrace.html">v_mintrace</a></td>
+			<td height="19">Find a row permutation to minimize the trace of a 
+			matrix</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_m2htmlpwd.html">v_m2htmlpwd</a></td>
+			<td height="19">Create HTML documentation of matlab routines in the 
+			current directory</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_nearnonz.html">v_nearnonz</a></td>
+			<td height="19">Replace zero elements by the nearest non-zero 
+			elements</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_permutes.html">v_permutes</a></td>
+			<td height="19">all possible permutations of the numbers 1:n</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_quadpeak.html">v_quadpeak</a></td>
+			<td height="19">find a quadratically-interpolated peak in a 
+			N-dimensional array by fitting a quadratic function to the array 
+			values</td>
+		</tr>
+		<tr>
+			<td height="19"><a href="mdoc/v_mfiles/v_rotation.html">v_rotation</a></td>
+			<td height="19">generates rotation matrices</td>
+		</tr>
+		<tr>
+			<td width="69" height="19"><a href="mdoc/v_mfiles/v_zerotrim.html">v_
+			zerotrim</a></td>
+			<td width="861" height="19">removes from a matrix any trailing rows 
+			and columns that are all zero.</td>
+		</tr>
+	</table>
+</blockquote>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6956824-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+</body>
+
+</html>

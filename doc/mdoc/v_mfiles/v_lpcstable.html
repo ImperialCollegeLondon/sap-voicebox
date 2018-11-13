@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_lpcstable</title>
+  <meta name="keywords" content="v_lpcstable">
+  <meta name="description" content="LPCSTABLE Test AR coefficients for stability and stabilize if necessary [MA,A]=(AR)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_lpcstable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_lpcstable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LPCSTABLE Test AR coefficients for stability and stabilize if necessary [MA,A]=(AR)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [m,a]=v_lpcstable(ar) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LPCSTABLE Test AR coefficients for stability and stabilize if necessary [MA,A]=(AR)
+
+ Usage: (1) [m,ar]=v_lpcstable(ar); % force ar polynolials to be stable
+
+   Input:  ar(:,p+1)  Autoregressive coefficients
+ Outputs:  m(:,1)    Mask identifying stable polynomials
+           a(:,p+1)  Stabilized polynomials formed by reflecting unstable
+                       poles in unit circle (with a(:,1)=1)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,a]=v_lpcstable(ar)</a>
+0002 <span class="comment">%LPCSTABLE Test AR coefficients for stability and stabilize if necessary [MA,A]=(AR)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) [m,ar]=v_lpcstable(ar); % force ar polynolials to be stable</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   Input:  ar(:,p+1)  Autoregressive coefficients</span>
+0007 <span class="comment">% Outputs:  m(:,1)    Mask identifying stable polynomials</span>
+0008 <span class="comment">%           a(:,p+1)  Stabilized polynomials formed by reflecting unstable</span>
+0009 <span class="comment">%                       poles in unit circle (with a(:,1)=1)</span>
+0010 
+0011 <span class="comment">%      Copyright (C) Mike Brookes 2016</span>
+0012 <span class="comment">%      Version: $Id: v_lpcstable.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0015 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0018 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0019 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0020 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0021 <span class="comment">%   (at your option) any later version.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0024 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0025 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0026 <span class="comment">%   GNU General Public License for more details.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0029 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0030 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0031 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0032 
+0033 [nf,p1] = size(ar);
+0034 mm=ar(:,1)~=1;
+0035 <span class="keyword">if</span> any(mm)          <span class="comment">% first ensure leading coefficient is always 1</span>
+0036     ar(mm,:)=ar(mm,:)./ar(mm,ones(1,p1));
+0037 <span class="keyword">end</span>
+0038 <span class="keyword">if</span> p1==1
+0039     m=ones(nf,1); <span class="comment">% 0'th order filter is always stable</span>
+0040 <span class="keyword">elseif</span> p1==2
+0041     m=abs(ar(:,2))&lt;1; <span class="comment">% 1'st order filter</span>
+0042 <span class="keyword">else</span>
+0043     rf = ar;
+0044     k = rf(:,p1); <span class="comment">% check final coefficient in range</span>
+0045     m=abs(k)&lt;1;
+0046     <span class="keyword">if</span> any(m)
+0047         d = (1-k(m).^2).^(-1);
+0048         wj=ones(1,p1-2);
+0049         rf(m,2:p1-1) = (rf(m,2:p1-1)-k(m,wj).*rf(m,p1-1:-1:2)).*d(:,wj);
+0050         <span class="keyword">for</span> j = p1-2:-1:2
+0051             k(m) = rf(m,j+1);
+0052             m(m)=abs(k)&lt;1;
+0053             <span class="keyword">if</span> ~any(m), <span class="keyword">break</span>, <span class="keyword">end</span>
+0054             d = (1-k(m).^2).^(-1);
+0055             wj=ones(1,j-1);
+0056             rf(m,2:j) = (rf(m,2:j)-k(m,wj).*rf(m,j:-1:2)).*d(:,wj);
+0057         <span class="keyword">end</span>
+0058     <span class="keyword">end</span>
+0059 <span class="keyword">end</span>
+0060 <span class="keyword">if</span> nargout&gt;1
+0061     a=ar;
+0062     <span class="keyword">if</span> ~all(m)
+0063         <span class="keyword">for</span> i=find(~m)'                 <span class="comment">% unstable frames</span>
+0064             z=roots(a(i,:));
+0065             k=abs(z)&gt;1;                 <span class="comment">% find any unstable roots</span>
+0066             z(k)=conj(z(k)).^(-1);      <span class="comment">% invert them</span>
+0067             a(i,:)=real(poly(z));       <span class="comment">% force a real polynomial</span>
+0068         <span class="keyword">end</span>
+0069     <span class="keyword">end</span>
+0070 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

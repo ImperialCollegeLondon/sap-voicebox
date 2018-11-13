@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_distchpf</title>
+  <meta name="keywords" content="v_distchpf">
+  <meta name="description" content="DISTCHPF calculates the cosh spectral distance between power spectra D=(PF1,PF2,MODE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_distchpf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_distchpf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>DISTCHPF calculates the cosh spectral distance between power spectra D=(PF1,PF2,MODE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function d=v_distchpf(pf1,pf2,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">DISTCHPF calculates the cosh spectral distance between power spectra D=(PF1,PF2,MODE)
+
+ Inputs: PF1,PF2     Power spectra to be compared. Each row represents a power spectrum: the first
+                     and last columns represent the DC and Nyquist terms respectively.
+                     PF1 and PF2 must have the same number of columns.
+
+         MODE        Character string selecting the following options:
+                         'x'  Calculate the full distance matrix from every row of PF1 to every row of PF2
+                         'd'  Calculate only the distance between corresponding rows of PF1 and PF2
+                              The default is 'd' if PF1 and PF2 have the same number of rows otherwise 'x'.
+           
+ Output: D           If MODE='d' then D is a column vector with the same number of rows as the shorter of PF1 and PF2.
+                     If MODE='x' then D is a matrix with the same number of rows as PF1 and the same number of columns as PF2'.
+
+ The COSH spectral distance is the average over +ve and -ve frequency of 
+
+                     cosh(log(p1/p2))-1   =   (p1-p2)^2/(2p1*p2)   =   (p1/p2 + p2/p1)/2 - 1
+
+ The COSH distance is a symmetrical version of the Itakura-Saito distance: v_distchpf(x,y)=(v_distispf(x,y)+v_distispf(y,x))/2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function d=v_distchpf(pf1,pf2,mode)</a>
+0002 <span class="comment">%DISTCHPF calculates the cosh spectral distance between power spectra D=(PF1,PF2,MODE)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: PF1,PF2     Power spectra to be compared. Each row represents a power spectrum: the first</span>
+0005 <span class="comment">%                     and last columns represent the DC and Nyquist terms respectively.</span>
+0006 <span class="comment">%                     PF1 and PF2 must have the same number of columns.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%         MODE        Character string selecting the following options:</span>
+0009 <span class="comment">%                         'x'  Calculate the full distance matrix from every row of PF1 to every row of PF2</span>
+0010 <span class="comment">%                         'd'  Calculate only the distance between corresponding rows of PF1 and PF2</span>
+0011 <span class="comment">%                              The default is 'd' if PF1 and PF2 have the same number of rows otherwise 'x'.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Output: D           If MODE='d' then D is a column vector with the same number of rows as the shorter of PF1 and PF2.</span>
+0014 <span class="comment">%                     If MODE='x' then D is a matrix with the same number of rows as PF1 and the same number of columns as PF2'.</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% The COSH spectral distance is the average over +ve and -ve frequency of</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%                     cosh(log(p1/p2))-1   =   (p1-p2)^2/(2p1*p2)   =   (p1/p2 + p2/p1)/2 - 1</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% The COSH distance is a symmetrical version of the Itakura-Saito distance: v_distchpf(x,y)=(v_distispf(x,y)+v_distispf(y,x))/2</span>
+0021 
+0022 <span class="comment">% The Cosh distance can also be calculated directly from AR coefficients; providing np is large</span>
+0023 <span class="comment">% enough, the values of d0 and d1 in the following will be very similar:</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%         np=255; d0=v_distchar(ar1,ar2); d1=v_distchpf(v_lpcar2pf(ar1,np),v_lpcar2pf(ar2,np))</span>
+0026 <span class="comment">%</span>
+0027 
+0028 <span class="comment">% Ref: A.H.Gray Jr and J.D.Markel, &quot;Distance measures for speech processing&quot;, IEEE ASSP-24(5): 380-391, Oct 1976</span>
+0029 <span class="comment">%      L. Rabiner abd B-H Juang, &quot;Fundamentals of Speech Recognition&quot;, Section 4.5, Prentice-Hall 1993, ISBN 0-13-015157-2</span>
+0030 
+0031 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0032 <span class="comment">%      Version: $Id: v_distchpf.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0035 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0038 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0039 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0040 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0041 <span class="comment">%   (at your option) any later version.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0044 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0045 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0046 <span class="comment">%   GNU General Public License for more details.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0049 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0050 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0051 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0052 
+0053 [nf1,p2]=size(pf1);
+0054 p1=p2-1;
+0055 nf2=size(pf2,1);
+0056 <span class="keyword">if</span> nargin&lt;3 | isempty(mode) mode=<span class="string">'0'</span>; <span class="keyword">end</span>
+0057 <span class="keyword">if</span> any(mode==<span class="string">'d'</span>) | (mode~=<span class="string">'x'</span> &amp; nf1==nf2)
+0058    nx=min(nf1,nf2);
+0059    r=pf1(1:nx,:)./pf2(1:nx,:);
+0060    q=r+r.^(-1);
+0061    d=(2*sum(q(:,2:p1),2)+q(:,1)+q(:,p2))/(4*p1)-1;
+0062 <span class="keyword">else</span>
+0063    r=permute(pf1(:,:,ones(1,nf2)),[1 3 2])./permute(pf2(:,:,ones(1,nf1)),[3 1 2]);
+0064    q=r+r.^(-1);
+0065    d=(2*sum(q(:,:,2:p1),3)+q(:,:,1)+q(:,:,p2))/(4*p1)-1;
+0066 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

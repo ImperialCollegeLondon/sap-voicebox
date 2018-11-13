@@ -1,0 +1,425 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_melbankm</title>
+  <meta name="keywords" content="v_melbankm">
+  <meta name="description" content="MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_melbankm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_melbankm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)
+
+ Inputs:
+       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb [ceil(4.6*log10(fs))]
+        n   length of fft
+        fs  sample rate in Hz
+        fl  low end of the lowest filter as a fraction of fs [default = 0]
+        fh  high end of highest filter as a fraction of fs [default = 0.5]
+        w   any sensible combination of the following:
+             'b' = bark scale instead of mel
+             'e' = erb-rate scale
+             'l' = log10 Hz frequency scale
+             'f' = linear frequency scale
+
+             'c' = fl/fh specify centre of low and high filters
+             'h' = fl/fh are in Hz instead of fractions of fs
+             'H' = fl/fh are in mel/erb/bark/log10
+
+              't' = triangular shaped filters in mel/erb/bark domain (default)
+              'n' = hanning shaped filters in mel/erb/bark domain
+              'm' = hamming shaped filters in mel/erb/bark domain
+
+              'z' = highest and lowest filters taper down to zero [default]
+              'y' = lowest filter remains at 1 down to 0 frequency and
+                    highest filter remains at 1 up to nyquist freqency
+
+             'u' = scale filters to sum to unity
+
+             's' = single-sided: do not double filters to account for negative frequencies
+
+             'g' = plot idealized filters [default if no output arguments present]
+
+ Note that the filter shape (triangular, hamming etc) is defined in the mel (or erb etc) domain.
+ Some people instead define an asymmetric triangular filter in the frequency domain.
+
+               If 'ty' or 'ny' is specified, the total power in the fft is preserved.
+
+ Outputs:    x     a sparse matrix containing the v_filterbank amplitudes
+                  If the mn and mx outputs are given then size(x)=[p,mx-mn+1]
+                 otherwise size(x)=[p,1+floor(n/2)]
+                 Note that the peak filter values equal 2 to account for the power
+                 in the negative FFT frequencies.
+           mc    the v_filterbank centre frequencies in mel/erb/bark
+            mn    the lowest fft bin with a non-zero coefficient
+            mx    the highest fft bin with a non-zero coefficient
+                 Note: you must specify both or neither of mn and mx.
+
+ Examples of use:
+
+ (a) Calcuate the Mel-frequency Cepstral Coefficients
+
+       f=v_rfft(s);                    % v_rfft() returns only 1+floor(n/2) coefficients
+        x=v_melbankm(p,n,fs);            % n is the fft length, p is the number of filters wanted
+        z=log(x*abs(f).^2);         % multiply x by the power spectrum
+        c=dct(z);                   % take the DCT
+
+ (b) Calcuate the Mel-frequency Cepstral Coefficients efficiently
+
+       f=fft(s);                        % n is the fft length, p is the number of filters wanted
+       [x,mc,na,nb]=v_melbankm(p,n,fs);   % na:nb gives the fft bins that are needed
+       z=log(x*(f(na:nb)).*conj(f(na:nb)));
+
+ (c) Plot the calculated filterbanks
+
+      plot((0:floor(n/2))*fs/n,melbankm(p,n,fs)')   % fs=sample frequency
+
+ (d) Plot the idealized filterbanks (without output sampling)
+
+      v_melbankm(p,n,fs);
+
+ References:
+
+ [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement
+     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185–19, 1937.
+ [2] S. Davis and P. Mermelstein. Comparison of parametric representations for
+     monosyllabic word recognition in continuously spoken sentences.
+     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357–366, Aug. 1980.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_melcepst.html" class="code" title="function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)">v_melcepst</a>	MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li><li><a href="v_modspect.html" class="code" title="function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p)">v_modspect</a>	MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)</a>
+0002 <span class="comment">%MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:</span>
+0005 <span class="comment">%       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb [ceil(4.6*log10(fs))]</span>
+0006 <span class="comment">%        n   length of fft</span>
+0007 <span class="comment">%        fs  sample rate in Hz</span>
+0008 <span class="comment">%        fl  low end of the lowest filter as a fraction of fs [default = 0]</span>
+0009 <span class="comment">%        fh  high end of highest filter as a fraction of fs [default = 0.5]</span>
+0010 <span class="comment">%        w   any sensible combination of the following:</span>
+0011 <span class="comment">%             'b' = bark scale instead of mel</span>
+0012 <span class="comment">%             'e' = erb-rate scale</span>
+0013 <span class="comment">%             'l' = log10 Hz frequency scale</span>
+0014 <span class="comment">%             'f' = linear frequency scale</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%             'c' = fl/fh specify centre of low and high filters</span>
+0017 <span class="comment">%             'h' = fl/fh are in Hz instead of fractions of fs</span>
+0018 <span class="comment">%             'H' = fl/fh are in mel/erb/bark/log10</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%              't' = triangular shaped filters in mel/erb/bark domain (default)</span>
+0021 <span class="comment">%              'n' = hanning shaped filters in mel/erb/bark domain</span>
+0022 <span class="comment">%              'm' = hamming shaped filters in mel/erb/bark domain</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%              'z' = highest and lowest filters taper down to zero [default]</span>
+0025 <span class="comment">%              'y' = lowest filter remains at 1 down to 0 frequency and</span>
+0026 <span class="comment">%                    highest filter remains at 1 up to nyquist freqency</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%             'u' = scale filters to sum to unity</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%             's' = single-sided: do not double filters to account for negative frequencies</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%             'g' = plot idealized filters [default if no output arguments present]</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% Note that the filter shape (triangular, hamming etc) is defined in the mel (or erb etc) domain.</span>
+0035 <span class="comment">% Some people instead define an asymmetric triangular filter in the frequency domain.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%               If 'ty' or 'ny' is specified, the total power in the fft is preserved.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% Outputs:    x     a sparse matrix containing the v_filterbank amplitudes</span>
+0040 <span class="comment">%                  If the mn and mx outputs are given then size(x)=[p,mx-mn+1]</span>
+0041 <span class="comment">%                 otherwise size(x)=[p,1+floor(n/2)]</span>
+0042 <span class="comment">%                 Note that the peak filter values equal 2 to account for the power</span>
+0043 <span class="comment">%                 in the negative FFT frequencies.</span>
+0044 <span class="comment">%           mc    the v_filterbank centre frequencies in mel/erb/bark</span>
+0045 <span class="comment">%            mn    the lowest fft bin with a non-zero coefficient</span>
+0046 <span class="comment">%            mx    the highest fft bin with a non-zero coefficient</span>
+0047 <span class="comment">%                 Note: you must specify both or neither of mn and mx.</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">% Examples of use:</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% (a) Calcuate the Mel-frequency Cepstral Coefficients</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%       f=v_rfft(s);                    % v_rfft() returns only 1+floor(n/2) coefficients</span>
+0054 <span class="comment">%        x=v_melbankm(p,n,fs);            % n is the fft length, p is the number of filters wanted</span>
+0055 <span class="comment">%        z=log(x*abs(f).^2);         % multiply x by the power spectrum</span>
+0056 <span class="comment">%        c=dct(z);                   % take the DCT</span>
+0057 <span class="comment">%</span>
+0058 <span class="comment">% (b) Calcuate the Mel-frequency Cepstral Coefficients efficiently</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%       f=fft(s);                        % n is the fft length, p is the number of filters wanted</span>
+0061 <span class="comment">%       [x,mc,na,nb]=v_melbankm(p,n,fs);   % na:nb gives the fft bins that are needed</span>
+0062 <span class="comment">%       z=log(x*(f(na:nb)).*conj(f(na:nb)));</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">% (c) Plot the calculated filterbanks</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%      plot((0:floor(n/2))*fs/n,melbankm(p,n,fs)')   % fs=sample frequency</span>
+0067 <span class="comment">%</span>
+0068 <span class="comment">% (d) Plot the idealized filterbanks (without output sampling)</span>
+0069 <span class="comment">%</span>
+0070 <span class="comment">%      v_melbankm(p,n,fs);</span>
+0071 <span class="comment">%</span>
+0072 <span class="comment">% References:</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">% [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement</span>
+0075 <span class="comment">%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185–19, 1937.</span>
+0076 <span class="comment">% [2] S. Davis and P. Mermelstein. Comparison of parametric representations for</span>
+0077 <span class="comment">%     monosyllabic word recognition in continuously spoken sentences.</span>
+0078 <span class="comment">%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357–366, Aug. 1980.</span>
+0079 
+0080 
+0081 <span class="comment">%      Copyright (C) Mike Brookes 1997-2009</span>
+0082 <span class="comment">%      Version: $Id: v_melbankm.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0085 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0088 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0089 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0090 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0091 <span class="comment">%   (at your option) any later version.</span>
+0092 <span class="comment">%</span>
+0093 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0094 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0095 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0096 <span class="comment">%   GNU General Public License for more details.</span>
+0097 <span class="comment">%</span>
+0098 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0099 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0100 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0101 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0102 
+0103 <span class="comment">% Note &quot;FFT bin_0&quot; assumes DC = bin 0 whereas &quot;FFT bin_1&quot; means DC = bin 1</span>
+0104 
+0105 <span class="keyword">if</span> nargin &lt; 6
+0106     w=<span class="string">'tz'</span>; <span class="comment">% default options</span>
+0107 <span class="keyword">end</span>
+0108 <span class="keyword">if</span> nargin &lt; 5 || isempty(fh)
+0109     fh=0.5; <span class="comment">% max freq is the nyquist</span>
+0110 <span class="keyword">end</span>
+0111 <span class="keyword">if</span> nargin &lt; 4 || isempty(fl)
+0112     fl=0; <span class="comment">% min freq is DC</span>
+0113 <span class="keyword">end</span>
+0114 
+0115 sfact=2-any(w==<span class="string">'s'</span>);   <span class="comment">% 1 if single sided else 2</span>
+0116 wr=<span class="string">' '</span>;   <span class="comment">% default warping is mel</span>
+0117 <span class="keyword">for</span> i=1:length(w)
+0118     <span class="keyword">if</span> any(w(i)==<span class="string">'lebf'</span>);
+0119         wr=w(i);
+0120     <span class="keyword">end</span>
+0121 <span class="keyword">end</span>
+0122 <span class="keyword">if</span> any(w==<span class="string">'h'</span>) || any(w==<span class="string">'H'</span>)
+0123     mflh=[fl fh];
+0124 <span class="keyword">else</span>
+0125     mflh=[fl fh]*fs;
+0126 <span class="keyword">end</span>
+0127 <span class="keyword">if</span> ~any(w==<span class="string">'H'</span>)
+0128     <span class="keyword">switch</span> wr
+0129                     <span class="keyword">case</span> <span class="string">'f'</span>       <span class="comment">% no transformation</span>
+0130         <span class="keyword">case</span> <span class="string">'l'</span>
+0131             <span class="keyword">if</span> fl&lt;=0
+0132                 error(<span class="string">'Low frequency limit must be &gt;0 for l option'</span>);
+0133             <span class="keyword">end</span>
+0134             mflh=log10(mflh);       <span class="comment">% convert frequency limits into log10 Hz</span>
+0135         <span class="keyword">case</span> <span class="string">'e'</span>
+0136             mflh=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(mflh);       <span class="comment">% convert frequency limits into erb-rate</span>
+0137         <span class="keyword">case</span> <span class="string">'b'</span>
+0138             mflh=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(mflh);       <span class="comment">% convert frequency limits into bark</span>
+0139         <span class="keyword">otherwise</span>
+0140             mflh=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(mflh);       <span class="comment">% convert frequency limits into mel</span>
+0141     <span class="keyword">end</span>
+0142 <span class="keyword">end</span>
+0143 melrng=mflh*(-1:2:1)';          <span class="comment">% mel range</span>
+0144 fn2=floor(n/2);     <span class="comment">% bin index of highest positive frequency (Nyquist if n is even)</span>
+0145 <span class="keyword">if</span> isempty(p)
+0146     p=ceil(4.6*log10(fs));         <span class="comment">% default number of filters</span>
+0147 <span class="keyword">end</span>
+0148 <span class="keyword">if</span> any(w==<span class="string">'c'</span>)              <span class="comment">% c option: specify fiter centres not edges</span>
+0149 <span class="keyword">if</span> p&lt;1
+0150     p=round(melrng/(p*1000))+1;
+0151 <span class="keyword">end</span>
+0152 melinc=melrng/(p-1);
+0153 mflh=mflh+(-1:2:1)*melinc;
+0154 <span class="keyword">else</span>
+0155     <span class="keyword">if</span> p&lt;1
+0156     p=round(melrng/(p*1000))-1;
+0157 <span class="keyword">end</span>
+0158 melinc=melrng/(p+1);
+0159 <span class="keyword">end</span>
+0160 
+0161 <span class="comment">%</span>
+0162 <span class="comment">% Calculate the FFT bins corresponding to [filter#1-low filter#1-mid filter#p-mid filter#p-high]</span>
+0163 <span class="comment">%</span>
+0164 <span class="keyword">switch</span> wr
+0165         <span class="keyword">case</span> <span class="string">'f'</span>
+0166         blim=(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
+0167     <span class="keyword">case</span> <span class="string">'l'</span>
+0168         blim=10.^(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
+0169     <span class="keyword">case</span> <span class="string">'e'</span>
+0170         blim=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
+0171     <span class="keyword">case</span> <span class="string">'b'</span>
+0172         blim=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
+0173     <span class="keyword">otherwise</span>
+0174         blim=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
+0175 <span class="keyword">end</span>
+0176 mc=mflh(1)+(1:p)*melinc;    <span class="comment">% mel centre frequencies</span>
+0177 b1=floor(blim(1))+1;            <span class="comment">% lowest FFT bin_0 required might be negative)</span>
+0178 b4=min(fn2,ceil(blim(4))-1);    <span class="comment">% highest FFT bin_0 required</span>
+0179 <span class="comment">%</span>
+0180 <span class="comment">% now map all the useful FFT bins_0 to filter1 centres</span>
+0181 <span class="comment">%</span>
+0182 <span class="keyword">switch</span> wr
+0183         <span class="keyword">case</span> <span class="string">'f'</span>
+0184         pf=((b1:b4)*fs/n-mflh(1))/melinc;
+0185     <span class="keyword">case</span> <span class="string">'l'</span>
+0186         pf=(log10((b1:b4)*fs/n)-mflh(1))/melinc;
+0187     <span class="keyword">case</span> <span class="string">'e'</span>
+0188         pf=(<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>((b1:b4)*fs/n)-mflh(1))/melinc;
+0189     <span class="keyword">case</span> <span class="string">'b'</span>
+0190         pf=(<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>((b1:b4)*fs/n)-mflh(1))/melinc;
+0191     <span class="keyword">otherwise</span>
+0192         pf=(<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>((b1:b4)*fs/n)-mflh(1))/melinc;
+0193 <span class="keyword">end</span>
+0194 <span class="comment">%</span>
+0195 <span class="comment">%  remove any incorrect entries in pf due to rounding errors</span>
+0196 <span class="comment">%</span>
+0197 <span class="keyword">if</span> pf(1)&lt;0
+0198     pf(1)=[];
+0199     b1=b1+1;
+0200 <span class="keyword">end</span>
+0201 <span class="keyword">if</span> pf(end)&gt;=p+1
+0202     pf(end)=[];
+0203     b4=b4-1;
+0204 <span class="keyword">end</span>
+0205 fp=floor(pf);                  <span class="comment">% FFT bin_0 i contributes to filters_1 fp(1+i-b1)+[0 1]</span>
+0206 pm=pf-fp;                       <span class="comment">% multiplier for upper filter</span>
+0207 k2=find(fp&gt;0,1);   <span class="comment">% FFT bin_1 k2+b1 is the first to contribute to both upper and lower filters</span>
+0208 k3=find(fp&lt;p,1,<span class="string">'last'</span>);  <span class="comment">% FFT bin_1 k3+b1 is the last to contribute to both upper and lower filters</span>
+0209 k4=numel(fp); <span class="comment">% FFT bin_1 k4+b1 is the last to contribute to any filters</span>
+0210 <span class="keyword">if</span> isempty(k2)
+0211     k2=k4+1;
+0212 <span class="keyword">end</span>
+0213 <span class="keyword">if</span> isempty(k3)
+0214     k3=0;
+0215 <span class="keyword">end</span>
+0216 <span class="keyword">if</span> any(w==<span class="string">'y'</span>)          <span class="comment">% preserve power in FFT</span>
+0217     mn=1; <span class="comment">% lowest fft bin required (1 = DC)</span>
+0218     mx=fn2+1; <span class="comment">% highest fft bin required (1 = DC)</span>
+0219     r=[ones(1,k2+b1-1) 1+fp(k2:k3) fp(k2:k3) repmat(p,1,fn2-k3-b1+1)]; <span class="comment">% filter number_1</span>
+0220     c=[1:k2+b1-1 k2+b1:k3+b1 k2+b1:k3+b1 k3+b1+1:fn2+1]; <span class="comment">% FFT bin1</span>
+0221     v=[ones(1,k2+b1-1) pm(k2:k3) 1-pm(k2:k3) ones(1,fn2-k3-b1+1)];
+0222 <span class="keyword">else</span>
+0223     r=[1+fp(1:k3) fp(k2:k4)]; <span class="comment">% filter number_1</span>
+0224     c=[1:k3 k2:k4]; <span class="comment">% FFT bin_1 - b1</span>
+0225     v=[pm(1:k3) 1-pm(k2:k4)];
+0226     mn=b1+1; <span class="comment">% lowest fft bin_1</span>
+0227     mx=b4+1;  <span class="comment">% highest fft bin_1</span>
+0228 <span class="keyword">end</span>
+0229 <span class="keyword">if</span> b1&lt;0
+0230     c=abs(c+b1-1)-b1+1;     <span class="comment">% convert negative frequencies into positive</span>
+0231 <span class="keyword">end</span>
+0232 <span class="comment">% end</span>
+0233 <span class="keyword">if</span> any(w==<span class="string">'n'</span>)
+0234     v=0.5-0.5*cos(v*pi);      <span class="comment">% convert triangles to Hanning</span>
+0235 <span class="keyword">elseif</span> any(w==<span class="string">'m'</span>)
+0236     v=0.5-0.46/1.08*cos(v*pi);  <span class="comment">% convert triangles to Hamming</span>
+0237 <span class="keyword">end</span>
+0238 <span class="keyword">if</span> sfact==2  <span class="comment">% double all except the DC and Nyquist (if any) terms</span>
+0239     msk=(c+mn&gt;2) &amp; (c+mn&lt;n-fn2+2);  <span class="comment">% there is no Nyquist term if n is odd</span>
+0240     v(msk)=2*v(msk);
+0241 <span class="keyword">end</span>
+0242 <span class="comment">%</span>
+0243 <span class="comment">% sort out the output argument options</span>
+0244 <span class="comment">%</span>
+0245 <span class="keyword">if</span> nargout &gt; 2
+0246     x=sparse(r,c,v);
+0247     <span class="keyword">if</span> nargout == 3     <span class="comment">% if exactly three output arguments, then</span>
+0248         mc=mn;          <span class="comment">% delete mc output for legacy code compatibility</span>
+0249         mn=mx;
+0250     <span class="keyword">end</span>
+0251 <span class="keyword">else</span>
+0252     x=sparse(r,c+mn-1,v,p,1+fn2);
+0253 <span class="keyword">end</span>
+0254 <span class="keyword">if</span> any(w==<span class="string">'u'</span>)
+0255     sx=sum(x,2);
+0256     x=x./repmat(sx+(sx==0),1,size(x,2));
+0257 <span class="keyword">end</span>
+0258 <span class="comment">%</span>
+0259 <span class="comment">% plot results if no output arguments or g option given</span>
+0260 <span class="comment">%</span>
+0261 <span class="keyword">if</span> ~nargout || any(w==<span class="string">'g'</span>) <span class="comment">% plot idealized filters</span>
+0262     ng=201;     <span class="comment">% 201 points</span>
+0263     me=mflh(1)+(0:p+1)'*melinc;
+0264     <span class="keyword">switch</span> wr
+0265                 <span class="keyword">case</span> <span class="string">'f'</span>
+0266             fe=me; <span class="comment">% defining frequencies</span>
+0267             xg=repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng);
+0268         <span class="keyword">case</span> <span class="string">'l'</span>
+0269             fe=10.^me; <span class="comment">% defining frequencies</span>
+0270             xg=10.^(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
+0271         <span class="keyword">case</span> <span class="string">'e'</span>
+0272             fe=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(me); <span class="comment">% defining frequencies</span>
+0273             xg=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
+0274         <span class="keyword">case</span> <span class="string">'b'</span>
+0275             fe=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(me); <span class="comment">% defining frequencies</span>
+0276             xg=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
+0277         <span class="keyword">otherwise</span>
+0278             fe=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(me); <span class="comment">% defining frequencies</span>
+0279             xg=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
+0280     <span class="keyword">end</span>
+0281 
+0282     v=1-abs(linspace(-1,1,ng));
+0283     <span class="keyword">if</span> any(w==<span class="string">'n'</span>)
+0284         v=0.5-0.5*cos(v*pi);      <span class="comment">% convert triangles to Hanning</span>
+0285     <span class="keyword">elseif</span> any(w==<span class="string">'m'</span>)
+0286         v=0.5-0.46/1.08*cos(v*pi);  <span class="comment">% convert triangles to Hamming</span>
+0287     <span class="keyword">end</span>
+0288     v=v*sfact;  <span class="comment">% multiply by 2 if double sided</span>
+0289     v=repmat(v,p,1);
+0290     <span class="keyword">if</span> any(w==<span class="string">'y'</span>)  <span class="comment">% extend first and last filters</span>
+0291         v(1,xg(1,:)&lt;fe(2))=sfact;
+0292         v(<span class="keyword">end</span>,xg(<span class="keyword">end</span>,:)&gt;fe(p+1))=sfact;
+0293     <span class="keyword">end</span>
+0294     <span class="keyword">if</span> any(w==<span class="string">'u'</span>) <span class="comment">% scale to unity sum</span>
+0295         dx=(xg(:,3:end)-xg(:,1:end-2))/2;
+0296         dx=dx(:,[1 1:ng-2 ng-2]);
+0297         vs=sum(v.*dx,2);
+0298         v=v./repmat(vs+(vs==0),1,ng)*fs/n;
+0299     <span class="keyword">end</span>
+0300     plot(xg',v',<span class="string">'b'</span>);
+0301     set(gca,<span class="string">'xlim'</span>,[fe(1) fe(end)]);
+0302     xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0303 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

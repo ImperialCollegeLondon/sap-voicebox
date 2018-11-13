@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_lpcifilt</title>
+  <meta name="keywords" content="v_lpcifilt">
+  <meta name="description" content="LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_lpcifilt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_lpcifilt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function u=v_lpcifilt(s,ar,t,dc,fade) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)
+
+ Inputs:    S             speech signal
+                AR(nf,p+1)    array of ar coefficients; one row per frame
+                T             column vector giving the index of the first sample in each frame
+           DC(nf)        optional dc component will be subtracted from the signal
+           FADE          AR coefficients will be linearly interpolated for FADE samples
+                         either side of frame boundaries</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function u=v_lpcifilt(s,ar,t,dc,fade)</a>
+0002 <span class="comment">%LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:    S             speech signal</span>
+0005 <span class="comment">%                AR(nf,p+1)    array of ar coefficients; one row per frame</span>
+0006 <span class="comment">%                T             column vector giving the index of the first sample in each frame</span>
+0007 <span class="comment">%           DC(nf)        optional dc component will be subtracted from the signal</span>
+0008 <span class="comment">%           FADE          AR coefficients will be linearly interpolated for FADE samples</span>
+0009 <span class="comment">%                         either side of frame boundaries</span>
+0010 <span class="comment">%</span>
+0011 
+0012 <span class="comment">% Example usage: generate an inverse filtered waveform</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%      [sp,fs]=v_readwav('infile.wav');</span>
+0015 <span class="comment">%      lpcord=2+floor(fs/1000);</span>
+0016 <span class="comment">%      spp=filter([1 -exp(-2*pi*50/fs)],1,sp);                    % preemphasis zero is at 50 Hz</span>
+0017 <span class="comment">%      [lpar,lpe,lpk]=v_lpcauto(spp,lpcord,floor([0.01 0.02]*fs));  % 20ms frame with 10ms frame increment</span>
+0018 <span class="comment">%      overlap=lpk(1,2)-lpk(2,1)+1;                               % overlap between adjacent frames</span>
+0019 <span class="comment">%      u=v_lpcifilt(sp,lpar,lpk(:,1)+floor(overlap/2),0,overlap/4); % do inverse filtering</span>
+0020 <span class="comment">%      v_writewav(u,fs,'outfile.wav');</span>
+0021 
+0022 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0023 <span class="comment">%      Version: $Id: v_lpcifilt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0026 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0029 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0030 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0031 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0032 <span class="comment">%   (at your option) any later version.</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0035 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0036 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0037 <span class="comment">%   GNU General Public License for more details.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0040 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0041 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0042 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0043 
+0044 [nf,p1]=size(ar);
+0045 <span class="keyword">if</span> nargin&lt;4 | isempty(dc)
+0046    dc=zeros(nf,1);
+0047 <span class="keyword">elseif</span> length(dc)==1
+0048    dc=dc(ones(nf,1));
+0049 <span class="keyword">end</span>
+0050 <span class="keyword">if</span> nf==1
+0051    u=filter(ar,1,s-dc);
+0052 <span class="keyword">else</span>
+0053    p=p1-1;
+0054    ns=length(s);
+0055    <span class="keyword">if</span> nargin&lt;5 | isempty(fade)
+0056       fade=0;
+0057       <span class="keyword">if</span> nargin&lt;3 | isempty(t)
+0058          t=p1+(0:nf-1)*(ns-p)/nf;
+0059       <span class="keyword">end</span>
+0060    <span class="keyword">end</span>
+0061    u=zeros(ns,1);
+0062    <span class="keyword">if</span> fade&lt;1
+0063       x0=(max(1,ceil(t(nf)-p)):ns)';
+0064       u(x0)=filter(ar(nf,:),1,s(x0)-dc(nf));
+0065       <span class="keyword">for</span> i=nf-1:-1:2
+0066          x0=(max(1,ceil(t(i)-p)):ceil(t(i+1)-1))';
+0067          u(x0)=filter(ar(i,:),1,s(x0)-dc(i));
+0068       <span class="keyword">end</span>
+0069       x0=(1:ceil(t(2)-1))';
+0070       u(x0)=filter(ar(1,:),1,s(x0)-dc(1));
+0071       
+0072    <span class="keyword">else</span>
+0073       tb=min(t(nf)+fade,(t(nf)+ns)/2);
+0074       ta=max(t(nf)-fade,(t(nf-1)+t(nf))/2);
+0075       t0=max(1,ceil(ta)-p);
+0076       x0=(t0:ns)';
+0077       xb=x0-tb;
+0078       u(x0)=filter(ar(nf,:),1,s(x0)-dc(nf)).*max((1+(xb-abs(xb))/(2*(tb-ta))),0);
+0079       <span class="keyword">for</span> i=nf-1:-1:2
+0080          td=tb;
+0081          tc=ta;
+0082          tb=min(t(i)+fade,ta);
+0083          ta=max(t(i)-fade,(t(i-1)+t(i))/2);
+0084          t1=floor(td);
+0085          t0=max(1,ceil(ta)-p);
+0086          x0=(t0:t1)';
+0087          xb=x0-tb;
+0088          xc=x0-tc;
+0089          u(x0)=u(x0)+filter(ar(i,:),1,s(x0)-dc(i)).*max((1+(xb-abs(xb))/(2*(tb-ta))-(xc+abs(xc))/(2*(td-tc))),0);
+0090       <span class="keyword">end</span>
+0091       t1=floor(tb);
+0092       x0=(1:t1)';
+0093       xc=x0-ta;
+0094       u(x0)=u(x0)+filter(ar(1,:),1,s(x0)-dc(1)).*(1-(xc+abs(xc))/(2*(tb-ta)));
+0095       
+0096    <span class="keyword">end</span>
+0097 <span class="keyword">end</span>
+0098</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

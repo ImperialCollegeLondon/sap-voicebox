@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_randvec</title>
+  <meta name="keywords" content="v_randvec">
+  <meta name="description" content="RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_randvec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_randvec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function x=v_randvec(n,m,c,w,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
+ generates a random matrix of size (|n|,p) where p is the maximum
+ dimension of M or C (see note below about row versus column vectos)
+  Inputs:  N        is the number of points to generate
+           M(K,P)   is the mean vectors (one row per mixture)
+           C(K,P)   are diagonal covariances (one row per mixture)
+        or C(P,P,K) are full covariance matrices (one per mixture)
+           W(K)     are the mixture weights (or omit if all mixtures have equal weight)
+           MODE     character string specifying options:
+                       g = real gaussian [default]
+                       c = complex gaussian
+                       l = lognormal
+
+ Outputs:  X(N,P) is the output data
+
+ Note this routine generates row vectors such that E((x-m)'*(x-m)) = C = cov(x). If
+ Alternatively x=(n,m',c,w,mode)' will generate column vectors satisfying E((x-m)*(x-m)') = C = cov(x').</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_randiscr.html" class="code" title="function x=v_randiscr(p,n,a)">v_randiscr</a>	RANDISCR Generate discrete random numbers with specified probabiities [X]=(P,N,A)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_randvec(n,m,c,w,mode)</a>
+0002 <span class="comment">%RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</span>
+0003 <span class="comment">% generates a random matrix of size (|n|,p) where p is the maximum</span>
+0004 <span class="comment">% dimension of M or C (see note below about row versus column vectos)</span>
+0005 <span class="comment">%  Inputs:  N        is the number of points to generate</span>
+0006 <span class="comment">%           M(K,P)   is the mean vectors (one row per mixture)</span>
+0007 <span class="comment">%           C(K,P)   are diagonal covariances (one row per mixture)</span>
+0008 <span class="comment">%        or C(P,P,K) are full covariance matrices (one per mixture)</span>
+0009 <span class="comment">%           W(K)     are the mixture weights (or omit if all mixtures have equal weight)</span>
+0010 <span class="comment">%           MODE     character string specifying options:</span>
+0011 <span class="comment">%                       g = real gaussian [default]</span>
+0012 <span class="comment">%                       c = complex gaussian</span>
+0013 <span class="comment">%                       l = lognormal</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Outputs:  X(N,P) is the output data</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Note this routine generates row vectors such that E((x-m)'*(x-m)) = C = cov(x). If</span>
+0018 <span class="comment">% Alternatively x=(n,m',c,w,mode)' will generate column vectors satisfying E((x-m)*(x-m)') = C = cov(x').</span>
+0019 
+0020 <span class="comment">% Bugs/suggestions</span>
+0021 <span class="comment">%    (1)  New mode 'x' to approximate chi squared</span>
+0022 
+0023 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
+0024 <span class="comment">%      Version: $Id: v_randvec.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0027 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0030 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0031 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0032 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0033 <span class="comment">%   (at your option) any later version.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0036 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0037 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0038 <span class="comment">%   GNU General Public License for more details.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0041 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0042 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 
+0045 <span class="comment">% first sort out the input arguments</span>
+0046 
+0047 sm=size(m);
+0048 <span class="keyword">if</span> nargin&lt;3
+0049     c=ones(sm);         <span class="comment">% default to unit variance</span>
+0050 <span class="keyword">end</span>
+0051 sc=size(c);
+0052 p=max(sm(2),sc(2));     <span class="comment">% data dimension</span>
+0053 k=sm(1);                <span class="comment">% number of mixtures</span>
+0054 fullc=(length(sc)&gt;2) || (sc(1)&gt;k);
+0055 <span class="keyword">if</span> nargin&lt;4
+0056     mode=<span class="string">'g'</span>;   <span class="comment">% default to gaussian</span>
+0057     w=ones(k,1);
+0058 <span class="keyword">else</span>
+0059     <span class="keyword">if</span> ischar(w)
+0060         mode = w;       <span class="comment">% w argument has been omitted</span>
+0061         w=ones(k,1);
+0062     <span class="keyword">elseif</span> nargin&lt;5
+0063         mode=<span class="string">'g'</span>;
+0064     <span class="keyword">end</span>
+0065 <span class="keyword">end</span>
+0066 ty=mode(1);   <span class="comment">% ignore all but first character for type</span>
+0067 x=zeros(n,p);   <span class="comment">% initialize output array</span>
+0068 <span class="keyword">if</span> sm(2)~=p
+0069     m=repmat(m,1,p);    <span class="comment">% if m is given as a scalar</span>
+0070 <span class="keyword">end</span>
+0071 <span class="keyword">if</span> sc(2) ~=p
+0072     c=repmat(c,1,p);    <span class="comment">% if c is given as a scalar</span>
+0073 <span class="keyword">end</span>
+0074 q=sqrt(0.5);
+0075 <span class="keyword">if</span> k&gt;1
+0076     kx=<a href="v_randiscr.html" class="code" title="function x=v_randiscr(p,n,a)">v_randiscr</a>(w,n);
+0077 <span class="keyword">else</span>
+0078     kx=ones(n,1);
+0079 <span class="keyword">end</span>
+0080 <span class="keyword">for</span> kk=1:k
+0081     nx=find(kx==kk);
+0082     nn=length(nx);
+0083     <span class="keyword">if</span> nn       <span class="comment">% check if we need to generate any from mixture kk</span>
+0084 
+0085         <span class="comment">% extract the mean and cov for this mixture</span>
+0086 
+0087         mm=m(kk,:);     <span class="comment">% mean vector</span>
+0088         <span class="keyword">if</span> fullc        <span class="comment">% full covariance matrix</span>
+0089             cc=c(:,:,kk);
+0090             <span class="keyword">if</span> ty==<span class="string">'l'</span>      <span class="comment">% lognormal distribution - convert mean and covariance</span>
+0091                 cc=log(1+cc./(mm.'*mm));
+0092                 mm=log(mm)-0.5*diag(cc).';
+0093             <span class="keyword">end</span>
+0094         <span class="keyword">else</span>
+0095             cc=c(kk,:);
+0096             <span class="keyword">if</span> ty==<span class="string">'l'</span>      <span class="comment">% lognormal distribution - convert mean and covariance</span>
+0097                 cc=log(1+cc(:).'./mm.^2);
+0098                 mm=log(mm)-0.5*cc;
+0099             <span class="keyword">end</span>
+0100         <span class="keyword">end</span>
+0101 
+0102         <span class="comment">% now generate nn complex or real values</span>
+0103 
+0104         <span class="keyword">if</span> ty==<span class="string">'c'</span>  <span class="comment">% generate complex values</span>
+0105             xx=q*randn(nn,p)+1i*q*randn(nn,p); <span class="comment">% complex-valued unit variance values</span>
+0106         <span class="keyword">else</span>
+0107             xx=randn(nn,p);   <span class="comment">% real-valued unit variance values</span>
+0108         <span class="keyword">end</span>;
+0109 
+0110         <span class="comment">% scale by the square root of the covariance matrix</span>
+0111 
+0112         <span class="keyword">if</span> fullc   <span class="comment">% full covariance covariance</span>
+0113             [v,d]=eig((cc+cc')/2);   <span class="comment">% force covariance matrix to be hermitian</span>
+0114             xx=(xx.*repmat(sqrt(abs(diag(d))).',nn,1))*v'+repmat(mm,nn,1); <span class="comment">% and also positive definite</span>
+0115         <span class="keyword">else</span>
+0116             xx=xx.*repmat(sqrt(abs(cc)),nn,1)+repmat(mm,nn,1); <span class="comment">% different mean/cov for each column</span>
+0117         <span class="keyword">end</span>
+0118         x(nx,:)=xx;
+0119     <span class="keyword">end</span>
+0120 <span class="keyword">end</span>
+0121 <span class="keyword">if</span> ty==<span class="string">'l'</span>  <span class="comment">% lognormal distribution</span>
+0122     x=exp(x);
+0123 <span class="keyword">end</span>
+0124 <span class="keyword">if</span> ~nargout
+0125     <span class="keyword">if</span> p==1
+0126         <span class="keyword">if</span> ty==<span class="string">'c'</span>
+0127             plot(real(x), imag(x),<span class="string">'+'</span>);
+0128             xlabel(<span class="string">'Real'</span>);
+0129             ylabel(<span class="string">'Imag'</span>);
+0130         <span class="keyword">else</span>
+0131             nbin=max(min(floor(sqrt(n)),50),5);
+0132             hist(x,nbin);
+0133             xlabel(<span class="string">'X'</span>);
+0134             ylabel(<span class="string">'Frequency'</span>);
+0135         <span class="keyword">end</span>
+0136     <span class="keyword">else</span>
+0137         [vv,iv]=sort(var(x,0,1));
+0138         iv=sort(iv(end-1:end));
+0139         plot(real(x(:,iv(1))), real(x(:,iv(2))),<span class="string">'+'</span>);
+0140         <span class="keyword">if</span> ty==<span class="string">'c'</span>
+0141             xylab=<span class="string">'Real[ x(%d) ]'</span>;
+0142         <span class="keyword">else</span>
+0143             xylab=<span class="string">'x(%d)'</span>;
+0144         <span class="keyword">end</span>
+0145         xlabel(sprintf(xylab,iv(1)));
+0146         ylabel(sprintf(xylab,iv(2)));
+0147     <span class="keyword">end</span>
+0148 <span class="keyword">end</span>
+0149</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

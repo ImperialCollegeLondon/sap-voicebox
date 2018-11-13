@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readcnx</title>
+  <meta name="keywords" content="v_readcnx">
+  <meta name="description" content="READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readcnx.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readcnx
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs,h]=v_readcnx(filename,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)
+
+ Inputs:
+           filename : character string containing filename (default extension .cnx)
+           mode:    't' = trim leading and trailing silences
+                    'h' = read header only
+             'd'    Look in data directory: v_voicebox('dir_data')
+
+ Outputs:
+           y  : column vector containing waveform
+           fs : sample frequency
+           h  : parameter array:
+                h(1) = number of samples in file
+                h(2) = status: 0=good, 1=bad
+                h(3) = start sample number
+                h(4) = ending sample number
+                h(5) = speaker identification number
+                h(6) = speaker age group
+                h(7) = speaker sex: 0=male, 1=female
+                h(8) = ascii character
+                h(9) = repetition number
+
+ This is the format of the BT Connex-S1 alphabet database
+ Note: the decoding is not particularly robust and assumes
+       that all headers contain the same sequence of fields</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,h]=v_readcnx(filename,mode)</a>
+0002 <span class="comment">%READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:</span>
+0005 <span class="comment">%           filename : character string containing filename (default extension .cnx)</span>
+0006 <span class="comment">%           mode:    't' = trim leading and trailing silences</span>
+0007 <span class="comment">%                    'h' = read header only</span>
+0008 <span class="comment">%             'd'    Look in data directory: v_voicebox('dir_data')</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Outputs:</span>
+0011 <span class="comment">%           y  : column vector containing waveform</span>
+0012 <span class="comment">%           fs : sample frequency</span>
+0013 <span class="comment">%           h  : parameter array:</span>
+0014 <span class="comment">%                h(1) = number of samples in file</span>
+0015 <span class="comment">%                h(2) = status: 0=good, 1=bad</span>
+0016 <span class="comment">%                h(3) = start sample number</span>
+0017 <span class="comment">%                h(4) = ending sample number</span>
+0018 <span class="comment">%                h(5) = speaker identification number</span>
+0019 <span class="comment">%                h(6) = speaker age group</span>
+0020 <span class="comment">%                h(7) = speaker sex: 0=male, 1=female</span>
+0021 <span class="comment">%                h(8) = ascii character</span>
+0022 <span class="comment">%                h(9) = repetition number</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% This is the format of the BT Connex-S1 alphabet database</span>
+0025 <span class="comment">% Note: the decoding is not particularly robust and assumes</span>
+0026 <span class="comment">%       that all headers contain the same sequence of fields</span>
+0027 
+0028 <span class="comment">%       Copyright (C) Mike Brookes 1998</span>
+0029 <span class="comment">%      Version: $Id: v_readcnx.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0032 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0036 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0037 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0038 <span class="comment">%   (at your option) any later version.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0041 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0042 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0043 <span class="comment">%   GNU General Public License for more details.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0046 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0047 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0048 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0049 
+0050 ix=[17 71; 18 0; 19 0; 10 0; 12 0; 13 77; 15 -1; 16 0; ];
+0051 
+0052 <span class="keyword">if</span> nargin&lt;2  mode=<span class="string">'0'</span>; <span class="keyword">end</span> 
+0053 <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0054     filename=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),filename);
+0055 <span class="keyword">end</span>
+0056 fid=fopen(filename,<span class="string">'rb'</span>,<span class="string">'l'</span>);
+0057 <span class="keyword">if</span> fid == -1
+0058     fn=[filename,<span class="string">'.cnx'</span>];
+0059     fid=fopen(fn,<span class="string">'rb'</span>,<span class="string">'l'</span>);
+0060     <span class="keyword">if</span> fid ~= -1 filename=fn; <span class="keyword">end</span>
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span> fid == -1 error(sprintf(<span class="string">'Can''t open %s for input'</span>,filename)); <span class="keyword">end</span>
+0063 [hdr,n]=fread(fid,512,<span class="string">'uchar'</span>);
+0064 <span class="keyword">if</span> n ~= 512 error(sprintf(<span class="string">'Can''t read header from connex file %s'</span>,filename)); <span class="keyword">end</span>
+0065 del=find(hdr(5:end)==<span class="string">'|'</span>)';
+0066 fs=sscanf(char(hdr(17:del(1)+3)),<span class="string">'%f'</span>);
+0067 h=zeros(size(ix,1),1);
+0068 <span class="keyword">for</span> i=1:length(h)
+0069     e=find(hdr(del(ix(i)-1)+5:del(ix(i))+3)==<span class="string">'='</span>);
+0070     <span class="keyword">if</span> ix(i,2)
+0071         h(i)=hdr(del(ix(i)-1)+e+5);
+0072         <span class="keyword">if</span> ix(i,2)&gt;0
+0073             h(i)=1-(h(i)==ix(i,2));
+0074         <span class="keyword">end</span>
+0075     <span class="keyword">else</span>
+0076         h(i)=sscanf(char(hdr(del(ix(i)-1)+e+5:del(ix(i))+3)),<span class="string">'%d'</span>);
+0077     <span class="keyword">end</span>
+0078 <span class="keyword">end</span>
+0079 <span class="keyword">if</span> any(mode ==<span class="string">'h'</span>)
+0080     y=[];
+0081 <span class="keyword">elseif</span> any(mode ==<span class="string">'t'</span>)
+0082     fseek(fid,2*h(2),0);
+0083     [y,n]=fread(fid,h(3)-h(2)+1,<span class="string">'short'</span>);
+0084     <span class="keyword">if</span> n ~= h(3)-h(2)+1 error(sprintf(<span class="string">'Error reading data from connex file %s'</span>,filename)); <span class="keyword">end</span>
+0085 <span class="keyword">else</span>
+0086     y=fread(fid,inf,<span class="string">'short'</span>);
+0087 <span class="keyword">end</span>
+0088 fseek(fid,0,1);
+0089 h=[ftell(fid)/2-256; h];
+0090 fclose(fid);</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

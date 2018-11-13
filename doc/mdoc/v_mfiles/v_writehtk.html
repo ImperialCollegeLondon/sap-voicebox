@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_writehtk</title>
+  <meta name="keywords" content="v_writehtk">
+  <meta name="description" content="WRITEHTK write data in HTK format []=(FILE,D,FP,TC)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_writehtk.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_writehtk
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>WRITEHTK write data in HTK format []=(FILE,D,FP,TC)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function v_writehtk(file,d,fp,tc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">WRITEHTK write data in HTK format []=(FILE,D,FP,TC)
+
+ Inputs:
+    FILE = name of file to write (no default extension)
+       D = data to write: one row per frame
+      FP = frame period in seconds
+      TC = type code = the sum of a data type and (optionally) one or more of the listed modifiers
+             0  WAVEFORM     Acoustic waveform
+             1  LPC          Linear prediction coefficients
+             2  LPREFC       LPC Reflection coefficients:  -v_lpcar2rf([1 LPC]);LPREFC(1)=[];
+             3  LPCEPSTRA    LPC Cepstral coefficients
+             4  LPDELCEP     LPC cepstral+delta coefficients (obsolete)
+             5  IREFC        LPC Reflection coefficients (16 bit fixed point)
+             6  MFCC         Mel frequency cepstral coefficients
+             7  FBANK        Log Fliter bank energies
+             8  MELSPEC      linear Mel-scaled spectrum
+             9  USER         User defined features
+            10  DISCRETE     Vector quantised codebook
+            11  PLP          Perceptual Linear prediction
+            12  ANON
+            64  _E  Includes energy terms                  hd(1)
+           128  _N  Suppress absolute energy               hd(2)
+           256  _D  Include delta coefs                    hd(3)
+           512  _A  Include acceleration coefs             hd(4)
+          1024  _C  Compressed                             hd(5)
+          2048  _Z  Zero mean static coefs                 hd(6)
+          4096  _K  CRC checksum (not implemented yet)     hd(7) (ignored)
+          8192  _0  Include 0'th cepstral coef             hd(8)
+         16384  _V  Attach VQ index                        hd(9)
+         32768  _T  Attach delta-delta-delta index         hd(10)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function v_writehtk(file,d,fp,tc)</a>
+0002 <span class="comment">%WRITEHTK write data in HTK format []=(FILE,D,FP,TC)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:</span>
+0005 <span class="comment">%    FILE = name of file to write (no default extension)</span>
+0006 <span class="comment">%       D = data to write: one row per frame</span>
+0007 <span class="comment">%      FP = frame period in seconds</span>
+0008 <span class="comment">%      TC = type code = the sum of a data type and (optionally) one or more of the listed modifiers</span>
+0009 <span class="comment">%             0  WAVEFORM     Acoustic waveform</span>
+0010 <span class="comment">%             1  LPC          Linear prediction coefficients</span>
+0011 <span class="comment">%             2  LPREFC       LPC Reflection coefficients:  -v_lpcar2rf([1 LPC]);LPREFC(1)=[];</span>
+0012 <span class="comment">%             3  LPCEPSTRA    LPC Cepstral coefficients</span>
+0013 <span class="comment">%             4  LPDELCEP     LPC cepstral+delta coefficients (obsolete)</span>
+0014 <span class="comment">%             5  IREFC        LPC Reflection coefficients (16 bit fixed point)</span>
+0015 <span class="comment">%             6  MFCC         Mel frequency cepstral coefficients</span>
+0016 <span class="comment">%             7  FBANK        Log Fliter bank energies</span>
+0017 <span class="comment">%             8  MELSPEC      linear Mel-scaled spectrum</span>
+0018 <span class="comment">%             9  USER         User defined features</span>
+0019 <span class="comment">%            10  DISCRETE     Vector quantised codebook</span>
+0020 <span class="comment">%            11  PLP          Perceptual Linear prediction</span>
+0021 <span class="comment">%            12  ANON</span>
+0022 <span class="comment">%            64  _E  Includes energy terms                  hd(1)</span>
+0023 <span class="comment">%           128  _N  Suppress absolute energy               hd(2)</span>
+0024 <span class="comment">%           256  _D  Include delta coefs                    hd(3)</span>
+0025 <span class="comment">%           512  _A  Include acceleration coefs             hd(4)</span>
+0026 <span class="comment">%          1024  _C  Compressed                             hd(5)</span>
+0027 <span class="comment">%          2048  _Z  Zero mean static coefs                 hd(6)</span>
+0028 <span class="comment">%          4096  _K  CRC checksum (not implemented yet)     hd(7) (ignored)</span>
+0029 <span class="comment">%          8192  _0  Include 0'th cepstral coef             hd(8)</span>
+0030 <span class="comment">%         16384  _V  Attach VQ index                        hd(9)</span>
+0031 <span class="comment">%         32768  _T  Attach delta-delta-delta index         hd(10)</span>
+0032 
+0033 <span class="comment">%   Thanks to Scott Otterson for fixing a bug in writing ultra-long frames</span>
+0034 <span class="comment">%   and to Mauricio Villegas for fixing the type specifications.</span>
+0035 
+0036 <span class="comment">%      Copyright (C) Mike Brookes 2005-2015</span>
+0037 <span class="comment">%      Version: $Id: v_writehtk.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0040 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0043 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0044 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0045 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0046 <span class="comment">%   (at your option) any later version.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0049 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0050 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0051 <span class="comment">%   GNU General Public License for more details.</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0054 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0055 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0056 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0057 
+0058 fid=fopen(file,<span class="string">'w'</span>,<span class="string">'b'</span>);
+0059 <span class="keyword">if</span> fid &lt; 0
+0060     error(<span class="string">'Cannot write to file %s'</span>,file);
+0061 <span class="keyword">end</span>
+0062 tc=bitset(tc,13,0);                 <span class="comment">% silently ignore a checksum request</span>
+0063 
+0064 [nf,nv]=size(d);
+0065 nhb=10;                             <span class="comment">% number of suffix codes</span>
+0066 ndt=6;                              <span class="comment">% number of bits for base type</span>
+0067 hb=floor(tc*pow2(-(ndt+nhb):-ndt));
+0068 hd=hb(nhb+1:-1:2)-2*hb(nhb:-1:1);   <span class="comment">% extract bits from type code</span>
+0069 dt=tc-pow2(hb(end),ndt);            <span class="comment">% low six bits of tc represent data type</span>
+0070 tc=tc-65536*(tc&gt;32767);
+0071 
+0072 <span class="keyword">if</span> ~dt &amp;&amp; (size(d,1)==1)             <span class="comment">% if waveform is a row vector</span>
+0073     d=d(:);                         <span class="comment">% ... convert it to a column vector</span>
+0074     [nf,nv]=size(d);
+0075 <span class="keyword">end</span>
+0076 
+0077 <span class="keyword">if</span> hd(5)                            <span class="comment">% if compressed</span>
+0078     dx=max(d,[],1);
+0079     dn=min(d,[],1);
+0080     a=ones(1,nv);                   <span class="comment">% default compression factors for cols with max=min</span>
+0081     b=dx;
+0082     mk=dx&gt;dn;
+0083     a(mk)=65534./(dx(mk)-dn(mk));   <span class="comment">% calculate compression factors for each column</span>
+0084     b(mk)=0.5*(dx(mk)+dn(mk)).*a(mk);
+0085     d=d.*repmat(a,nf,1)-repmat(b,nf,1); <span class="comment">% compress the data</span>
+0086     nf=nf+4;                        <span class="comment">% adjust frame count to include compression factors</span>
+0087 <span class="keyword">end</span>
+0088 fwrite(fid,nf,<span class="string">'int32'</span>);             <span class="comment">% write frame count</span>
+0089 fwrite(fid,round(fp*1.E7),<span class="string">'int32'</span>); <span class="comment">% write frame period (in 100 ns units)</span>
+0090 <span class="keyword">if</span> any(dt==[0,5,10]) || hd(5)        <span class="comment">% write data as shorts</span>
+0091     <span class="keyword">if</span> dt==5                        <span class="comment">% IREFC has fixed scale factor</span>
+0092         d=d*32767;
+0093         <span class="keyword">if</span> hd(5)
+0094             error(<span class="string">'Cannot use compression with IREFC format'</span>);
+0095         <span class="keyword">end</span>
+0096     <span class="keyword">end</span>
+0097     nby=nv*2;
+0098     <span class="keyword">if</span> nby&lt;=32767
+0099         fwrite(fid,nby,<span class="string">'int16'</span>);        <span class="comment">% write byte count</span>
+0100         fwrite(fid,tc,<span class="string">'int16'</span>);         <span class="comment">% write type code</span>
+0101         <span class="keyword">if</span> hd(5)
+0102             fwrite(fid,a,<span class="string">'float32'</span>);    <span class="comment">% write compression factors</span>
+0103             fwrite(fid,b,<span class="string">'float32'</span>);
+0104         <span class="keyword">end</span>
+0105         fwrite(fid,d.',<span class="string">'int16'</span>);        <span class="comment">% write data array</span>
+0106     <span class="keyword">end</span>
+0107 <span class="keyword">else</span>
+0108     nby=nv*4;
+0109     <span class="keyword">if</span> nby&lt;=32767
+0110         fwrite(fid,nby,<span class="string">'int16'</span>);        <span class="comment">% write byte count</span>
+0111         fwrite(fid,tc,<span class="string">'int16'</span>);         <span class="comment">% write type code</span>
+0112         fwrite(fid,d.',<span class="string">'float32'</span>);      <span class="comment">% write data array</span>
+0113     <span class="keyword">end</span>
+0114 <span class="keyword">end</span>
+0115 fclose(fid);
+0116 <span class="keyword">if</span> nby&gt;32767
+0117     delete(file);                       <span class="comment">% remove file if byte count is rubbish</span>
+0118     error(<span class="string">'byte count of frame is %d which exceeds 32767 (is data transposed?)'</span>,nby);
+0119 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

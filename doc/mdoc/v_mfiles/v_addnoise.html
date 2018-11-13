@@ -1,0 +1,483 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_addnoise</title>
+  <meta name="keywords" content="v_addnoise">
+  <meta name="description" content="V_ADDNOISE Add noise at a chosen SNR [z,p,fso]=(s,fsx,snr,m,nb,fsa)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_addnoise.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_addnoise
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_ADDNOISE Add noise at a chosen SNR [z,p,fso]=(s,fsx,snr,m,nb,fsa)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_ADDNOISE Add noise at a chosen SNR [z,p,fso]=(s,fsx,snr,m,nb,fsa)
+
+ Usage: (1) z=v_addnoise(s,fs,snr); % add white noise using P.56 for speech power with total ouput level at 0 dB
+        (2) z=v_addnoise(s,fs,snr,'',n,fn); % add noise from column vector n() at sample frequency fn with random start
+                                            % sample and wrapping around as required with a vorbis cross-fade
+        (3) z=v_addnoise(s,fs,snr,'AD');    % use A-weighting when calculating the SNR which is specified as a power ratio
+        (4) z=v_addnoise(s,fs,snr,'f',b,a); % generate noise using filter(b,a,randn(*,1)) but avoiding startup transient
+        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from stdspectrum.m)and plot a graph
+
+ Inputs:  s    input signal (column vector)
+        fsx    sampling frequency (Hz) or fso output from previous call
+        snr    target SNR in dB (or power ratio if 'D' option given) [default: Inf]
+          m    mode string [default = 'dxopEk']
+                (1) 'A'  use A-weighting when calculating SNR
+                (2) 'd'  SNR input and p output given in dB [default]
+                    'D'  SNR input and p output given as power ratio
+                (3) 'S'  no noise wrapping
+                    'w'  wrap noise if it is too short
+                    'W'  wrap noise with vorbis cross-fade of +-50 ms [default]
+                (4) 'b'  Go fom the beginning of the noise signal
+                    'o'  Add a random noise offset even if it means extra wraps [default]
+                    'O'  Add a random noise offset but minimize number of wraps
+                (5) 'p'  Use P.56 to calculate signal level [default]
+                    'e'  Use energy to calculate signal level
+                    'P'  Use P.56 to calculate noise level
+                    'E'  Use energy to calculate noise level [default]
+                (6) 'z'  Assume signal is already at 0 dB
+                    'Z'  Assume noise is already at 0 dB
+                (7) 'n'  make signal level = 0dB
+                    'N'  make noise level = 0dB
+                    't'  make sum of speech and noise levels = 0dB [default]
+                    'k'  preserve original signal power
+                    'K'  preserve original noise power
+                (8) 'x'  the output z contains input and noise as separate columns
+                (8) 'f'  Inputs nb and fsa specify a z-domain filter nb(z)/fsa(z) applied to Gaussian noise
+                (9) 'g'  plot graph [default if no output arguments]
+         nb    noise signal or stdspectrum type or numerator of noise filter if 'f' option (default: white noise)
+        fsa    noise sample frequency [default fsx] or denominator of noise filter if 'f' option
+
+ Outputs: z    noisy signal (single column unless 'x' option given
+          p    levels in dB or power (see 'dD' options): [s-in n-in s-out n-out]
+        fso    state output for fsx input to future call to allow s to be processed in blocks
+
+ The noise can have a different sample rate from the signal (fsa and fsx
+ inputs respectively) but if you will be re-using the noise multiple times
+ it is more efficient to use v_resample() on the noise signal. This is the
+ same as resample() but discards the initial and final filter transients.
+ By using the fso output as the fsx input in a subsequent call, you can
+ process a long speech signal in chuncks with the same noise. Note that
+ the speech and noise levels determined fom the first chunck are used for
+ all subsequent chuncks.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa)</a>
+0002 <span class="comment">%V_ADDNOISE Add noise at a chosen SNR [z,p,fso]=(s,fsx,snr,m,nb,fsa)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) z=v_addnoise(s,fs,snr); % add white noise using P.56 for speech power with total ouput level at 0 dB</span>
+0005 <span class="comment">%        (2) z=v_addnoise(s,fs,snr,'',n,fn); % add noise from column vector n() at sample frequency fn with random start</span>
+0006 <span class="comment">%                                            % sample and wrapping around as required with a vorbis cross-fade</span>
+0007 <span class="comment">%        (3) z=v_addnoise(s,fs,snr,'AD');    % use A-weighting when calculating the SNR which is specified as a power ratio</span>
+0008 <span class="comment">%        (4) z=v_addnoise(s,fs,snr,'f',b,a); % generate noise using filter(b,a,randn(*,1)) but avoiding startup transient</span>
+0009 <span class="comment">%        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from stdspectrum.m)and plot a graph</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Inputs:  s    input signal (column vector)</span>
+0012 <span class="comment">%        fsx    sampling frequency (Hz) or fso output from previous call</span>
+0013 <span class="comment">%        snr    target SNR in dB (or power ratio if 'D' option given) [default: Inf]</span>
+0014 <span class="comment">%          m    mode string [default = 'dxopEk']</span>
+0015 <span class="comment">%                (1) 'A'  use A-weighting when calculating SNR</span>
+0016 <span class="comment">%                (2) 'd'  SNR input and p output given in dB [default]</span>
+0017 <span class="comment">%                    'D'  SNR input and p output given as power ratio</span>
+0018 <span class="comment">%                (3) 'S'  no noise wrapping</span>
+0019 <span class="comment">%                    'w'  wrap noise if it is too short</span>
+0020 <span class="comment">%                    'W'  wrap noise with vorbis cross-fade of +-50 ms [default]</span>
+0021 <span class="comment">%                (4) 'b'  Go fom the beginning of the noise signal</span>
+0022 <span class="comment">%                    'o'  Add a random noise offset even if it means extra wraps [default]</span>
+0023 <span class="comment">%                    'O'  Add a random noise offset but minimize number of wraps</span>
+0024 <span class="comment">%                (5) 'p'  Use P.56 to calculate signal level [default]</span>
+0025 <span class="comment">%                    'e'  Use energy to calculate signal level</span>
+0026 <span class="comment">%                    'P'  Use P.56 to calculate noise level</span>
+0027 <span class="comment">%                    'E'  Use energy to calculate noise level [default]</span>
+0028 <span class="comment">%                (6) 'z'  Assume signal is already at 0 dB</span>
+0029 <span class="comment">%                    'Z'  Assume noise is already at 0 dB</span>
+0030 <span class="comment">%                (7) 'n'  make signal level = 0dB</span>
+0031 <span class="comment">%                    'N'  make noise level = 0dB</span>
+0032 <span class="comment">%                    't'  make sum of speech and noise levels = 0dB [default]</span>
+0033 <span class="comment">%                    'k'  preserve original signal power</span>
+0034 <span class="comment">%                    'K'  preserve original noise power</span>
+0035 <span class="comment">%                (8) 'x'  the output z contains input and noise as separate columns</span>
+0036 <span class="comment">%                (8) 'f'  Inputs nb and fsa specify a z-domain filter nb(z)/fsa(z) applied to Gaussian noise</span>
+0037 <span class="comment">%                (9) 'g'  plot graph [default if no output arguments]</span>
+0038 <span class="comment">%         nb    noise signal or stdspectrum type or numerator of noise filter if 'f' option (default: white noise)</span>
+0039 <span class="comment">%        fsa    noise sample frequency [default fsx] or denominator of noise filter if 'f' option</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">% Outputs: z    noisy signal (single column unless 'x' option given</span>
+0042 <span class="comment">%          p    levels in dB or power (see 'dD' options): [s-in n-in s-out n-out]</span>
+0043 <span class="comment">%        fso    state output for fsx input to future call to allow s to be processed in blocks</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">% The noise can have a different sample rate from the signal (fsa and fsx</span>
+0046 <span class="comment">% inputs respectively) but if you will be re-using the noise multiple times</span>
+0047 <span class="comment">% it is more efficient to use v_resample() on the noise signal. This is the</span>
+0048 <span class="comment">% same as resample() but discards the initial and final filter transients.</span>
+0049 <span class="comment">% By using the fso output as the fsx input in a subsequent call, you can</span>
+0050 <span class="comment">% process a long speech signal in chuncks with the same noise. Note that</span>
+0051 <span class="comment">% the speech and noise levels determined fom the first chunck are used for</span>
+0052 <span class="comment">% all subsequent chuncks.</span>
+0053 
+0054 <span class="comment">%      Copyright (C) Mike Brookes 2014</span>
+0055 <span class="comment">%      Version: $Id: v_addnoise.m 10461 2018-03-29 13:30:51Z dmb $</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0058 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0061 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0062 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0063 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0064 <span class="comment">%   (at your option) any later version.</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0067 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0068 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0069 <span class="comment">%   GNU General Public License for more details.</span>
+0070 <span class="comment">%</span>
+0071 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0072 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0073 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0074 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0075 
+0076 ns=numel(s);        <span class="comment">% number of speech samples</span>
+0077 <span class="keyword">if</span> isstruct(fsx)
+0078     fs=fsx.fs;      <span class="comment">% sample frequency</span>
+0079     nb=fsx.nb;        <span class="comment">% noise samples or filter numerator</span>
+0080     genf=fsx.genf;  <span class="comment">% filtered white noise flag</span>
+0081     nsc=fsx.nsc;    <span class="comment">% cumulative sample count</span>
+0082     gm=fsx.gm; <span class="comment">% gains for speech and noise</span>
+0083     p=fsx.p; <span class="comment">% output powers</span>
+0084     <span class="keyword">if</span> genf
+0085         zof=fsx.zof;  <span class="comment">% noise generating filter state</span>
+0086         fsa=fsx.fsa;  <span class="comment">% filter denominator</span>
+0087     <span class="keyword">else</span>
+0088         ioff=fsx.ioff;  <span class="comment">% offset in noise signal</span>
+0089     <span class="keyword">end</span>
+0090     <span class="comment">%% decode input arguments</span>
+0091 <span class="keyword">else</span>
+0092     fs=fsx;         <span class="comment">% sample frequency</span>
+0093     nsc=0;          <span class="comment">% cumulative sample count</span>
+0094     <span class="keyword">if</span> nargin&lt;3 || ~numel(snr)
+0095         snr=Inf;
+0096     <span class="keyword">end</span>
+0097     <span class="keyword">if</span> nargin&lt;4 || ~numel(m)
+0098         m=<span class="string">''</span>;
+0099     <span class="keyword">end</span>
+0100     <span class="keyword">if</span> nargin&lt;5 || ~numel(nb)
+0101         nb=1;   <span class="comment">% default is white noise</span>
+0102     <span class="keyword">end</span>
+0103     <span class="keyword">if</span> any(m==<span class="string">'A'</span>) &amp;&amp; (~any(m==<span class="string">'z'</span>) || ~any(m==<span class="string">'Z'</span>))
+0104         [awb,awa]=stdspectrum(2,<span class="string">'z'</span>,fs); <span class="comment">% create an A-weighting filter</span>
+0105     <span class="keyword">end</span>
+0106     <span class="keyword">if</span> any(m==<span class="string">'z'</span>)
+0107         se=1;                       <span class="comment">% speech power given as 0 dB</span>
+0108     <span class="keyword">elseif</span> any(m==<span class="string">'A'</span>)
+0109         sf=filter(awb,awa,s);        <span class="comment">% apply A-weighting</span>
+0110         <span class="keyword">if</span> any(m==<span class="string">'e'</span>)
+0111             se=mean(sf.^2);         <span class="comment">% use normal energy</span>
+0112         <span class="keyword">else</span>
+0113             se=activlev(sf,fs);     <span class="comment">% or else P.56</span>
+0114         <span class="keyword">end</span>
+0115     <span class="keyword">else</span>
+0116         <span class="keyword">if</span> any(m==<span class="string">'e'</span>)
+0117             se=mean(s.^2);          <span class="comment">% use normal energy</span>
+0118         <span class="keyword">else</span>
+0119             se=activlev(s,fs);      <span class="comment">% or else P.56</span>
+0120         <span class="keyword">end</span>
+0121     <span class="keyword">end</span>
+0122     <span class="comment">%% Now sort out the noise</span>
+0123     genf=any(m==<span class="string">'f'</span>) || ischar(nb) || numel(nb)==1;     <span class="comment">% generate noise locally</span>
+0124     <span class="keyword">if</span> genf   <span class="comment">% generate noise locally</span>
+0125         <span class="keyword">if</span> ~any(m==<span class="string">'f'</span>) <span class="comment">% specify standard spectrum</span>
+0126             [nb,fsa]=stdspectrum(nb,<span class="string">'z'</span>,fs);
+0127         <span class="keyword">end</span>
+0128         [dum1,zof,dum2,ne]=randfilt(nb,fsa,0);
+0129         <span class="keyword">if</span> any(m==<span class="string">'A'</span>)                                  <span class="comment">% convolve with A-weighting to find power</span>
+0130             [dum1,dum2,dum3,ne]=randfilt(conv(nb,awb),conv(fsa,awa),0);
+0131         <span class="keyword">end</span>
+0132         <span class="comment">%% use the supplied noise signal</span>
+0133     <span class="keyword">else</span>                                    <span class="comment">% noise signal supplied</span>
+0134         hov=round(0.1*fs);                  <span class="comment">% fading overlap width</span>
+0135         moff=min(2*any(m==<span class="string">'b'</span>)+any(m==<span class="string">'O'</span>),2);      <span class="comment">% moff=0='o',1='O', 2='b'</span>
+0136         mwr=min(2*any(m==<span class="string">'S'</span>)+any(m==<span class="string">'w'</span>),2);       <span class="comment">% mwr= 0='W',1='w', 2='S'</span>
+0137         nn=numel(nb);
+0138         <span class="keyword">if</span> size(nn,2)&gt;1
+0139             error(<span class="string">'Noise signal must be a column vector'</span>);
+0140         <span class="keyword">end</span>
+0141         <span class="keyword">if</span> nargin&lt;6
+0142             fsa=fs;         <span class="comment">% default sample rate is same as for speech</span>
+0143         <span class="keyword">end</span>
+0144         <span class="keyword">if</span> fsa~=fs          <span class="comment">% need to do resampling</span>
+0145             frat=fs/fsa;
+0146             nbadd=ceil(10*max(frat,1)+1);         <span class="comment">% half-length of filter at output sample rate</span>
+0147             nreq=ceil((ns+4*nbadd+hov+10)/frat);  <span class="comment">% worst case number of input samples we need</span>
+0148             <span class="keyword">if</span> nargout&lt;3 &amp;&amp; nreq&lt;nn                              <span class="comment">% just resample the bit we need</span>
+0149                 ioff=0;                             <span class="comment">% initial offset in original noise signal</span>
+0150                 <span class="keyword">if</span> moff&lt;2
+0151                     <span class="keyword">if</span> mwr&lt;2 &amp;&amp; moff==0             <span class="comment">% any offset allowed</span>
+0152                         ioff=floor(rand(1)*nn);
+0153                     <span class="keyword">else</span>
+0154                         ioff=floor(rand(1)*(nn-nreq)); <span class="comment">% choose offset to prevent wrapping</span>
+0155                     <span class="keyword">end</span>
+0156                 <span class="keyword">end</span>
+0157                 <span class="keyword">if</span> nreq+ioff&lt;nn <span class="comment">% no wrapping required</span>
+0158                     nb=resample(reshape(nb(ioff+1:ioff+nreq),[],1),round(fs*10),round(fsa*10));
+0159                     moff=2; <span class="comment">% start at beginning</span>
+0160                     mwr=2;  <span class="comment">% no wrapping</span>
+0161                 <span class="keyword">else</span> <span class="comment">% resample portions at the beginning and end and define offset to avoid the middle</span>
+0162                     nb=resample([nb(1:nreq+ioff-nn+ceil(10/frat));nb(ioff+1:nn)],round(fs*10),round(fsa*10));
+0163                     joff=length(nb)-floor((nn-ioff)*frat)+5-nbadd; <span class="comment">% offset to use when wrapping</span>
+0164                     moff=3;
+0165                 <span class="keyword">end</span>
+0166             <span class="keyword">else</span> <span class="comment">% resample the entire noise signal</span>
+0167                 nb=resample(nb(:),round(fs*10),round(fsa*10));
+0168                 <span class="keyword">if</span> length(nb)&lt;=2*nbadd
+0169                     error(<span class="string">'noise signal too short after resampling'</span>);
+0170                 <span class="keyword">end</span>
+0171             <span class="keyword">end</span>
+0172             nb=nb(nbadd+1:end-nbadd); <span class="comment">% trim ends to avoid resampling transients</span>
+0173             nn=numel(nb);
+0174         <span class="keyword">end</span>
+0175         <span class="comment">%% determine the starting offset within the noise signal</span>
+0176         ioff=0;                         <span class="comment">% initial offset in noise signal</span>
+0177         <span class="keyword">switch</span> mwr
+0178             <span class="keyword">case</span> 2                      <span class="comment">% mwr=2: no wrapping</span>
+0179                 <span class="keyword">if</span> nn&lt;ns
+0180                     error(<span class="string">'noise signal too short'</span>);
+0181                 <span class="keyword">end</span>
+0182                 <span class="keyword">if</span> moff&lt;2 <span class="comment">% choose an offset</span>
+0183                     ioff=floor(rand(1)*(nn-ns));
+0184                 <span class="keyword">end</span>
+0185             <span class="keyword">case</span> 1                      <span class="comment">% mwr=1: abrupt wrapping</span>
+0186                 <span class="keyword">switch</span> moff
+0187                     <span class="keyword">case</span> 3
+0188                         ioff=joff;  <span class="comment">% use pre-calculated offset</span>
+0189                     <span class="keyword">case</span> 1          <span class="comment">% minimize number of wraps</span>
+0190                         ioff=floor(rand(1)*(nn-mod(ns-1,nn)));
+0191                     <span class="keyword">case</span> 0          <span class="comment">% allow extra wraps</span>
+0192                         ioff=floor(rand(1)*nn);
+0193                 <span class="keyword">end</span>
+0194 
+0195             <span class="keyword">case</span> 0                   <span class="comment">% mwr=0: faded wrapping</span>
+0196                 hov=round(0.1*fs); <span class="comment">% overlap is 0.1 seconds</span>
+0197                 <span class="keyword">if</span> nn&lt;2*hov
+0198                     error(<span class="string">'noise signal too short'</span>);
+0199                 <span class="keyword">end</span>
+0200                 <span class="keyword">switch</span> moff
+0201                     <span class="keyword">case</span> 3
+0202                         ioff=joff;  <span class="comment">% use pre-calculated offset</span>
+0203                     <span class="keyword">case</span> 1          <span class="comment">% minimize number of wraps</span>
+0204                         ioff=floor(rand(1)*(nn+1-2*hov-mod(ns-hov-1,nn-hov)));
+0205                     <span class="keyword">case</span> 0          <span class="comment">% allow any number of wraps</span>
+0206                         ioff=floor(rand(1)*nn-hov);
+0207                 <span class="keyword">end</span>
+0208                 <span class="keyword">if</span> nargin&gt;=3 || ioff+ns&gt;nn        <span class="comment">% we need to create a wrapped noise signal</span>
+0209                     wf=sin(0.25*pi*(1+cos((1:hov)*pi/(1+hov))))';
+0210                     nb(nn-hov+1:nn)=nb(1:hov).*wf(hov:-1:1)+nb(nn-hov+1:nn).*wf;
+0211                     nb(1:hov)=[];
+0212                 <span class="keyword">end</span>
+0213         <span class="keyword">end</span>
+0214         <span class="keyword">if</span> any(m==<span class="string">'Z'</span>)
+0215             ne=1;                       <span class="comment">% noise power given as 0 dB</span>
+0216         <span class="keyword">elseif</span> any(m==<span class="string">'A'</span>)
+0217             sf=filter(awb,awa,nb);      <span class="comment">% apply A-weighting</span>
+0218             <span class="keyword">if</span> any(m==<span class="string">'P'</span>)
+0219                 ne=activlev(sf,fs);     <span class="comment">% use P.56 for noise power</span>
+0220             <span class="keyword">else</span>
+0221                 ne=mean(sf.^2);         <span class="comment">% or just normal energy</span>
+0222             <span class="keyword">end</span>
+0223         <span class="keyword">else</span>
+0224             <span class="keyword">if</span> any(m==<span class="string">'P'</span>)
+0225                 ne=activlev(nb,fs);     <span class="comment">% use P.56 for noise power</span>
+0226             <span class="keyword">else</span>
+0227                 ne=mean(nb.^2);          <span class="comment">% or just normal energy</span>
+0228             <span class="keyword">end</span>
+0229         <span class="keyword">end</span>
+0230     <span class="keyword">end</span>
+0231     <span class="comment">%% Determine scaling factors</span>
+0232     <span class="keyword">if</span> any(m==<span class="string">'D'</span>)
+0233         snre=snr;
+0234     <span class="keyword">else</span>
+0235         snre=10^(0.1*snr); <span class="comment">% convert from dB</span>
+0236     <span class="keyword">end</span>
+0237     <span class="keyword">if</span> snre&gt;1 <span class="comment">% positive SNR -&gt; fix the signal level</span>
+0238         <span class="keyword">if</span> any(m==<span class="string">'n'</span>)
+0239             sze=1;
+0240         <span class="keyword">elseif</span> any(m==<span class="string">'N'</span>)
+0241             sze=snre;
+0242         <span class="keyword">elseif</span> any(m==<span class="string">'K'</span>)
+0243             sze=ne*snre;
+0244         <span class="keyword">elseif</span> any(m==<span class="string">'k'</span>)
+0245             sze=se;
+0246         <span class="keyword">else</span>
+0247             sze=1/(1+1/snre);
+0248         <span class="keyword">end</span>
+0249         nze=sze/snre;
+0250     <span class="keyword">else</span> <span class="comment">% negative SNR -&gt; fix the noise level</span>
+0251         <span class="keyword">if</span> any(m==<span class="string">'n'</span>)
+0252             nze=1/snre;
+0253         <span class="keyword">elseif</span> any(m==<span class="string">'N'</span>)
+0254             nze=1;
+0255         <span class="keyword">elseif</span> any(m==<span class="string">'K'</span>)
+0256             nze=ne;
+0257         <span class="keyword">elseif</span> any(m==<span class="string">'k'</span>)
+0258             nze=se/snre;
+0259         <span class="keyword">else</span>
+0260             nze=1/(1+snre);
+0261         <span class="keyword">end</span>
+0262         sze=nze*snre;
+0263     <span class="keyword">end</span>
+0264     pe=[se ne sze nze]; <span class="comment">% powers</span>
+0265     <span class="keyword">if</span> (se==0 &amp;&amp; sze&gt;0) || (ne==0 &amp;&amp; nze&gt;0) || sze==Inf || nze==Inf
+0266         <span class="keyword">if</span> (se==0 &amp;&amp; sze&gt;0) || sze==Inf
+0267             error(<span class="string">'Infinite gain for signal with mode ''%s'': input=%.1f dB, output=%.1f dB'</span>,m,db(se)/2,db(sze)/2);
+0268         <span class="keyword">else</span>
+0269             error(<span class="string">'Infinite gain for noise with mode ''%s'': input=%.1f dB, output=%.1f dB'</span>,m,db(ne)/2,db(nze)/2);
+0270         <span class="keyword">end</span>
+0271     <span class="keyword">end</span>
+0272     gm=sqrt([sze/(se+(se==0)) nze/(ne+(ne==0))]); <span class="comment">% gains for speech and noise</span>
+0273     p=pe;
+0274     <span class="keyword">if</span> ~any(m==<span class="string">'D'</span>) &amp;&amp; nargout~=1
+0275         mk=pe~=Inf &amp; pe~=0;
+0276         p(mk)=10*log10(pe(mk));
+0277         p(pe==0)=-Inf;
+0278     <span class="keyword">end</span>
+0279 <span class="keyword">end</span>
+0280 <span class="keyword">if</span> gm(2)&gt;0          <span class="comment">% only generate noise if it has a non-zero gain</span>
+0281     nn=length(nb);  <span class="comment">% caluculate the length of the noise signal or filter numerator</span>
+0282     <span class="keyword">if</span> genf         <span class="comment">% we need to generate new noise</span>
+0283         <span class="keyword">if</span> nn==1 &amp;&amp; numel(fsa)==1 &amp;&amp; nb==1 &amp;&amp; fsa==1
+0284             n=randn(ns,1);
+0285         <span class="keyword">else</span>
+0286             [n,zof]=filter(nb,fsa,randn(ns,1),zof);
+0287         <span class="keyword">end</span>
+0288     <span class="keyword">else</span> <span class="comment">% use supplied noise signal</span>
+0289         n=nb(1+mod(ioff+nsc:ioff+ns-1+nsc,nn));
+0290     <span class="keyword">end</span>
+0291     <span class="keyword">if</span> any(m==<span class="string">'x'</span>)
+0292         z=[gm(1)*s(:) gm(2)*n(:)];
+0293     <span class="keyword">else</span>
+0294         z=gm(1)*s(:)+gm(2)*n(:);
+0295     <span class="keyword">end</span>
+0296 <span class="keyword">elseif</span> any(m==<span class="string">'x'</span>)
+0297     z=[gm(1)*s(:) zeros(ns,1)];
+0298 <span class="keyword">else</span>
+0299 z=gm(1)*s(:);
+0300 <span class="keyword">end</span>
+0301 <span class="comment">%% create output state if required</span>
+0302 <span class="keyword">if</span> nargout&gt;2
+0303     fso.fs=fs;          <span class="comment">% sample frequency</span>
+0304     fso.genf=genf;      <span class="comment">% filtered white noise flag</span>
+0305     fso.nsc=nsc+ns;     <span class="comment">% cumulative sample count</span>
+0306     fso.nb=nb;            <span class="comment">% noise signal or filter numerator</span>
+0307     fso.gm=gm; <span class="comment">% gains for speech and noise</span>
+0308     fso.p=p; <span class="comment">% output powers</span>
+0309     <span class="keyword">if</span> genf
+0310         fso.zof=zof;        <span class="comment">% noise generating filter state</span>
+0311         fso.fsa=fsa;        <span class="comment">% filter denominator</span>
+0312     <span class="keyword">else</span>
+0313         fso.ioff=ioff;      <span class="comment">% offset in noise signal</span>
+0314     <span class="keyword">end</span>
+0315 <span class="keyword">end</span>
+0316 <span class="comment">%% now plot if no output arguments</span>
+0317 <span class="keyword">if</span> ~isstruct(fsx) &amp;&amp; (~nargout || any(m==<span class="string">'g'</span>))
+0318     tax=(1:ns)/fs;
+0319     subplot(3,1,3)
+0320     zp=sqrt(mean(z.^2));
+0321     <span class="keyword">if</span> zp&gt;0
+0322         lg=20*log10(zp);
+0323     <span class="keyword">else</span>
+0324         lg=-Inf;
+0325     <span class="keyword">end</span>
+0326     plot(tax,z,<span class="string">'-y'</span>,tax([1 ns]),[0 0],<span class="string">':k'</span>,tax([1 ns]),[zp zp],<span class="string">'-b'</span>);
+0327     texthvc(tax(1),zp,sprintf(<span class="string">' %.1f dB'</span>,lg),<span class="string">'lbb'</span>);
+0328     axisenlarge([-1.005 -1.05]);
+0329     ylim=get(gca,<span class="string">'ylim'</span>);
+0330     <span class="keyword">if</span> snre==0
+0331         lg=-Inf;
+0332     <span class="keyword">elseif</span> snre==Inf
+0333         lg=Inf;
+0334     <span class="keyword">else</span>
+0335         lg=10*log10(snre);
+0336     <span class="keyword">end</span>
+0337     texthvc(tax(ns),ylim(2),sprintf(<span class="string">'%.1f dB SNR '</span>,lg),<span class="string">'rtb'</span>);
+0338     xlabel(<span class="string">'Time (s)'</span>);
+0339     ylabel(<span class="string">'Output'</span>);
+0340     subplot(3,1,2)
+0341     <span class="keyword">if</span> nze==0
+0342         plot(tax([1 ns]),[0 0],<span class="string">'-y'</span>);
+0343         axisenlarge([-1.005 1]);
+0344     <span class="keyword">else</span>
+0345         plot(tax,n,<span class="string">'-y'</span>,tax([1 ns]),[0 0],<span class="string">':k'</span>,tax([1 ns]),sqrt(pe(2))*[1 1],<span class="string">'-b'</span>);
+0346         <span class="keyword">if</span> pe(2)==0
+0347             lg=-Inf;
+0348         <span class="keyword">elseif</span> pe(2)==Inf
+0349             lg=Inf;
+0350         <span class="keyword">else</span>
+0351             lg=10*log10(pe(2));
+0352         <span class="keyword">end</span>
+0353         texthvc(tax(1),sqrt(pe(2)),sprintf(<span class="string">' %.1f dB'</span>,lg),<span class="string">'lbb'</span>);
+0354         axisenlarge([-1.005 -1.05]);
+0355         ylim=get(gca,<span class="string">'ylim'</span>);
+0356         <span class="keyword">if</span> pe(4)/pe(2)==0
+0357             lg=-Inf;
+0358         <span class="keyword">elseif</span> pe(4)/pe(2)==Inf
+0359             lg=Inf;
+0360         <span class="keyword">else</span>
+0361             lg=10*log10(pe(4)/pe(2));
+0362         <span class="keyword">end</span>
+0363         texthvc(tax(ns),ylim(2),sprintf(<span class="string">'\\times %.1f dB '</span>,lg),<span class="string">'rtb'</span>);
+0364     <span class="keyword">end</span>
+0365     ylabel(<span class="string">'Noise'</span>);
+0366     subplot(3,1,1)
+0367     plot(tax,s,<span class="string">'-y'</span>,tax([1 ns]),[0 0],<span class="string">':k'</span>,tax([1 ns]),sqrt(pe(1))*[1 1],<span class="string">'-b'</span>);
+0368     <span class="keyword">if</span> pe(1)==0
+0369         lg=-Inf;
+0370     <span class="keyword">elseif</span> pe(1)==Inf
+0371         lg=Inf;
+0372     <span class="keyword">else</span>
+0373         lg=10*log10(pe(1));
+0374     <span class="keyword">end</span>
+0375     texthvc(tax(1),sqrt(pe(1)),sprintf(<span class="string">' %.1f dB'</span>,lg),<span class="string">'lbb'</span>);
+0376     axisenlarge([-1.005 -1.05]);
+0377     ylim=get(gca,<span class="string">'ylim'</span>);
+0378     <span class="keyword">if</span> pe(3)/pe(1)==0
+0379         lg=-Inf;
+0380     <span class="keyword">elseif</span> pe(3)/pe(1)==Inf
+0381         lg=Inf;
+0382     <span class="keyword">else</span>
+0383         lg=10*log10(pe(3)/pe(1));
+0384     <span class="keyword">end</span>
+0385     texthvc(tax(ns),ylim(2),sprintf(<span class="string">'\\times %.1f dB '</span>,lg),<span class="string">'rtb'</span>);
+0386     ylabel(<span class="string">'Signal'</span>);
+0387 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

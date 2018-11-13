@@ -1,0 +1,589 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_sphrharm</title>
+  <meta name="keywords" content="v_sphrharm">
+  <meta name="description" content="SPHRHARM  forward and inverse spherical harmonic transform">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_sphrharm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_sphrharm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SPHRHARM  forward and inverse spherical harmonic transform</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [u,v,w]=v_sphrharm(m,a,b,c,d) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SPHRHARM  forward and inverse spherical harmonic transform
+
+ Usage: (1) y=('f',n,x)      % Calculate complex transform of spatial data x up to order n
+
+        (2) y=('fr',n,x)     % Calculate real transform of spatial data x(ne,na) up to order n
+                             % x is specified on a uniform grid with inclination e=(0.5:ne-0.5)*pi/ne
+                             % and azimuth a=(0:na-1)*2*pi/na. The North pole has inclination 0 and
+                             % azimuths increase going East.
+
+        (3) y=('fd',n,e,a,v) % Calculate transform of impulse at (e(i),a(i)) of height v(i) up to order n
+                             % e(i), a(i) and v(i) should be the same dimension; v defaults to 1.
+
+        (4) x=('i',y,ne,na)  % Calculate spatial data from spherical harmonics y on
+                             % a uniform grid with ne inclinations and na azimuths
+
+        (5) [e,a,w]=('cg',ne,na)   % Calculate the inclinations, azimuths and
+                                   % quadrature weights of a Gaussian sampling grid
+
+        (6) n=2;             % illustrate real basis functions upto order 2
+            for i=0:n
+              for j=-i:i
+                subplot(n+1,2*n+1,i*(2*n+1)+j+n+1);
+                v_sphrharm('irp',[zeros(1,i^2+i+j) 1],25,25);
+              end
+            end
+
+  Inputs:  m string specifying various options:
+               'f' forward transform
+               'i' inverse transform
+               'c' calculate the coordinates of the sampling grid [default if f or i omitted]
+               'r' real spherical harmonics instead of complex
+               'u' uniform inclination grid:  e=(0.5:ne-0.5)*pi/ne [default]
+                      for invertibility, ne&gt;=2N+1 for order N
+               'U' uniform inclination grid:  e=(0:ne-1)*pi/ne
+                      for invertibility, ne&gt;=2N+1 for order N
+               'g' gaussian inclination grid (non-uniform but fewer samples needed)
+                      for invertibility, ne&gt;=N+1 for order N
+               'a' arbitrary (specified by user - inverse transform only)
+               'd' delta function [forward transform only]
+               'p' plot result
+               'P' plot with colourbar
+
+           The remaining inputs depend on the mode specified:
+               'f'  a         order of transform
+                    b(ne,na)  input data array on the chosen inclination-azimuth sampling grid
+               'fd' a         order of transform
+                    b(k)      inclinations of k delta functions
+                    c(k)      azimuths of k delta functions
+                    d(k)      amplitudes of k delta functions [default=1]
+               'i'  a()       spherical harmonics as a single row vector in the order:
+                                 (0,0),(1,-1),(1,0),(1,1),(2,-2),(2,-1),...
+                              To access as a 2-D harmonic: Y(n,m)=a(n^2+n+m+1) where n=0:N, m=-n:n
+                    b         number of inclination values in output grid
+                    c         number of azimuth values in output grid
+               'c'  a         number of inclination values in output grid
+                    b         number of azimuth values in output grid
+
+ Outputs:  u output data according to transform direction:
+                'f': spherical harmonics as a single row vector in the order:
+                        (0,0),(1,-1),(1,0),(1,1),(2,-2),(2,-1),...
+                     To access as a 2-D harmonic: Y(n,m)=u(n^2+n+m+1) where n=0:N, m=-n:n
+                'i': u(ne,na) is spatial data sampled on an azimuth-inclination grid
+                     with ne inclination points (in 0:pi) and na azimuth points (in 0:2*pi)
+                'c': u(ne) gives inclination grid positions with 0 being the North pole
+           v(na) gives azimuth grid positions
+           w(ne) gives the quadrature weights used in the transform
+
+ Suppose f(e,a) is a complex-valued function defined on the surface of the
+ sphere (0&lt;=e&lt;=pi, 0&lt;=a&lt;2pi) where e=inclination=pi/2-elevation and
+ a=azimuth. (0,*) is the North pole, (pi/2,0) is on the equator near
+ Ghana and (pi/2,pi/2) is on the equator near India.
+
+ We can approximate f(e,a) using complex spherical harmonics as
+ f(e,a) = sum(F(n,m)*u(n,m,e,a)) where the sum
+ is over n=0:N,m=-n:n giving a total of (N+1)^2 coefficients F(n,m).
+
+ If f(e,a) happens to be real-valued, then we can transform the
+ coefficients using G(n,0)=F(n,0) and, for m&gt;0,
+ [G(n,m); G(n,-m)]=sqrt(0.5)*[1 1; 1i -1i]*[F(n,m); F(n,-m)]
+ to give the real spherical harmonic coefficients G(n,m).
+
+ The basis functions u(n,m,e,a) are orthonormal under the inner product
+ &lt;u(e,a),v(e,a)&gt; = integral(u(e,a)*v'(e,a)*sin(e)*de*da).
+
+  Minimum spatial grid for invertibility:
+     Gaussian grid: ne &gt;= N+1,  na &gt;= 2N+1
+     Uniform grid:  ne &gt;= 2N+1, na &gt;= 2N+1
+     An inverse transform followed by a forward transform will restore the
+     original coefficient values provided that the sampling grid is large
+     enough. The advantage of the Gaussian grid is that it can be smaller.
+
+   Data formats:
+     (1) Spatial Data: x=v_sphrharm('i',y,ne,na)
+            x(1:ne,1:na) is spatial data sampled on an azimuth-inclination grid
+                         with ne inclination points (in 0:pi) and
+                         na azimuth points (in 0:2*pi)
+     (2) Spherical harmonics: y=v_sphrharm('f',n,x)
+            y(1:(n+1)^2)  spherical harmonics as a single row vector
+                          in the order: (0,0),(1,-1),(1,0),(1,1),(2,-2),(2,-1),...
+                          To access as a 2-D harmonic, use
+                          Y(n,m)=y(n^2+n+m+1)   where n=0:N, m=-i:i
+     (3) Sampling Grid:  [e,a,w]=v_sphrharm('c',ne,na)
+            e(1:ne)   monotonically increasing inclination values (0&lt;=e&lt;=pi) where 0 is the North pole
+            a(1:na)   monotonically increasing azimuth values (0&lt;=a&lt;2pi)
+            w(1:ne)   Quadrature weights</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	h is the handle of the colorbar, axis or figure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [ueo,weo,lgpo]=sphrharp(gr,ne,nsp)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [u,v,w]=v_sphrharm(m,a,b,c,d)</a>
+0002 <span class="comment">%SPHRHARM  forward and inverse spherical harmonic transform</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) y=('f',n,x)      % Calculate complex transform of spatial data x up to order n</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%        (2) y=('fr',n,x)     % Calculate real transform of spatial data x(ne,na) up to order n</span>
+0007 <span class="comment">%                             % x is specified on a uniform grid with inclination e=(0.5:ne-0.5)*pi/ne</span>
+0008 <span class="comment">%                             % and azimuth a=(0:na-1)*2*pi/na. The North pole has inclination 0 and</span>
+0009 <span class="comment">%                             % azimuths increase going East.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%        (3) y=('fd',n,e,a,v) % Calculate transform of impulse at (e(i),a(i)) of height v(i) up to order n</span>
+0012 <span class="comment">%                             % e(i), a(i) and v(i) should be the same dimension; v defaults to 1.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%        (4) x=('i',y,ne,na)  % Calculate spatial data from spherical harmonics y on</span>
+0015 <span class="comment">%                             % a uniform grid with ne inclinations and na azimuths</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%        (5) [e,a,w]=('cg',ne,na)   % Calculate the inclinations, azimuths and</span>
+0018 <span class="comment">%                                   % quadrature weights of a Gaussian sampling grid</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%        (6) n=2;             % illustrate real basis functions upto order 2</span>
+0021 <span class="comment">%            for i=0:n</span>
+0022 <span class="comment">%              for j=-i:i</span>
+0023 <span class="comment">%                subplot(n+1,2*n+1,i*(2*n+1)+j+n+1);</span>
+0024 <span class="comment">%                v_sphrharm('irp',[zeros(1,i^2+i+j) 1],25,25);</span>
+0025 <span class="comment">%              end</span>
+0026 <span class="comment">%            end</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%  Inputs:  m string specifying various options:</span>
+0029 <span class="comment">%               'f' forward transform</span>
+0030 <span class="comment">%               'i' inverse transform</span>
+0031 <span class="comment">%               'c' calculate the coordinates of the sampling grid [default if f or i omitted]</span>
+0032 <span class="comment">%               'r' real spherical harmonics instead of complex</span>
+0033 <span class="comment">%               'u' uniform inclination grid:  e=(0.5:ne-0.5)*pi/ne [default]</span>
+0034 <span class="comment">%                      for invertibility, ne&gt;=2N+1 for order N</span>
+0035 <span class="comment">%               'U' uniform inclination grid:  e=(0:ne-1)*pi/ne</span>
+0036 <span class="comment">%                      for invertibility, ne&gt;=2N+1 for order N</span>
+0037 <span class="comment">%               'g' gaussian inclination grid (non-uniform but fewer samples needed)</span>
+0038 <span class="comment">%                      for invertibility, ne&gt;=N+1 for order N</span>
+0039 <span class="comment">%               'a' arbitrary (specified by user - inverse transform only)</span>
+0040 <span class="comment">%               'd' delta function [forward transform only]</span>
+0041 <span class="comment">%               'p' plot result</span>
+0042 <span class="comment">%               'P' plot with colourbar</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%           The remaining inputs depend on the mode specified:</span>
+0045 <span class="comment">%               'f'  a         order of transform</span>
+0046 <span class="comment">%                    b(ne,na)  input data array on the chosen inclination-azimuth sampling grid</span>
+0047 <span class="comment">%               'fd' a         order of transform</span>
+0048 <span class="comment">%                    b(k)      inclinations of k delta functions</span>
+0049 <span class="comment">%                    c(k)      azimuths of k delta functions</span>
+0050 <span class="comment">%                    d(k)      amplitudes of k delta functions [default=1]</span>
+0051 <span class="comment">%               'i'  a()       spherical harmonics as a single row vector in the order:</span>
+0052 <span class="comment">%                                 (0,0),(1,-1),(1,0),(1,1),(2,-2),(2,-1),...</span>
+0053 <span class="comment">%                              To access as a 2-D harmonic: Y(n,m)=a(n^2+n+m+1) where n=0:N, m=-n:n</span>
+0054 <span class="comment">%                    b         number of inclination values in output grid</span>
+0055 <span class="comment">%                    c         number of azimuth values in output grid</span>
+0056 <span class="comment">%               'c'  a         number of inclination values in output grid</span>
+0057 <span class="comment">%                    b         number of azimuth values in output grid</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">% Outputs:  u output data according to transform direction:</span>
+0060 <span class="comment">%                'f': spherical harmonics as a single row vector in the order:</span>
+0061 <span class="comment">%                        (0,0),(1,-1),(1,0),(1,1),(2,-2),(2,-1),...</span>
+0062 <span class="comment">%                     To access as a 2-D harmonic: Y(n,m)=u(n^2+n+m+1) where n=0:N, m=-n:n</span>
+0063 <span class="comment">%                'i': u(ne,na) is spatial data sampled on an azimuth-inclination grid</span>
+0064 <span class="comment">%                     with ne inclination points (in 0:pi) and na azimuth points (in 0:2*pi)</span>
+0065 <span class="comment">%                'c': u(ne) gives inclination grid positions with 0 being the North pole</span>
+0066 <span class="comment">%           v(na) gives azimuth grid positions</span>
+0067 <span class="comment">%           w(ne) gives the quadrature weights used in the transform</span>
+0068 <span class="comment">%</span>
+0069 <span class="comment">% Suppose f(e,a) is a complex-valued function defined on the surface of the</span>
+0070 <span class="comment">% sphere (0&lt;=e&lt;=pi, 0&lt;=a&lt;2pi) where e=inclination=pi/2-elevation and</span>
+0071 <span class="comment">% a=azimuth. (0,*) is the North pole, (pi/2,0) is on the equator near</span>
+0072 <span class="comment">% Ghana and (pi/2,pi/2) is on the equator near India.</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">% We can approximate f(e,a) using complex spherical harmonics as</span>
+0075 <span class="comment">% f(e,a) = sum(F(n,m)*u(n,m,e,a)) where the sum</span>
+0076 <span class="comment">% is over n=0:N,m=-n:n giving a total of (N+1)^2 coefficients F(n,m).</span>
+0077 <span class="comment">%</span>
+0078 <span class="comment">% If f(e,a) happens to be real-valued, then we can transform the</span>
+0079 <span class="comment">% coefficients using G(n,0)=F(n,0) and, for m&gt;0,</span>
+0080 <span class="comment">% [G(n,m); G(n,-m)]=sqrt(0.5)*[1 1; 1i -1i]*[F(n,m); F(n,-m)]</span>
+0081 <span class="comment">% to give the real spherical harmonic coefficients G(n,m).</span>
+0082 <span class="comment">%</span>
+0083 <span class="comment">% The basis functions u(n,m,e,a) are orthonormal under the inner product</span>
+0084 <span class="comment">% &lt;u(e,a),v(e,a)&gt; = integral(u(e,a)*v'(e,a)*sin(e)*de*da).</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">%  Minimum spatial grid for invertibility:</span>
+0087 <span class="comment">%     Gaussian grid: ne &gt;= N+1,  na &gt;= 2N+1</span>
+0088 <span class="comment">%     Uniform grid:  ne &gt;= 2N+1, na &gt;= 2N+1</span>
+0089 <span class="comment">%     An inverse transform followed by a forward transform will restore the</span>
+0090 <span class="comment">%     original coefficient values provided that the sampling grid is large</span>
+0091 <span class="comment">%     enough. The advantage of the Gaussian grid is that it can be smaller.</span>
+0092 <span class="comment">%</span>
+0093 <span class="comment">%   Data formats:</span>
+0094 <span class="comment">%     (1) Spatial Data: x=v_sphrharm('i',y,ne,na)</span>
+0095 <span class="comment">%            x(1:ne,1:na) is spatial data sampled on an azimuth-inclination grid</span>
+0096 <span class="comment">%                         with ne inclination points (in 0:pi) and</span>
+0097 <span class="comment">%                         na azimuth points (in 0:2*pi)</span>
+0098 <span class="comment">%     (2) Spherical harmonics: y=v_sphrharm('f',n,x)</span>
+0099 <span class="comment">%            y(1:(n+1)^2)  spherical harmonics as a single row vector</span>
+0100 <span class="comment">%                          in the order: (0,0),(1,-1),(1,0),(1,1),(2,-2),(2,-1),...</span>
+0101 <span class="comment">%                          To access as a 2-D harmonic, use</span>
+0102 <span class="comment">%                          Y(n,m)=y(n^2+n+m+1)   where n=0:N, m=-i:i</span>
+0103 <span class="comment">%     (3) Sampling Grid:  [e,a,w]=v_sphrharm('c',ne,na)</span>
+0104 <span class="comment">%            e(1:ne)   monotonically increasing inclination values (0&lt;=e&lt;=pi) where 0 is the North pole</span>
+0105 <span class="comment">%            a(1:na)   monotonically increasing azimuth values (0&lt;=a&lt;2pi)</span>
+0106 <span class="comment">%            w(1:ne)   Quadrature weights</span>
+0107 <span class="comment">%</span>
+0108 
+0109 <span class="comment">% future options</span>
+0110 <span class="comment">%    direction: [m=v_rotation matrix]</span>
+0111 <span class="comment">%    transform: [h=complex harmonics but only the positive ones specified]</span>
+0112 <span class="comment">%    grid       d=delta function [forward transform only]</span>
+0113 <span class="comment">%               [s=sparse azimuth]</span>
+0114 <span class="comment">%               [z=include both north and south pole]</span>
+0115 <span class="comment">%</span>
+0116 <span class="comment">% bugs:</span>
+0117 <span class="comment">%   (1) we could save space and time by taking advantage of symmetry of legendre polynomials</span>
+0118 <span class="comment">%   (2) the number of points in the inclination (elevation) grid must, for now, be even if the 'U' option is chosen</span>
+0119 <span class="comment">%   (3) should ensure that the negative nyquist azimuth frequency is not used</span>
+0120 <span class="comment">%   (4) save time by manipulating only the necessary 2*m columns of the da matrix</span>
+0121 <span class="comment">%   (5) should make non-existant coefficients black in plots</span>
+0122 <span class="comment">%   (6) using 'surf' for plots adds an offset in azimuth and elevation</span>
+0123 <span class="comment">%       because colours correspond to vertices not faces</span>
+0124 <span class="comment">%   (7) the normalization for mode 'fd' seems incorrect</span>
+0125 <span class="comment">%   (8) mode 'fd' should allow multiple impulses to be summed</span>
+0126 
+0127 <span class="comment">% errors:</span>
+0128 
+0129 <span class="comment">% tests:</span>
+0130 <span class="comment">% check for inverse transform n=4; m=4; [ve,va]=spvals(8,8,n,m); ve*va-v_sphrharm('iur',[zeros(1,n^2+n+m) 1],8,8)</span>
+0131 <span class="comment">% check inverse followed by forward: no=4; h=rand(1,(no+1)^2); max(abs(v_sphrharm('fur',v_sphrharm('iur',h,10,10),no)-h))</span>
+0132 <span class="comment">% same but complex: no=4; h=rand(1,(no+1)^2); max(abs(v_sphrharm('fu',v_sphrharm('iu',h,10,10),no)-h))</span>
+0133 <span class="comment">% same but gaussian grid: no=4; h=rand(1,(no+1)^2); max(abs(v_sphrharm('fg',v_sphrharm('ig',h,6,10),no)-h))</span>
+0134 
+0135 <span class="comment">%      Copyright (C) Mike Brookes 2009</span>
+0136 <span class="comment">%      Version: $Id: v_sphrharm.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0137 <span class="comment">%</span>
+0138 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0139 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0140 <span class="comment">%</span>
+0141 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0142 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0143 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0144 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0145 <span class="comment">%   (at your option) any later version.</span>
+0146 <span class="comment">%</span>
+0147 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0148 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0149 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0150 <span class="comment">%   GNU General Public License for more details.</span>
+0151 <span class="comment">%</span>
+0152 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0153 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0154 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0155 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0156 
+0157 <span class="comment">% decode option string</span>
+0158 mv=<span class="string">'c u '</span>;       <span class="comment">% mv(1)=transform, mv(2)=real/complex, mv(3)=grid, mv(4)=plot</span>
+0159 <span class="keyword">if</span> ~nargout
+0160     mv(4)=<span class="string">'P'</span>;
+0161 <span class="keyword">end</span>
+0162 mc=<span class="string">'ficruUgadpP'</span>;
+0163 mi=[1 1 1 2 3 3 3 3 3 4 4];
+0164 <span class="keyword">for</span> i=1:length(m)
+0165     j=find(m(i)==mc);
+0166     <span class="keyword">if</span> ~isempty(j)
+0167         mv(mi(j))=m(i);
+0168     <span class="keyword">end</span>
+0169 <span class="keyword">end</span>
+0170 
+0171 <span class="keyword">switch</span> mv(1)
+0172     <span class="keyword">case</span> <span class="string">'f'</span> <span class="comment">% forward transform [sp]=('f',order,data)</span>
+0173         <span class="keyword">if</span> mv(3)~=<span class="string">'d'</span>
+0174             <span class="comment">% input data has elevations down the columns and azimuths along the rows</span>
+0175             <span class="comment">% output data is in the form:</span>
+0176             [ne,na]=size(b);
+0177             da=fft(b,[],2)*sqrt(pi)/na;
+0178             <span class="keyword">if</span> mv(2)==<span class="string">'r'</span> <span class="comment">% only actually need to do this for min(a,floor(na/2)) values (but nyquist is tricky)</span>
+0179                 ix=2:ceil(na/2);
+0180                 iy=na:-1:na+2-ix(end);
+0181                 da(:,ix)=da(:,ix)+da(:,iy);
+0182                 da(:,iy)=1i*(da(:,ix)-2*da(:,iy));  <span class="comment">% note</span>
+0183                 da(:,1)=da(:,1)*sqrt(2);
+0184             <span class="keyword">else</span>
+0185                 da=da*sqrt(2);
+0186             <span class="keyword">end</span>
+0187             [ue,we,lgp]=<a href="#_sub1" class="code" title="subfunction [ueo,weo,lgpo]=sphrharp(gr,ne,nsp)">sphrharp</a>(mv(3),ne,a);
+0188             da=da.*repmat(we',1,na);
+0189             u=zeros(1,(a+1)^2);
+0190             i=0;
+0191             <span class="keyword">for</span> nn=0:a
+0192                 <span class="comment">% we could vectorize this to avoid the inner loop</span>
+0193                 <span class="comment">% we should ensure the the negative nyquist value is not used</span>
+0194                 <span class="keyword">for</span> mm=-nn:nn
+0195                     i=i+1;
+0196                     u(i)=lgp(1+nn*(nn+1)/2+abs(mm),:)*da(:,1+mod(mm,na));
+0197                 <span class="keyword">end</span>
+0198             <span class="keyword">end</span>
+0199         <span class="keyword">else</span>       <span class="comment">% forward transform of impulses [sp]=('fd',order,e,a,value)</span>
+0200             <span class="keyword">if</span> nargin&lt;5
+0201                 d=ones(size(b));
+0202             <span class="keyword">end</span>
+0203             [ue,we,lgp]=<a href="#_sub1" class="code" title="subfunction [ueo,weo,lgpo]=sphrharp(gr,ne,nsp)">sphrharp</a>(<span class="string">'a'</span>,b(:),a);
+0204             uu=zeros(1,(a+1)^2);     <span class="comment">% reserve space for spherical harmonic coefficients</span>
+0205             u=uu;
+0206             <span class="keyword">for</span> j=1:numel(b)
+0207                 i=0;
+0208                 <span class="keyword">if</span> mv(2)==<span class="string">'r'</span>
+0209                     <span class="keyword">for</span> nn=0:a
+0210                         <span class="comment">% we could vectorize this to avoid the inner loop</span>
+0211                         <span class="comment">% we should ensure the the negative nyquist value is not used</span>
+0212                         i=i+1;
+0213                         uu(i+nn)=lgp(1+nn*(nn+1)/2,1);
+0214                         <span class="keyword">for</span> mm=1:nn
+0215                             uu(i+nn-mm)=lgp(1+nn*(nn+1)/2+abs(mm),j)*sin(mm*c(j))*sqrt(2);
+0216                             uu(i+nn+mm)=lgp(1+nn*(nn+1)/2+abs(mm),j)*cos(mm*c(j))*sqrt(2);
+0217                         <span class="keyword">end</span>
+0218                         i=i+2*nn;
+0219                     <span class="keyword">end</span>
+0220                 <span class="keyword">else</span>
+0221                     <span class="keyword">for</span> nn=0:a
+0222                         <span class="comment">% we could vectorize this to avoid the inner loop</span>
+0223                         <span class="comment">% we should ensure the the negative nyquist value is not used</span>
+0224                         <span class="keyword">for</span> mm=-nn:nn
+0225                             i=i+1;
+0226                             uu(i)=lgp(1+nn*(nn+1)/2+abs(mm),j)*exp(-1i*mm*c(j));
+0227                         <span class="keyword">end</span>
+0228                     <span class="keyword">end</span>
+0229                 <span class="keyword">end</span>
+0230                 u=u+d(j)*uu/sqrt(2*pi);
+0231             <span class="keyword">end</span>
+0232         <span class="keyword">end</span>
+0233     <span class="keyword">case</span> <span class="string">'i'</span> <span class="comment">% inverse transform [data]=('i',sp,nincl,nazim)</span>
+0234         <span class="comment">%or [data]=('a',sp,e,a) where e is a list of elevations and a is either a corresponding list of azimuths</span>
+0235         <span class="comment">% or else a cell array contining several azimuths for each inclination</span>
+0236         <span class="comment">% input data is sp=[(0,0) (1,-1) (1,0) (1,1) (2,-2) (2,-1) (2,0) ... ]</span>
+0237         <span class="comment">% length is (n+1)^2 where n is the order</span>
+0238         <span class="comment">% output data is an array [ne,na]</span>
+0239         nsp=ceil(sqrt(length(a)))-1;
+0240         [ue,we,lgp]=<a href="#_sub1" class="code" title="subfunction [ueo,weo,lgpo]=sphrharp(gr,ne,nsp)">sphrharp</a>(mv(3),b,nsp);
+0241         <span class="keyword">if</span> mv(3)==<span class="string">'a'</span>
+0242             na=nsp*2+1;
+0243             ne=length(b);
+0244         <span class="keyword">else</span>
+0245             na=c;
+0246             ne=b;
+0247         <span class="keyword">end</span>
+0248         i=0;
+0249         da=zeros(ne,na);
+0250         <span class="keyword">for</span> nn=0:nsp
+0251             <span class="comment">% this could be vectorized somewhat to speed it up</span>
+0252             <span class="keyword">for</span> mm=-nn:nn
+0253                 i=i+1;
+0254                 <span class="keyword">if</span> i&gt;length(a)
+0255                     <span class="keyword">break</span>;
+0256                 <span class="keyword">end</span>
+0257                 da(:,1+mod(mm,na))=da(:,1+mod(mm,na))+a(i)*lgp(1+nn*(nn+1)/2+abs(mm),:)';
+0258             <span class="keyword">end</span>
+0259         <span class="keyword">end</span>
+0260         <span class="keyword">if</span> na&gt;1 &amp;&amp; mv(2)==<span class="string">'r'</span> <span class="comment">% convert real to complex only actually need to do this for min(b,floor(na/2)) values (but nyquist is a bit tricky)</span>
+0261             ix=2:ceil(na/2);
+0262             iy=na:-1:na+2-ix(end);
+0263             da(:,iy)=(da(:,ix)+1i*da(:,iy))*0.5;
+0264             da(:,ix)=da(:,ix)-da(:,iy);
+0265             da(:,1)=da(:,1)/sqrt(2);
+0266         <span class="keyword">else</span>
+0267             da=da/sqrt(2);
+0268         <span class="keyword">end</span>
+0269         <span class="keyword">if</span> mv(3)==<span class="string">'a'</span> <span class="comment">% do a slow fft</span>
+0270             <span class="keyword">if</span> iscell(c)
+0271                 u{ne,1}=[]; <span class="comment">% reserve space for output cell array</span>
+0272                 <span class="keyword">for</span> i=1:ne
+0273                     ai=c{i};
+0274                     ui=repmat(da(i,1),1,length(ai));
+0275                     <span class="keyword">for</span> j=1:nsp
+0276                         exj=exp(1i*j*ai(:).'); <span class="comment">% we could vectorize this more</span>
+0277                         ui=ui+da(i,j+1).'.*exj+da(i,na+1-j).'.*conj(exj);
+0278                     <span class="keyword">end</span>
+0279                     u{i}=ui/sqrt(pi);
+0280                 <span class="keyword">end</span>
+0281             <span class="keyword">else</span>
+0282                 u=da(:,1);
+0283                 <span class="keyword">for</span> j=1:nsp
+0284                     exj=exp(1i*j*c(:)); <span class="comment">% we could vectorize this more</span>
+0285                     u=u+da(:,j+1).*exj+da(:,na+1-j).*conj(exj);
+0286                 <span class="keyword">end</span>
+0287                 u=u/sqrt(pi);
+0288                 <span class="keyword">if</span> mv(2)==<span class="string">'r'</span> &amp;&amp; isreal(a)
+0289                     u=real(u);
+0290                 <span class="keyword">end</span>
+0291             <span class="keyword">end</span>
+0292         <span class="keyword">else</span>
+0293             u=ifft(da,[],2)*na/sqrt(pi); <span class="comment">% could put the scale factor 1/sqrt(pi) earlier</span>
+0294             <span class="keyword">if</span> mv(2)==<span class="string">'r'</span> &amp;&amp; isreal(a)
+0295                 u=real(u);
+0296             <span class="keyword">end</span>
+0297         <span class="keyword">end</span>
+0298     <span class="keyword">case</span> <span class="string">'c'</span> <span class="comment">% just output coordinates [inclination,azim,weights]=('c',nincl,nazim)</span>
+0299         <span class="comment">% if m!='g', then order, a, must be even</span>
+0300         [u,w]=<a href="#_sub1" class="code" title="subfunction [ueo,weo,lgpo]=sphrharp(gr,ne,nsp)">sphrharp</a>(mv(3),a,0);
+0301         <span class="keyword">if</span> nargin&lt;3
+0302             b=ceil(a/1+(mv(3)==<span class="string">'g'</span>));
+0303         <span class="keyword">end</span>
+0304         v=(0:b-1)*2*pi/b;
+0305 <span class="keyword">end</span>
+0306 <span class="keyword">if</span> mv(4)~=<span class="string">' '</span>
+0307     <span class="keyword">switch</span> mv(1)
+0308         <span class="keyword">case</span> <span class="string">'f'</span>
+0309             <span class="keyword">if</span> mv(2)==<span class="string">'r'</span>
+0310                 ua=u;
+0311                 tit=<span class="string">'Real Coefficients'</span>;
+0312             <span class="keyword">else</span>
+0313                 ua=abs(u);
+0314                 tit=<span class="string">'Complex Coefficient Magnitudes'</span>;
+0315             <span class="keyword">end</span>
+0316             nu=length(ua);
+0317             no=ceil(sqrt(nu))-1;
+0318             yi=zeros(no,2*no+1);
+0319             <span class="keyword">for</span> i=0:no
+0320                 <span class="keyword">for</span> j=-i:i
+0321                     iy=i^2+i+j+1;
+0322                     <span class="keyword">if</span> iy&lt;=nu
+0323                         yi(i+1,j+no+1)=ua(iy);
+0324                     <span class="keyword">end</span>
+0325                 <span class="keyword">end</span>
+0326             <span class="keyword">end</span>
+0327             imagesc(-no:no,0:no,yi);
+0328             axis <span class="string">'xy'</span>;
+0329             <span class="keyword">if</span> mv(4)==<span class="string">'P'</span>
+0330                 colorbar;
+0331             <span class="keyword">end</span>
+0332             xlabel(<span class="string">'Harmonic'</span>);
+0333             ylabel(<span class="string">'Order'</span>);
+0334             title(tit);
+0335         <span class="keyword">case</span> <span class="string">'i'</span>            <span class="comment">% [data]=('i',sp,nincl,nazim)</span>
+0336             vv=(0:na)*2*pi/na;  <span class="comment">% azimuth array</span>
+0337             gr=sin(ue)';
+0338             surf(gr*cos(vv),gr*sin(vv),repmat(cos(ue)',1,na+1),real(u(:,[1:na 1])));
+0339             axis equal;
+0340             xlabel(<span class="string">'X'</span>);
+0341             ylabel(<span class="string">'Y'</span>);
+0342             zlabel(<span class="string">'Z'</span>);
+0343             <span class="keyword">if</span> mv(4)==<span class="string">'P'</span>
+0344                 colorbar;
+0345             <span class="keyword">end</span>
+0346             <span class="comment">%             v_cblabel('Legendre Weight');</span>
+0347             <span class="comment">%             title(sprintf('Sampling Grid: %s, %d, %d',mv(3),length(u),na-1));</span>
+0348         <span class="keyword">case</span> <span class="string">'c'</span>            <span class="comment">% [inclination,azim,weights]=('c',nincl,nazim)</span>
+0349             vv=[v v(1)];    <span class="comment">% replicate initial azimuth point</span>
+0350             na=length(vv);
+0351             gr=sin(u)';
+0352             mesh(gr*cos(vv),gr*sin(vv),repmat(cos(u)',1,na),repmat(w',1,na));
+0353             axis equal;
+0354             xlabel(<span class="string">'X'</span>);
+0355             ylabel(<span class="string">'Y'</span>);
+0356             zlabel(<span class="string">'Z'</span>);
+0357             <span class="keyword">if</span> mv(4)==<span class="string">'P'</span>
+0358                 colorbar;
+0359                 <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Quadrature Weight'</span>);
+0360             <span class="keyword">end</span>
+0361             title(sprintf(<span class="string">'Sampling Grid: %s, %d, %d'</span>,mv(3),length(u),na-1));
+0362     <span class="keyword">end</span>
+0363 <span class="keyword">end</span>
+0364 
+0365 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0366 
+0367 <a name="_sub1" href="#_subfunctions" class="code">function [ueo,weo,lgpo]=sphrharp(gr,ne,nsp)</a>
+0368 <span class="comment">% calculate persistent variables for grid points and legendre polynomials</span>
+0369 <span class="comment">% we recalculate if transform order or inclination grid size or type are changed</span>
+0370 <span class="comment">% gr = grid type:</span>
+0371 <span class="comment">%       'u'=uniform inclination starting at pi/2n (default)</span>
+0372 <span class="comment">%       'U'=uniform but starting at north pole</span>
+0373 <span class="comment">%       'g'=gaussian inclination</span>
+0374 <span class="comment">%       'a'=arbitrary (specified by user - inverse transform only)</span>
+0375 <span class="comment">% ne = number of inclination values</span>
+0376 <span class="comment">% nsp = maximum order</span>
+0377 <span class="comment">% Outputs:</span>
+0378 <span class="comment">%    ueo(ne)     vector containing the inclination values</span>
+0379 <span class="comment">%    weo(ne)     vector containing the quadrature weights</span>
+0380 <span class="comment">%    lgpo((nsp+1)*(nsp+2)/2,ne)  evaluates the Schmidt seminormalized</span>
+0381 <span class="comment">%                                associated Legendre function at each value</span>
+0382 <span class="comment">%                                of cos(ue) for n=0:nsp, m=0:n.</span>
+0383 <span class="keyword">persistent</span> gr0 lgp ne0 ue we nsp0
+0384 <span class="keyword">if</span> isempty(ne0)
+0385     ne0=-1;
+0386     nsp0=-1;
+0387     gr0=<span class="string">'a'</span>;
+0388 <span class="keyword">end</span>
+0389 <span class="keyword">if</span> gr==<span class="string">'a'</span>
+0390     ue=ne;
+0391     ne=length(ue);
+0392     ne0=-1;
+0393     gr0=gr;
+0394     nsp0=-1; <span class="comment">% delete previous legendre polynomials</span>
+0395     lgp=[];
+0396     we=[];
+0397 <span class="keyword">elseif</span> gr~=gr0 || ne~=ne0
+0398     <span class="keyword">if</span> gr==<span class="string">'g'</span>
+0399         r = 1:ne-1;
+0400         r = r ./ sqrt(4*r.^2 - 1);
+0401         p = zeros( ne, ne );
+0402         p( 2 : ne+1 : ne*(ne-1) ) = r;
+0403         p( ne+1 : ne+1 : ne^2-1 ) = r;
+0404         [q, ue] = eig(p);
+0405         [ue, k] = sort(diag(ue));
+0406         ue=acos(-ue)';
+0407         we = 2*q(1,k).^2;
+0408     <span class="keyword">elseif</span> gr==<span class="string">'U'</span>
+0409         <span class="keyword">if</span> rem(ne,2)
+0410             error(<span class="string">'inclination grid size must be even when using ''U'' option'</span>);
+0411         <span class="keyword">end</span>
+0412         ue=(0:ne-1)*pi/ne;
+0413         xx=zeros(1,ne);
+0414         ah=ne/2;
+0415         xx(1:ah)=(1:2:ne).^(-1);
+0416         we=-4*sin(ue).*imag(fft(xx).*exp(-1i*ue))/ne;
+0417     <span class="keyword">else</span> <span class="comment">% default is m='u'</span>
+0418         ue=(1:2:2*ne)*pi*0.5/ne;
+0419         vq=(ne-abs(ne+1-2*(1:ne))).^(-1).*exp(-1i*(ue+0.5*pi));
+0420         we=(-2*sin(ue).*real(fft(vq).*exp(-1i*(0:ne-1)*pi/ne))/ne);
+0421     <span class="keyword">end</span>
+0422     gr0=gr;
+0423     ne0=ne;
+0424     nsp0=-1; <span class="comment">% delete previous legendre polynomials</span>
+0425     lgp=[];
+0426 <span class="keyword">end</span>
+0427 <span class="keyword">if</span> nsp&gt;nsp0
+0428     lgp((nsp+1)*(nsp+2)/2,ne)=0; <span class="comment">% reserve space</span>
+0429     <span class="keyword">for</span> i=nsp0+1:nsp
+0430         lgp(1+i*(i+1)/2:(i+1)*(i+2)/2,:)=legendre(i,cos(ue),<span class="string">'sch'</span>)*sqrt(0.5*i+0.25);
+0431         lgp(1+i*(i+1)/2,:)=lgp(1+i*(i+1)/2,:)*sqrt(2);
+0432     <span class="keyword">end</span>
+0433     nsp0=nsp;
+0434 <span class="keyword">end</span>
+0435 lgpo=lgp;
+0436 weo=we;
+0437 ueo=ue;</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

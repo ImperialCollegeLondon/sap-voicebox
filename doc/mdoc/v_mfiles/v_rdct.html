@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_rdct</title>
+  <meta name="keywords" content="v_rdct">
+  <meta name="description" content="RDCT     Discrete cosine transform of real data Y=(X,N,A,B)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_rdct.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_rdct
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y=v_rdct(x,n,a,b) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">RDCT     Discrete cosine transform of real data Y=(X,N,A,B)
+ Data is truncated/padded to length N.
+
+ This routine is equivalent to multiplying by the matrix
+
+   rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)
+
+ Default values of the scaling factors are A=sqrt(2N) and B=1 which
+ results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2). 
+ If b~=1 then the columns are no longer orthogonal.
+
+ see IRDCT for the inverse transform</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_lpcaa2dl.html" class="code" title="function dl=v_lpcaa2dl(aa)">v_lpcaa2dl</a>	LPCAA2DL LPC: Convert area coefficients to dct of log area DL=(AA)</li><li><a href="v_modspect.html" class="code" title="function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p)">v_modspect</a>	MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li><li><a href="v_pow2cep.html" class="code" title="function [u,v]=v_pow2cep(m,c,mode)">v_pow2cep</a>	CEP2POW convert cepstral means and variances to the power domain</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_rdct(x,n,a,b)</a>
+0002 <span class="comment">%RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</span>
+0003 <span class="comment">% Data is truncated/padded to length N.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% This routine is equivalent to multiplying by the matrix</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Default values of the scaling factors are A=sqrt(2N) and B=1 which</span>
+0010 <span class="comment">% results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).</span>
+0011 <span class="comment">% If b~=1 then the columns are no longer orthogonal.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% see IRDCT for the inverse transform</span>
+0014 
+0015 <span class="comment">% BUG: in line 51 we should do chopping after transform and not before</span>
+0016 
+0017 
+0018 
+0019 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
+0020 <span class="comment">%      Version: $Id: v_rdct.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0023 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0026 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0027 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0028 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0029 <span class="comment">%   (at your option) any later version.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0032 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0033 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0034 <span class="comment">%   GNU General Public License for more details.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0037 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0038 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0039 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0040 
+0041 fl=size(x,1)==1;
+0042 <span class="keyword">if</span> fl x=x(:); <span class="keyword">end</span>
+0043 [m,k]=size(x);
+0044 <span class="keyword">if</span> nargin&lt;2 n=m;
+0045 <span class="keyword">end</span>
+0046 <span class="keyword">if</span> nargin&lt;4 b=1;  
+0047     <span class="keyword">if</span> nargin&lt;3 a=sqrt(2*n);
+0048     <span class="keyword">end</span>
+0049     <span class="keyword">end</span>
+0050 <span class="keyword">if</span> n&gt;m x=[x; zeros(n-m,k)];
+0051 <span class="keyword">elseif</span> n&lt;m x(n+1:m,:)=[];
+0052 <span class="keyword">end</span>
+0053 
+0054 x=[x(1:2:n,:); x(2*fix(n/2):-2:2,:)];
+0055 z=[sqrt(2) 2*exp((-0.5i*pi/n)*(1:n-1))].';
+0056 y=real(fft(x).*z(:,ones(1,k)))/a;
+0057 y(1,:)=y(1,:)*b;
+0058 <span class="keyword">if</span> fl y=y.'; <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

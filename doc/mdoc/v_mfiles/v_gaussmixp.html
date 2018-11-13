@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmixp</title>
+  <meta name="keywords" content="v_gaussmixp">
+  <meta name="description" content="GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gaussmixp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gaussmixp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model
+
+ Usage: (1) v_gaussmixp([],m,v,w) % plot a 1D or 2D gaussian mixture pdf
+
+ Inputs: n data values, k mixtures, p parameters, q data vector size
+
+   Y(n,q) = input data (or optional plot range if no out arguments)
+            Row of Y(i,:) represents a single observation of the
+            transformed GMM data point X: Y(i,1:q)=X(i,1:p)*A'+B'. If A and B are
+            omitted and q=p, then Y(i,:)=X(i,:).
+   M(k,p) = mixture means for x(p)
+   V(k,p) or V(p,p,k) variances (diagonal or full)
+   W(k,1) = weights
+   A(q,p) = transformation: y=x*A'+ B' (where y and x are row vectors).
+   B(q,1)   If A is omitted or null, y=x*I(B,:)' where I is the identity matrix.
+            If B is also omitted or null, y=x*I(1:q,:)'.
+   Note that most commonly, q=p and A and B are omitted entirely.
+
+ Outputs
+
+  LP(n,1) = log probability of each data point
+  RP(n,k) = relative probability of each mixture
+  KH(n,1) = highest probability mixture
+  KP(n,1) = relative probability of highest probability mixture
+
+ See also: <a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>, <a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>, <a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>, <a href="v_randvec.html" class="code" title="function x=v_randvec(n,m,c,w,mode)">v_randvec</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	h is the handle of the colorbar, axis or figure</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>	GAUSSMIXD marginal and conditional Gaussian mixture densities</li><li><a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>	GAUSSMIXG global mean, variance and mode of a GMM</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_gaussmixt.html" class="code" title="function [m,v,w]=v_gaussmixt(m1,v1,w1,m2,v2,w2)">v_gaussmixt</a>	GAUSSMIXT Multiply two GMM pdfs</li><li><a href="v_gmmlpdf.html" class="code" title="function l=v_gmmlpdf(varargin)">v_gmmlpdf</a>	GMMLPDF obsolete function - please use GAUSSMIXP instead</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	SPENDRED          Speech Enhancement and Dereverberation by Doire</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)</a>
+0002 <span class="comment">%GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) v_gaussmixp([],m,v,w) % plot a 1D or 2D gaussian mixture pdf</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Inputs: n data values, k mixtures, p parameters, q data vector size</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%   Y(n,q) = input data (or optional plot range if no out arguments)</span>
+0009 <span class="comment">%            Row of Y(i,:) represents a single observation of the</span>
+0010 <span class="comment">%            transformed GMM data point X: Y(i,1:q)=X(i,1:p)*A'+B'. If A and B are</span>
+0011 <span class="comment">%            omitted and q=p, then Y(i,:)=X(i,:).</span>
+0012 <span class="comment">%   M(k,p) = mixture means for x(p)</span>
+0013 <span class="comment">%   V(k,p) or V(p,p,k) variances (diagonal or full)</span>
+0014 <span class="comment">%   W(k,1) = weights</span>
+0015 <span class="comment">%   A(q,p) = transformation: y=x*A'+ B' (where y and x are row vectors).</span>
+0016 <span class="comment">%   B(q,1)   If A is omitted or null, y=x*I(B,:)' where I is the identity matrix.</span>
+0017 <span class="comment">%            If B is also omitted or null, y=x*I(1:q,:)'.</span>
+0018 <span class="comment">%   Note that most commonly, q=p and A and B are omitted entirely.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Outputs</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%  LP(n,1) = log probability of each data point</span>
+0023 <span class="comment">%  RP(n,k) = relative probability of each mixture</span>
+0024 <span class="comment">%  KH(n,1) = highest probability mixture</span>
+0025 <span class="comment">%  KP(n,1) = relative probability of highest probability mixture</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% See also: v_gaussmix, v_gaussmixd, v_gaussmixg, v_randvec</span>
+0028 
+0029 <span class="comment">%      Copyright (C) Mike Brookes 2000-2009</span>
+0030 <span class="comment">%      Version: $Id: v_gaussmixp.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 [k,p]=size(m);
+0051 [n,q]=size(y);
+0052 <span class="keyword">if</span> q==0
+0053     <span class="keyword">if</span> nargin&lt;=4 || (nargin==5 &amp;&amp; isempty(a)) || (nargin&gt;=6 &amp;&amp; isempty(a) &amp;&amp; isempty(b))
+0054         q=p;
+0055     <span class="keyword">elseif</span> ~isempty(a)
+0056         q=size(a,1);
+0057     <span class="keyword">else</span>
+0058         q=size(b,1);
+0059     <span class="keyword">end</span>
+0060 <span class="keyword">end</span>
+0061 
+0062 <span class="keyword">if</span> nargin&lt;4
+0063     w=repmat(1/k,k,1);
+0064     <span class="keyword">if</span> nargin&lt;3
+0065         v=ones(k,p);
+0066     <span class="keyword">end</span>
+0067 <span class="keyword">end</span>
+0068 fv=ndims(v)&gt;2 || size(v,1)&gt;k;       <span class="comment">% full covariance matrix is supplied</span>
+0069 <span class="keyword">if</span> nargin&gt;4 &amp;&amp; ~isempty(a)          <span class="comment">% need to transform the data</span>
+0070     <span class="keyword">if</span> nargin&lt;6 || isempty(b)
+0071         m=m*a';                     <span class="comment">% no offset b specified</span>
+0072     <span class="keyword">else</span>
+0073         m=m*a'+repmat(b',k,1);      <span class="comment">% offset b is specified</span>
+0074     <span class="keyword">end</span>
+0075     v1=v;                   <span class="comment">% save the original covariance matrix array</span>
+0076     v=zeros(q,q,k);         <span class="comment">% create new full covariance matrix array</span>
+0077     <span class="keyword">if</span> fv
+0078         <span class="keyword">for</span> ik=1:k
+0079             v(:,:,ik)=a*v1(:,:,ik)*a';
+0080         <span class="keyword">end</span>
+0081     <span class="keyword">else</span>
+0082         <span class="keyword">for</span> ik=1:k
+0083             v(:,:,ik)=(a.*repmat(v1(ik,:),q,1))*a';
+0084         <span class="keyword">end</span>
+0085         fv=1; <span class="comment">% now we definitely have a full covariance matrix</span>
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">elseif</span> q&lt;p || nargin&gt;4    <span class="comment">% need to select coefficient subset</span>
+0088     <span class="keyword">if</span> nargin&lt;6 || isempty(b)
+0089         b=1:q;
+0090     <span class="keyword">end</span>
+0091     m=m(:,b);
+0092     <span class="keyword">if</span> fv
+0093         v=v(b,b,:);
+0094     <span class="keyword">else</span>
+0095         v=v(:,b);
+0096     <span class="keyword">end</span>
+0097 <span class="keyword">end</span>
+0098 
+0099 memsize=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'memsize'</span>);    <span class="comment">% set memory size to use</span>
+0100 
+0101 lp=zeros(n,1);
+0102 rp=zeros(n,k);
+0103 wk=ones(k,1);
+0104 <span class="keyword">if</span> n&gt;0
+0105     <span class="keyword">if</span> ~fv          <span class="comment">% diagonal covariance</span>
+0106         <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0107         <span class="comment">% Diagonal Covariance matrices  %</span>
+0108         <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0109         
+0110         <span class="comment">% If data size is large then do calculations in chunks</span>
+0111         
+0112         nb=min(n,max(1,floor(memsize/(8*q*k))));    <span class="comment">% chunk size for testing data points</span>
+0113         nl=ceil(n/nb);                  <span class="comment">% number of chunks</span>
+0114         jx0=n-(nl-1)*nb;                <span class="comment">% size of first chunk</span>
+0115         im=repmat((1:k)',nb,1);
+0116         wnb=ones(1,nb);
+0117         wnj=ones(1,jx0);
+0118         vi=-0.5*v.^(-1);                <span class="comment">% data-independent scale factor in exponent</span>
+0119         lvm=log(w)-0.5*sum(log(v),2);   <span class="comment">% log of external scale factor (excluding -0.5*q*log(2pi) term)</span>
+0120         
+0121         <span class="comment">% first do partial chunk</span>
+0122         
+0123         jx=jx0;
+0124         ii=1:jx;
+0125         kk=repmat(ii,k,1);
+0126         km=repmat(1:k,1,jx);
+0127         py=reshape(sum((y(kk(:),:)-m(km(:),:)).^2.*vi(km(:),:),2),k,jx)+lvm(:,wnj);
+0128         mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0129         px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0130         ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0131         rp(ii,:)=(px./ps(wk,:))';                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0132         lp(ii)=log(ps)+mx;
+0133         
+0134         <span class="keyword">for</span> il=2:nl
+0135             ix=jx+1;
+0136             jx=jx+nb;                    <span class="comment">% increment upper limit</span>
+0137             ii=ix:jx;
+0138             kk=repmat(ii,k,1);
+0139             py=reshape(sum((y(kk(:),:)-m(im,:)).^2.*vi(im,:),2),k,nb)+lvm(:,wnb);
+0140             mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0141             px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0142             ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0143             rp(ii,:)=(px./ps(wk,:))';                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0144             lp(ii)=log(ps)+mx;
+0145         <span class="keyword">end</span>
+0146     <span class="keyword">else</span>
+0147         <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0148         <span class="comment">% Full Covariance matrices  %</span>
+0149         <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0150         pl=q*(q+1)/2;
+0151         lix=1:q^2;
+0152         cix=repmat(1:q,q,1);
+0153         rix=cix';
+0154         lix(cix&gt;rix)=[];                                        <span class="comment">% index of lower triangular elements</span>
+0155         lixi=zeros(q,q);
+0156         lixi(lix)=1:pl;
+0157         lixi=lixi';
+0158         lixi(lix)=1:pl;                                        <span class="comment">% reverse index to build full matrices</span>
+0159         vt=reshape(v,q^2,k);
+0160         vt=vt(lix,:)';                                            <span class="comment">% lower triangular in rows</span>
+0161         
+0162         <span class="comment">% If data size is large then do calculations in chunks</span>
+0163         
+0164         nb=min(n,max(1,floor(memsize/(24*q*k))));    <span class="comment">% chunk size for testing data points</span>
+0165         nl=ceil(n/nb);                  <span class="comment">% number of chunks</span>
+0166         jx0=n-(nl-1)*nb;                <span class="comment">% size of first chunk</span>
+0167         wnb=ones(1,nb);
+0168         wnj=ones(1,jx0);
+0169         
+0170         vi=zeros(q*k,q);                    <span class="comment">% stack of k inverse cov matrices each size q*q</span>
+0171         vim=zeros(q*k,1);                   <span class="comment">% stack of k vectors of the form inv(vt)*m</span>
+0172         mtk=vim;                             <span class="comment">% stack of k vectors of the form m</span>
+0173         lvm=zeros(k,1);
+0174         wpk=repmat((1:q)',k,1);
+0175         
+0176         <span class="keyword">for</span> ik=1:k
+0177             
+0178             <span class="comment">% these lines added for debugging only</span>
+0179             <span class="comment">%             vk=reshape(vt(k,lixi),q,q);</span>
+0180             <span class="comment">%             condk(ik)=cond(vk);</span>
+0181             <span class="comment">%%%%%%%%%%%%%%%%%%%%</span>
+0182             [uvk,dvk]=eig(reshape(vt(ik,lixi),q,q));      <span class="comment">% convert lower triangular to full and find eigenvalues</span>
+0183             dvk=diag(dvk);
+0184             <span class="keyword">if</span>(any(dvk&lt;=0))
+0185                 error(<span class="string">'Covariance matrix for mixture %d is not positive definite'</span>,ik);
+0186             <span class="keyword">end</span>
+0187             vik=-0.5*uvk*diag(dvk.^(-1))*uvk';   <span class="comment">% calculate inverse</span>
+0188             vi((ik-1)*q+(1:q),:)=vik;           <span class="comment">% vi contains all mixture inverses stacked on top of each other</span>
+0189             vim((ik-1)*q+(1:q))=vik*m(ik,:)';   <span class="comment">% vim contains vi*m for all mixtures stacked on top of each other</span>
+0190             mtk((ik-1)*q+(1:q))=m(ik,:)';       <span class="comment">% mtk contains all mixture means stacked on top of each other</span>
+0191             lvm(ik)=log(w(ik))-0.5*sum(log(dvk));       <span class="comment">% vm contains the weighted sqrt of det(vi) for each mixture</span>
+0192         <span class="keyword">end</span>
+0193         <span class="comment">%</span>
+0194         <span class="comment">%         % first do partial chunk</span>
+0195         <span class="comment">%</span>
+0196         jx=jx0;
+0197         ii=1:jx;
+0198         xii=y(ii,:).';
+0199         py=reshape(sum(reshape((vi*xii-vim(:,wnj)).*(xii(wpk,:)-mtk(:,wnj)),q,jx*k),1),k,jx)+lvm(:,wnj);
+0200         mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0201         px=exp(py-mx(wk,:));  <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0202         ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0203         rp(ii,:)=(px./ps(wk,:))';                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0204         lp(ii)=log(ps)+mx;
+0205         
+0206         <span class="keyword">for</span> il=2:nl
+0207             ix=jx+1;
+0208             jx=jx+nb;        <span class="comment">% increment upper limit</span>
+0209             ii=ix:jx;
+0210             xii=y(ii,:).';
+0211             py=reshape(sum(reshape((vi*xii-vim(:,wnb)).*(xii(wpk,:)-mtk(:,wnb)),q,nb*k),1),k,nb)+lvm(:,wnb);
+0212             mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0213             px=exp(py-mx(wk,:));  <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0214             ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0215             rp(ii,:)=(px./ps(wk,:))';                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0216             lp(ii)=log(ps)+mx;
+0217         <span class="keyword">end</span>
+0218     <span class="keyword">end</span>
+0219     lp=lp-0.5*q*log(2*pi);
+0220 <span class="keyword">else</span>
+0221 <span class="keyword">end</span>
+0222 <span class="keyword">if</span> nargout &gt;2
+0223     [kp,kh]=max(rp,[],2);
+0224 <span class="keyword">end</span>
+0225 <span class="keyword">if</span> ~nargout
+0226     <span class="keyword">switch</span> q
+0227         <span class="keyword">case</span> 1,
+0228             nxx=256; <span class="comment">% number of points to plot</span>
+0229             <span class="keyword">if</span> size(y,1)&lt;2
+0230                 nsd=2; <span class="comment">% number of std deviations</span>
+0231                 sd=sqrt(v(:));
+0232                 xax=linspace(min(m-nsd*sd),max(m+nsd*sd),nxx);
+0233             <span class="keyword">else</span>
+0234                 xax=linspace(min(y),max(y),nxx);
+0235             <span class="keyword">end</span>
+0236             plot(xax,<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(xax(:),m,v,w),<span class="string">'-b'</span>);
+0237             xlabel(<span class="string">'Parameter 1'</span>);
+0238             ylabel(<span class="string">'Log probability density'</span>);
+0239             <span class="keyword">if</span> n&gt;0
+0240                 hold on
+0241                 plot(y,lp,<span class="string">'xr'</span>);
+0242                 hold off
+0243             <span class="keyword">end</span>
+0244         <span class="keyword">case</span> 2,
+0245             nxx=256; <span class="comment">% number of points to plot</span>
+0246             <span class="keyword">if</span> size(y,1)&lt;2
+0247                 nsd=2; <span class="comment">% number of std deviations</span>
+0248                 <span class="keyword">if</span> fv
+0249                     sd=sqrt([v(1:4:end)' v(4:4:end)']); <span class="comment">% extract diagonal elements only</span>
+0250                 <span class="keyword">else</span>
+0251                     sd=sqrt(v);
+0252                 <span class="keyword">end</span>
+0253                 xax=linspace(min(m(:,1)-nsd*sd(:,1)),max(m(:,1)+nsd*sd(:,1)),nxx);
+0254                 yax=linspace(min(m(:,2)-nsd*sd(:,2)),max(m(:,2)+nsd*sd(:,2)),nxx);
+0255             <span class="keyword">else</span>
+0256                 xax=linspace(min(y(:,1)),max(y(:,1)),nxx);
+0257                 yax=linspace(min(y(:,2)),max(y(:,2)),nxx);
+0258             <span class="keyword">end</span>
+0259             xx(:,:,1)=repmat(xax',1,nxx);
+0260             xx(:,:,2)=repmat(yax,nxx,1);
+0261             imagesc(xax,yax,reshape(gaussmixp(reshape(xx,nxx^2,2),m,v,w),nxx,nxx)');
+0262             axis <span class="string">'xy'</span>;
+0263             colorbar;
+0264             xlabel(<span class="string">'Parameter 1'</span>);
+0265             ylabel(<span class="string">'Parameter 2'</span>);
+0266             <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Log probability density'</span>);
+0267             <span class="keyword">if</span> n&gt;0
+0268                 hold on
+0269                 cmap=colormap;
+0270                 clim=get(gca,<span class="string">'CLim'</span>);  <span class="comment">% get colourmap limits</span>
+0271                 msk=lp&gt;clim*[0.5; 0.5];
+0272                 <span class="keyword">if</span> any(msk)
+0273                     plot(y(msk,1),y(msk,2),<span class="string">'x'</span>,<span class="string">'markeredgecolor'</span>,cmap(1,:));
+0274                 <span class="keyword">end</span>
+0275                 <span class="keyword">if</span> any(~msk)
+0276                     plot(y(~msk,1),y(~msk,2),<span class="string">'x'</span>,<span class="string">'markeredgecolor'</span>,cmap(64,:));
+0277                 <span class="keyword">end</span>
+0278                 hold off
+0279             <span class="keyword">end</span>
+0280     <span class="keyword">end</span>
+0281 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

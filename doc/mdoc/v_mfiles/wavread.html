@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of wavread</title>
+  <meta name="keywords" content="wavread">
+  <meta name="description" content="WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; wavread.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>wavread
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs,bits]=v_wavread(fn,n) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)
+ v_wavread supports multichannel data, with up to 32 bits per sample, and supports reading 24- and 32-bit .wav files.
+
+ Usage:
+ y = v_wavread('filename')               loads a WAVE file specified by the string filename, returning
+                                       the sampled data in y. The .wav extension is appended if no
+                                       extension is given. Amplitude values are in the range [-1,+1].
+ [y,Fs,bits] = v_wavread('filename')     returns the sample rate (Fs) in Hertz and the number of bits
+                                       per sample (bits) used to encode the data in the file.
+ [...] = v_wavread('filename',N)         returns only the first N samples from each channel in the file.
+ [...] = v_wavread('filename',[N1 N2])   returns only samples N1 through N2 from each channel in the file.
+ siz = v_wavread('filename','size')      returns the size of the audio data contained in the file in place
+                                       of the actual audio data, returning the vector siz = [samples channels].</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,bits]=v_wavread(fn,n)</a>
+0002 <span class="comment">%WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)</span>
+0003 <span class="comment">% v_wavread supports multichannel data, with up to 32 bits per sample, and supports reading 24- and 32-bit .wav files.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Usage:</span>
+0006 <span class="comment">% y = v_wavread('filename')               loads a WAVE file specified by the string filename, returning</span>
+0007 <span class="comment">%                                       the sampled data in y. The .wav extension is appended if no</span>
+0008 <span class="comment">%                                       extension is given. Amplitude values are in the range [-1,+1].</span>
+0009 <span class="comment">% [y,Fs,bits] = v_wavread('filename')     returns the sample rate (Fs) in Hertz and the number of bits</span>
+0010 <span class="comment">%                                       per sample (bits) used to encode the data in the file.</span>
+0011 <span class="comment">% [...] = v_wavread('filename',N)         returns only the first N samples from each channel in the file.</span>
+0012 <span class="comment">% [...] = v_wavread('filename',[N1 N2])   returns only samples N1 through N2 from each channel in the file.</span>
+0013 <span class="comment">% siz = v_wavread('filename','size')      returns the size of the audio data contained in the file in place</span>
+0014 <span class="comment">%                                       of the actual audio data, returning the vector siz = [samples channels].</span>
+0015 
+0016 <span class="comment">%       Copyright (C) Mike Brookes 2018</span>
+0017 <span class="comment">%      Version: $Id: wavread.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0020 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0023 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0024 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0025 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0026 <span class="comment">%   (at your option) any later version.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0029 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0030 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0031 <span class="comment">%   GNU General Public License for more details.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0034 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0035 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="keyword">if</span> nargin&lt;2
+0038     [y,fs,wm,fx]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>(fn);
+0039 <span class="keyword">elseif</span> ischar(n)
+0040     <span class="keyword">if</span> strcmp(n,<span class="string">'size'</span>)
+0041         [y,fs,wm,fx]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>(fn,<span class="string">''</span>,0);
+0042         y=fx(4:5); <span class="comment">% number of samples and channels</span>
+0043     <span class="keyword">else</span>
+0044         error(<span class="string">'%s is invalid option'</span>,n);
+0045     <span class="keyword">end</span>
+0046 <span class="keyword">elseif</span> length(n)&lt;2
+0047     [y,fs,wm,fx]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>(fn,<span class="string">''</span>,n);
+0048 <span class="keyword">else</span>
+0049     [y,fs,wm,fx]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>(fn,<span class="string">''</span>,n(2)-n(1)+1,n(1)-1);
+0050 <span class="keyword">end</span>
+0051 bits=fx(7); <span class="comment">% bits precision</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

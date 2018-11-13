@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_besselratioi</title>
+  <meta name="keywords" content="v_besselratioi">
+  <meta name="description" content="BESSELRATIOI calculate the inverse Bessel function ratio">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_besselratioi.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_besselratioi
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>BESSELRATIOI calculate the inverse Bessel function ratio</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function s=v_besselratioi(r,v,p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">BESSELRATIOI calculate the inverse Bessel function ratio
+  Inputs:
+      r    value of the Bessel function ratio besseli(v+1,s)./besseli(v,s) (scalar or matrix)
+      v    denominator Bessel function order [0] [for now v=0 always]
+      p    digits precision &lt;=14 [5]
+
+ Outputs:
+      s    value of s such that r=besseli(v+1,s)./besseli(v,s)
+
+ This function implements function VKAPPA from [1] for which a FORTRAN
+ implementation is available in [2].
+
+ Refs:
+ [1] G. W. Hill, Evaluation and Inversion of the Ratios of Modified Bessel
+     Functions, I 1 (x)/I 0 (x) and I 1.5 (x)/I 0.5 (x),
+     ACM Transactions on Mathematical Software (TOMS), Vol 7, pp199-208, 1981
+ [2] ACM Collected Algorithms (CALGO), http://calgo.acm.org/</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>	BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_besselratioi(r,v,p)</a>
+0002 <span class="comment">%BESSELRATIOI calculate the inverse Bessel function ratio</span>
+0003 <span class="comment">%  Inputs:</span>
+0004 <span class="comment">%      r    value of the Bessel function ratio besseli(v+1,s)./besseli(v,s) (scalar or matrix)</span>
+0005 <span class="comment">%      v    denominator Bessel function order [0] [for now v=0 always]</span>
+0006 <span class="comment">%      p    digits precision &lt;=14 [5]</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Outputs:</span>
+0009 <span class="comment">%      s    value of s such that r=besseli(v+1,s)./besseli(v,s)</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% This function implements function VKAPPA from [1] for which a FORTRAN</span>
+0012 <span class="comment">% implementation is available in [2].</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Refs:</span>
+0015 <span class="comment">% [1] G. W. Hill, Evaluation and Inversion of the Ratios of Modified Bessel</span>
+0016 <span class="comment">%     Functions, I 1 (x)/I 0 (x) and I 1.5 (x)/I 0.5 (x),</span>
+0017 <span class="comment">%     ACM Transactions on Mathematical Software (TOMS), Vol 7, pp199-208, 1981</span>
+0018 <span class="comment">% [2] ACM Collected Algorithms (CALGO), http://calgo.acm.org/</span>
+0019 
+0020 <span class="comment">%      Copyright (C) Mike Brookes 2017-2018</span>
+0021 <span class="comment">%      Version: $Id: v_besselratioi.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0024 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0028 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0029 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0030 <span class="comment">%   (at your option) any later version.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0033 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0034 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0035 <span class="comment">%   GNU General Public License for more details.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0038 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0039 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0040 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0041 <span class="keyword">if</span> nargin&lt;3 || isempty(p)
+0042     p=5;
+0043 <span class="keyword">else</span>
+0044     p=min(max(ceil(p),1),13);       <span class="comment">% digits precision required</span>
+0045 <span class="keyword">end</span>
+0046 <span class="keyword">if</span> nargin&lt;2 || isempty(v)
+0047     v=0;                            <span class="comment">% default to I1/I0</span>
+0048 <span class="keyword">end</span>
+0049 sr=size(r);
+0050 r=r(:); <span class="comment">% convert to a column vector</span>
+0051 nr=prod(sr);
+0052 <span class="keyword">if</span> v~=0
+0053     error(<span class="string">'v must be zero (for now)'</span>);
+0054 <span class="keyword">end</span>
+0055 s=repmat(-1,nr,1);      <span class="comment">% default is -1 for r&lt;0 or r&gt;=1</span>
+0056 y=2./(1-r);
+0057 m1=r&gt;=0 &amp; r&lt;1;          <span class="comment">% m1 is mask for valid range</span>
+0058 mn=m1;                  <span class="comment">% mn is mask for using Newton iteration</span>
+0059 m=m1 &amp; r&lt;=0.85;         <span class="comment">% use inverse taylor series for 0&lt;=r&lt;=0.85</span>
+0060 <span class="keyword">if</span> any(m)
+0061     rm=r(m);  
+0062     mn(m)= rm&gt;=0.642;   <span class="comment">% we will need a Newton iteration for 0.642&lt;=r&lt;=0.85</span>
+0063     xm=rm.^2;
+0064     sm=(((rm-5.6076).*rm+5.0797).*rm-4.6494).*y(m).*xm-1;
+0065     s(m)=((((sm.*xm+15.0).*xm+60.0).*xm/360.0+1.0).*xm-2.0).*rm./(xm-1);
+0066 <span class="keyword">end</span>
+0067 m=m1 &amp; ~m;              <span class="comment">% use continued fraction for 0.85&lt;r&lt;1</span>
+0068 <span class="keyword">if</span> any(m)
+0069     rm=r(m);
+0070     mn(m)=rm&lt;0.95;      <span class="comment">% we will need a Newton iteration for 0.85&lt;r&lt;0.95</span>
+0071     ym=y(m);
+0072     mc=rm&lt;0.95;
+0073     <span class="keyword">if</span> any(mc)
+0074         rm(mc)=(-2326.0.*rm(mc)+4317.5526).*rm(mc) - 2001.035224;
+0075     <span class="keyword">end</span>
+0076     <span class="keyword">if</span> any(~mc)    
+0077         rm(~mc)=32.0./(120.0*rm(~mc)-131.5+ym(~mc));
+0078     <span class="keyword">end</span>
+0079     s(m)=(ym+1.0+3.0./(ym-5.0-12.0./(ym-10.0-rm)))*0.25;    
+0080 <span class="keyword">end</span>
+0081 <span class="keyword">if</span> any(mn)              <span class="comment">% we need to do one or two Newton iterations</span>
+0082     rmn=r(mn);
+0083     smn=s(mn);
+0084     ymn=y(mn);
+0085     ymn= ((0.00048*ymn-0.1589).*ymn+0.744).*ymn - 4.2932;   <span class="comment">% Gradient approximation ds/dr</span>
+0086     smn=smn+(<a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>(smn,0,p+1)-rmn).*ymn;              <span class="comment">% do a Newton iteration</span>
+0087     mr=(rmn&gt;=0.75) &amp; (rmn&lt;=0.875);                          <span class="comment">% need a second Newton iteration for 0.75&lt;=r&lt;=0.875</span>
+0088     <span class="keyword">if</span> any(mr)
+0089         smn(mr)=smn(mr)+(<a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>(smn(mr),0,p+1)-rmn(mr)).*ymn(mr); <span class="comment">% do a second Newton iteration</span>
+0090     <span class="keyword">end</span>
+0091     s(mn)=smn;                                              <span class="comment">% update the main s() array</span>
+0092 <span class="keyword">end</span>
+0093 s=reshape(s,sr);                <span class="comment">% put back into the same shape is the input r</span>
+0094 <span class="keyword">if</span> ~nargout
+0095     plot(r,s);
+0096     ylabel(<span class="string">'x'</span>);
+0097     xlabel(sprintf(<span class="string">'I_{%d}(x)/I_{%d}(x)'</span>,v+1,v));
+0098 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

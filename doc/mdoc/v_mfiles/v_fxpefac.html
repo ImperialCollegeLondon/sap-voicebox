@@ -1,0 +1,498 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_fxpefac</title>
+  <meta name="keywords" content="v_fxpefac">
+  <meta name="description" content="FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_fxpefac.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_fxpefac
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)
+
+ Input:   s(ns)      Speech signal
+          fs         Sample frequency (Hz)
+          tinc       Time increment between frames (s) [0.01]
+                     or [start increment end]
+          m          mode
+                     'g' plot graph showing waveform and pitch
+                     'G' plot spectrogram with superimposed pitch using
+                         options pp.sopt [default: 'ilcwpf']
+                     'x' use external files for algorithm parameter
+                         initialization: fxpefac_g and fxpefac_w
+          pp         structure containing algorithm parameters
+
+ Outputs: fx(nframe)     Estimated pitch (Hz)
+          tx(nframe)     Time at the centre of each frame (seconds).
+          pv(nframe)     Probability of the frame of being voiced
+          fv             structure containing feature vectors
+                           fv.vuvfea(nframe,2) = voiced/unvoiced GMM features</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>	V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function y=smooth(x,n)</a></li><li><a href="#_sub2" class="code">function y=timesm(x,n)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)</a>
+0002 <span class="comment">%FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input:   s(ns)      Speech signal</span>
+0005 <span class="comment">%          fs         Sample frequency (Hz)</span>
+0006 <span class="comment">%          tinc       Time increment between frames (s) [0.01]</span>
+0007 <span class="comment">%                     or [start increment end]</span>
+0008 <span class="comment">%          m          mode</span>
+0009 <span class="comment">%                     'g' plot graph showing waveform and pitch</span>
+0010 <span class="comment">%                     'G' plot spectrogram with superimposed pitch using</span>
+0011 <span class="comment">%                         options pp.sopt [default: 'ilcwpf']</span>
+0012 <span class="comment">%                     'x' use external files for algorithm parameter</span>
+0013 <span class="comment">%                         initialization: fxpefac_g and fxpefac_w</span>
+0014 <span class="comment">%          pp         structure containing algorithm parameters</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Outputs: fx(nframe)     Estimated pitch (Hz)</span>
+0017 <span class="comment">%          tx(nframe)     Time at the centre of each frame (seconds).</span>
+0018 <span class="comment">%          pv(nframe)     Probability of the frame of being voiced</span>
+0019 <span class="comment">%          fv             structure containing feature vectors</span>
+0020 <span class="comment">%                           fv.vuvfea(nframe,2) = voiced/unvoiced GMM features</span>
+0021 
+0022 <span class="comment">% References</span>
+0023 <span class="comment">%  [1]  S. Gonzalez and M. Brookes. PEFAC - a pitch estimation algorithm robust to high levels of noise.</span>
+0024 <span class="comment">%       IEEE Trans. Audio, Speech, Language Processing, 22 (2): 518-530, Feb. 2014.</span>
+0025 <span class="comment">%       doi: 10.1109/TASLP.2013.2295918.</span>
+0026 <span class="comment">%  [2]  S.Gonzalez and M. Brookes,</span>
+0027 <span class="comment">%       A pitch estimation filter robust to high levels of noise (PEFAC), Proc EUSIPCO,Aug 2011.</span>
+0028 
+0029 <span class="comment">% Bugs/Suggestions</span>
+0030 <span class="comment">% (1) do long files in chunks</span>
+0031 <span class="comment">% (2) option of n-best DP</span>
+0032 
+0033 <span class="comment">%       Copyright (C) Sira Gonzalez and Mike Brookes 2011</span>
+0034 <span class="comment">%      Version: $Id: v_fxpefac.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0037 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0040 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0041 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0042 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0043 <span class="comment">%   (at your option) any later version.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0046 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0047 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0048 <span class="comment">%   GNU General Public License for more details.</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0051 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0052 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0053 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0054 
+0055 <span class="keyword">persistent</span> w_u m_u v_u w_v m_v v_v dpwtdef
+0056 <span class="comment">% initialize persistent variables</span>
+0057 <span class="keyword">if</span> ~numel(w_u)
+0058 
+0059     <span class="comment">% voiced/unvoiced decision based on 2-element feature vector</span>
+0060     <span class="comment">% (a) mean power of the frame's log-freq spectrum (normalized so its short-term average is LTASS)</span>
+0061     <span class="comment">% (b) sum of the power in the first three peaks</span>
+0062     <span class="comment">%===== VUV</span>
+0063     <span class="keyword">if</span> nargin&gt;3 &amp;&amp; any(m==<span class="string">'x'</span>)
+0064         fxpefac_g;     <span class="comment">% read in GMM parameters</span>
+0065         fxpefac_w;     <span class="comment">% read in Weights parameters</span>
+0066     <span class="keyword">else</span>
+0067         w_u=[0.1461799 0.3269458 0.2632178 0.02331986 0.06360947 0.1767271 ]';
+0068 
+0069         m_u=[13.38533 0.4199435 ;
+0070              12.23505 0.1496836 ;
+0071              12.76646 0.2581733 ;
+0072              13.69822 0.6893078 ;
+0073              9.804372 0.02786567 ;
+0074              11.03848 0.07711229 ];
+0075 
+0076         v_u=reshape([0.4575519 0.002619074 0.002619074 0.01262138 ;
+0077              0.7547719 0.008568089 0.008568089 0.001933864 ;
+0078              0.5770533 0.003561592 0.003561592 0.00527957 ;
+0079              0.3576287 0.01388739 0.01388739 0.04742106 ;
+0080              0.9049906 0.01033191 0.01033191 0.0001887114 ;
+0081              0.637969 0.009936445 0.009936445 0.0007082946 ]',[2 2 6]);
+0082 
+0083         w_v=[0.1391365 0.221577 0.2214025 0.1375109 0.1995124 0.08086066 ]';
+0084 
+0085         m_v=[15.36667 0.8961554 ;
+0086              13.52718 0.4809653 ;
+0087              13.95531 0.8901121 ;
+0088              14.56318 0.6767258 ;
+0089              14.59449 1.190709 ;
+0090              13.11096 0.2861982 ];
+0091 
+0092         v_v=reshape([0.196497 -0.002605404 -0.002605404 0.05495016 ;
+0093              0.6054919 0.007776652 0.007776652 0.01899244 ;
+0094              0.5944617 0.0485788 0.0485788 0.03511229 ;
+0095              0.3871268 0.0292966 0.0292966 0.02046839 ;
+0096              0.3377683 0.02839657 0.02839657 0.04756354 ;
+0097              1.00439 0.03595795 0.03595795 0.006737475 ]',[2 2 6]);
+0098     <span class="keyword">end</span>
+0099     <span class="comment">%===== PDP</span>
+0100     <span class="comment">%     dfm = -0.4238; % df mean</span>
+0101     <span class="comment">%     dfv = 3.8968; % df variance (although treated as std dev here)</span>
+0102     <span class="comment">%     delta = 0.15;</span>
+0103     <span class="comment">%     dflpso=[dfm 0.5/(log(10)*dfv^2) -log(2*delta/(dfv*sqrt(2*pi)))/log(10)]; % scale factor &amp; offset for df pdf</span>
+0104     <span class="comment">%     dpwtdef=[1.0000, 0.8250, 1.3064, 1.9863]; % default DP weights</span>
+0105     dpwtdef=[1.0000, 0.8250, 0.01868, 0.006773, 98.9, -0.4238]; <span class="comment">% default DP weights</span>
+0106     <span class="comment">%===== END</span>
+0107 
+0108 <span class="keyword">end</span>
+0109 <span class="comment">% Algorithm parameter defaults</span>
+0110 
+0111 p.fstep=5;              <span class="comment">% frequency resolution of initial spectrogram (Hz)</span>
+0112 p.fmax=4000;            <span class="comment">% maximum frequency of initial spectrogram (Hz)</span>
+0113 p.fres = 20;            <span class="comment">% bandwidth of initial spectrogram (Hz)</span>
+0114 p.fbanklo = 10;         <span class="comment">% low frequency limit of log v_filterbank (Hz)</span>
+0115 p.mpsmooth = 21;       <span class="comment">% width of smoothing filter for mean power</span>
+0116 <span class="comment">% p.maxtranf = 1000;      % maximum value of tranf cost term</span>
+0117 p.shortut = 7;          <span class="comment">% max utterance length to average power of entire utterance</span>
+0118 p.pefact = 1.8;         <span class="comment">% shape factor in PEFAC filter</span>
+0119 p.numopt = 3;           <span class="comment">% number of possible frequencies per frame</span>
+0120 p.flim = [60 400];      <span class="comment">% range of feasible fundamental frequencies (Hz)</span>
+0121 p.w = dpwtdef;          <span class="comment">% DP weights</span>
+0122 <span class="comment">% p.rampk = 1.1;          % constant for relative-amplitude cost term</span>
+0123 <span class="comment">% p.rampcz = 100;         % relative amplitude cost for missing peak</span>
+0124 p.tmf = 2;              <span class="comment">% median frequency smoothing interval (s)</span>
+0125 p.tinc = 0.01;          <span class="comment">% default frame increment (s)</span>
+0126 p.sopt = <span class="string">'ilcwpf'</span>;      <span class="comment">% spectrogram options</span>
+0127 
+0128 <span class="comment">% update parameters from pp argument</span>
+0129 
+0130 <span class="keyword">if</span> nargin&gt;=5 &amp;&amp; isstruct(pp)
+0131     fnq=fieldnames(pp);
+0132     <span class="keyword">for</span> i=1:length(fnq)
+0133         <span class="keyword">if</span> isfield(p,fnq{i})
+0134             p.(fnq{i})=pp.(fnq{i});
+0135         <span class="keyword">end</span>
+0136     <span class="keyword">end</span>
+0137 <span class="keyword">end</span>
+0138 
+0139 <span class="comment">% Sort out input arguments</span>
+0140 <span class="keyword">if</span> nargin&gt;=3  &amp;&amp; numel(tinc)&gt;0
+0141     p.tinc = tinc;   <span class="comment">% 0.01 s between consecutive time frames</span>
+0142 <span class="keyword">end</span>
+0143 <span class="keyword">if</span> nargin&lt;4
+0144     m=<span class="string">''</span>;
+0145 <span class="keyword">end</span>
+0146 
+0147 <span class="comment">% Spectrogram of the mixture</span>
+0148 fmin = 0; fstep = p.fstep; fmax = p.fmax;
+0149 fres = p.fres;  <span class="comment">% Frequency resolution (Hz)</span>
+0150 [tx,f,MIX]=<a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>(s,fs,fres,[fmin fstep fmax],[],p.tinc);
+0151 nframes=length(tx);
+0152 txinc=tx(2)-tx(1);  <span class="comment">% actual frame increment</span>
+0153 <span class="comment">%  ==== we could combine v_spgrambw and v_filtbankm into a single call to v_spgrambw or use fft directly ====</span>
+0154 <span class="comment">% Log-frequency scale</span>
+0155 [trans,cf]=<a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>(length(f),2*length(f)-1,2*f(end),p.fbanklo,f(end),<span class="string">'usl'</span>);
+0156 O = MIX*trans'; <span class="comment">% Original spectrum in Log-frequency scale</span>
+0157 
+0158 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0159 <span class="comment">% Amplitude Compression</span>
+0160 
+0161 <span class="comment">% Calculate alpha based on LTASS ratios</span>
+0162 ltass = <a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(6,<span class="string">'p'</span>,cf); <span class="comment">% uses an old version of the LTASS spectrum but we will need to recalculate the GMM if we update it</span>
+0163 auxf = [cf(1),(cf(1:end-1)+cf(2:end))./2,cf(end)];
+0164 ltass = ltass.*diff(auxf);                  <span class="comment">% weight by bin width</span>
+0165 
+0166 <span class="comment">% estimated ltass</span>
+0167 O = O.*repmat(diff(auxf),nframes,1);     <span class="comment">% weight spectrum by bin width</span>
+0168 O1 = O;
+0169 
+0170 <span class="keyword">if</span> tx(end)&lt;p.shortut                        <span class="comment">% if it is a short utterance</span>
+0171     eltass = mean(O,1);                     <span class="comment">% mean power per each frequency band</span>
+0172     eltass = <a href="#_sub1" class="code" title="subfunction y=smooth(x,n)">smooth</a>(eltass,p.mpsmooth);     <span class="comment">% smooth in log frequency</span>
+0173     eltass= eltass(:).';                    <span class="comment">% force a row vector</span>
+0174 
+0175     <span class="comment">% Linear AC</span>
+0176     alpha = (ltass)./(eltass);
+0177     alpha = alpha(:).';
+0178     alpha = repmat(alpha,nframes,1);
+0179     O = O.*alpha;                           <span class="comment">% force O to have an average LTASS spectrum</span>
+0180 
+0181     <span class="comment">% ==== should perhaps exclude the silent portions ***</span>
+0182 <span class="keyword">else</span>                                        <span class="comment">% long utterance</span>
+0183 
+0184     tsmo = 3; <span class="comment">% time smoothing over 3 sec</span>
+0185     stt = round(tsmo/txinc);
+0186     eltass = <a href="#_sub2" class="code" title="subfunction y=timesm(x,n)">timesm</a>(O,stt);
+0187     eltass = <a href="#_sub1" class="code" title="subfunction y=smooth(x,n)">smooth</a>(eltass,p.mpsmooth);     <span class="comment">% filter in time and log frequency</span>
+0188 
+0189     <span class="comment">% Linear AC</span>
+0190     alpha = repmat(ltass,nframes,1)./(eltass);
+0191     O = O.*alpha;
+0192 
+0193 <span class="keyword">end</span>
+0194 
+0195 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0196 <span class="comment">% Create the filter to detect the harmonics</span>
+0197 ini = find(cf&gt;3*cf(1));
+0198 sca = cf/cf(ini(1)); <span class="comment">% bin frequencies start at approximately 0.33 with sca(ini(1))=1 exactly</span>
+0199 
+0200 <span class="comment">% Middle</span>
+0201 sca = sca(sca&lt;10.5 &amp; sca&gt;0.5);  <span class="comment">% restrict to 0.5 - 10.5 times fundamental</span>
+0202 
+0203 sca1 = sca;
+0204 filh = 1./(p.pefact-cos(2*pi*sca1));
+0205 filh = filh - sum(filh(1:end).*diff([sca1(1),(sca1(1:end-1)+sca1(2:end))./2,sca1(end)]))/sum(diff([sca1(1),(sca1(1:end-1)+sca1(2:end))./2,sca1(end)]));
+0206 
+0207 posit = find(sca&gt;=1);  <span class="comment">% ==== this should just equal ini(1) ====</span>
+0208 negat = find(sca&lt;1);
+0209 numz = length(posit)-1-length(negat);
+0210 filh = filh./max(filh);
+0211 filh = [zeros(1,numz) filh]; <span class="comment">% length is always odd with central value = 1</span>
+0212 
+0213 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0214 <span class="comment">% Filter the log-frequency scaled spectrogram</span>
+0215 B = imfilter(O,filh);  <span class="comment">% does a convolution with zero lag at centre of filh</span>
+0216 
+0217 <span class="comment">% Feasible frequency range</span>
+0218 numopt = p.numopt; <span class="comment">% Number of possible fundamental frequencies per frame</span>
+0219 flim = p.flim;
+0220 pfreq = find(cf&gt;flim(1) &amp; cf&lt;flim(2)); <span class="comment">% flim = permitted fx range = [60 400]</span>
+0221 ff = zeros(nframes,numopt);
+0222 amp = zeros(nframes,numopt);
+0223 <span class="keyword">for</span> i=1:nframes
+0224     [pos,peak]=<a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>(B(i,pfreq),[],5/(cf(pfreq(2))-cf(pfreq(1)))); <span class="comment">% min separation = 5Hz @ fx=flim(1) (could pre-calculate) ====</span>
+0225     <span class="keyword">if</span> numel(pos)
+0226         [peak,ind]=sort(peak,<span class="string">'descend'</span>);
+0227         pos = pos(ind);                     <span class="comment">% indices of peaks in the B array</span>
+0228         posff = cf(pfreq(pos));             <span class="comment">% frequencies of peaks</span>
+0229         fin = min(numopt,length(posff));
+0230         ff(i,1:fin)=posff(1:fin);           <span class="comment">% save both frequency and amplitudes</span>
+0231         amp(i,1:fin)=peak(1:fin);
+0232     <span class="keyword">end</span>
+0233 <span class="keyword">end</span>
+0234 
+0235 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0236 <span class="comment">% Probabilitly of the frame of being voiced</span>
+0237 
+0238 <span class="comment">% voiced/unvoiced decision based on 2-element feature vector</span>
+0239 <span class="comment">% (a) mean power of the frame's log-freq spectrum (normalized so its short-term average is LTASS)</span>
+0240 <span class="comment">% (b) sum of the power in the first three peaks</span>
+0241 
+0242 pow = mean(O,2);
+0243 
+0244 vuvfea = [log(pow) 1e-3*sum(amp,2)./(pow+1.75*1e5)];
+0245 
+0246 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%</span>
+0247 
+0248 pru=<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(vuvfea,m_u,v_u,w_u);  <span class="comment">% Log probability of being unvoiced</span>
+0249 prv=<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(vuvfea,m_v,v_v,w_v);  <span class="comment">% Log probability of being voiced</span>
+0250 
+0251 pv=(1+exp(pru-prv)).^(-1);
+0252 
+0253 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0254 <span class="comment">% Dynamic programming</span>
+0255 
+0256 <span class="comment">% w(1): relative amp, voiced local cost</span>
+0257 <span class="comment">% w(2): median pitch deviation cost</span>
+0258 <span class="comment">% w(3): df cost weight</span>
+0259 <span class="comment">% w(4): max df cost</span>
+0260 <span class="comment">% w(5): relative amp cost for missing peaks (very high)</span>
+0261 <span class="comment">% w(6): df mean</span>
+0262 
+0263 w = p.w;
+0264 
+0265 <span class="comment">% Relative amplitude</span>
+0266 camp = -amp./repmat(max(amp,[],2),1,numopt);  <span class="comment">% relative amplitude used as cost</span>
+0267 camp(amp==0)=w(5); <span class="comment">% If no frequency found</span>
+0268 
+0269 <span class="comment">% Time interval for the median frequency</span>
+0270 tmf = p.tmf; <span class="comment">% in sec</span>
+0271 inmf = round(tmf/txinc);
+0272 
+0273 <span class="comment">%--------------------------------------------------------------------------</span>
+0274 <span class="comment">% FORWARDS</span>
+0275 <span class="comment">% Initialize values</span>
+0276 cost = zeros(nframes,numopt);
+0277 prev = zeros(nframes,numopt);
+0278 medfx = zeros(nframes,1);
+0279 dffact=2/txinc;
+0280 
+0281 <span class="comment">% First time frame</span>
+0282 <span class="comment">% cost(1,:) = w(1)*ramp(1,:);</span>
+0283 cost(1,:) = w(1)*camp(1,:);  <span class="comment">% only one cost term for first frame</span>
+0284 fpos = ff(1:min(inmf,end),1);
+0285 mf=median(fpos(pv(1:min(inmf,end))&gt;0.6));   <span class="comment">% calculate median frequency of first 2 seconds</span>
+0286 <span class="keyword">if</span> isnan(mf)
+0287     mf=median(fpos(pv(1:min(inmf,end))&gt;0.5));
+0288     <span class="keyword">if</span> isnan(mf)
+0289         mf=median(fpos(pv(1:min(inmf,end))&gt;0.4));
+0290         <span class="keyword">if</span> isnan(mf)
+0291             mf=median(fpos(pv(1:min(inmf,end))&gt;0.3)); <span class="comment">% ==== clumsy way of ensuring that we take the best frames ====</span>
+0292             <span class="keyword">if</span> isnan(mf)
+0293                 mf=0;
+0294             <span class="keyword">end</span>
+0295         <span class="keyword">end</span>
+0296     <span class="keyword">end</span>
+0297 <span class="keyword">end</span>
+0298 medfx(1)=mf;
+0299 
+0300 <span class="keyword">for</span> i=2:nframes              <span class="comment">% main dynamic programming loop</span>
+0301     <span class="keyword">if</span> i&gt;inmf
+0302         fpos = ff(i-inmf:i,1);  <span class="comment">% fpos is the highest peak in each frame</span>
+0303         mf=median(fpos(pv(1:inmf)&gt;0.6));  <span class="comment">% find median frequency over past 2 seconds</span>
+0304         <span class="keyword">if</span> isnan(mf)
+0305             mf=median(fpos(pv(1:inmf)&gt;0.5));
+0306             <span class="keyword">if</span> isnan(mf)
+0307                 mf=median(fpos(pv(1:inmf)&gt;0.4));
+0308                 <span class="keyword">if</span> isnan(mf)
+0309                     mf=median(fpos(pv(1:inmf)&gt;0.3));<span class="comment">% ==== clumsy way of ensuring that we take the best frames ====</span>
+0310                     <span class="keyword">if</span> isnan(mf)
+0311                         mf=0;
+0312                     <span class="keyword">end</span>
+0313                 <span class="keyword">end</span>
+0314             <span class="keyword">end</span>
+0315         <span class="keyword">end</span>
+0316     <span class="keyword">end</span>
+0317     medfx(i)=mf;
+0318     <span class="comment">% Frequency difference between candidates and cost</span>
+0319     df = dffact*(repmat(ff(i,:).',1,numopt) - repmat(ff(i-1,:),numopt,1))./(repmat(ff(i,:).',1,numopt) + repmat(ff(i-1,:),numopt,1));
+0320     costdf=w(3)*min((df-w(6)).^2,w(4));
+0321 
+0322     <span class="comment">% Cost related to the median pitch</span>
+0323     <span class="keyword">if</span> mf==0                                   <span class="comment">% this test was inverted in the original version</span>
+0324         costf = zeros(1,numopt);
+0325     <span class="keyword">else</span>
+0326         costf = abs(ff(i,:) - mf)./mf;
+0327     <span class="keyword">end</span>
+0328     [cost(i,:),prev(i,:)]=min(costdf + repmat(cost(i-1,:),numopt,1),[],2); <span class="comment">% ==== should we allow the possibility of skipping frames ? ====</span>
+0329     cost(i,:)=cost(i,:)+w(2)*costf + w(1)*camp(i,:);  <span class="comment">% add on costs that are independent of previous path</span>
+0330 
+0331 <span class="keyword">end</span>
+0332 
+0333 <span class="comment">% Traceback</span>
+0334 
+0335 fx=zeros(nframes,1);
+0336 ax=zeros(nframes,1);
+0337 best = zeros(nframes,1);
+0338 
+0339 nose=find(cost(<span class="keyword">end</span>,:)==min(cost(<span class="keyword">end</span>,:))); <span class="comment">% ==== bad method (dangerous) ===</span>
+0340 best(end)=nose(1);
+0341 fx(end)=ff(<span class="keyword">end</span>,best(end));
+0342 ax(end)=amp(<span class="keyword">end</span>,best(end));
+0343 <span class="keyword">for</span> i=nframes:-1:2
+0344     best(i-1)=prev(i,best(i));
+0345     fx(i-1)=ff(i-1,best(i-1));
+0346     ax(i-1)=amp(i-1,best(i-1));
+0347 <span class="keyword">end</span>
+0348 
+0349 <span class="keyword">if</span> nargout&gt;=4
+0350     fv.vuvfea=vuvfea;  <span class="comment">% voiced-unvoiced features</span>
+0351     fv.best=best;  <span class="comment">% selected path</span>
+0352     fv.ff=ff;  <span class="comment">% pitch candidates</span>
+0353     fv.amp=amp;  <span class="comment">% pitch candidate amplitudes</span>
+0354     fv.medfx=medfx;  <span class="comment">% median pitch</span>
+0355     fv.w=w;  <span class="comment">% DP weights</span>
+0356     fv.dffact=dffact;  <span class="comment">% df scale factor</span>
+0357     fv.hist = [log(mean(O,2)) sum(amp,2)./((mean(O,2)))];
+0358 <span class="keyword">end</span>
+0359 
+0360 <span class="keyword">if</span> ~nargout || any(m==<span class="string">'g'</span>) || any(m==<span class="string">'G'</span>)
+0361     nax=0;  <span class="comment">% number of axes sets to link</span>
+0362     msk=pv&gt;0.5; <span class="comment">% find voiced frames as a mask</span>
+0363     fxg=fx;
+0364     fxg(~msk)=NaN; <span class="comment">% allow only good frames</span>
+0365     fxb=fx;
+0366     fxb(msk)=NaN; <span class="comment">% allow only bad frames</span>
+0367     <span class="keyword">if</span> any(m==<span class="string">'G'</span>) || ~nargout &amp;&amp; ~any(m==<span class="string">'g'</span>)
+0368         clf;
+0369         <a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>(s,fs,p.sopt); <span class="comment">% draw spectrogram with log axes</span>
+0370         hold on
+0371         plot(tx,log10(fxg),<span class="string">'-b'</span>,tx,log10(fxb),<span class="string">'-r'</span>); <span class="comment">% fx track</span>
+0372         yy=get(gca,<span class="string">'ylim'</span>);
+0373         plot(tx,yy(1)+yy*[-1;1]*(0.02+0.05*pv),<span class="string">'-k'</span>); <span class="comment">% P(V) track</span>
+0374         hold off
+0375         nax=nax+1;
+0376         axh(nax)=gca;
+0377         <span class="keyword">if</span> any(m==<span class="string">'g'</span>)
+0378             figure;   <span class="comment">% need a new figure if plotting two graphs</span>
+0379         <span class="keyword">end</span>
+0380     <span class="keyword">end</span>
+0381     <span class="keyword">if</span> any(m==<span class="string">'g'</span>)
+0382         ns=length(s);
+0383         [tsr,ix]=sort([(1:ns)/fs 0.5*(tx(1:end-1)+tx(2:end))']); <span class="comment">% intermingle speech and frame boundaries</span>
+0384         jx(ix)=1:length(ix); <span class="comment">% create inverse index</span>
+0385         sp2fr=jx(1:ns)-(0:ns-1);  <span class="comment">% speech sample to frame number</span>
+0386         spmsk=msk(sp2fr);   <span class="comment">% speech sample voiced mask</span>
+0387         sg=s;
+0388         sg(~spmsk)=NaN;   <span class="comment">% good speech samples only</span>
+0389         sb=s;
+0390         sb(spmsk)=NaN;    <span class="comment">% bad speech samples only</span>
+0391         clf;
+0392         subplot(5,1,1);
+0393         plot(tx,pv,<span class="string">'-b'</span>,(1:ns)/fs,0.5*mod(cumsum(fx(sp2fr)/fs),1)-0.6,<span class="string">'-b'</span>);
+0394         nax=nax+1;
+0395         axh(nax)=gca;
+0396         ylabel(<span class="string">'\phi(t), P(V)'</span>);
+0397         set(gca,<span class="string">'ylim'</span>,[-0.65 1.05]);
+0398         subplot(5,1,2:3);
+0399         plot((1:ns)/fs,sg,<span class="string">'-b'</span>,(1:ns)/fs,sb,<span class="string">'-r'</span>);
+0400         nax=nax+1;
+0401         axh(nax)=gca;
+0402         subplot(5,1,4:5);
+0403         plot(tx,fxg,<span class="string">'-b'</span>,tx,fxb,<span class="string">'-r'</span>);
+0404         ylabel(<span class="string">'Pitch (Hz)'</span>);
+0405         <span class="comment">%         semilogy(tx,fxg,'-b',tx,fxb,'-r');</span>
+0406         <span class="comment">%         ylabel(['Pitch (' v_yticksi 'Hz)']);</span>
+0407         set(gca,<span class="string">'ylim'</span>,[min(fxg)-30 max(fxg)+30]);
+0408         nax=nax+1;
+0409         axh(nax)=gca;
+0410     <span class="keyword">end</span>
+0411     <span class="keyword">if</span> nax&gt;1
+0412         linkaxes(axh,<span class="string">'x'</span>);
+0413     <span class="keyword">end</span>
+0414 <span class="keyword">end</span>
+0415 
+0416 <a name="_sub1" href="#_subfunctions" class="code">function y=smooth(x,n)</a>
+0417 nx=size(x,2);
+0418 nf=size(x,1);
+0419 c=cumsum(x,2);
+0420 y=[c(:,1:2:n)./repmat(1:2:n,nf,1) (c(:,n+1:end)-c(:,1:end-n))/n (repmat(c(:,end),1,floor(n/2))-c(:,end-n+2:2:end-1))./repmat(n-2:-2:1,nf,1)];
+0421 
+0422 <a name="_sub2" href="#_subfunctions" class="code">function y=timesm(x,n)</a>
+0423 <span class="keyword">if</span> ~mod(n,2)
+0424     n = n+1;
+0425 <span class="keyword">end</span>
+0426 nx=size(x,2);
+0427 nf=size(x,1);
+0428 c=cumsum(x,1);
+0429 mid = round(n/2);
+0430 y=[c(mid:n,:)./repmat((mid:n).',1,nx); <span class="keyword">...</span>
+0431     (c(n+1:<span class="keyword">end</span>,:)-c(1:end-n,:))/n; <span class="keyword">...</span>
+0432     (repmat(c(<span class="keyword">end</span>,:),mid-1,1) - c(end-n+1:end-mid,:))./repmat((n-1:-1:mid).',1,nx)];</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

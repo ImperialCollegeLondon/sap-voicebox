@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_lpcauto</title>
+  <meta name="keywords" content="v_lpcauto">
+  <meta name="description" content="LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_lpcauto.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_lpcauto
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ar,e,k]=v_lpcauto(s,p,t,w,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)
+ Usage: (1) [ar,e]=v_lpcauto(x,p,[],'r','e'); same as lpc(x,p);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>	WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li><li><a href="v_fxrapt.html" class="code" title="function [fx,tt]=v_fxrapt(s,fs,mode,q)">v_fxrapt</a>	FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ar,e,k]=v_lpcauto(s,p,t,w,m)</a>
+0002 <span class="comment">%LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</span>
+0003 <span class="comment">% Usage: (1) [ar,e]=v_lpcauto(x,p,[],'r','e'); same as lpc(x,p);</span>
+0004 
+0005 <span class="comment">%  Inputs:</span>
+0006 <span class="comment">%     s(ns,nch)  is the input signal (ns samples, nch channels)</span>
+0007 <span class="comment">%      p          is the order (default: 12)</span>
+0008 <span class="comment">%      t(nf,3)    specifies the frames size details: each row specifies</span>
+0009 <span class="comment">%                 up to three values per frame: [len anal skip] where:</span>
+0010 <span class="comment">%                   len     is the length of the frame (default: length(s))</span>
+0011 <span class="comment">%                   anal    is the analysis length (default: len)</span>
+0012 <span class="comment">%                   skip    is the number of samples to skip at the beginning (default: 0)</span>
+0013 <span class="comment">%                 If t contains only one row, it will be used repeatedly</span>
+0014 <span class="comment">%                 until there are no more samples left in s.</span>
+0015 <span class="comment">%     w          window or window type (see v_windows)</span>
+0016 <span class="comment">%                  Code Window     Sidelobe  3dB-BW  6dB-BW</span>
+0017 <span class="comment">%                  'c'   cos        -23dB     1.2     1.6  used in MP3</span>
+0018 <span class="comment">%                  'k'   kaiser(5)  -23dB     1.2     1.7  used in AAC</span>
+0019 <span class="comment">%                  'm'   hamming    -43dB     1.3     1.8  low sidelobes [default]</span>
+0020 <span class="comment">%                  'n'   hanning    -31dB     1.4     2.0  rapid falloff</span>
+0021 <span class="comment">%                  'r'   rectangle  -13dB     0.87    1.2  narrow main lobe</span>
+0022 <span class="comment">%                  'w'   rsqvorbis  -26dB     1.1     1.5  sqrt Vorbis</span>
+0023 <span class="comment">%                  's'   hamming    -24dB     1.1     1.5  sqrt Hamming</span>
+0024 <span class="comment">%                  'v'   vorbis     -21dB     1.3     1.8  used in Vorbis</span>
+0025 <span class="comment">%     m          set of mode options:</span>
+0026 <span class="comment">%                  'e'   scale window to make sum of squares = 1</span>
+0027 <span class="comment">%                  'j'   find a single set of LPC coefficients for all channels</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% Outputs:</span>
+0030 <span class="comment">%     ar(nf,p+1,nch) are the AR coefficients with ar(:,1,:) = 1</span>
+0031 <span class="comment">%     e(nf,nch)      is the energy in the residual.</span>
+0032 <span class="comment">%                      sqrt(e) is often called the 'gain' of the filter.</span>
+0033 <span class="comment">%     k(nf,2)        gives the first and last sample of the analysis intervals</span>
+0034 
+0035 <span class="comment">% Notes:</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% (1) The first frame always starts at sample s(1) and the analysis window starts at s(t(1,3)+1).</span>
+0038 <span class="comment">% (2) The elements of t need not be integers; window parameters will be rounded to the nearest integers.</span>
+0039 <span class="comment">% (3) The analysis interval is always multiplied by a hamming window</span>
+0040 <span class="comment">% (4) As an example, if p=3 and t=[10 5 2], then the illustration below shows</span>
+0041 <span class="comment">%     successive frames labelled a, b, c, ... with capitals for the</span>
+0042 <span class="comment">%     analysis regions.</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%      a a A A A A A a a a b b B B B B B b b b c c C C C C C c c c d ...</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%     The first frame starts at s(1) and the first analysis interval is t(1,3)+(1:t(1,2)).</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% (5) Frames can overlap: e.g. t=[5 20] will use analysis frames of</span>
+0049 <span class="comment">%     length 20 overlapped by 15 samples.</span>
+0050 <span class="comment">% (6) For speech processing p should be at least 2*f*l/c where f is the sampling</span>
+0051 <span class="comment">%     frequency, l the vocal tract length and c the speed of sound. For a typical</span>
+0052 <span class="comment">%     male (l=17 cm) this gives f/1000.</span>
+0053 
+0054 <span class="comment">%      Copyright (C) Mike Brookes 1997-2018</span>
+0055 <span class="comment">%      Version: $Id: v_lpcauto.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0058 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0061 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0062 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0063 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0064 <span class="comment">%   (at your option) any later version.</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0067 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0068 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0069 <span class="comment">%   GNU General Public License for more details.</span>
+0070 <span class="comment">%</span>
+0071 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0072 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0073 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0074 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0075 <span class="keyword">persistent</span> wnam wtypes
+0076 <span class="keyword">if</span> isempty(wnam)
+0077     wnam={<span class="string">'c'</span>,<span class="string">'k'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'r'</span>,<span class="string">'w'</span>,<span class="string">'s'</span>,<span class="string">'v'</span>};
+0078     wtypes=[10 11 3 2 1 8 3 7];
+0079 <span class="keyword">end</span>
+0080 [ns,nch]=size(s);
+0081 <span class="keyword">if</span> ns==1
+0082     s = s(:); <span class="comment">% transpose if a row vector</span>
+0083     [ns,nch]=size(s);
+0084 <span class="keyword">end</span>
+0085 <span class="keyword">if</span> nargin &lt; 2 || isempty(p)
+0086     p=12;
+0087 <span class="keyword">end</span>
+0088 <span class="keyword">if</span> nargin &lt; 3 || isempty(t)
+0089     t=ns; <span class="comment">% default frame is entire signal</span>
+0090 <span class="keyword">end</span>
+0091 <span class="keyword">if</span> nargin &lt;4 || isempty(w)
+0092     w=<span class="string">'m'</span>; <span class="comment">% default to Hamming window</span>
+0093 <span class="keyword">end</span>
+0094 <span class="keyword">if</span> nargin&lt;5 || isempty(m)
+0095     m=<span class="string">''</span>;
+0096 <span class="keyword">end</span>
+0097 modee=any(m==<span class="string">'e'</span>); <span class="comment">% normalize window to unit energy</span>
+0098 modej=any(m==<span class="string">'j'</span>); <span class="comment">% do LPC jointly for all channels</span>
+0099 wch=ischar(w);
+0100 <span class="keyword">if</span> wch
+0101     <span class="keyword">if</span> modee
+0102         wopt=<span class="string">'e'</span>;
+0103     <span class="keyword">else</span>
+0104         wopt=<span class="string">''</span>;
+0105     <span class="keyword">end</span>
+0106     wch=find(strcmp(w,wnam),1);
+0107 <span class="keyword">else</span>
+0108     w=w(:);
+0109     <span class="keyword">if</span> modee
+0110         w=w/sqrt(w'*w); <span class="comment">% make sum of squares equal to 1</span>
+0111     <span class="keyword">end</span>
+0112 <span class="keyword">end</span>
+0113 [nf,ng]=size(t);
+0114 <span class="keyword">if</span> ng==1
+0115     t=[t t zeros(nf,1)];
+0116 <span class="keyword">elseif</span> ng==2
+0117     t=[t zeros(nf,1)];
+0118 <span class="keyword">end</span>
+0119 <span class="keyword">if</span> nf==1
+0120     nf=floor(1+(ns-t(2)-t(3))/t(1));
+0121     t=repmat(t,nf,1); <span class="comment">% repeat t for each frame</span>
+0122 <span class="keyword">end</span>
+0123 k=round(repmat(cumsum([0;t(1:nf-1,1)])+t(:,3),1,2)+[ones(nf,1) t(:,2)]); <span class="comment">% integer start and end of each analysis frame</span>
+0124 kd=k*[-1; 1]+1; <span class="comment">% frame lengths</span>
+0125 ku=unique(kd);
+0126 nk=length(ku); <span class="comment">% number of unique frame lengths</span>
+0127 <span class="keyword">if</span> modej <span class="comment">% do jointly over all channels</span>
+0128     ar=zeros(p+1,nf); <span class="comment">% space for LPC coefficients</span>
+0129     e=zeros(nf,1); <span class="comment">% space for residual energy</span>
+0130     <span class="keyword">for</span> ik=1:nk <span class="comment">% loop for each unique frame length</span>
+0131         kui=ku(ik); <span class="comment">% analysis frame length</span>
+0132         <span class="keyword">if</span> wch
+0133             w = <a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>(wtypes(wch),kui,wopt,5)'; <span class="comment">% only Kaiser needs a parameter; hence always = 5</span>
+0134         <span class="keyword">end</span>
+0135         pk=min(p,kui); <span class="comment">% actual LPC order for these frames</span>
+0136         km=kd==kui; <span class="comment">% mask of frames with this length</span>
+0137         nkm=sum(km); <span class="comment">% number of frame with this length</span>
+0138         sk=zeros(kui,nkm,nch); <span class="comment">% space for data</span>
+0139         sk(:)=s(repmat(repmat(k(km,1)',kui,1)+repmat((0:kui-1)',1,nkm),[1,1,nch])+reshape(repmat(ns*(0:nch-1),kui*nkm,1),[kui,nkm,nch])).*repmat(w(1:kui),[1,nkm,nch]);
+0140         rr=zeros(pk+1,nkm); <span class="comment">% space for autocorrelation coefs</span>
+0141         ark=rr;
+0142         rr(1,:)=sum(sum(sk.^2,1),3); <span class="comment">% zero-lag autocorrelation</span>
+0143         rr(2,:)=sum(sum(sk(1:kui-1,:,:).*sk(2:kui,:,:),1),3);
+0144         ark(1,:)=1; <span class="comment">% first LPC coefficient is always 1</span>
+0145         ark(2,:)=-rr(2,:)./rr(1,:);
+0146         ek=rr(1,:).*(ark(2,:).^2-1); <span class="comment">% **** maybe force non-negative</span>
+0147         <span class="keyword">for</span> n=2:pk
+0148             rr(n+1,:)=sum(sum(sk(1:kui-n,:,:).*sk(n+1:kui,:,:),1),3); <span class="comment">% calculate new autocorrelation term</span>
+0149             ka=(rr(n+1,:)+sum(rr(n:-1:2,:).*ark(2:n,:),1))./ek; <span class="comment">% ***** what if ek is zero, could limit to +-1</span>
+0150             <span class="comment">% mka=abs(ka)&gt;=1; ka(mka)=sign(ka(mka));</span>
+0151             ark(2:n,:)=ark(2:n,:)+repmat(ka,n-1,1).*ark(n:-1:2,:);
+0152             ark(n+1,:)=ka;
+0153             ek=ek.*(1-ka.^2);
+0154         <span class="keyword">end</span>
+0155         ar(1:pk+1,km)=ark;
+0156         e(km)=-ek;
+0157     <span class="keyword">end</span>
+0158     ar=permute(ar,[2 1 3]);
+0159 <span class="keyword">else</span>                            <span class="comment">% do each channel independently</span>
+0160     ar=zeros(p+1,nf,nch);       <span class="comment">% space for LPC coefficients</span>
+0161     e=zeros(nf,nch);            <span class="comment">% space for residual energy</span>
+0162     <span class="keyword">for</span> ik=1:nk                 <span class="comment">% loop for each unique frame length</span>
+0163         kui=ku(ik);             <span class="comment">% analysis frame length</span>
+0164         <span class="keyword">if</span> wch
+0165             w = <a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>(wtypes(wch),kui,wopt,5)'; <span class="comment">% only Kaiser needs a parameter; hence always = 5</span>
+0166         <span class="keyword">end</span>
+0167         pk=min(p,kui);          <span class="comment">% actual LPC order for these frames</span>
+0168         km=kd==kui;             <span class="comment">% mask of frames with this length</span>
+0169         nkm=sum(km);            <span class="comment">% number of frame with this length</span>
+0170         sk=zeros(kui,nkm*nch);  <span class="comment">% space for data</span>
+0171         sk(:)=s(repmat(repmat(k(km,1)',kui,1)+repmat((0:kui-1)',1,nkm),1,nch)+reshape(repmat(ns*(0:nch-1),kui*nkm,1),kui,nkm*nch)).*repmat(w(1:kui),1,nkm*nch);
+0172         rr=zeros(pk+1,nkm*nch);    <span class="comment">% space for autocorrelation coefs</span>
+0173         ark=rr;
+0174         rr(1,:)=sum(sk.^2,1);   <span class="comment">% zero-lag autocorrelation</span>
+0175         rr(2,:)=sum(sk(1:kui-1,:).*sk(2:kui,:),1);
+0176         ark(1,:)=1;             <span class="comment">% first LPC coefficient is always 1</span>
+0177         ark(2,:)=-rr(2,:)./rr(1,:);
+0178         ek=rr(1,:).*(ark(2,:).^2-1); <span class="comment">% **** maybe force non-negative</span>
+0179         <span class="keyword">for</span> n=2:pk
+0180             rr(n+1,:)=sum(sk(1:kui-n,:).*sk(n+1:kui,:),1);      <span class="comment">% calculate new autocorrelation term</span>
+0181             ka=(rr(n+1,:)+sum(rr(n:-1:2,:).*ark(2:n,:),1))./ek; 
+0182             <span class="comment">% could limit to +-1 by doing: mka=abs(ka)&gt;=1; ka(mka)=sign(ka(mka));</span>
+0183             ark(2:n,:)=ark(2:n,:)+repmat(ka,n-1,1).*ark(n:-1:2,:);
+0184             ark(n+1,:)=ka;
+0185             ek=ek.*(1-ka.^2);
+0186         <span class="keyword">end</span>
+0187         ar(1:pk+1,km,:)=reshape(ark,[pk+1,nkm,nch]);    <span class="comment">% insert into output array</span>
+0188         e(km,:)=reshape(-ek,nkm,nch);                   <span class="comment">% insert into output array</span>
+0189     <span class="keyword">end</span>
+0190     ar=permute(ar,[2 1 3]);
+0191 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

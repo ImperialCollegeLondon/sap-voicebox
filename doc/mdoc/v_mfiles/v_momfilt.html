@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_momfilt</title>
+  <meta name="keywords" content="v_momfilt">
+  <meta name="description" content="MOMFILT calculates moments of a signal using a sliding window Y=(X,R,W,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_momfilt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_momfilt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MOMFILT calculates moments of a signal using a sliding window Y=(X,R,W,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,mm]=v_momfilt(x,r,w,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MOMFILT calculates moments of a signal using a sliding window Y=(X,R,W,M)
+
+ Inputs: x    is the input signal
+         r    is a list of moments to calculate
+              (+ve = relative to mean, -ve = relative to zero)
+         w    is the window (or just the length of a Hamming window)
+              Note: If the window is asymmetric, you should be aware that it gets
+              flipped in the convolution process
+         m    is the sample of w to use as the centre [default=ceil(length(w)/2+0.5)]
+
+         mm   the actual value of m used. Output point y(i) is based on x(i+m-w:i+m-1).
+
+ Example:
+  To calculate a running kurtosis using a Hamming window of length 30:
+             y=v_momfilt(x,[2 4],30); k=y(:,2)./y(:,1).^2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,mm]=v_momfilt(x,r,w,m)</a>
+0002 <span class="comment">%MOMFILT calculates moments of a signal using a sliding window Y=(X,R,W,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: x    is the input signal</span>
+0005 <span class="comment">%         r    is a list of moments to calculate</span>
+0006 <span class="comment">%              (+ve = relative to mean, -ve = relative to zero)</span>
+0007 <span class="comment">%         w    is the window (or just the length of a Hamming window)</span>
+0008 <span class="comment">%              Note: If the window is asymmetric, you should be aware that it gets</span>
+0009 <span class="comment">%              flipped in the convolution process</span>
+0010 <span class="comment">%         m    is the sample of w to use as the centre [default=ceil(length(w)/2+0.5)]</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%         mm   the actual value of m used. Output point y(i) is based on x(i+m-w:i+m-1).</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Example:</span>
+0015 <span class="comment">%  To calculate a running kurtosis using a Hamming window of length 30:</span>
+0016 <span class="comment">%             y=v_momfilt(x,[2 4],30); k=y(:,2)./y(:,1).^2</span>
+0017 
+0018 <span class="comment">%       Copyright (C) Mike Brookes 2007</span>
+0019 <span class="comment">%      Version: $Id: v_momfilt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0022 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0025 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0026 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0027 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0028 <span class="comment">%   (at your option) any later version.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0031 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0032 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0033 <span class="comment">%   GNU General Public License for more details.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0036 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0037 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0038 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0039 <span class="keyword">if</span> nargin &lt; 3
+0040    w=hamming(length(x));
+0041 <span class="keyword">elseif</span>  length(w)==1
+0042    w=hamming(w);
+0043 <span class="keyword">end</span>
+0044 lw=length(w);
+0045 w=w(:);                 <span class="comment">% force to a column vector</span>
+0046 <span class="keyword">if</span> nargin &lt; 4
+0047    m=(1+lw)/2;
+0048 <span class="keyword">end</span>
+0049 m=max(round(m),1);
+0050 mm=m;
+0051 r=round(r(:))';             <span class="comment">% force integer row vector of moments</span>
+0052 
+0053 lx=prod(size(x));
+0054 lxx=lx+m-1;
+0055 xx=zeros(lxx,1);
+0056 xx(1:lx)=x(:);              <span class="comment">% extend with zeros so filter() works correctly</span>
+0057 
+0058 cw=cumsum(w);
+0059 sw=cw(end);
+0060 y0=repmat(sw,lxx,1);
+0061 lxw=min(lxx,lw);
+0062 y0(1:lxw)=cw(1:lxw);
+0063 y0(lx+1:lx+m-1)=y0(lx+1:lx+m-1)-cw(1:m-1);      <span class="comment">% equivalent to y0=filter(w,1,xx^0);</span>
+0064 yd=y0(m:end);
+0065 yd(abs(yd)&lt;eps)=1;
+0066 
+0067 nr=length(r);
+0068 wlx=ones(lx,1);
+0069 wlxx=ones(lxx,1);
+0070 y=zeros(lx,nr);
+0071 mr=max(abs(r));                         <span class="comment">% max moment to calculate</span>
+0072 mk=zeros(1,mr);                       <span class="comment">% list of moments</span>
+0073 mk(-r(r&lt;0))=1;                         <span class="comment">% choose the moments we need to calculate</span>
+0074 maxr=max(r);
+0075 <span class="keyword">if</span> maxr&gt;1
+0076     mk(1:maxr)=1;
+0077 <span class="keyword">end</span>
+0078 ml=find(mk&gt;0);
+0079 lml=length(ml);
+0080 <span class="keyword">if</span> lml
+0081     mlx=mk;
+0082     mlx(ml)=1:lml;                        <span class="comment">% mapping from moment into ml</span>
+0083     wlml=ones(1,lml);
+0084     xm=filter(w,1,xx(:,wlml).^ml(wlxx,:));    <span class="comment">% calculate all the moments</span>
+0085     xm=xm(m:<span class="keyword">end</span>,:)./yd(:,wlml);                             <span class="comment">% remove the useless start values and normalize</span>
+0086 <span class="keyword">end</span>
+0087 fr=find(r&lt;0);
+0088 <span class="keyword">if</span> length(fr)
+0089     y(:,fr)=xm(:,mlx(-r(fr)));    <span class="comment">% zero-centred moments</span>
+0090 <span class="keyword">end</span>
+0091 fr=find(r==0);                              <span class="comment">% 0'th moment</span>
+0092 <span class="keyword">if</span> length(fr)
+0093     y(:,fr)=1;
+0094 <span class="keyword">end</span>
+0095 fr=find(r==1);                              <span class="comment">% 1'st moment about mean</span>
+0096 <span class="keyword">if</span> length(fr)
+0097     y(:,fr)=0;
+0098 <span class="keyword">end</span>
+0099 fr=find(r==2);                              <span class="comment">% 2'nd moment about mean</span>
+0100 <span class="keyword">if</span> length(fr)
+0101     yfr=xm(:,2)-xm(:,1).^2;
+0102     y(:,fr)=yfr(:,ones(1,length(fr)));
+0103 <span class="keyword">end</span>
+0104 <span class="keyword">if</span> maxr&gt;2
+0105     mon=[1 -1];
+0106     bc=[1 -2 1];
+0107     am=zeros(lx,maxr);
+0108     am(:,1)=xm(:,1);                            <span class="comment">% copy the mean across</span>
+0109     ml=2:maxr;
+0110     wlml=ones(1,length(ml));
+0111     am(:,2:end)=xm(:,wlml).^ml(ones(lx,1),:);              <span class="comment">% calculate powers of the mean</span>
+0112     <span class="keyword">for</span> i=3:maxr
+0113         bc=conv(bc,mon);                        <span class="comment">% calculate binomial coefficients</span>
+0114         fr=find(r==i);
+0115         <span class="keyword">if</span> length(fr)
+0116             yfr=xm(:,i)+sum(xm(:,i-1:-1:2).*am(:,1:i-2).*bc(wlx,2:i-1),2)+am(:,i)*(bc(i)+bc(i+1));
+0117             y(:,fr)=yfr(:,ones(1,length(fr)));
+0118         <span class="keyword">end</span>
+0119     <span class="keyword">end</span>
+0120 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

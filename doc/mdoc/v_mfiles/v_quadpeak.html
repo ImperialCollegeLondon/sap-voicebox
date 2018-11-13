@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_quadpeak</title>
+  <meta name="keywords" content="v_quadpeak">
+  <meta name="description" content="PEAK2DQUAD find quadratically-interpolated peak in a N-D array">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_quadpeak.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_quadpeak
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>PEAK2DQUAD find quadratically-interpolated peak in a N-D array</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [v,x,t,m,ze]=v_quadpeak(z) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">PEAK2DQUAD find quadratically-interpolated peak in a N-D array
+
+  Inputs:  Z(m,n,...)   is the input array (ignoring trailing singleton dimensions)
+                        Note: a row vector will have 2 dimensions
+
+ Outputs:  V        is the peak value
+           X(:,1)  is the position of the peak (in fractional subscript values)
+           T        is -1, 0, +1 for maximum, saddle point or minimum
+           M        defines the fitted quadratic: z = [x y ... 1]*M*[x y ... 1]'
+           ZE       the estimated version of Z</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_peak2dquad.html" class="code" title="function [v,xy,t,m]=v_peak2dquad(z)">v_peak2dquad</a>	PEAK2DQUAD find quadratically-interpolated peak in a 2D array</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	Estimate multiple psychometric functions</li><li><a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>	v_psycestu estimate unimodal psychometric function</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [v,x,t,m,ze]=v_quadpeak(z)</a>
+0002 <span class="comment">%PEAK2DQUAD find quadratically-interpolated peak in a N-D array</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  Z(m,n,...)   is the input array (ignoring trailing singleton dimensions)</span>
+0005 <span class="comment">%                        Note: a row vector will have 2 dimensions</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Outputs:  V        is the peak value</span>
+0008 <span class="comment">%           X(:,1)  is the position of the peak (in fractional subscript values)</span>
+0009 <span class="comment">%           T        is -1, 0, +1 for maximum, saddle point or minimum</span>
+0010 <span class="comment">%           M        defines the fitted quadratic: z = [x y ... 1]*M*[x y ... 1]'</span>
+0011 <span class="comment">%           ZE       the estimated version of Z</span>
+0012 
+0013 <span class="comment">%       Copyright (C) Mike Brookes 2008</span>
+0014 <span class="comment">%      Version: $Id: v_quadpeak.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0017 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0020 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0021 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0022 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0023 <span class="comment">%   (at your option) any later version.</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0026 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0027 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0028 <span class="comment">%   GNU General Public License for more details.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0031 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0032 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0033 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0034 
+0035 <span class="keyword">persistent</span> wz a
+0036 <span class="comment">% first calculate the fixed matrix, a (can be stored if sz is constant)</span>
+0037 sz=size(z);         <span class="comment">% size of input array</span>
+0038 psz=prod(sz);       <span class="comment">% number of elements in input array</span>
+0039 dz=numel(sz);       <span class="comment">% number of input dimensions</span>
+0040 mz=find(sz&gt;1);      <span class="comment">% non-singleton dimension indices</span>
+0041 nm=numel(mz);       <span class="comment">% number of non-singleton dimensions</span>
+0042 vz=sz(mz);          <span class="comment">% size of squeezed input array</span>
+0043 dx=max(mz);         <span class="comment">% number of output dimensions</span>
+0044 <span class="keyword">if</span> ~nm              <span class="comment">% if the input array is a scalar</span>
+0045     error(<span class="string">'Cannot find peak of a scalar'</span>);
+0046 <span class="keyword">end</span>
+0047 nc=(nm+1)*(nm+2)/2;  <span class="comment">% number of columns in A matrix</span>
+0048 <span class="keyword">if</span> min(vz)&lt;3
+0049     error(<span class="string">'Need at least 3 points in each non-singleton dimension'</span>);
+0050 <span class="keyword">end</span>
+0051 <span class="keyword">if</span> isempty(wz) || numel(wz)~=numel(vz) || ~all(wz==vz)
+0052     wz=vz;
+0053     a=ones(psz,nc);
+0054     ix=(0:psz-1)';
+0055     <span class="keyword">for</span> i=1:nm
+0056         jx=floor(ix/sz(mz(i)));
+0057         a(:,i+nc-nm-1)=1+ix-jx*sz(mz(i));
+0058         ix=jx;
+0059         a(:,(i^2-i+2)/2:i*(i+1)/2)=a(:,nc-nm:i+nc-nm-1).*repmat(a(:,i+nc-nm-1),1,i);
+0060     <span class="keyword">end</span>
+0061     a=(a'*a)\a';        <span class="comment">% converts to polynomial coeficients {x^2 xy y^2 x y 1]</span>
+0062 <span class="keyword">end</span>
+0063 
+0064 <span class="comment">% now find the peak</span>
+0065 
+0066 c=a*z(:);   <span class="comment">% polynomial coefficients for this data</span>
+0067 w=zeros(nm+1,nm+1);
+0068 i=1:(nm+1)*(nm+2)/2;
+0069 j=floor((sqrt(8*i-7)-1)/2);
+0070 w(i+j.*(2*nm+1-j)/2)=c;
+0071 w=(w+w.')/2; <span class="comment">% make it symmetrical</span>
+0072 mr=w(1:nm,1:nm);
+0073 we=w(1:nm,nm+1);
+0074 y=-(mr\we);
+0075 v=y'*we+w(nm+1,nm+1);  <span class="comment">% value at peak</span>
+0076 
+0077 <span class="comment">% insert singleton dimensions into outputs</span>
+0078 
+0079 x=zeros(dx,1);
+0080 x(mz)=y;
+0081 m=zeros(dx+1,dx+1);
+0082 mz(nm+1)=dx+1;
+0083 m(mz,mz)=w;
+0084 <span class="keyword">if</span> nargout&gt;2
+0085     ev=eig(mr);
+0086     t=all(ev&gt;0)-all(ev&lt;0);
+0087 <span class="keyword">end</span>
+0088 <span class="keyword">if</span> nargout&gt;4
+0089     ze=zeros(sz);
+0090     scp=cumprod([1 sz(1:end-1)]);
+0091     ivec=fix(repmat((0:psz-1)',1,dz)./repmat(scp,psz,1));
+0092     xe=[1+ivec-repmat(sz,psz,1).*fix(ivec./repmat(sz,psz,1)) ones(psz,1)];
+0093     ze=reshape(sum((xe*m).*xe,2),sz);
+0094 <span class="keyword">end</span>
+0095 
+0096 
+0097 <span class="keyword">if</span> ~nargout &amp;&amp; nm&lt;=2
+0098     <span class="comment">% plot the data</span>
+0099     desc={<span class="string">'Maximum'</span>,<span class="string">'Saddle Point'</span>,<span class="string">'Minimum'</span>};
+0100     <span class="keyword">if</span> nargout&lt;=2
+0101         ev=eig(mr);
+0102         t=all(ev&gt;0)-all(ev&lt;0);
+0103     <span class="keyword">end</span>
+0104     <span class="keyword">if</span> nm==1
+0105         xax=linspace(1,psz,100);
+0106         plot(xax,c(1)*xax.^2+c(2)*xax+c(3),<span class="string">'-r'</span>,1:psz,z(:),<span class="string">'ob'</span>,x,v,<span class="string">'^k'</span>);
+0107         set(gca,<span class="string">'xlim'</span>,[0.9 psz+0.1]);
+0108         ylabel(<span class="string">'z'</span>);
+0109         xlabel(sprintf(<span class="string">'x%d'</span>,mz(1)));
+0110         title(sprintf(<span class="string">'\\Delta = %s: z(%.2g) = %.2g'</span>,desc{t+2},y(1),v));
+0111     <span class="keyword">else</span>
+0112         ngr=17;
+0113         xax=repmat(linspace(1,vz(1),ngr)',1,ngr);
+0114         yax=repmat(linspace(1,vz(2),ngr),ngr,1);
+0115         zq=(c(1)*xax+c(2)*yax+c(4)).*xax+(c(3)*yax+c(5)).*yax+c(6);
+0116         hold off
+0117         mesh(xax,yax,zq,<span class="string">'EdgeColor'</span>,<span class="string">'r'</span>);
+0118         hold on
+0119         plot3(repmat((1:vz(1))',1,vz(2)),repmat(1:vz(2),vz(1),1),reshape(z,vz),<span class="string">'ob'</span>,y(1),y(2),v,<span class="string">'^k'</span>);
+0120         hold off
+0121         set(gca,<span class="string">'xlim'</span>,[0.9 vz(1)+0.1],<span class="string">'ylim'</span>,[0.9 vz(2)+0.1]);
+0122         xlabel(sprintf(<span class="string">'x%d'</span>,mz(1)));
+0123         ylabel(sprintf(<span class="string">'x%d'</span>,mz(2)));
+0124         zlabel(<span class="string">'z'</span>);
+0125         title(sprintf(<span class="string">'\\Delta = %s: z(%.2g,%.2g) = %.2g'</span>,desc{t+2},y(1),y(2),v));
+0126     <span class="keyword">end</span>
+0127 <span class="keyword">end</span>
+0128 
+0129</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

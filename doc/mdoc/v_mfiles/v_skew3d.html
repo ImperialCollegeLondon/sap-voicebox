@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_skew3d</title>
+  <meta name="keywords" content="v_skew3d">
+  <meta name="description" content="SKEW3D Convert between a vector and the corresponding skew-symmetric matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_skew3d.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_skew3d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SKEW3D Convert between a vector and the corresponding skew-symmetric matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y=v_skew3d(x,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SKEW3D Convert between a vector and the corresponding skew-symmetric matrix
+
+ Inputs:   x   input vector or matrix
+                size(x) must equal [3 1], [3 3], [6 1] or [4 4]
+           m   m string:
+               'n'  normalize the vector to have unit magnitude
+               'z'  orthoganlize the vector so that x'Jy=0
+
+ Outputs:  y   output matrix or vector
+                size(y) = [3 3], [3 1], [4 4] or [6 1] respectively
+                Note that v_skew3d() is its own inverse: v_skew3d(v_skew3d(x)) =  x
+
+ 3D Euclidean space
+ ------------------
+    If A and B are 3x1 vectors then the vector cross product is given by
+    v_skew3d(A)*B = cross(A,B) = A x B. This relationship is widely used
+    in computer vision.
+
+ 3D Projective space
+ -------------------
+ In 3D projective space, a line has 4 degrees of freedom and may be
+ represented by its homogeneous 6x1 Plucker vector, A, or 4x4 Plucker
+ matrix B=v_skew3d(A).
+ The 6x1 Plucker vector loses one degree of freedom because it is
+ homogeneous (i.e. independent of a non-zero scale factor) and another
+ because it must satisfy A'*flipud(A)=0. Setting the 'n' and 'z' options
+ in the second input parameter will remove these redundancies by forcing
+ A'*A=1 and A'*flipud(A)=0.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_skew3d(x,m)</a>
+0002 <span class="comment">%SKEW3D Convert between a vector and the corresponding skew-symmetric matrix</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:   x   input vector or matrix</span>
+0005 <span class="comment">%                size(x) must equal [3 1], [3 3], [6 1] or [4 4]</span>
+0006 <span class="comment">%           m   m string:</span>
+0007 <span class="comment">%               'n'  normalize the vector to have unit magnitude</span>
+0008 <span class="comment">%               'z'  orthoganlize the vector so that x'Jy=0</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Outputs:  y   output matrix or vector</span>
+0011 <span class="comment">%                size(y) = [3 3], [3 1], [4 4] or [6 1] respectively</span>
+0012 <span class="comment">%                Note that v_skew3d() is its own inverse: v_skew3d(v_skew3d(x)) =  x</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% 3D Euclidean space</span>
+0015 <span class="comment">% ------------------</span>
+0016 <span class="comment">%    If A and B are 3x1 vectors then the vector cross product is given by</span>
+0017 <span class="comment">%    v_skew3d(A)*B = cross(A,B) = A x B. This relationship is widely used</span>
+0018 <span class="comment">%    in computer vision.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% 3D Projective space</span>
+0021 <span class="comment">% -------------------</span>
+0022 <span class="comment">% In 3D projective space, a line has 4 degrees of freedom and may be</span>
+0023 <span class="comment">% represented by its homogeneous 6x1 Plucker vector, A, or 4x4 Plucker</span>
+0024 <span class="comment">% matrix B=v_skew3d(A).</span>
+0025 <span class="comment">% The 6x1 Plucker vector loses one degree of freedom because it is</span>
+0026 <span class="comment">% homogeneous (i.e. independent of a non-zero scale factor) and another</span>
+0027 <span class="comment">% because it must satisfy A'*flipud(A)=0. Setting the 'n' and 'z' options</span>
+0028 <span class="comment">% in the second input parameter will remove these redundancies by forcing</span>
+0029 <span class="comment">% A'*A=1 and A'*flipud(A)=0.</span>
+0030 
+0031 <span class="comment">%      Copyright (C) Mike Brookes 1998-2012</span>
+0032 <span class="comment">%      Version: $Id: v_skew3d.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0035 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0038 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0039 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0040 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0041 <span class="comment">%   (at your option) any later version.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0044 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0045 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0046 <span class="comment">%   GNU General Public License for more details.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0049 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0050 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0051 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0052 
+0053 [j,k]=size(x);
+0054 mn=nargin&gt;1 &amp;&amp; any(m==<span class="string">'n'</span>);  <span class="comment">% normalize</span>
+0055 mz=nargin&gt;1 &amp;&amp; any(m==<span class="string">'z'</span>);  <span class="comment">% orthoganalize</span>
+0056 <span class="keyword">if</span> j==3
+0057     <span class="keyword">if</span> k==1
+0058         <span class="keyword">if</span> mn &amp;&amp; x'*x&gt;0
+0059             x=x/sqrt(x'*x);
+0060         <span class="keyword">end</span>
+0061         y=zeros(3,3);
+0062         y([6 7 2])=x(:)';
+0063         y([8 3 4])=-x(:)';
+0064     <span class="keyword">elseif</span> k==3
+0065         y=x([6 7 2]');
+0066         <span class="keyword">if</span> mn &amp;&amp; y'*y&gt;0
+0067             y=y/sqrt(y'*y);
+0068         <span class="keyword">end</span>
+0069     <span class="keyword">else</span>
+0070         error(<span class="string">'size(x) must be [3 1], [3 3], [6 1] or [4 4]'</span>);
+0071     <span class="keyword">end</span>
+0072 <span class="keyword">elseif</span> j==6 &amp;&amp; k==1
+0073     x=x(:);
+0074     u=x(1:3);
+0075     v=x(6:-1:4);
+0076     <span class="keyword">if</span> mz &amp;&amp; u'*u&gt;0 &amp;&amp; v'*v&gt;0  <span class="comment">% orthoganalize</span>
+0077         v = v - (u'*v)/(2*u'*u)*u;
+0078         x = [u-(v'*u)/(v'*v)*v; v([3 2 1])];
+0079     <span class="keyword">end</span>
+0080     <span class="keyword">if</span> mn &amp;&amp; x'*x&gt;0
+0081         x=x/sqrt(x'*x);
+0082     <span class="keyword">end</span>
+0083     y=zeros(4,4);
+0084     y([5 9 13 10 8 15])=x(:)';
+0085     y([2 3 4 7 14 12])=-x(:)';
+0086 <span class="keyword">elseif</span> j==4 &amp;&amp; k==4
+0087     u=x([5 9 13]');
+0088     v=x([15 8 10]');
+0089     <span class="keyword">if</span> mz &amp;&amp; u'*u&gt;0 &amp;&amp; v'*v&gt;0  <span class="comment">% orthoganalize</span>
+0090         v = v - (u'*v)/(2*u'*u)*u;
+0091         y = [u-(v'*u)/(v'*v)*v; v([3 2 1])];
+0092     <span class="keyword">else</span>
+0093         y = [u; v([3 2 1])];
+0094     <span class="keyword">end</span>
+0095     <span class="keyword">if</span> mn &amp;&amp; y'*y&gt;0
+0096         y=y/sqrt(y'*y);
+0097     <span class="keyword">end</span>
+0098 <span class="keyword">else</span>
+0099     error(<span class="string">'size(x) must be [3 1], [3 3], [6 1] or [4 4]'</span>);
+0100 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

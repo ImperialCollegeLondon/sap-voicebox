@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_teager</title>
+  <meta name="keywords" content="v_teager">
+  <meta name="description" content="TEAGER calculate v_teager energy waveform Y=(X,D,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_teager.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_teager
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>TEAGER calculate v_teager energy waveform Y=(X,D,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y=v_teager(x,d,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">TEAGER calculate v_teager energy waveform Y=(X,D,M)
+
+  Inputs:  x         speech signal
+           d         dimension to apply filter along [default 1st non-singleton]
+           m         Normally Y has the same length as X and the first
+                     and last output samples are extrapolated. Setting m='x'
+                     supresses this extrapolation and Y will be two
+                     samples shorter than X
+
+ Outputs:  Y         output signal: y(n)=abs(x(n))^2 - x(n+1)*conj(x(n-1))
+
+ Calculates the Teager energy waveform [1]. The following waveforms give
+ a constant output (independent of n) where A, B, C are real constants:
+  (a) x(n) = A*sin(B*n+C)    --&gt;   y(n) = (A*sin(B))^2
+  (b) x(n) = A*n + B         --&gt;   y(n) = A^2
+  (c) x(n) = A*exp(j(B*n+C)) --&gt;   y(n) = A^2*(1-exp(2jB))
+  (d) x(n) = A*exp(B*n+C)    --&gt;   y(n) = 0
+
+ Reference:
+  [1]    J. Kaiser. On a simple algorithm to calculate the ‘energy’ of a signal.
+       In Proc IEEE Intl Conf Acoustics, Speech and Signal Processing,
+       pages 381–384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_teager(x,d,m)</a>
+0002 <span class="comment">%TEAGER calculate v_teager energy waveform Y=(X,D,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  x         speech signal</span>
+0005 <span class="comment">%           d         dimension to apply filter along [default 1st non-singleton]</span>
+0006 <span class="comment">%           m         Normally Y has the same length as X and the first</span>
+0007 <span class="comment">%                     and last output samples are extrapolated. Setting m='x'</span>
+0008 <span class="comment">%                     supresses this extrapolation and Y will be two</span>
+0009 <span class="comment">%                     samples shorter than X</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Outputs:  Y         output signal: y(n)=abs(x(n))^2 - x(n+1)*conj(x(n-1))</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Calculates the Teager energy waveform [1]. The following waveforms give</span>
+0014 <span class="comment">% a constant output (independent of n) where A, B, C are real constants:</span>
+0015 <span class="comment">%  (a) x(n) = A*sin(B*n+C)    --&gt;   y(n) = (A*sin(B))^2</span>
+0016 <span class="comment">%  (b) x(n) = A*n + B         --&gt;   y(n) = A^2</span>
+0017 <span class="comment">%  (c) x(n) = A*exp(j(B*n+C)) --&gt;   y(n) = A^2*(1-exp(2jB))</span>
+0018 <span class="comment">%  (d) x(n) = A*exp(B*n+C)    --&gt;   y(n) = 0</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Reference:</span>
+0021 <span class="comment">%  [1]    J. Kaiser. On a simple algorithm to calculate the ‘energy’ of a signal.</span>
+0022 <span class="comment">%       In Proc IEEE Intl Conf Acoustics, Speech and Signal Processing,</span>
+0023 <span class="comment">%       pages 381–384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.</span>
+0024 
+0025 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0026 <span class="comment">%      Version: $Id: v_teager.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0029 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0032 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0033 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0034 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0035 <span class="comment">%   (at your option) any later version.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0038 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0039 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0040 <span class="comment">%   GNU General Public License for more details.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0043 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0044 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 e=size(x);
+0047 p=prod(e);
+0048 <span class="keyword">if</span> nargin&lt;2             <span class="comment">% if no dimension given, find the first non-singleton</span>
+0049     d=find(e&gt;1,1);
+0050     <span class="keyword">if</span> ~numel(d)
+0051         d=1;
+0052     <span class="keyword">end</span>
+0053 <span class="keyword">end</span>
+0054 k=e(d);                 <span class="comment">% size of active dimension</span>
+0055 q=p/k;                  <span class="comment">% size of remainder</span>
+0056 <span class="keyword">if</span> d==1
+0057     z=reshape(x,k,q);
+0058 <span class="keyword">else</span>
+0059     z=shiftdim(x,d-1);
+0060     r=size(z);
+0061     z=reshape(z,k,q);
+0062 <span class="keyword">end</span>
+0063 <span class="keyword">if</span> nargin&gt;2 &amp;&amp; any(m==<span class="string">'x'</span>)
+0064     y=z(2:k-1,:).*conj(z(2:k-1,:))-z(3:k,:).*conj(z(1:k-2,:));
+0065     k=k-2;              <span class="comment">% we have lost two elements</span>
+0066 <span class="keyword">elseif</span> k&gt;=4
+0067     y=zeros(k,q);
+0068     y(2:k-1,:)=z(2:k-1,:).*conj(z(2:k-1,:))-z(3:k,:).*conj(z(1:k-2,:));
+0069     y(1,:)=2*y(2,:)-y(3,:);             <span class="comment">% linearly interpolate the end points</span>
+0070     y(k,:)=2*y(k-1,:)-y(k-2,:);
+0071 <span class="keyword">elseif</span> k==3
+0072     y=repmat(x(2,:).*conj(x(2,:))-x(3,:).*conj(x(1,:)),3,1);
+0073 <span class="keyword">else</span>
+0074     y=zeros(k,q);
+0075 <span class="keyword">end</span>
+0076 <span class="keyword">if</span> d==1
+0077     e(d)=k;
+0078     y=reshape(y,e);
+0079 <span class="keyword">else</span>
+0080     r(1)=k;
+0081     y=shiftdim(reshape(y,r),length(e)+1-d);
+0082 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

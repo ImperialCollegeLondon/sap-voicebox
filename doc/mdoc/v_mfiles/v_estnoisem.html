@@ -1,0 +1,441 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_estnoisem</title>
+  <meta name="keywords" content="v_estnoisem">
+  <meta name="description" content="ESTNOISEM - estimate noise spectrum using minimum statistics">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_estnoisem.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_estnoisem
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ESTNOISEM - estimate noise spectrum using minimum statistics</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,zo,xs]=v_estnoisem(yf,tz,pp) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">ESTNOISEM - estimate noise spectrum using minimum statistics
+
+ Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
+           ovf=2;                  % overlap factor
+           f=v_rfft(v_enframe(s,hanning(ovf*ninc,'periodic'),ninc),ovf*ninc,2);
+           f=f.*conj(f);           % convert to power spectrum
+           x=v_estnoisem(f,ninc/fs); % estimate the noise power spectrum
+
+ Inputs:
+   yf      input power spectra (one row per frame)
+   tz      frame increment in seconds
+           Alternatively, the input state from a previous call (see below)
+   pp      algorithm parameters [optional]
+
+ Outputs:
+   x       estimated noise power spectra (one row per frame)
+   zo      output state
+   xs      estimated std error of x (one row per frame)
+           xs seems often to be an underestimate by a factor of 2 or 3
+
+ The algorithm parameters are defined in reference [1] from which equation
+ numbers are given in parentheses. They are as follows:
+
+        pp.taca      % (11): smoothing time constant for alpha_c [0.0449 seconds]
+        pp.tamax     % (3): max smoothing time constant [0.392 seconds]
+        pp.taminh    % (3): min smoothing time constant (upper limit) [0.0133 seconds]
+        pp.tpfall    % (12): time constant for P to fall [0.064 seconds]
+        pp.tbmax     % (20): max smoothing time constant [0.0717 seconds]
+        pp.qeqmin    % (23): minimum value of Qeq [2]
+        pp.qeqmax    % max value of Qeq per frame [14]
+        pp.av        % (23)+13 lines: fudge factor for bc calculation  [2.12]
+        pp.td        % time to take minimum over [1.536 seconds]
+        pp.nu        % number of subwindows to use [3]
+        pp.qith      % Q-inverse thresholds to select maximum noise slope [0.03 0.05 0.06 Inf ]
+        pp.nsmdb     % corresponding noise slope thresholds in dB/second   [47 31.4 15.7 4.1]
+
+ Example use:      y=v_enframe(s,w,ni);                  % divide speech signal s(n) into
+                                                       % overlapping frames using window w(n)
+                   yf=v_rfft(y,nf,2);                    % take fourier transform
+                   dp=v_estnoisem(yf.*conj(yf),tinc);    % estimate the noise
+
+ If convenient, you can call v_estnoisem in chunks of arbitrary size. Thus the following are equivalent:
+
+                   (a) dp=v_estnoisem(yp(1:300),tinc);
+
+                   (b) [dp(1:100),z]=v_estnoisem(yp(1:100),tinc);
+                       [dp(101:200),z]=v_estnoisem(yp(101:200),z);
+                       [dp(201:300),z]=v_estnoisem(yp(201:300),z);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>	VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [m,h,d]=mhvals(d)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,zo,xs]=v_estnoisem(yf,tz,pp)</a>
+0002 <span class="comment">%ESTNOISEM - estimate noise spectrum using minimum statistics</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]</span>
+0005 <span class="comment">%           ovf=2;                  % overlap factor</span>
+0006 <span class="comment">%           f=v_rfft(v_enframe(s,hanning(ovf*ninc,'periodic'),ninc),ovf*ninc,2);</span>
+0007 <span class="comment">%           f=f.*conj(f);           % convert to power spectrum</span>
+0008 <span class="comment">%           x=v_estnoisem(f,ninc/fs); % estimate the noise power spectrum</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Inputs:</span>
+0011 <span class="comment">%   yf      input power spectra (one row per frame)</span>
+0012 <span class="comment">%   tz      frame increment in seconds</span>
+0013 <span class="comment">%           Alternatively, the input state from a previous call (see below)</span>
+0014 <span class="comment">%   pp      algorithm parameters [optional]</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Outputs:</span>
+0017 <span class="comment">%   x       estimated noise power spectra (one row per frame)</span>
+0018 <span class="comment">%   zo      output state</span>
+0019 <span class="comment">%   xs      estimated std error of x (one row per frame)</span>
+0020 <span class="comment">%           xs seems often to be an underestimate by a factor of 2 or 3</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% The algorithm parameters are defined in reference [1] from which equation</span>
+0023 <span class="comment">% numbers are given in parentheses. They are as follows:</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%        pp.taca      % (11): smoothing time constant for alpha_c [0.0449 seconds]</span>
+0026 <span class="comment">%        pp.tamax     % (3): max smoothing time constant [0.392 seconds]</span>
+0027 <span class="comment">%        pp.taminh    % (3): min smoothing time constant (upper limit) [0.0133 seconds]</span>
+0028 <span class="comment">%        pp.tpfall    % (12): time constant for P to fall [0.064 seconds]</span>
+0029 <span class="comment">%        pp.tbmax     % (20): max smoothing time constant [0.0717 seconds]</span>
+0030 <span class="comment">%        pp.qeqmin    % (23): minimum value of Qeq [2]</span>
+0031 <span class="comment">%        pp.qeqmax    % max value of Qeq per frame [14]</span>
+0032 <span class="comment">%        pp.av        % (23)+13 lines: fudge factor for bc calculation  [2.12]</span>
+0033 <span class="comment">%        pp.td        % time to take minimum over [1.536 seconds]</span>
+0034 <span class="comment">%        pp.nu        % number of subwindows to use [3]</span>
+0035 <span class="comment">%        pp.qith      % Q-inverse thresholds to select maximum noise slope [0.03 0.05 0.06 Inf ]</span>
+0036 <span class="comment">%        pp.nsmdb     % corresponding noise slope thresholds in dB/second   [47 31.4 15.7 4.1]</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% Example use:      y=v_enframe(s,w,ni);                  % divide speech signal s(n) into</span>
+0039 <span class="comment">%                                                       % overlapping frames using window w(n)</span>
+0040 <span class="comment">%                   yf=v_rfft(y,nf,2);                    % take fourier transform</span>
+0041 <span class="comment">%                   dp=v_estnoisem(yf.*conj(yf),tinc);    % estimate the noise</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">% If convenient, you can call v_estnoisem in chunks of arbitrary size. Thus the following are equivalent:</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%                   (a) dp=v_estnoisem(yp(1:300),tinc);</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%                   (b) [dp(1:100),z]=v_estnoisem(yp(1:100),tinc);</span>
+0048 <span class="comment">%                       [dp(101:200),z]=v_estnoisem(yp(101:200),z);</span>
+0049 <span class="comment">%                       [dp(201:300),z]=v_estnoisem(yp(201:300),z);</span>
+0050 
+0051 
+0052 <span class="comment">% This is intended to be a precise implementation of [1] with Table III</span>
+0053 <span class="comment">% replaced by the updated table 5 from [2]. The only deliberate algorithm</span>
+0054 <span class="comment">% change is the introduction of a minimum value for 1/Qeq in equation (23).</span>
+0055 <span class="comment">% This change only affects the first few frames and improves the</span>
+0056 <span class="comment">% convergence of the algorithm. A minor improveemnt was reported in [3] but</span>
+0057 <span class="comment">% this has not yet been included.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">% Refs:</span>
+0060 <span class="comment">%    [1] Rainer Martin.</span>
+0061 <span class="comment">%        Noise power spectral density estimation based on optimal smoothing and minimum statistics.</span>
+0062 <span class="comment">%        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.</span>
+0063 <span class="comment">%    [2] Rainer Martin.</span>
+0064 <span class="comment">%        Bias compensation methods for minimum statistics noise power spectral density estimation</span>
+0065 <span class="comment">%        Signal Processing, 2006, 86, 1215-1229</span>
+0066 <span class="comment">%    [3] Dirk Mauler and Rainer Martin</span>
+0067 <span class="comment">%        Noise power spectral density estimation on highly correlated data</span>
+0068 <span class="comment">%        Proc IWAENC, 2006</span>
+0069 
+0070 <span class="comment">%       Copyright (C) Mike Brookes 2008</span>
+0071 <span class="comment">%      Version: $Id: v_estnoisem.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0074 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0075 <span class="comment">%</span>
+0076 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0077 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0078 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0079 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0080 <span class="comment">%   (at your option) any later version.</span>
+0081 <span class="comment">%</span>
+0082 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0083 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0084 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0085 <span class="comment">%   GNU General Public License for more details.</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0088 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0089 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0090 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0091 
+0092 [nr,nrf]=size(yf);          <span class="comment">% number of frames and freq bins</span>
+0093 x=zeros(nr,nrf);            <span class="comment">% initialize output arrays</span>
+0094 xs=zeros(nr,nrf);           <span class="comment">% will hold std error in the future</span>
+0095 <span class="keyword">if</span> isempty(yf) &amp;&amp; isstruct(tz)             <span class="comment">% no real data</span>
+0096     zo=tz;              <span class="comment">% just keep the same state</span>
+0097 <span class="keyword">else</span>
+0098     <span class="keyword">if</span> isstruct(tz)       <span class="comment">% take parameters from a previous call</span>
+0099         nrcum=tz.nrcum;
+0100         p=tz.p;          <span class="comment">% smoothed power spectrum</span>
+0101         ac=tz.ac;               <span class="comment">% correction factor (9)</span>
+0102         sn2=tz.sn2;              <span class="comment">% estimated noise power</span>
+0103         pb=tz.pb;               <span class="comment">% smoothed noisy speech power (20)</span>
+0104         pb2=tz.pb2;
+0105         pminu=tz.pminu;
+0106         actmin=tz.actmin;   <span class="comment">% Running minimum estimate</span>
+0107         actminsub=tz.actminsub;           <span class="comment">% sub-window minimum estimate</span>
+0108         subwc=tz.subwc;                   <span class="comment">% force a buffer switch on first loop</span>
+0109         actbuf=tz.actbuf;  <span class="comment">% buffer to store subwindow minima</span>
+0110         ibuf=tz.ibuf;
+0111         lminflag=tz.lminflag;      <span class="comment">% flag to remember local minimum</span>
+0112         tinc=tz.tinc;     <span class="comment">% frame increment</span>
+0113         qq=tz.qq;         <span class="comment">% parameter structure</span>
+0114     <span class="keyword">else</span>
+0115         tinc = tz;          <span class="comment">% second argument is frame increment</span>
+0116         nrcum=0;            <span class="comment">% no frames so far</span>
+0117         <span class="comment">% default algorithm constants</span>
+0118 
+0119         qq.taca=0.0449;    <span class="comment">% smoothing time constant for alpha_c = -tinc/log(0.7) in equ (11)</span>
+0120         qq.tamax=0.392;    <span class="comment">% max smoothing time constant in (3) = -tinc/log(0.96)</span>
+0121         qq.taminh=0.0133;    <span class="comment">% min smoothing time constant (upper limit) in (3) = -tinc/log(0.3)</span>
+0122         qq.tpfall=0.064;   <span class="comment">% time constant for P to fall (12)</span>
+0123         qq.tbmax=0.0717;   <span class="comment">% max smoothing time constant in (20) = -tinc/log(0.8)</span>
+0124         qq.qeqmin=2;       <span class="comment">% minimum value of Qeq (23)</span>
+0125         qq.qeqmax=14;      <span class="comment">% max value of Qeq per frame</span>
+0126         qq.av=2.12;             <span class="comment">% fudge factor for bc calculation (23 + 13 lines)</span>
+0127         qq.td=1.536;       <span class="comment">% time to take minimum over</span>
+0128         qq.nu=8;           <span class="comment">% number of subwindows</span>
+0129         qq.qith=[0.03 0.05 0.06 Inf]; <span class="comment">% noise slope thresholds in dB/s</span>
+0130         qq.nsmdb=[47 31.4 15.7 4.1];
+0131 
+0132         <span class="keyword">if</span> nargin&gt;=3 &amp;&amp; ~isempty(pp)
+0133             qqn=fieldnames(qq);
+0134             <span class="keyword">for</span> i=1:length(qqn)
+0135                 <span class="keyword">if</span> isfield(pp,qqn{i})
+0136                     qq.(qqn{i})=pp.(qqn{i});
+0137                 <span class="keyword">end</span>
+0138             <span class="keyword">end</span>
+0139         <span class="keyword">end</span>
+0140     <span class="keyword">end</span>
+0141 
+0142     <span class="comment">% unpack parameter structure</span>
+0143 
+0144     taca=qq.taca;    <span class="comment">% smoothing time constant for alpha_c = -tinc/log(0.7) in equ (11)</span>
+0145     tamax=qq.tamax;    <span class="comment">% max smoothing time constant in (3) = -tinc/log(0.96)</span>
+0146     taminh=qq.taminh;    <span class="comment">% min smoothing time constant (upper limit) in (3) = -tinc/log(0.3)</span>
+0147     tpfall=qq.tpfall;   <span class="comment">% time constant for P to fall (12)</span>
+0148     tbmax=qq.tbmax;   <span class="comment">% max smoothing time constant in (20) = -tinc/log(0.8)</span>
+0149     qeqmin=qq.qeqmin;       <span class="comment">% minimum value of Qeq (23)</span>
+0150     qeqmax=qq.qeqmax;      <span class="comment">% max value of Qeq per frame</span>
+0151     av=qq.av;             <span class="comment">% fudge factor for bc calculation (23 + 13 lines)</span>
+0152     td=qq.td;       <span class="comment">% time to take minimum over</span>
+0153     nu=qq.nu;           <span class="comment">% number of subwindows</span>
+0154     qith=qq.qith; <span class="comment">% noise slope thresholds in dB/s</span>
+0155     nsmdb=qq.nsmdb;   <span class="comment">% maximum permitted +ve noise slope in dB/s</span>
+0156 
+0157     <span class="comment">% derived algorithm constants</span>
+0158 
+0159     aca=exp(-tinc/taca); <span class="comment">% smoothing constant for alpha_c in equ (11) = 0.7</span>
+0160     acmax=aca;          <span class="comment">% min value of alpha_c = 0.7 in equ (11) also = 0.7</span>
+0161     amax=exp(-tinc/tamax); <span class="comment">% max smoothing constant in (3) = 0.96</span>
+0162     aminh=exp(-tinc/taminh); <span class="comment">% min smoothing constant (upper limit) in (3) = 0.3</span>
+0163     bmax=exp(-tinc/tbmax); <span class="comment">% max smoothing constant in (20) = 0.8</span>
+0164     snrexp = -tinc/tpfall;
+0165     nv=round(td/(tinc*nu));    <span class="comment">% length of each subwindow in frames</span>
+0166     <span class="keyword">if</span> nv&lt;4            <span class="comment">% algorithm doesn't work for miniscule frames</span>
+0167         nv=4;
+0168         nu=max(round(td/(tinc*nv)),1);
+0169     <span class="keyword">end</span>
+0170     nd=nu*nv;           <span class="comment">% length of total window in frames</span>
+0171     [md,hd]=<a href="#_sub1" class="code" title="subfunction [m,h,d]=mhvals(d)">mhvals</a>(nd); <span class="comment">% calculate the constants M(D) and H(D) from Table III</span>
+0172     [mv,hv]=<a href="#_sub1" class="code" title="subfunction [m,h,d]=mhvals(d)">mhvals</a>(nv); <span class="comment">% calculate the constants M(D) and H(D) from Table III</span>
+0173     nsms=10.^(nsmdb*nv*tinc/10);  <span class="comment">% [8 4 2 1.2] in paper</span>
+0174     qeqimax=1/qeqmin;  <span class="comment">% maximum value of Qeq inverse (23)</span>
+0175     qeqimin=1/qeqmax; <span class="comment">% minumum value of Qeq per frame inverse</span>
+0176 
+0177     <span class="keyword">if</span> isempty(yf)      <span class="comment">% provide dummy initialization</span>
+0178         ac=1;               <span class="comment">% correction factor (9)</span>
+0179         subwc=nv;                   <span class="comment">% force a buffer switch on first loop</span>
+0180         ibuf=0;
+0181         p=x;          <span class="comment">% smoothed power spectrum</span>
+0182         sn2=p;              <span class="comment">% estimated noise power</span>
+0183         pb=p;               <span class="comment">% smoothed noisy speech power (20)</span>
+0184         pb2=pb.^2;
+0185         pminu=p;
+0186         actmin=repmat(Inf,1,nrf);   <span class="comment">% Running minimum estimate</span>
+0187         actminsub=actmin;           <span class="comment">% sub-window minimum estimate</span>
+0188         actbuf=repmat(Inf,nu,nrf);  <span class="comment">% buffer to store subwindow minima</span>
+0189         lminflag=zeros(1,nrf);      <span class="comment">% flag to remember local minimum</span>
+0190     <span class="keyword">else</span>
+0191 
+0192         <span class="keyword">if</span> ~nrcum       <span class="comment">% initialize values for first frame</span>
+0193             p=yf(1,:);          <span class="comment">% smoothed power spectrum</span>
+0194             ac=1;               <span class="comment">% correction factor (9)</span>
+0195             sn2=p;              <span class="comment">% estimated noise power</span>
+0196             pb=p;               <span class="comment">% smoothed noisy speech power (20)</span>
+0197             pb2=pb.^2;
+0198             pminu=p;
+0199             actmin=repmat(Inf,1,nrf);   <span class="comment">% Running minimum estimate</span>
+0200             actminsub=actmin;           <span class="comment">% sub-window minimum estimate</span>
+0201             subwc=nv;                   <span class="comment">% force a buffer switch on first loop</span>
+0202             actbuf=repmat(Inf,nu,nrf);  <span class="comment">% buffer to store subwindow minima</span>
+0203             ibuf=0;
+0204             lminflag=zeros(1,nrf);      <span class="comment">% flag to remember local minimum</span>
+0205         <span class="keyword">end</span>
+0206 
+0207         <span class="comment">% loop for each frame</span>
+0208 
+0209         <span class="keyword">for</span> t=1:nr              <span class="comment">% we use t instead of lambda in the paper</span>
+0210             yft=yf(t,:);        <span class="comment">% noise speech power spectrum</span>
+0211             acb=(1+(sum(p)./sum(yft)-1).^2).^(-1);  <span class="comment">% alpha_c-bar(t)  (9)</span>
+0212             ac=aca*ac+(1-aca)*max(acb,acmax);       <span class="comment">% alpha_c(t)  (10)</span>
+0213             ah=amax*ac.*(1+(p./sn2-1).^2).^(-1);    <span class="comment">% alpha_hat: smoothing factor per frequency (11)</span>
+0214             snr=sum(p)/sum(sn2);
+0215             ah=max(ah,min(aminh,snr^snrexp));       <span class="comment">% lower limit for alpha_hat (12)</span>
+0216 
+0217             p=ah.*p+(1-ah).*yft;            <span class="comment">% smoothed noisy speech power (3)</span>
+0218             b=min(ah.^2,bmax);              <span class="comment">% smoothing constant for estimating periodogram variance (22 + 2 lines)</span>
+0219             pb=b.*pb + (1-b).*p;            <span class="comment">% smoothed periodogram (20)</span>
+0220             pb2=b.*pb2 + (1-b).*p.^2;         <span class="comment">% smoothed periodogram squared (21)</span>
+0221 
+0222             qeqi=max(min((pb2-pb.^2)./(2*sn2.^2),qeqimax),qeqimin/(t+nrcum));   <span class="comment">% Qeq inverse (23)</span>
+0223             qiav=sum(qeqi)/nrf;             <span class="comment">% Average over all frequencies (23+12 lines) (ignore non-duplication of DC and nyquist terms)</span>
+0224             bc=1+av*sqrt(qiav);             <span class="comment">% bias correction factor (23+11 lines)</span>
+0225             bmind=1+2*(nd-1)*(1-md)./(qeqi.^(-1)-2*md);      <span class="comment">% we use the simplified form (17) instead of (15)</span>
+0226             bminv=1+2*(nv-1)*(1-mv)./(qeqi.^(-1)-2*mv);      <span class="comment">% same expression but for sub windows</span>
+0227             kmod=bc*p.*bmind&lt;actmin;        <span class="comment">% Frequency mask for new minimum</span>
+0228             <span class="keyword">if</span> any(kmod)
+0229                 actmin(kmod)=bc*p(kmod).*bmind(kmod);
+0230                 actminsub(kmod)=bc*p(kmod).*bminv(kmod);
+0231             <span class="keyword">end</span>
+0232             <span class="keyword">if</span> subwc&gt;1 &amp;&amp; subwc&lt;nv              <span class="comment">% middle of buffer - allow a local minimum</span>
+0233                 lminflag=lminflag | kmod;        <span class="comment">% potential local minimum frequency bins</span>
+0234                 pminu=min(actminsub,pminu);
+0235                 sn2=pminu;
+0236             <span class="keyword">else</span>
+0237                 <span class="keyword">if</span> subwc&gt;=nv                    <span class="comment">% end of buffer - do a buffer switch</span>
+0238                     ibuf=1+rem(ibuf,nu);         <span class="comment">% increment actbuf storage pointer</span>
+0239                     actbuf(ibuf,:)=actmin;        <span class="comment">% save sub-window minimum</span>
+0240                     pminu=min(actbuf,[],1);
+0241                     i=find(qiav&lt;qith);
+0242                     nsm=nsms(i(1));              <span class="comment">% noise slope max</span>
+0243                     lmin=lminflag &amp; ~kmod &amp; actminsub&lt;nsm*pminu &amp; actminsub&gt;pminu;
+0244                     <span class="keyword">if</span> any(lmin)
+0245                         pminu(lmin)=actminsub(lmin);
+0246                         actbuf(:,lmin)=repmat(pminu(lmin),nu,1);
+0247                     <span class="keyword">end</span>
+0248                     lminflag(:)=0;
+0249                     actmin(:)=Inf;
+0250                     subwc=0;
+0251                 <span class="keyword">end</span>
+0252             <span class="keyword">end</span>
+0253             subwc=subwc+1;
+0254             x(t,:)=sn2;
+0255             qisq=sqrt(qeqi);
+0256             <span class="comment">% empirical formula for standard error based on Fig 15 of [2]</span>
+0257             xs(t,:)=sn2.*sqrt(0.266*(nd+100*qisq).*qisq/(1+0.005*nd+6/nd)./(0.5*qeqi.^(-1)+nd-1));
+0258         <span class="keyword">end</span>
+0259     <span class="keyword">end</span>
+0260     <span class="keyword">if</span> nargout&gt;1    <span class="comment">% we need to store the state for next time</span>
+0261         zo.nrcum=nrcum+nr;      <span class="comment">% number of frames so far</span>
+0262         zo.p=p;          <span class="comment">% smoothed power spectrum</span>
+0263         zo.ac=ac;               <span class="comment">% correction factor (9)</span>
+0264         zo.sn2=sn2;              <span class="comment">% estimated noise power</span>
+0265         zo.pb=pb;               <span class="comment">% smoothed noisy speech power (20)</span>
+0266         zo.pb2=pb2;
+0267         zo.pminu=pminu;
+0268         zo.actmin=actmin;   <span class="comment">% Running minimum estimate</span>
+0269         zo.actminsub=actminsub;           <span class="comment">% sub-window minimum estimate</span>
+0270         zo.subwc=subwc;                   <span class="comment">% force a buffer switch on first loop</span>
+0271         zo.actbuf=actbuf;  <span class="comment">% buffer to store subwindow minima</span>
+0272         zo.ibuf=ibuf;
+0273         zo.lminflag=lminflag;      <span class="comment">% flag to remember local minimum</span>
+0274         zo.tinc=tinc;     <span class="comment">% must be the last one</span>
+0275         zo.qq=qq;
+0276     <span class="keyword">end</span>
+0277     <span class="keyword">if</span> ~nargout
+0278         clf;
+0279         subplot(212);
+0280         plot((1:nr)*tinc,10*log10([sum(yf,2) sum(x,2)]))
+0281         ylabel(<span class="string">'Frame Energy (dB)'</span>);
+0282         xlabel(sprintf(<span class="string">'Time (s)   [%d ms frame incr]'</span>,round(tinc*1000)));
+0283         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0284         legend(<span class="string">'input'</span>,<span class="string">'noise'</span>,<span class="string">'Location'</span>,<span class="string">'Best'</span>);
+0285         subplot(211);
+0286         plot(1:nrf,10*log10([sum(yf,1)'/nr sum(x,1)'/nr]))
+0287         ylabel(<span class="string">'Power (dB)'</span>);
+0288         xlabel(<span class="string">'Frequency bin'</span>);
+0289         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0290         legend(<span class="string">'input'</span>,<span class="string">'noise'</span>,<span class="string">'Location'</span>,<span class="string">'Best'</span>);
+0291     <span class="keyword">end</span>
+0292 <span class="keyword">end</span>
+0293 
+0294 <a name="_sub1" href="#_subfunctions" class="code">function [m,h,d]=mhvals(d)</a>
+0295 <span class="comment">% Values are taken from Table 5 in [2]</span>
+0296 <span class="comment">%[2] R. Martin,&quot;Bias compensation methods for minimum statistics noise power</span>
+0297 <span class="comment">%               spectral density estimation&quot;, Signal Processing Vol 86, pp1215-1229, 2006.</span>
+0298 
+0299 <span class="comment">% approx: plot(d.^(-0.5),[m 1-d.^(-0.5)],'x-'), plot(d.^0.5,h,'x-')</span>
+0300 <span class="keyword">persistent</span> dmh
+0301 <span class="keyword">if</span> isempty(dmh)
+0302     dmh=[
+0303         1   0       0;
+0304         2   0.26    0.15;
+0305         5   0.48    0.48;
+0306         8   0.58    0.78;
+0307         10  0.61    0.98;
+0308         15  0.668   1.55;
+0309         20  0.705   2;
+0310         30  0.762   2.3;
+0311         40  0.8     2.52;
+0312         60  0.841   3.1;
+0313         80  0.865   3.38;
+0314         120 0.89    4.15;
+0315         140 0.9     4.35;
+0316         160 0.91    4.25;
+0317         180 0.92    3.9;
+0318         220 0.93    4.1;
+0319         260 0.935   4.7;
+0320         300 0.94    5];
+0321 <span class="keyword">end</span>
+0322 
+0323 <span class="keyword">if</span> nargin&gt;=1
+0324     i=find(d&lt;=dmh(:,1));
+0325     <span class="keyword">if</span> isempty(i)
+0326         i=size(dmh,1);
+0327         j=i;
+0328     <span class="keyword">else</span>
+0329         i=i(1);
+0330         j=i-1;
+0331     <span class="keyword">end</span>
+0332     <span class="keyword">if</span> d==dmh(i,1)
+0333         m=dmh(i,2);
+0334         h=dmh(i,3);
+0335     <span class="keyword">else</span>
+0336         qj=sqrt(dmh(i-1,1));    <span class="comment">% interpolate using sqrt(d)</span>
+0337         qi=sqrt(dmh(i,1));
+0338         q=sqrt(d);
+0339         h=dmh(i,3)+(q-qi)*(dmh(j,3)-dmh(i,3))/(qj-qi);
+0340         m=dmh(i,2)+(qi*qj/q-qj)*(dmh(j,2)-dmh(i,2))/(qi-qj);
+0341     <span class="keyword">end</span>
+0342 <span class="keyword">else</span>
+0343     d=dmh(:,1);
+0344     m=dmh(:,2);
+0345     h=dmh(:,3);
+0346 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

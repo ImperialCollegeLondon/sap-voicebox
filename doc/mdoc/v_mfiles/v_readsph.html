@@ -1,0 +1,476 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readsph</title>
+  <meta name="keywords" content="v_readsph">
+  <meta name="description" content="READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readsph.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readsph
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)
+
+ Input Parameters:
+
+    FILENAME gives the name of the file (with optional .SPH extension) or alternatively
+                 can be the FFX output from a previous call to READSPH having the 'f' mode option
+    MODE        specifies the following (*=default):
+
+    Scaling: 's'    Auto scale to make data peak = +-1 (use with caution if reading in chunks)
+             'r'    Raw unscaled data (integer values)
+             'p' *    Scaled to make +-1 equal full scale
+             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)
+                     (can be combined with n+p,r,s modes)
+             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)
+                     (can be combined with o+p,r,s modes)
+   Format    'l'    Little endian data (Intel,DEC) (overrides indication in file)
+             'b'    Big endian data (non Intel/DEC) (overrides indication in file)
+
+   File I/O: 'f'    Do not close file on exit
+             'd'    Look in data directory: v_voicebox('dir_data')
+             'w'    Also read the annotation file *.wrd if present (as in TIMIT)
+             't'    Also read the phonetic transcription file *.phn if present (as in TIMIT)
+                    Eac line of the annotation and transcription files is of the form: m n token
+                    where m and n are start end end times in samples and token is a word or phoneme test descriptor
+                    The corresponding cell arrays WRD and PHN contain two elements per row: {[m n]/fs 'token'}
+                    These outputs are only present if the corresponding 'w' and 't' options are selected
+
+    NMAX     maximum number of samples to read (or -1 for unlimited [default])
+    NSKIP    number of samples to skip from start of file
+               (or -1 to continue from previous read when FFX is given instead of FILENAME [default])
+ff
+ Output Parameters:
+
+    Y          data matrix of dimension (samples,channels)
+    FS         sample frequency in Hz
+    WRD{*,2}   cell array with word annotations: WRD{*,:)={[t_start t_end],'text'} where times are in seconds
+              with the first sample at t=0 [only present if 'w' option is selected]
+    PHN{*,2}   cell array with phoneme annotations: PHN{*,:)={[t_start    t_end],'phoneme'} where times are in seconds
+              with the first sample at t=0 [only present if 't' option is selected]
+    FFX        Cell array containing
+
+     {1}     filename
+     {2}     header information
+        {1}  first header field name
+        {2}  first header field value
+     {3}     format string (e.g. NIST_1A)
+     {4}(1)  file id
+        (2)  current position in file
+        (3)  dataoff    byte offset in file to start of data
+        (4)  order  byte order (l or b)
+        (5)  nsamp    number of samples
+        (6)  number of channels
+        (7)  nbytes    bytes per data value
+        (8)  bits    number of bits of precision
+        (9)  fs    sample frequency
+         (10) min value
+        (11) max value
+        (12) coding: 0=PCM,1=uLAW + 0=no compression,10=shorten,20=wavpack,30=shortpack
+        (13) file not yet decompressed
+     {5}     temporary filename
+
+   If no output parameters are specified, header information will be printed.
+   To decode shorten-encoded files, the program shorten.exe must be in the same directory as this m-file
+
+  Usage Examples:
+
+ (a) Draw an annotated spectrogram of a TIMIT file
+           filename='....TIMIT/TEST/DR1/FAKS0/SA1.WAV';
+           [s,fs,wrd,phn]=v_readsph(filename,'wt');
+           v_spgrambw(s,fs,'Jwcpta',[],[],[],[],wrd);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>	PCMU2LIN Convert A-law PCM to linear X=(P,M,S)</li><li><a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>	PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>	SPRINTSI Print X with SI multiplier S=(X,D,W)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)</a>
+0002 <span class="comment">%READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input Parameters:</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    FILENAME gives the name of the file (with optional .SPH extension) or alternatively</span>
+0007 <span class="comment">%                 can be the FFX output from a previous call to READSPH having the 'f' mode option</span>
+0008 <span class="comment">%    MODE        specifies the following (*=default):</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%    Scaling: 's'    Auto scale to make data peak = +-1 (use with caution if reading in chunks)</span>
+0011 <span class="comment">%             'r'    Raw unscaled data (integer values)</span>
+0012 <span class="comment">%             'p' *    Scaled to make +-1 equal full scale</span>
+0013 <span class="comment">%             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)</span>
+0014 <span class="comment">%                     (can be combined with n+p,r,s modes)</span>
+0015 <span class="comment">%             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)</span>
+0016 <span class="comment">%                     (can be combined with o+p,r,s modes)</span>
+0017 <span class="comment">%   Format    'l'    Little endian data (Intel,DEC) (overrides indication in file)</span>
+0018 <span class="comment">%             'b'    Big endian data (non Intel/DEC) (overrides indication in file)</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%   File I/O: 'f'    Do not close file on exit</span>
+0021 <span class="comment">%             'd'    Look in data directory: v_voicebox('dir_data')</span>
+0022 <span class="comment">%             'w'    Also read the annotation file *.wrd if present (as in TIMIT)</span>
+0023 <span class="comment">%             't'    Also read the phonetic transcription file *.phn if present (as in TIMIT)</span>
+0024 <span class="comment">%                    Eac line of the annotation and transcription files is of the form: m n token</span>
+0025 <span class="comment">%                    where m and n are start end end times in samples and token is a word or phoneme test descriptor</span>
+0026 <span class="comment">%                    The corresponding cell arrays WRD and PHN contain two elements per row: {[m n]/fs 'token'}</span>
+0027 <span class="comment">%                    These outputs are only present if the corresponding 'w' and 't' options are selected</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%    NMAX     maximum number of samples to read (or -1 for unlimited [default])</span>
+0030 <span class="comment">%    NSKIP    number of samples to skip from start of file</span>
+0031 <span class="comment">%               (or -1 to continue from previous read when FFX is given instead of FILENAME [default])</span>
+0032 <span class="comment">%ff</span>
+0033 <span class="comment">% Output Parameters:</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%    Y          data matrix of dimension (samples,channels)</span>
+0036 <span class="comment">%    FS         sample frequency in Hz</span>
+0037 <span class="comment">%    WRD{*,2}   cell array with word annotations: WRD{*,:)={[t_start t_end],'text'} where times are in seconds</span>
+0038 <span class="comment">%              with the first sample at t=0 [only present if 'w' option is selected]</span>
+0039 <span class="comment">%    PHN{*,2}   cell array with phoneme annotations: PHN{*,:)={[t_start    t_end],'phoneme'} where times are in seconds</span>
+0040 <span class="comment">%              with the first sample at t=0 [only present if 't' option is selected]</span>
+0041 <span class="comment">%    FFX        Cell array containing</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%     {1}     filename</span>
+0044 <span class="comment">%     {2}     header information</span>
+0045 <span class="comment">%        {1}  first header field name</span>
+0046 <span class="comment">%        {2}  first header field value</span>
+0047 <span class="comment">%     {3}     format string (e.g. NIST_1A)</span>
+0048 <span class="comment">%     {4}(1)  file id</span>
+0049 <span class="comment">%        (2)  current position in file</span>
+0050 <span class="comment">%        (3)  dataoff    byte offset in file to start of data</span>
+0051 <span class="comment">%        (4)  order  byte order (l or b)</span>
+0052 <span class="comment">%        (5)  nsamp    number of samples</span>
+0053 <span class="comment">%        (6)  number of channels</span>
+0054 <span class="comment">%        (7)  nbytes    bytes per data value</span>
+0055 <span class="comment">%        (8)  bits    number of bits of precision</span>
+0056 <span class="comment">%        (9)  fs    sample frequency</span>
+0057 <span class="comment">%         (10) min value</span>
+0058 <span class="comment">%        (11) max value</span>
+0059 <span class="comment">%        (12) coding: 0=PCM,1=uLAW + 0=no compression,10=shorten,20=wavpack,30=shortpack</span>
+0060 <span class="comment">%        (13) file not yet decompressed</span>
+0061 <span class="comment">%     {5}     temporary filename</span>
+0062 <span class="comment">%</span>
+0063 <span class="comment">%   If no output parameters are specified, header information will be printed.</span>
+0064 <span class="comment">%   To decode shorten-encoded files, the program shorten.exe must be in the same directory as this m-file</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%  Usage Examples:</span>
+0067 <span class="comment">%</span>
+0068 <span class="comment">% (a) Draw an annotated spectrogram of a TIMIT file</span>
+0069 <span class="comment">%           filename='....TIMIT/TEST/DR1/FAKS0/SA1.WAV';</span>
+0070 <span class="comment">%           [s,fs,wrd,phn]=v_readsph(filename,'wt');</span>
+0071 <span class="comment">%           v_spgrambw(s,fs,'Jwcpta',[],[],[],[],wrd);</span>
+0072 
+0073 <span class="comment">%       Copyright (C) Mike Brookes 1998</span>
+0074 <span class="comment">%      Version: $Id: v_readsph.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0075 <span class="comment">%</span>
+0076 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0077 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0080 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0081 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0082 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0083 <span class="comment">%   (at your option) any later version.</span>
+0084 <span class="comment">%</span>
+0085 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0086 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0087 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0088 <span class="comment">%   GNU General Public License for more details.</span>
+0089 <span class="comment">%</span>
+0090 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0091 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0092 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0093 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0094 
+0095 <span class="keyword">persistent</span> BYTEORDER
+0096 codes={<span class="string">'sample_count'</span>; <span class="string">'channel_count'</span>;  <span class="string">'sample_n_bytes'</span>;<span class="string">'sample_sig_bits'</span>; <span class="string">'sample_rate'</span>; <span class="string">'sample_min'</span>; <span class="string">'sample_max'</span>};
+0097 codings={<span class="string">'pcm'</span>; <span class="string">'ulaw'</span>};
+0098 compressions={<span class="string">',embedded-shorten-'</span>;<span class="string">',embedded-wavpack-'</span>; <span class="string">',embedded-shortpack-'</span>};
+0099 <span class="keyword">if</span> isempty(BYTEORDER), BYTEORDER=<span class="string">'l'</span>; <span class="keyword">end</span>
+0100 <span class="keyword">if</span> nargin&lt;1, error(<span class="string">'Usage: [y,fs,hdr,fidx]=READSPH(filename,mode,nmax,nskip)'</span>); <span class="keyword">end</span>
+0101 <span class="keyword">if</span> nargin&lt;2, mode=<span class="string">'p'</span>;
+0102 <span class="keyword">else</span> mode = [mode(:).' <span class="string">'p'</span>];
+0103 <span class="keyword">end</span>
+0104 k=find((mode&gt;=<span class="string">'p'</span>) &amp; (mode&lt;=<span class="string">'s'</span>));
+0105 mno=all(mode~=<span class="string">'o'</span>);                      <span class="comment">% scale to input limits not output limits</span>
+0106 sc=mode(k(1));
+0107 <span class="keyword">if</span> any(mode==<span class="string">'l'</span>), BYTEORDER=<span class="string">'l'</span>;
+0108 <span class="keyword">elseif</span> any(mode==<span class="string">'b'</span>), BYTEORDER=<span class="string">'b'</span>;
+0109 <span class="keyword">end</span>
+0110 <span class="keyword">if</span> nargout
+0111     ffx=cell(5,1);
+0112     <span class="keyword">if</span> ischar(filename)
+0113         <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0114             filename=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),filename);
+0115         <span class="keyword">end</span>
+0116         fid=fopen(filename,<span class="string">'rb'</span>,BYTEORDER);
+0117         <span class="keyword">if</span> fid == -1
+0118             fn=[filename,<span class="string">'.sph'</span>];
+0119             fid=fopen(fn,<span class="string">'rb'</span>,BYTEORDER);
+0120             <span class="keyword">if</span> fid ~= -1, filename=fn; <span class="keyword">end</span>
+0121         <span class="keyword">end</span>
+0122         <span class="keyword">if</span> fid == -1
+0123             error(<span class="string">'Can''t open %s for input'</span>,filename);
+0124         <span class="keyword">end</span>
+0125         ffx{1}=filename;
+0126     <span class="keyword">else</span>
+0127         <span class="keyword">if</span> iscell(filename)
+0128             ffx=filename;
+0129         <span class="keyword">else</span>
+0130             fid=filename;
+0131         <span class="keyword">end</span>
+0132     <span class="keyword">end</span>
+0133 
+0134     <span class="keyword">if</span> isempty(ffx{4})
+0135         fseek(fid,0,-1);
+0136         str=char(fread(fid,16)');
+0137         <span class="keyword">if</span> str(8) ~= 10 || str(16) ~= 10, fclose(fid); error(<span class="string">'File does not begin with a SPHERE header'</span>); <span class="keyword">end</span>
+0138         ffx{3}=str(1:7);
+0139         hlen=str2double(str(9:15));
+0140         hdr={};
+0141         <span class="keyword">while</span> 1
+0142             str=fgetl(fid);
+0143             <span class="keyword">if</span> str(1) ~= <span class="string">';'</span>
+0144                 [tok,str]=strtok(str);
+0145                 <span class="keyword">if</span> strcmp(tok,<span class="string">'end_head'</span>), <span class="keyword">break</span>; <span class="keyword">end</span>
+0146                 hdr(end+1,1)={tok};
+0147                 [tok,str]=strtok(str);
+0148                 <span class="keyword">if</span> tok(1) ~= <span class="string">'-'</span>, error(<span class="string">'Missing ''-'' in SPHERE header'</span>); <span class="keyword">end</span>
+0149                 <span class="keyword">if</span> tok(2)==<span class="string">'s'</span>
+0150                     hdr(<span class="keyword">end</span>,2)={str(2:str2num(tok(3:end))+1)};
+0151                 <span class="keyword">elseif</span> tok(2)==<span class="string">'i'</span>
+0152                     hdr(<span class="keyword">end</span>,2)={sscanf(str,<span class="string">'%d'</span>,1)};
+0153                 <span class="keyword">else</span>
+0154                     hdr(<span class="keyword">end</span>,2)={sscanf(str,<span class="string">'%f'</span>,1)};
+0155                 <span class="keyword">end</span>
+0156             <span class="keyword">end</span>
+0157         <span class="keyword">end</span>
+0158         i=find(strcmp(hdr(:,1),<span class="string">'sample_byte_format'</span>));
+0159         <span class="keyword">if</span> ~isempty(i)
+0160             bord=char(<span class="string">'b'</span>+(<span class="string">'l'</span>-<span class="string">'b'</span>)*(hdr{i,2}(1)==<span class="string">'0'</span>));
+0161             <span class="keyword">if</span> bord ~= BYTEORDER &amp;&amp; all(mode~=<span class="string">'b'</span>) &amp;&amp; all(mode ~=<span class="string">'l'</span>)
+0162                 BYTEORDER=bord;
+0163                 fclose(fid);
+0164                 fid=fopen(filename,<span class="string">'rb'</span>,BYTEORDER);
+0165             <span class="keyword">end</span>
+0166         <span class="keyword">end</span>
+0167         i=find(strcmp(hdr(:,1),<span class="string">'sample_coding'</span>));
+0168         icode=0;                <span class="comment">% initialize to PCM coding</span>
+0169         <span class="keyword">if</span> ~isempty(i)
+0170             icode=-1;                   <span class="comment">% unknown code</span>
+0171             scode=hdr{i,2};
+0172             nscode=length(scode);
+0173             <span class="keyword">for</span> j=1:length(codings)
+0174                 lenj=length(codings{j});
+0175                 <span class="keyword">if</span> strcmp(scode(1:min(nscode,lenj)),codings{j})
+0176                     <span class="keyword">if</span> nscode&gt;lenj
+0177                         <span class="keyword">for</span> k=1:length(compressions)
+0178                             lenk=length(compressions{k});
+0179                             <span class="keyword">if</span> strcmp(scode(lenj+1:min(lenj+lenk,nscode)),compressions{k})
+0180                                 icode=10*k+j-1;
+0181                                 <span class="keyword">break</span>;
+0182                             <span class="keyword">end</span>
+0183                         <span class="keyword">end</span>
+0184                     <span class="keyword">else</span>
+0185                         icode=j-1;
+0186                     <span class="keyword">end</span>
+0187                     <span class="keyword">break</span>;
+0188                 <span class="keyword">end</span>
+0189             <span class="keyword">end</span>
+0190         <span class="keyword">end</span>
+0191 
+0192         info=[fid; 0; hlen; double(BYTEORDER); 0; 1; 2; 16; 1 ; 1; -1; icode];
+0193         <span class="keyword">for</span> j=1:7
+0194             i=find(strcmp(hdr(:,1),codes{j}));
+0195             <span class="keyword">if</span> ~isempty(i)
+0196                 info(j+4)=hdr{i,2};
+0197             <span class="keyword">end</span>
+0198         <span class="keyword">end</span>
+0199         <span class="keyword">if</span> ~info(5)
+0200             fseek(fid,0,1);
+0201             info(5)=floor((ftell(fid)-info(3))/(info(6)*info(7)));
+0202         <span class="keyword">end</span>
+0203         ffx{2}=hdr;
+0204         ffx{4}=info;
+0205     <span class="keyword">end</span>
+0206     info=ffx{4};
+0207     <span class="keyword">if</span> nargin&lt;4, nskip=info(2);
+0208     <span class="keyword">elseif</span> nskip&lt;0, nskip=info(2);
+0209     <span class="keyword">end</span>
+0210 
+0211     ksamples=info(5)-nskip;
+0212     <span class="keyword">if</span> nargin&gt;2
+0213         <span class="keyword">if</span> nmax&gt;=0
+0214             ksamples=min(nmax,ksamples);
+0215         <span class="keyword">end</span>
+0216     <span class="keyword">end</span>
+0217 
+0218     <span class="keyword">if</span> ksamples&gt;0
+0219         fid=info(1);
+0220         <span class="keyword">if</span> icode&gt;=10 &amp;&amp; isempty(ffx{5})
+0221             fclose(fid);
+0222             dirt=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_temp'</span>);
+0223             filetemp=fullfile(dirt,<span class="string">'shorten.wav'</span>);
+0224             cmdtemp=fullfile(dirt,<span class="string">'shorten.bat'</span>);               <span class="comment">% batch file needed to convert to short filenames</span>
+0225             <span class="comment">% if ~exist(cmdtemp,'file')                   % write out the batch file if it doesn't exist</span>
+0226                 cmdfid=fopen(cmdtemp,<span class="string">'wt'</span>);
+0227                 fprintf(cmdfid,<span class="string">'@&quot;%s&quot; -x -a %%1 &quot;%%~s2&quot; &quot;%%~s3&quot;\n'</span>,<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'shorten'</span>));
+0228                 fclose(cmdfid);
+0229             <span class="comment">% end</span>
+0230             <span class="keyword">if</span> exist(filetemp,<span class="string">'file'</span>)                          <span class="comment">% need to explicitly delete old file since shorten makes read-only</span>
+0231                 doscom=[<span class="string">'del /f &quot;'</span> filetemp <span class="string">'&quot;'</span>];
+0232                 <span class="keyword">if</span> dos(doscom) <span class="comment">% run the program</span>
+0233                     error(<span class="string">'Error running DOS command: %s'</span>,doscom);
+0234                 <span class="keyword">end</span>
+0235             <span class="keyword">end</span>
+0236             <span class="keyword">if</span> floor(icode/10)==1               <span class="comment">% shorten</span>
+0237                 doscom=[<span class="string">'&quot;'</span> cmdtemp <span class="string">'&quot; '</span> num2str(info(3)) <span class="string">' &quot;'</span> filename <span class="string">'&quot; &quot;'</span> filetemp <span class="string">'&quot;'</span>];
+0238                 <span class="comment">%                     fprintf(1,'Executing: %s\n',doscom);</span>
+0239                 <span class="keyword">if</span> dos(doscom) <span class="comment">% run the program</span>
+0240                     error(<span class="string">'Error running DOS command: %s'</span>,doscom);
+0241                 <span class="keyword">end</span>
+0242             <span class="keyword">else</span>
+0243                 error(<span class="string">'unknown compression format'</span>);
+0244             <span class="keyword">end</span>
+0245             ffx{5}=filetemp;
+0246             fid=fopen(filetemp,<span class="string">'r'</span>,BYTEORDER);
+0247             <span class="keyword">if</span> fid&lt;0, error(<span class="string">'Cannot open decompressed file %s'</span>,filetemp); <span class="keyword">end</span>
+0248             info(1)=fid;                            <span class="comment">% update fid</span>
+0249         <span class="keyword">end</span>
+0250         info(2)=nskip+ksamples;
+0251         pk=pow2(0.5,8*info(7))*(1+(mno/2-all(mode~=<span class="string">'n'</span>))/pow2(0.5,info(8)));  <span class="comment">% use modes o and n to determine effective peak</span>
+0252         fseek(fid,info(3)+info(6)*info(7)*nskip,-1);
+0253         nsamples=info(6)*ksamples;
+0254         <span class="keyword">if</span> info(7)&lt;3
+0255             <span class="keyword">if</span> info(7)&lt;2
+0256                 y=fread(fid,nsamples,<span class="string">'uchar'</span>);
+0257                 <span class="keyword">if</span> mod(info(12),10)==1
+0258                     y=<a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>(y);
+0259                     pk=2.005649;
+0260                 <span class="keyword">elseif</span> mod(info(12),10)==2,
+0261                     y=<a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>(y);
+0262                     pk=2.005649;
+0263                 <span class="keyword">else</span>
+0264                     y=y-128;
+0265                 <span class="keyword">end</span>
+0266             <span class="keyword">else</span>
+0267                 y=fread(fid,nsamples,<span class="string">'short'</span>);
+0268             <span class="keyword">end</span>
+0269         <span class="keyword">else</span>
+0270             <span class="keyword">if</span> info(7)&lt;4
+0271                 y=fread(fid,3*nsamples,<span class="string">'uchar'</span>);
+0272                 y=reshape(y,3,nsamples);
+0273                 y=[1 256 65536]*y-pow2(fix(pow2(y(3,:),-7)),24);
+0274             <span class="keyword">else</span>
+0275                 y=fread(fid,nsamples,<span class="string">'long'</span>);
+0276             <span class="keyword">end</span>
+0277         <span class="keyword">end</span>
+0278         <span class="keyword">if</span> sc ~= <span class="string">'r'</span>
+0279             <span class="keyword">if</span> sc==<span class="string">'s'</span>
+0280                 <span class="keyword">if</span> info(10)&gt;info(11)
+0281                     info(10)=min(y);
+0282                     info(11)=max(y);
+0283                 <span class="keyword">end</span>
+0284                 sf=1/max(max(abs(info(10:11))),1);
+0285             <span class="keyword">else</span> sf=1/pk;
+0286             <span class="keyword">end</span>
+0287             y=sf*y;
+0288         <span class="keyword">end</span>
+0289         <span class="keyword">if</span> info(6)&gt;1, y = reshape(y,info(6),ksamples).'; <span class="keyword">end</span>
+0290     <span class="keyword">else</span>
+0291         y=[];
+0292     <span class="keyword">end</span>
+0293 
+0294     <span class="keyword">if</span> mode~=<span class="string">'f'</span>
+0295         fclose(fid);
+0296         info(1)=-1;
+0297         <span class="keyword">if</span> ~isempty(ffx{5})
+0298             doscom=[<span class="string">'del /f '</span> ffx{5}];
+0299             <span class="keyword">if</span> dos(doscom) <span class="comment">% run the program</span>
+0300                 error(<span class="string">'Error running DOS command: %s'</span>,doscom);
+0301             <span class="keyword">end</span>
+0302             ffx{5}=[];
+0303         <span class="keyword">end</span>
+0304     <span class="keyword">end</span>
+0305     ffx{4}=info;
+0306     fs=info(9);
+0307     wrd=ffx;        <span class="comment">% copy ffx into the other arguments in case 'w' and/or 't' are not specified</span>
+0308     phn=ffx;
+0309     <span class="keyword">if</span> any(mode==<span class="string">'w'</span>)
+0310         wrd=cell(0,0);
+0311         fidw=fopen([filename(1:end-3) <span class="string">'wrd'</span>],<span class="string">'r'</span>);
+0312         <span class="keyword">if</span> fidw&gt;0
+0313             <span class="keyword">while</span> 1
+0314                 tline = fgetl(fidw); <span class="comment">% read an input line</span>
+0315                 <span class="keyword">if</span> ~ischar(tline)
+0316                     <span class="keyword">break</span>
+0317                 <span class="keyword">end</span>
+0318                 [wtim, ntim, ee, nix] = sscanf(tline,<span class="string">'%d%d'</span>,2);
+0319                 <span class="keyword">if</span> ntim==2
+0320                     wrd{end+1,1}=wtim(:)'/fs;
+0321                     wrd{<span class="keyword">end</span>,2}=strtrim(tline(nix:end));
+0322                 <span class="keyword">end</span>
+0323             <span class="keyword">end</span>
+0324             fclose(fidw);
+0325         <span class="keyword">end</span>
+0326     <span class="keyword">end</span>
+0327     <span class="keyword">if</span> any(mode==<span class="string">'t'</span>)
+0328         ph=cell(0,0);
+0329         fidw=fopen([filename(1:end-3) <span class="string">'phn'</span>],<span class="string">'r'</span>);
+0330         <span class="keyword">if</span> fidw&gt;0
+0331             <span class="keyword">while</span> 1
+0332                 tline = fgetl(fidw); <span class="comment">% read an input line</span>
+0333                 <span class="keyword">if</span> ~ischar(tline)
+0334                     <span class="keyword">break</span>
+0335                 <span class="keyword">end</span>
+0336                 [wtim, ntim, ee, nix] = sscanf(tline,<span class="string">'%d%d'</span>,2);
+0337                 <span class="keyword">if</span> ntim==2
+0338                     ph{end+1,1}=wtim(:)'/fs;
+0339                     ph{<span class="keyword">end</span>,2}=strtrim(tline(nix:end));
+0340                 <span class="keyword">end</span>
+0341             <span class="keyword">end</span>
+0342             fclose(fidw);
+0343         <span class="keyword">end</span>
+0344         <span class="keyword">if</span> any(mode==<span class="string">'w'</span>)
+0345             phn=ph;             <span class="comment">% copy into 4th argument</span>
+0346         <span class="keyword">else</span>
+0347             wrd=ph;             <span class="comment">% copy into 3rd argument</span>
+0348         <span class="keyword">end</span>
+0349     <span class="keyword">end</span>
+0350 <span class="keyword">else</span>
+0351     [y1,fs,ffx]=<a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>(filename,mode,0);
+0352     info=ffx{4};
+0353     icode=info(12); <span class="comment">% could convert this into text</span>
+0354     <span class="keyword">if</span> ~isempty(ffx{1}), fprintf(1,<span class="string">'Filename: %s\n'</span>,ffx{1}); <span class="keyword">end</span>
+0355     fprintf(1,<span class="string">'Sphere file type: %s, coding %d\n'</span>,ffx{3}, icode);
+0356     fprintf(1,<span class="string">'Duration = %ss: %d channel * %d samples @ %sHz\n'</span>,<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(info(5)/info(9)),info(6),info(5),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(info(9)));
+0357 <span class="keyword">end</span>
+0358 
+0359 
+0360 
+0361</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

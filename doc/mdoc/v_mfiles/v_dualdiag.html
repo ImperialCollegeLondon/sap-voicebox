@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_dualdiag</title>
+  <meta name="keywords" content="v_dualdiag">
+  <meta name="description" content="DUALDIAG Simultaneous diagonalisation of two hermitian matrices [A,D,E]=(W,B)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_dualdiag.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_dualdiag
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>DUALDIAG Simultaneous diagonalisation of two hermitian matrices [A,D,E]=(W,B)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [a,d,e]=v_dualdiag(w,b) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">DUALDIAG Simultaneous diagonalisation of two hermitian matrices [A,D,E]=(W,B)
+ Inputs:   W,B     Two square hermitian matrices
+
+ Outputs:  A       Diagonalizing matrix (not normally unitary or hermitian)
+           D       Real diagonal matrix elements: A'*B*A=diag(D) (see note below)
+           E       Real diagonal matrix elements: A'*W*A=diag(E)
+
+ Note: At least one of W and B must be either positive definite or negative
+ definite. If this is not the case, then D=A'*B*A and E=A'*W*A will be
+ complex hermitian matrices rather than being vectors of real diagonal elements.
+
+ The columns of A will be ordered so that abs(D./E) is in descending order.
+ If two output arguments are given then A will be scaled to make diag(E)=I
+ but, if W is singular, this will cause some elements of A to be infinite.
+
+ If A'*B*A=diag(D) and A'*W*A=diag(E) then A'*W*A*diag(1./E)=I so A'*B*A=A'*W*A*diag(D./E)
+ and hence B*A=W*A*diag(D./E) so the columns of A are the eigenvectors of W\A or
+ equivalently the generalized eigenvectors of (B,W).
+
+ Suppose we have several N-dimensional data row-vectors arising from each of C different classes of data.
+ for each class, c, we can form the mean data vector m(c) and the within-class covariance matrix W(c)
+ We can then form the between class covariance matrix B by taking the covariance of the mean vectors m(1), m(2), ...
+ and also the averaged within-class covariance matrix W by averaging W(1), W(2), ...
+ If we then take A=v_dualdiag(W,B) and postmultiply all our original data vectors by A, we obtain new
+ data vectors for which the average within-class covariance matrix is the identity and for which
+ the first few components contain most of the information that is useful in discriminating between classes.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [a,d,e]=v_dualdiag(w,b)</a>
+0002 <span class="comment">%DUALDIAG Simultaneous diagonalisation of two hermitian matrices [A,D,E]=(W,B)</span>
+0003 <span class="comment">% Inputs:   W,B     Two square hermitian matrices</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Outputs:  A       Diagonalizing matrix (not normally unitary or hermitian)</span>
+0006 <span class="comment">%           D       Real diagonal matrix elements: A'*B*A=diag(D) (see note below)</span>
+0007 <span class="comment">%           E       Real diagonal matrix elements: A'*W*A=diag(E)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Note: At least one of W and B must be either positive definite or negative</span>
+0010 <span class="comment">% definite. If this is not the case, then D=A'*B*A and E=A'*W*A will be</span>
+0011 <span class="comment">% complex hermitian matrices rather than being vectors of real diagonal elements.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% The columns of A will be ordered so that abs(D./E) is in descending order.</span>
+0014 <span class="comment">% If two output arguments are given then A will be scaled to make diag(E)=I</span>
+0015 <span class="comment">% but, if W is singular, this will cause some elements of A to be infinite.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% If A'*B*A=diag(D) and A'*W*A=diag(E) then A'*W*A*diag(1./E)=I so A'*B*A=A'*W*A*diag(D./E)</span>
+0018 <span class="comment">% and hence B*A=W*A*diag(D./E) so the columns of A are the eigenvectors of W\A or</span>
+0019 <span class="comment">% equivalently the generalized eigenvectors of (B,W).</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Suppose we have several N-dimensional data row-vectors arising from each of C different classes of data.</span>
+0022 <span class="comment">% for each class, c, we can form the mean data vector m(c) and the within-class covariance matrix W(c)</span>
+0023 <span class="comment">% We can then form the between class covariance matrix B by taking the covariance of the mean vectors m(1), m(2), ...</span>
+0024 <span class="comment">% and also the averaged within-class covariance matrix W by averaging W(1), W(2), ...</span>
+0025 <span class="comment">% If we then take A=v_dualdiag(W,B) and postmultiply all our original data vectors by A, we obtain new</span>
+0026 <span class="comment">% data vectors for which the average within-class covariance matrix is the identity and for which</span>
+0027 <span class="comment">% the first few components contain most of the information that is useful in discriminating between classes.</span>
+0028 
+0029 <span class="comment">%      Copyright (C) Mike Brookes 1997-2013</span>
+0030 <span class="comment">%      Version: $Id: v_dualdiag.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 [a,l]=eig(b+b',w+w');               <span class="comment">% generalized eigendecomposition</span>
+0051 <span class="keyword">if</span> isreal(l)
+0052     [d,i]=sort(abs(diag(l)),<span class="string">'descend'</span>); <span class="comment">% sort by absolute value</span>
+0053     <span class="keyword">if</span> nargout==2
+0054         q=sqrt(diag(a'*w*a))'.^(-1);    <span class="comment">% scale to make e=1</span>
+0055         a=a(:,i).*q(ones(size(w,1),1),i); <span class="comment">% reorder and scale columns of a</span>
+0056     <span class="keyword">else</span>
+0057         a=a(:,i);                       <span class="comment">% reorder columns of a to match eigenvalues</span>
+0058         e=real(diag(a'*w*a));
+0059     <span class="keyword">end</span>
+0060     d=real(diag(a'*b*a));
+0061 <span class="keyword">else</span>
+0062     d=a'*b*a;
+0063     e=a'*w*a;
+0064 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_findpeaks</title>
+  <meta name="keywords" content="v_findpeaks">
+  <meta name="description" content="V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_findpeaks.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_findpeaks
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [k,v]=v_findpeaks(y,m,w,x) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)
+
+  Inputs:  Y(N,1)   is the input signal (does not work with UInt datatype)
+           M        is mode:
+                       'f' include the first sample if a downward initial slope
+                       'l' include the last sample if an upward final slope
+                       'm' return only the maximum peak
+                       'q' performs quadratic interpolation
+                       'v' finds valleys instead of peaks
+           W        is the width tolerance; a peak will be eliminated if there is
+                    a higher peak within +-W. Units are samples or X values
+           X(N,1)   x-axis locations of Y values [default: 1:length(Y)]
+
+ Outputs:  K(P,1)   are the positions in X of the peaks in Y (fractional if M='q')
+           V(P,1)   are the peak amplitudes: if M='q' the amplitudes will be interpolated
+                    whereas if M~='q' then V=Y(K).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_fxrapt.html" class="code" title="function [fx,tt]=v_fxrapt(s,fs,mode,q)">v_fxrapt</a>	FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</li><li><a href="v_windinfo.html" class="code" title="function x=windinfo(w,fs)">v_windinfo</a>	WINDINFO window information and figures of merit X=(W,FS)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [k,v]=v_findpeaks(y,m,w,x)</a>
+0002 <span class="comment">%V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  Y(N,1)   is the input signal (does not work with UInt datatype)</span>
+0005 <span class="comment">%           M        is mode:</span>
+0006 <span class="comment">%                       'f' include the first sample if a downward initial slope</span>
+0007 <span class="comment">%                       'l' include the last sample if an upward final slope</span>
+0008 <span class="comment">%                       'm' return only the maximum peak</span>
+0009 <span class="comment">%                       'q' performs quadratic interpolation</span>
+0010 <span class="comment">%                       'v' finds valleys instead of peaks</span>
+0011 <span class="comment">%           W        is the width tolerance; a peak will be eliminated if there is</span>
+0012 <span class="comment">%                    a higher peak within +-W. Units are samples or X values</span>
+0013 <span class="comment">%           X(N,1)   x-axis locations of Y values [default: 1:length(Y)]</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Outputs:  K(P,1)   are the positions in X of the peaks in Y (fractional if M='q')</span>
+0016 <span class="comment">%           V(P,1)   are the peak amplitudes: if M='q' the amplitudes will be interpolated</span>
+0017 <span class="comment">%                    whereas if M~='q' then V=Y(K).</span>
+0018 
+0019 <span class="comment">% Outputs are column vectors regardless of whether Y is row or column.</span>
+0020 <span class="comment">% If there is a plateau rather than a sharp peak, the routine will place the</span>
+0021 <span class="comment">% peak in the centre of the plateau. When the W input argument is specified,</span>
+0022 <span class="comment">% the routine will eliminate the lower of any pair of peaks whose separation</span>
+0023 <span class="comment">% is &lt;=W; if the peaks have exactly the same height, the second one will be eliminated.</span>
+0024 <span class="comment">% Unless the 'f' or 'l' options are given, all peak locations satisfy 1&lt;K&lt;N.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% If no output arguments are specified, the results will be plotted.</span>
+0027 <span class="comment">%</span>
+0028 
+0029 <span class="comment">%       Copyright (C) Mike Brookes 2005</span>
+0030 <span class="comment">%      Version: $Id: v_findpeaks.m 6564 2015-08-16 16:56:40Z dmb $</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 
+0051 <span class="keyword">if</span> nargin&lt;2 || ~numel(m)
+0052     m=<span class="string">' '</span>;
+0053 <span class="keyword">elseif</span> nargin&gt;3
+0054     x=x(:); <span class="comment">% x must be a column vector</span>
+0055 <span class="keyword">end</span>
+0056 ny=length(y);
+0057 <span class="keyword">if</span> any(m==<span class="string">'v'</span>)
+0058     y=-y(:);        <span class="comment">% invert y if searching for valleys</span>
+0059 <span class="keyword">else</span>
+0060     y=y(:);        <span class="comment">% force to be a column vector</span>
+0061 <span class="keyword">end</span>
+0062 dx=y(2:end)-y(1:end-1);
+0063 r=find(dx&gt;0);
+0064 f=find(dx&lt;0);
+0065 k=[]; <span class="comment">% set defaults</span>
+0066 v=[];
+0067 <span class="keyword">if</span> ~isempty(r) &amp;&amp; ~isempty(f)    <span class="comment">% we must have at least one rise and one fall</span>
+0068     dr=r;
+0069     dr(2:end)=r(2:end)-r(1:end-1);
+0070     rc=ones(ny,1);
+0071     rc(r+1)=1-dr;
+0072     rc(1)=0;
+0073     rs=cumsum(rc); <span class="comment">% = time since the last rise</span>
+0074     df=f;
+0075     df(2:end)=f(2:end)-f(1:end-1);
+0076     fc=ones(ny,1);
+0077     fc(f+1)=1-df;
+0078     fc(1)=0;
+0079     fs=cumsum(fc); <span class="comment">% = time since the last fall</span>
+0080     rp=repmat(-1,ny,1);
+0081     rp([1; r+1])=[dr-1; ny-r(end)-1];
+0082     rq=cumsum(rp);  <span class="comment">% = time to the next rise</span>
+0083     fp=repmat(-1,ny,1);
+0084     fp([1; f+1])=[df-1; ny-f(end)-1];
+0085     fq=cumsum(fp); <span class="comment">% = time to the next fall</span>
+0086     k=find((rs&lt;fs) &amp; (fq&lt;rq) &amp; (floor((fq-rs)/2)==0));   <span class="comment">% the final term centres peaks within a plateau</span>
+0087     v=y(k);
+0088     <span class="keyword">if</span> any(m==<span class="string">'q'</span>)         <span class="comment">% do quadratic interpolation</span>
+0089         <span class="keyword">if</span> nargin&gt;3
+0090             xm=x(k-1)-x(k);
+0091             xp=x(k+1)-x(k);
+0092             ym=y(k-1)-y(k);
+0093             yp=y(k+1)-y(k);
+0094             d=xm.*xp.*(xm-xp);
+0095             b=0.5*(yp.*xm.^2-ym.*xp.^2);
+0096             a=xm.*yp-xp.*ym;
+0097             j=(a&gt;0);            <span class="comment">% j=0 on a plateau</span>
+0098             v(j)=y(k(j))+b(j).^2./(a(j).*d(j));
+0099             k(j)=x(k(j))+b(j)./a(j); <span class="comment">% x-axis position of peak</span>
+0100             k(~j)=0.5*(x(k(~j)+fq(k(~j)))+x(k(~j)-rs(k(~j))));    <span class="comment">% find the middle of the plateau</span>
+0101         <span class="keyword">else</span>
+0102             b=0.25*(y(k+1)-y(k-1));
+0103             a=y(k)-2*b-y(k-1);
+0104             j=(a&gt;0);            <span class="comment">% j=0 on a plateau</span>
+0105             v(j)=y(k(j))+b(j).^2./a(j);
+0106             k(j)=k(j)+b(j)./a(j);
+0107             k(~j)=k(~j)+(fq(k(~j))-rs(k(~j)))/2;    <span class="comment">% add 0.5 to k if plateau has an even width</span>
+0108         <span class="keyword">end</span>
+0109     <span class="keyword">elseif</span> nargin&gt;3 <span class="comment">% convert to the x-axis using linear interpolation</span>
+0110         k=x(k);
+0111     <span class="keyword">end</span>
+0112 <span class="keyword">end</span>
+0113 <span class="comment">% add first and last samples if requested</span>
+0114 <span class="keyword">if</span> ny&gt;1
+0115     <span class="keyword">if</span> any(m==<span class="string">'f'</span>) &amp;&amp; y(1)&gt;y(2)
+0116         v=[y(1); v];
+0117         <span class="keyword">if</span> nargin&gt;3
+0118             k=[x(1); k];
+0119         <span class="keyword">else</span>
+0120             k=[1; k];
+0121         <span class="keyword">end</span>
+0122     <span class="keyword">end</span>
+0123     <span class="keyword">if</span> any(m==<span class="string">'l'</span>) &amp;&amp; y(ny-1)&lt;y(ny)
+0124         v=[v; y(ny)];
+0125         <span class="keyword">if</span> nargin&gt;3
+0126             k=[k; x(ny)];
+0127         <span class="keyword">else</span>
+0128             k=[k; ny];
+0129         <span class="keyword">end</span>
+0130     <span class="keyword">end</span>
+0131     
+0132     <span class="comment">% now purge nearby peaks - note that the decision about which peaks to</span>
+0133     <span class="comment">% delete is not unique</span>
+0134     
+0135     <span class="keyword">if</span> any(m==<span class="string">'m'</span>)
+0136         [v,iv]=max(v);
+0137         k=k(iv);
+0138     <span class="keyword">elseif</span> nargin&gt;2 &amp;&amp; numel(w)==1 &amp;&amp; w&gt;0
+0139         j=find(k(2:end)-k(1:end-1)&lt;=w);
+0140         <span class="keyword">while</span> any(j)
+0141             j=j+(v(j)&gt;=v(j+1));
+0142             k(j)=[];
+0143             v(j)=[];
+0144             j=find(k(2:end)-k(1:end-1)&lt;=w);
+0145         <span class="keyword">end</span>
+0146     <span class="keyword">end</span>
+0147 <span class="keyword">elseif</span> ny&gt;0 &amp;&amp; (any(m==<span class="string">'f'</span>) || any(m==<span class="string">'l'</span>))
+0148     v=y;
+0149     <span class="keyword">if</span> nargin&gt;3
+0150         k=x;
+0151     <span class="keyword">else</span>
+0152         k=1;
+0153     <span class="keyword">end</span>
+0154 <span class="keyword">end</span>
+0155 <span class="keyword">if</span> any(m==<span class="string">'v'</span>)
+0156     v=-v;    <span class="comment">% invert peaks if searching for valleys</span>
+0157 <span class="keyword">end</span>
+0158 
+0159 <span class="keyword">if</span> ~nargout
+0160     <span class="keyword">if</span> any(m==<span class="string">'v'</span>)
+0161         y=-y;    <span class="comment">% re-invert y if searching for valleys</span>
+0162         ch=<span class="string">'v'</span>;
+0163     <span class="keyword">else</span>
+0164         ch=<span class="string">'^'</span>;
+0165     <span class="keyword">end</span>
+0166     plot(1:ny,y,<span class="string">'-'</span>,k,v,ch);
+0167 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

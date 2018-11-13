@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_rectifyhomog</title>
+  <meta name="keywords" content="v_rectifyhomog">
+  <meta name="description" content="RECTIFYHOMOG Apply rectifying homographies to an image set">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_rectifyhomog.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_rectifyhomog
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>RECTIFYHOMOG Apply rectifying homographies to an image set</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">RECTIFYHOMOG Apply rectifying homographies to an image set
+
+ Usage:    figure(101);     % Initial figure for rectiied image display
+           v_rectifyhomog(ims,roc,k0,'ga');   % plot in individual figures
+
+ Inputs:
+        ims{nc}       cell array of input images (colour or monochrome)
+        roc(3,3,nc)   v_rotation matrices from world coordinates to camera coordinates
+        k0            camera matrix or focal length in pixels optionally divided by the image width [0.8]
+        mode          mode string
+                         g  show images on separate figures
+                         G  tile images onto a single figure [default if no output arguments]
+                         k  clip to original image dimensions
+                         l  do not link axes
+                         v  k0 contains diffent values for each camera
+                         a  orient to average camera orientation
+                        [z  make optical axis perpendicular to camera plane]
+                        [x  align x axis with camera displacements]
+ Outputs:
+        imr{nc}(my,mx,nc)  output images (uint8)
+        xa{nc}(mx)        x axis for each image
+        ya{nc}(my)        y axis for each image</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_imagehomog.html" class="code" title="function [ih,xa,ya]=v_imagehomog(im,h,m,clip)">v_imagehomog</a>	IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix</li><li><a href="v_rotqrmean.html" class="code" title="function [y,s,v]=v_rotqrmean(q)">v_rotqrmean</a>	ROTQRMEAN calculates the mean v_rotation of a quaternion array [y,s]=[q]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	ROTRO2EQ converts a 3x3 v_rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	ROTRO2QR converts a 3x3 v_rotation matrix to a real quaternion</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)</a>
+0002 <span class="comment">%RECTIFYHOMOG Apply rectifying homographies to an image set</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:    figure(101);     % Initial figure for rectiied image display</span>
+0005 <span class="comment">%           v_rectifyhomog(ims,roc,k0,'ga');   % plot in individual figures</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Inputs:</span>
+0008 <span class="comment">%        ims{nc}       cell array of input images (colour or monochrome)</span>
+0009 <span class="comment">%        roc(3,3,nc)   v_rotation matrices from world coordinates to camera coordinates</span>
+0010 <span class="comment">%        k0            camera matrix or focal length in pixels optionally divided by the image width [0.8]</span>
+0011 <span class="comment">%        mode          mode string</span>
+0012 <span class="comment">%                         g  show images on separate figures</span>
+0013 <span class="comment">%                         G  tile images onto a single figure [default if no output arguments]</span>
+0014 <span class="comment">%                         k  clip to original image dimensions</span>
+0015 <span class="comment">%                         l  do not link axes</span>
+0016 <span class="comment">%                         v  k0 contains diffent values for each camera</span>
+0017 <span class="comment">%                         a  orient to average camera orientation</span>
+0018 <span class="comment">%                        [z  make optical axis perpendicular to camera plane]</span>
+0019 <span class="comment">%                        [x  align x axis with camera displacements]</span>
+0020 <span class="comment">% Outputs:</span>
+0021 <span class="comment">%        imr{nc}(my,mx,nc)  output images (uint8)</span>
+0022 <span class="comment">%        xa{nc}(mx)        x axis for each image</span>
+0023 <span class="comment">%        ya{nc}(my)        y axis for each image</span>
+0024 
+0025 <span class="comment">%      Copyright (C) Mike Brookes 2012</span>
+0026 <span class="comment">%      Version: $Id: v_rectifyhomog.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0029 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0032 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0033 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0034 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0035 <span class="comment">%   (at your option) any later version.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0038 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0039 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0040 <span class="comment">%   GNU General Public License for more details.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0043 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0044 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 <span class="keyword">if</span> ~iscell(ims)
+0047     ims={ims};
+0048 <span class="keyword">end</span>
+0049 nc=numel(ims); <span class="comment">% number of images</span>
+0050 <span class="keyword">if</span> ~((nc==1 &amp;&amp; isequal(size(roc),[3 3])) || isequal(size(roc),[3 3 nc]))
+0051     error(<span class="string">'roc should have dimensions [3,3,%d]'</span>,nc);
+0052 <span class="keyword">end</span>
+0053 <span class="keyword">if</span> nargin&lt;4 || ~numel(mode)
+0054     mode=<span class="string">''</span>;
+0055 <span class="keyword">end</span>
+0056 <span class="keyword">if</span> nargin&lt;3 || ~numel(k0)
+0057     k0=0.8;
+0058 <span class="keyword">end</span>
+0059 <span class="keyword">if</span> nargin&lt;2 || ~numel(roc)
+0060     roc=repmat(eye(3),[1 1 nc]);
+0061 <span class="keyword">end</span>
+0062 
+0063 <span class="comment">% sort out options</span>
+0064 
+0065 vv=any(mode==<span class="string">'v'</span>);  <span class="comment">% different k0 for each camera</span>
+0066 nk=numel(k0)/(1+vv*(nc-1));  <span class="comment">% number of k parameters per camera</span>
+0067 <span class="keyword">switch</span> nk
+0068     <span class="keyword">case</span> {1,3}
+0069         k0=reshape(k0,[1 nk 1+vv*(nc-1)]);
+0070     <span class="keyword">case</span> 9
+0071         k0=reshape(k0,[3 3 1+vv*(nc-1)]);
+0072     <span class="keyword">otherwise</span>
+0073         error(<span class="string">'k0 must have 1, 3 or 9 values per camera'</span>);
+0074 <span class="keyword">end</span>
+0075 ncr=1+(nargout&gt;0)*(nc-1);   <span class="comment">% numer of output images</span>
+0076 <span class="keyword">if</span> any(mode==<span class="string">'g'</span>)
+0077     gmode=1;
+0078 <span class="keyword">elseif</span> any(mode==<span class="string">'G'</span>) || ~nargout
+0079     gmode=2;
+0080 <span class="keyword">else</span>
+0081     gmode=0;
+0082 <span class="keyword">end</span>
+0083 <span class="keyword">if</span> gmode&gt;0
+0084     fig0=gcf; <span class="comment">% initialize the figure</span>
+0085 <span class="keyword">end</span>
+0086 <span class="keyword">if</span> any(mode==<span class="string">'k'</span>)
+0087     modeh=<span class="string">'kxt'</span>;
+0088 <span class="keyword">else</span>
+0089     modeh=<span class="string">'t'</span>;
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="comment">% determine a global camera v_rotation</span>
+0093 
+0094 <span class="keyword">if</span> any(mode==<span class="string">'a'</span>)
+0095     qrc=zeros(4,nc);  <span class="comment">% calculate the mean camera orientation</span>
+0096     <span class="keyword">for</span> i=1:nc
+0097         qrc(:,i)=<a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>(roc(:,:,i));
+0098     <span class="keyword">end</span>
+0099     rocmean=<a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_rotqrmean.html" class="code" title="function [y,s,v]=v_rotqrmean(q)">v_rotqrmean</a>(qrc));
+0100 <span class="keyword">else</span>
+0101     rocmean=eye(3);
+0102 <span class="keyword">end</span>
+0103 
+0104 <span class="comment">% now do image transformations</span>
+0105 
+0106 imr=cell(ncr,1);
+0107 xa=imr;
+0108 ya=imr;
+0109 axh=zeros(nc,1);
+0110 splx=ceil(sqrt(nc));
+0111 sply=ceil(nc/splx);
+0112 <span class="keyword">for</span> i=1:nc
+0113     k0i=k0(:,:,1+vv*(i-1));  <span class="comment">% camera parameters</span>
+0114     <span class="keyword">if</span> numel(k0i)&lt;9
+0115         imsz=size(ims{i});
+0116         fe=k0(1);
+0117         <span class="keyword">if</span> fe&lt;0.1*imsz(2) <span class="comment">% focal length is a fraction of the width</span>
+0118             fe=k0*imsz(2);
+0119         <span class="keyword">end</span>
+0120         <span class="keyword">if</span> numel(k0i)&lt;3
+0121             xy0=(imsz(2:-1:1)+1)/2;
+0122         <span class="keyword">else</span>
+0123             xy0=k0i(2:3);
+0124         <span class="keyword">end</span>
+0125         k0=eye(3);
+0126         k0(1:4:5)=fe;
+0127         k0(7:8)=xy0;
+0128     <span class="keyword">end</span>
+0129     j=min(i,ncr);
+0130     rocall=rocmean*roc(:,:,i)';
+0131     titl=sprintf(<span class="string">'%d: pan-tilt-roll = %.1f°, %.1f°, %.1f°'</span>,i,-<a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>(<span class="string">'yxz'</span>,rocall)*180/pi);
+0132     [imr{j},xa{j},ya{j}]=<a href="v_imagehomog.html" class="code" title="function [ih,xa,ya]=v_imagehomog(im,h,m,clip)">v_imagehomog</a>(uint8(ims{i}),k0*rocall/k0,modeh);  <span class="comment">% apply inverse of v_rotation matrix</span>
+0133     <span class="keyword">if</span> gmode&gt;0
+0134         <span class="keyword">if</span> gmode&gt;1
+0135             subplot(sply,splx,i);
+0136         <span class="keyword">else</span>
+0137             figure(fig0+i-1);
+0138         <span class="keyword">end</span>
+0139         imagesc(xa{j},ya{j},imr{j});
+0140         axis image
+0141         title(titl);
+0142         axh(i)=gca;
+0143     <span class="keyword">end</span>
+0144 <span class="keyword">end</span>
+0145 <span class="keyword">if</span> gmode&gt;0 &amp;&amp; nc&gt;1
+0146     <span class="keyword">if</span> ~any(mode==<span class="string">'l'</span>)
+0147         linkaxes(axh);
+0148     <span class="keyword">end</span>
+0149     figure(fig0);
+0150 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

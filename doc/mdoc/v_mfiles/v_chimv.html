@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_chimv</title>
+  <meta name="keywords" content="v_chimv">
+  <meta name="description" content="V_CHIMV approximate mean and variance of non-central chi distribution [m,v]=(n,l,s)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_chimv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_chimv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_CHIMV approximate mean and variance of non-central chi distribution [m,v]=(n,l,s)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [m,v]=v_chimv(n,l,s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_CHIMV approximate mean and variance of non-central chi distribution [m,v]=(n,l,s)
+
+  Inputs:    n = degrees of freedom
+           l = non-centrality parameter = sqrt(sum(mean^2)) [default 0]
+               (can be a vector or matrix to calculate many different values at once)
+           s = standard deviation of Gaussian [default 1]
+
+ Outputs:  m = mean of chi distribution
+           v = variance of chi distribution
+
+ If x=c+randn(n,1) is a column vector of Gaussian random numbers with mean vector c, then
+ z=sqrt(x'*x) has a chi distributon with n degrees of freedom and non-centrality parameter
+ l=sqrt(c'*c). The mean and variance of a chi distribution are given precisely by
+
+     m = sqrt(2)*exp(gammaln(0.5*n+0.5)-gammaln(0.5*n))*hypergeom(-0.5,0.5*n,-0.5*l^2)
+       = sqrt(pi/2) L(0.5,0.5*n-1,-0.5*l^2)
+     v = n+l^2-m^2
+
+ where L(n,a,x) is the generalized Laguerre polynomial L_n^{(a)}(x) but this is very slow
+ to calculate so this routine approximates these expressions.
+
+ For n=1, the accuracy is high; for n&gt;1, accuracy improves with increasing n.
+ Accuracy is worst when the non-centrality parameter, l, is close to s*sqrt(n).
+ Worst case errors as a function of n are:
+                       n:    1       2      3       5      10
+   worst case error in m:  1e-15   0.007  0.004  0.0015  0.0005</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,v]=v_chimv(n,l,s)</a>
+0002 <span class="comment">%V_CHIMV approximate mean and variance of non-central chi distribution [m,v]=(n,l,s)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:    n = degrees of freedom</span>
+0005 <span class="comment">%           l = non-centrality parameter = sqrt(sum(mean^2)) [default 0]</span>
+0006 <span class="comment">%               (can be a vector or matrix to calculate many different values at once)</span>
+0007 <span class="comment">%           s = standard deviation of Gaussian [default 1]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs:  m = mean of chi distribution</span>
+0010 <span class="comment">%           v = variance of chi distribution</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% If x=c+randn(n,1) is a column vector of Gaussian random numbers with mean vector c, then</span>
+0013 <span class="comment">% z=sqrt(x'*x) has a chi distributon with n degrees of freedom and non-centrality parameter</span>
+0014 <span class="comment">% l=sqrt(c'*c). The mean and variance of a chi distribution are given precisely by</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%     m = sqrt(2)*exp(gammaln(0.5*n+0.5)-gammaln(0.5*n))*hypergeom(-0.5,0.5*n,-0.5*l^2)</span>
+0017 <span class="comment">%       = sqrt(pi/2) L(0.5,0.5*n-1,-0.5*l^2)</span>
+0018 <span class="comment">%     v = n+l^2-m^2</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% where L(n,a,x) is the generalized Laguerre polynomial L_n^{(a)}(x) but this is very slow</span>
+0021 <span class="comment">% to calculate so this routine approximates these expressions.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% For n=1, the accuracy is high; for n&gt;1, accuracy improves with increasing n.</span>
+0024 <span class="comment">% Accuracy is worst when the non-centrality parameter, l, is close to s*sqrt(n).</span>
+0025 <span class="comment">% Worst case errors as a function of n are:</span>
+0026 <span class="comment">%                       n:    1       2      3       5      10</span>
+0027 <span class="comment">%   worst case error in m:  1e-15   0.007  0.004  0.0015  0.0005</span>
+0028 
+0029 <span class="comment">%      Copyright (C) Mike Brookes 2014</span>
+0030 <span class="comment">%      Version: $Id: v_chimv.m 4969 2014-08-05 18:24:30Z dmb $</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 <span class="keyword">persistent</span> ab pp qq nab
+0051 <span class="keyword">if</span> isempty(ab)
+0052     nab=200; <span class="comment">% cache a few low values of n</span>
+0053     pp=[ 0.595336298258636  -1.213013700592756  -0.018016200037799   1.999986150447582 0];
+0054     qq=[ -0.161514114798972   0.368983655790737  -0.136992134476950  -0.499681107630725 2];
+0055     ni=1./(1:nab);
+0056     ab=[polyval(qq,ni);polyval(pp,ni)];
+0057 <span class="keyword">end</span>
+0058 <span class="keyword">if</span> nargin&lt;3
+0059     s=1;
+0060     <span class="keyword">if</span> nargin&lt;2
+0061         l=0;
+0062     <span class="keyword">end</span>
+0063 <span class="keyword">end</span>
+0064 ls=l/s;
+0065 l2=(ls).^2;
+0066 s2=s^2;
+0067 <span class="keyword">if</span> n&lt;=nab
+0068     <span class="keyword">if</span> n==1
+0069         m=l.*(1-2*normcdf(-ls))+2*s*normpdf(-ls);
+0070     <span class="keyword">else</span>
+0071         m=sqrt(l2+n-1+(ab(1,n)+ab(2,n)*l2).^(-1))*s;
+0072     <span class="keyword">end</span>
+0073 <span class="keyword">else</span>
+0074     m=sqrt(l2+n-1+(polyval(qq,1/n)+polyval(pp,1/n)*l2).^(-1))*s;
+0075 <span class="keyword">end</span>
+0076 v=(n+l2)*s2-m.^2;</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

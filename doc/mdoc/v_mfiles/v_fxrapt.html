@@ -1,0 +1,420 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_fxrapt</title>
+  <meta name="keywords" content="v_fxrapt">
+  <meta name="description" content="FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_fxrapt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_fxrapt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [fx,tt]=v_fxrapt(s,fs,mode,q) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)
+
+ Input:   s(ns)      Speech signal
+          fs         Sample frequency (Hz)
+          mode       'g' will plot a graph [default if no output arguments]
+                     'u' will include unvoiced fames (with fx=NaN)
+          q          stucture with parameter values (e.g. q.f0min=40); see below for a list
+
+ Outputs: fx(nframe)     Larynx frequency for each fram,e (or NaN for silent/unvoiced)
+          tt(nframe,3)  Start and end samples of each frame. tt(*,3)=1 at the start of each talk spurt
+
+ Plots a graph if no outputs are specified showing lag candidates and selected path</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_distitar.html" class="code" title="function d=v_distitar(ar1,ar2,mode)">v_distitar</a>	DISTITAR calculates the Itakura distance between AR coefficients D=(AR1,AR2,MODE)</li><li><a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>	V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>	LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</li><li><a href="v_paramsetch.html" class="code" title="function p=v_paramsetch(d,q,m,c,t)">v_paramsetch</a>	PARAMSETCH update and check parameter values p=(d,q,m,c,t)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function v=normxcor(x,y,d)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fx,tt]=v_fxrapt(s,fs,mode,q)</a>
+0002 <span class="comment">%FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input:   s(ns)      Speech signal</span>
+0005 <span class="comment">%          fs         Sample frequency (Hz)</span>
+0006 <span class="comment">%          mode       'g' will plot a graph [default if no output arguments]</span>
+0007 <span class="comment">%                     'u' will include unvoiced fames (with fx=NaN)</span>
+0008 <span class="comment">%          q          stucture with parameter values (e.g. q.f0min=40); see below for a list</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Outputs: fx(nframe)     Larynx frequency for each fram,e (or NaN for silent/unvoiced)</span>
+0011 <span class="comment">%          tt(nframe,3)  Start and end samples of each frame. tt(*,3)=1 at the start of each talk spurt</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Plots a graph if no outputs are specified showing lag candidates and selected path</span>
+0014 <span class="comment">%</span>
+0015 
+0016 <span class="comment">% Bugs/Suggestions:</span>
+0017 <span class="comment">%   (1) Include backward DP pass and output the true cost for each candidate.</span>
+0018 <span class="comment">%   (2) Add an extra state to distinguish between voiceless and silent</span>
+0019 <span class="comment">%   (3) N-best DP to allow longer term penalties (e.g. for frequent pitch doubling/halving)</span>
+0020 
+0021 <span class="comment">% The algorithm is taken from [1] with the following differences:</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%      (a)  the factor AFACT which in the Talkin algorithm corresponds roughly</span>
+0024 <span class="comment">%           to the absolute level of harmonic noise in the correlation window. This value</span>
+0025 <span class="comment">%           is here calculated as the maximum of three figures:</span>
+0026 <span class="comment">%                   (i) an absolute floor set by p.absnoise</span>
+0027 <span class="comment">%                  (ii) a multiple of the peak signal set by p.signoise</span>
+0028 <span class="comment">%                 (iii) a multiple of the noise floor set by p.relnoise</span>
+0029 <span class="comment">%      (b) The LPC used in calculating the Itakura distance uses a Hamming window rather than</span>
+0030 <span class="comment">%          a Hanning window.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% A C implementation of this algorithm by Derek Lin and David Talkin is included as  &quot;get_f0.c&quot;</span>
+0033 <span class="comment">% in the esps.zip package available from http://www.speech.kth.se/esps/esps.zip under the BSD</span>
+0034 <span class="comment">% license.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% Refs:</span>
+0037 <span class="comment">%      [1]   D. Talkin, &quot;A Robust Algorithm for Pitch Tracking (RAPT)&quot;</span>
+0038 <span class="comment">%            in &quot;Speech Coding &amp; Synthesis&quot;, W B Kleijn, K K Paliwal eds,</span>
+0039 <span class="comment">%            Elsevier ISBN 0444821694, 1995</span>
+0040 
+0041 <span class="comment">%      Copyright (C) Mike Brookes 2006-2013</span>
+0042 <span class="comment">%      Version: $Id: v_fxrapt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0045 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0048 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0049 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0050 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0051 <span class="comment">%   (at your option) any later version.</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0054 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0055 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0056 <span class="comment">%   GNU General Public License for more details.</span>
+0057 <span class="comment">%</span>
+0058 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0059 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0060 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0061 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0062 
+0063 s=s(:); <span class="comment">% force s to be a column</span>
+0064 <span class="keyword">if</span> nargin&lt;4
+0065     q=[];
+0066     <span class="keyword">if</span> nargin&lt;3
+0067         mode=<span class="string">' '</span>;
+0068     <span class="keyword">end</span>
+0069 <span class="keyword">end</span>
+0070 doback=0;   <span class="comment">% don't do backwards DP for now</span>
+0071 
+0072 <span class="comment">% set default parameters</span>
+0073 
+0074 p0.f0min=50;           <span class="comment">% Min F0 (Hz)</span>
+0075 p0.f0max=500;          <span class="comment">% Max F0 (Hz)</span>
+0076 p0.tframe=0.01;        <span class="comment">% frame size (s)</span>
+0077 p0.tlpw=0.005;         <span class="comment">% low pass filter window size (s)</span>
+0078 p0.tcorw=0.0075;       <span class="comment">% correlation window size (s)</span>
+0079 p0.candtr=0.3;         <span class="comment">% minimum peak in NCCF</span>
+0080 p0.lagwt=0.3;          <span class="comment">% linear lag taper factor</span>
+0081 p0.freqwt=0.02;        <span class="comment">% cost factor for F0 change</span>
+0082 p0.vtranc=0.005;       <span class="comment">% fixed voice-state transition cost</span>
+0083 p0.vtrac=0.5;          <span class="comment">% delta amplitude modulated transition cost</span>
+0084 p0.vtrsc=0.5;          <span class="comment">% delta spectrum modulated transition cost</span>
+0085 p0.vobias=0.0;         <span class="comment">% bias to encourage voiced hypotheses</span>
+0086 p0.doublec=0.35;       <span class="comment">% cost of exact doubling or halving</span>
+0087 p0.absnoise=0;         <span class="comment">% absolute rms noise level</span>
+0088 p0.relnoise=2;         <span class="comment">% rms noise level relative to noise floor</span>
+0089 p0.signoise=0.001;     <span class="comment">% ratio of peak signal rms to noise floor (0.001 = 60dB)</span>
+0090 p0.ncands=20;          <span class="comment">% max hypotheses at each frame</span>
+0091 p0.trms=0.03;                      <span class="comment">% window length for rms measurement</span>
+0092 p0.dtrms=0.02;                     <span class="comment">% window spacing for rms measurement</span>
+0093 p0.preemph=-7000;                  <span class="comment">% s-plane position of preemphasis zero</span>
+0094 p0.nfullag=7;                      <span class="comment">% number of full lags to try (must be odd)</span>
+0095 p=<a href="v_paramsetch.html" class="code" title="function p=v_paramsetch(d,q,m,c,t)">v_paramsetch</a>(p0,q);
+0096 
+0097 <span class="comment">% redefine commonly used parameters</span>
+0098 
+0099 candtr=p.candtr;          <span class="comment">% minimum peak in NCCF                      [0.3]</span>
+0100 vtranc=p.vtranc;          <span class="comment">% fixed voice-state transition cost         [0.005]</span>
+0101 vtrac=p.vtrac;            <span class="comment">% delta amplitude modulated transition cost [0.5]</span>
+0102 vtrsc=p.vtrsc;            <span class="comment">% delta spectrum modulated transition cost  [0.5]</span>
+0103 vobias=p.vobias;          <span class="comment">% bias to encourage voiced hypotheses       [0.0]</span>
+0104 doublec=p.doublec;        <span class="comment">% cost of exact doubling or halving         [0.35]</span>
+0105 ncands=p.ncands;          <span class="comment">% max hypotheses at each frame              [20]</span>
+0106 nfullag=p.nfullag;        <span class="comment">% number of full lags to try (must be odd)  [7]</span>
+0107 
+0108 <span class="comment">% derived parameters (mostly dependent on sample rate fs)</span>
+0109 
+0110 krms=round(p.trms*fs);            <span class="comment">% window length for rms measurement</span>
+0111 kdrms=round(p.dtrms*fs);          <span class="comment">% window spacing for rms measurement</span>
+0112 <span class="comment">% rmswin=hanning(krms).^2;</span>
+0113 rmswin=(0.5-0.5*cos(2*pi*(1:krms)'/(krms+1))).^2; <span class="comment">% squared Hanning window</span>
+0114 kdsmp=round(0.25*fs/p.f0max);
+0115 hlpw=round(p.tlpw*fs/2);          <span class="comment">% force window to be an odd length</span>
+0116 blp=sinc((-hlpw:hlpw)/kdsmp).*hamming(2*hlpw+1).';
+0117 fsd=fs/kdsmp;
+0118 kframed=round(fsd*p.tframe);      <span class="comment">% downsampled frame length</span>
+0119 kframe=kframed*kdsmp;           <span class="comment">% frame increment at full rate</span>
+0120 rmsix=(1:krms)+floor((kdrms-kframe)/2); <span class="comment">% rms index according to Talkin; better=(1:krms)+floor((kdrms-krms+1)/2)</span>
+0121 minlag=ceil(fsd/p.f0max);
+0122 maxlag=round(fsd/p.f0min);        <span class="comment">% use round() only because that is what Talkin does</span>
+0123 kcorwd=round(fsd*p.tcorw);        <span class="comment">% downsampled correlation window</span>
+0124 kcorw=kcorwd*kdsmp;             <span class="comment">% full rate correlation window</span>
+0125 spoff=max(hlpw-floor(kdsmp/2),1+kdrms-rmsix(1)-kframe);  <span class="comment">% offset for first speech frame at full rate</span>
+0126 sfoff=spoff-hlpw+floor(kdsmp/2); <span class="comment">% offset for downsampling filter</span>
+0127 sfi=1:kcorwd;                   <span class="comment">% initial decimated correlation window index array</span>
+0128 sfhi=1:kcorw;                   <span class="comment">% initial correlation window index array</span>
+0129 sfj=1:kcorwd+maxlag;
+0130 sfmi=repmat((minlag:maxlag)',1,kcorwd)+repmat(sfi,maxlag-minlag+1,1);
+0131 lagoff=(minlag-1)*kdsmp;        <span class="comment">% lag offset when converting to high sample rate</span>
+0132 beta=p.lagwt*p.f0min/fs;            <span class="comment">% bias towards low lags</span>
+0133 log2=log(2);
+0134 lpcord=2+round(fs/1000);        <span class="comment">% lpc order for itakura distance</span>
+0135 hnfullag=floor(nfullag/2);
+0136 jumprat=exp((doublec+log2)/2);  <span class="comment">% lag ratio at which octave jump cost is lowest</span>
+0137 ssq=s.^2;
+0138 csssq=cumsum(ssq);
+0139 sqrt(min(csssq(kcorw+1:end)-csssq(1:end-kcorw))/kcorw);
+0140 afact=max([p.absnoise^2,max(ssq)*p.signoise^2,min(csssq(kcorw+1:end)-csssq(1:end-kcorw))*(p.relnoise/kcorw)^2])^2*kcorw^2;
+0141 
+0142 <span class="comment">% downsample signal to approx 2 kHz to speed up autocorrelation calculation</span>
+0143 <span class="comment">% kdsmp is the downsample factor</span>
+0144 
+0145 sf=filter(blp/sum(blp),1,s(sfoff+1:end));
+0146 sp=filter([1 exp(p.preemph/fs)],1,s); <span class="comment">% preemphasised speech for LPC calculation</span>
+0147 sf(1:length(blp)-1)=[];         <span class="comment">% remove startup transient</span>
+0148 sf=sf(1:kdsmp:end);             <span class="comment">% downsample to =~2kHz</span>
+0149 nsf=length(sf);                 <span class="comment">% length of downsampled speech</span>
+0150 ns=length(s);                   <span class="comment">% length of full rate speech</span>
+0151 
+0152 <span class="comment">% Calculate the frame limit to ensure we don't run off the end of the speech or decimated speech:</span>
+0153 <span class="comment">%   (a) For decimated autocorrelation when calculating sff():  (nframe-1)*kframed+kcorwd+maxlag &lt;= nsf</span>
+0154 <span class="comment">%   (b) For full rate autocorrelation when calculating sfh():  max(fho)+kcorw+maxlag*kdsamp+hnfllag &lt;= ns</span>
+0155 <span class="comment">%   (c) For rms ratio window when calculating rr            :  max(fho)+rmsix(end) &lt;= ns</span>
+0156 <span class="comment">% where max(fho) = (nframe-1)*kframe + spoff</span>
+0157 
+0158 nframe=floor(1+min((nsf-kcorwd-maxlag)/kframed,(ns-spoff-max(kcorw-maxlag*kdsmp-hnfullag,rmsix(end)))/kframe));
+0159 
+0160 <span class="comment">% now search for autocorrelation peaks in the downsampled signal</span>
+0161 
+0162 cost=zeros(nframe,ncands);      <span class="comment">% cumulative cost</span>
+0163 prev=zeros(nframe,ncands);      <span class="comment">% traceback pointer</span>
+0164 mcands=zeros(nframe,1);         <span class="comment">% number of actual candidates excluding voiceless</span>
+0165 lagval=repmat(NaN,nframe,ncands-1);    <span class="comment">% lag of each voiced candidate</span>
+0166 tv=zeros(nframe,3);             <span class="comment">% diagnostics: 1=voiceless cost, 2=min voiced cost, 3:cumulative voiceless-min voiced</span>
+0167 <span class="keyword">if</span> doback
+0168     costms=cell(nframe,1);
+0169 <span class="keyword">end</span>
+0170 
+0171 <span class="comment">% Main processing loop for each 10 ms frame</span>
+0172 
+0173 <span class="keyword">for</span> iframe=1:nframe       <span class="comment">% loop for each frame (~10 ms)</span>
+0174     
+0175     <span class="comment">% Find peaks in the normalized autocorrelation of subsampled (2Khz) speech</span>
+0176     <span class="comment">% only keep peaks that are &gt; 30% of highest peak</span>
+0177     
+0178     fho=(iframe-1)*kframe+spoff;
+0179     sff=sf((iframe-1)*kframed+sfj);
+0180     sffdc=mean(sff(sfi));       <span class="comment">% mean of initial correlation window length</span>
+0181     sff=sff-sffdc;              <span class="comment">% subtract off the mean</span>
+0182     nccfd=<a href="#_sub1" class="code" title="subfunction v=normxcor(x,y,d)">normxcor</a>(sff(1:kcorwd),sff(minlag+1:end));
+0183     [ipkd,vpkd]=<a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>(nccfd,<span class="string">'q'</span>);
+0184     
+0185     <span class="comment">% Debugging: execute the line below to plot the autocorrelation peaks.</span>
+0186     <span class="comment">% v_findpeaks(nccfd,'q'); xlabel(sprintf('Lag = (x+%d)*%g ms',minlag-1,1000*kdsmp/fs)); ylabel('Normalized Cross Correlation'); title (sprintf('Frame %d/%d',iframe,nframe));</span>
+0187     
+0188     vipkd=[vpkd ipkd];
+0189     vipkd(vpkd&lt;max(vpkd)*candtr,:)=[];          <span class="comment">% eliminate peaks that are small</span>
+0190     <span class="keyword">if</span> size(vipkd,1)
+0191         <span class="keyword">if</span> size(vipkd,1)&gt;ncands-1
+0192             vipkd=sortrows(vipkd);
+0193             vipkd(1:size(vipkd,1)-ncands+1,:)=[];   <span class="comment">% eliminate lowest to leave only ncands-1</span>
+0194         <span class="keyword">end</span>
+0195         lagcan=round(vipkd(:,2)*kdsmp+lagoff);        <span class="comment">% convert the lag candidate values to the full sample rate</span>
+0196         nlcan=length(lagcan);
+0197     <span class="keyword">else</span>
+0198         nlcan=0;
+0199     <span class="keyword">end</span>
+0200     
+0201     <span class="comment">% If there are any candidate lag values (nlcan&gt;0) then refine their accuracy at the full sample rate</span>
+0202     
+0203     <span class="keyword">if</span> nlcan
+0204         laglist=reshape(repmat(lagcan(:)',nfullag,1)+repmat((-hnfullag:hnfullag)',1,nlcan),nfullag*nlcan,1);
+0205         sfh=s(fho+(1:kcorw+max(lagcan)+hnfullag));
+0206         sfhdc=mean(sfh(sfhi));
+0207         sfh=sfh-sfhdc;
+0208         e0=sum(sfh(sfhi).^2);                     <span class="comment">% energy of initial correlation window (only needed to store in tv(:,6)</span>
+0209         lagl2=repmat(lagcan(:)',nfullag+kcorw-1,1)+repmat((1-hnfullag:hnfullag+kcorw)',1,nlcan);
+0210         nccf=<a href="#_sub1" class="code" title="subfunction v=normxcor(x,y,d)">normxcor</a>(sfh(1:kcorw),sfh(lagl2),afact);
+0211         
+0212         [maxcc,maxcci]=max(nccf,[],1);
+0213         vipk=[maxcc(:) lagcan(:)+maxcci(:)-hnfullag-1];
+0214         vipk=vipk(:,[1 2 2]);
+0215         maxccj=maxcci(:)'+nfullag*(0:nlcan-1);    <span class="comment">% vector index into nccf array</span>
+0216         msk=mod(maxcci,nfullag-1)~=1 &amp; 2*nccf(maxccj)-nccf(mod(maxccj-2,nfullag*nlcan)+1)-nccf(mod(maxccj,nfullag*nlcan)+1)&gt;0;  <span class="comment">% don't do quadratic interpolation for the end ones</span>
+0217         <span class="keyword">if</span> any(msk)
+0218             maxccj=maxccj(msk);
+0219             vipk(msk,3)=vipk(msk,3)+(nccf(maxccj+1)-nccf(maxccj-1))'./(2*(2*nccf(maxccj)-nccf(maxccj-1)-nccf(maxccj+1)))';
+0220         <span class="keyword">end</span>
+0221         vipk(maxcc&lt;max(maxcc)*candtr,:)=[];          <span class="comment">% eliminate peaks that are small</span>
+0222         <span class="keyword">if</span> size(vipk,1)&gt;ncands-1
+0223             vipk=sortrows(vipk);
+0224             vipk(1:size(vipk,1)-ncands+1,:)=[];   <span class="comment">% eliminate lowest to leave only ncands-1</span>
+0225         <span class="keyword">end</span>
+0226         
+0227         <span class="comment">% vipk(:,1) has NCCF value, vipk(:,2) has integer peak position, vipk(:,3) has refined peak position</span>
+0228         
+0229         mc=size(vipk,1);
+0230     <span class="keyword">else</span>
+0231         mc=0;
+0232     <span class="keyword">end</span>
+0233     
+0234     <span class="comment">% We now have mc lag candidates at the full sample rate</span>
+0235     
+0236     mc1=mc+1;               <span class="comment">% total number of candidates including &quot;unvoiced&quot; possibility</span>
+0237     mcands(iframe)=mc;      <span class="comment">% save number of lag candidates (needed for pitch consistency cost calculation)</span>
+0238     <span class="keyword">if</span> mc
+0239         lagval(iframe,1:mc)=vipk(:,3)';
+0240         cost(iframe,1)=vobias+max(vipk(:,1));   <span class="comment">% voiceless cost</span>
+0241         cost(iframe,2:mc1)=1-vipk(:,1)'.*(1-beta*vipk(:,3)');   <span class="comment">% local voiced costs</span>
+0242         tv(iframe,2)=min(cost(iframe,2:mc1));
+0243     <span class="keyword">else</span>
+0244         cost(iframe,1)=vobias;          <span class="comment">% if no lag candidates (mc=0), then the voiceless case is the only possibility</span>
+0245     <span class="keyword">end</span>
+0246     tv(iframe,1)=cost(iframe,1);
+0247     <span class="keyword">if</span> iframe&gt;1                         <span class="comment">% if it is not the first frame, then calculate pitch consistency and v/uv transition costs</span>
+0248         mcp=mcands(iframe-1);
+0249         costm=zeros(mcp+1,mc1);         <span class="comment">% cost matrix: rows and cols correspond to candidates in previous and current frames (incl voiceless)</span>
+0250         
+0251         <span class="comment">% if both frames have at least one lag candidate, then calculate a pitch consistency cost</span>
+0252         
+0253         <span class="keyword">if</span> mc*mcp
+0254             lrat=abs(log(repmat(lagval(iframe,1:mc),mcp,1)./repmat(lagval(iframe-1,1:mcp)',1,mc)));
+0255             costm(2:<span class="keyword">end</span>,2:end)=p.freqwt*min(lrat,doublec+abs(lrat-log2));  <span class="comment">% allow pitch doubling/halving</span>
+0256         <span class="keyword">end</span>
+0257         
+0258         <span class="comment">% if either frame has a lag candidate, then calculate the cost of voiced/voiceless transition and vice versa</span>
+0259         
+0260         <span class="keyword">if</span> mc+mcp
+0261             rr=sqrt((rmswin'*s(fho+rmsix).^2)/(rmswin'*s(fho+rmsix-kdrms).^2)); <span class="comment">% amplitude &quot;gradient&quot;</span>
+0262             ss=0.2/(<a href="v_distitar.html" class="code" title="function d=v_distitar(ar1,ar2,mode)">v_distitar</a>(<a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>(sp(fho+rmsix),lpcord),<a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>(sp(fho+rmsix-kdrms),lpcord),<span class="string">'e'</span>)-0.8);   <span class="comment">% Spectral stationarity: note: Talkin uses Hanning instead of Hamming windows for LPC</span>
+0263             costm(1,2:end)= vtranc+vtrsc*ss+vtrac/rr;   <span class="comment">% voiceless -&gt; voiced cost</span>
+0264             costm(2:<span class="keyword">end</span>,1)= vtranc+vtrsc*ss+vtrac*rr;
+0265             tv(iframe,4:5)=[costm(1,mc1) costm(mcp+1,1)];
+0266         <span class="keyword">end</span>
+0267         costm=costm+repmat(cost(iframe-1,1:mcp+1)',1,mc1);  <span class="comment">% add in cumulative costs</span>
+0268         [costi,previ]=min(costm,[],1);
+0269         cost(iframe,1:mc1)=cost(iframe,1:mc1)+costi;
+0270         prev(iframe,1:mc1)=previ;
+0271     <span class="keyword">else</span>                            <span class="comment">% first ever frame</span>
+0272         costm=zeros(1,mc1); <span class="comment">% create a cost matrix in case doing a backward recursion</span>
+0273     <span class="keyword">end</span>
+0274     <span class="keyword">if</span> mc
+0275         tv(iframe,3)=cost(iframe,1)-min(cost(iframe,2:mc1));
+0276         tv(iframe,6)=5*log10(e0*e0/afact);
+0277     <span class="keyword">end</span>
+0278     <span class="keyword">if</span> doback
+0279         costms{iframe}=costm; <span class="comment">% need to add repmatted cost into this</span>
+0280     <span class="keyword">end</span>
+0281 <span class="keyword">end</span>
+0282 
+0283 <span class="comment">% now do traceback</span>
+0284 
+0285 best=zeros(nframe,1);
+0286 [cbest,best(nframe)]=min(cost(nframe,1:mcands(nframe)+1));
+0287 <span class="keyword">for</span> i=nframe:-1:2
+0288     best(i-1)=prev(i,best(i));
+0289 <span class="keyword">end</span>
+0290 vix=find(best&gt;1);
+0291 fx=repmat(NaN,nframe,1);                        <span class="comment">% unvoiced frames will be NaN</span>
+0292 fx(vix)=fs*lagval(vix+nframe*(best(vix)-2)).^(-1); <span class="comment">% leave as NaN if unvoiced</span>
+0293 tt=zeros(nframe,3);
+0294 tt(:,1)=(1:nframe)'*kframe+spoff;       <span class="comment">% find frame times</span>
+0295 tt(:,2)=tt(:,1)+kframe-1;
+0296 jratm=(jumprat+1/jumprat)/2;
+0297 tt(2:<span class="keyword">end</span>,3)=abs(fx(2:end)./fx(1:end-1)-jratm)&gt;jumprat-jratm;    <span class="comment">% new spurt if frequency ratio is outside (1/jumprat,jumprat)</span>
+0298 tt(1,3)=1;           <span class="comment">% first frame always starts a spurt</span>
+0299 tt(1+find(isnan(fx(1:end-1))),3)=1; <span class="comment">% NaN always forces a new spurt</span>
+0300 
+0301 <span class="comment">% plot results if there are no output arguments of if the 'g' mode option is specified</span>
+0302 
+0303 <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>)
+0304     tf=spoff+(0:nframe-1)'*kframe;      <span class="comment">% one sample before start of each frame</span>
+0305     blag=repmat(NaN,nframe,1);                        <span class="comment">% unvoiced frames will be NaN</span>
+0306     blag(vix)=lagval(vix+nframe*(best(vix)-2)); <span class="comment">% leave as NaN if unvoiced</span>
+0307     ts=(1:ns)/fs;                       <span class="comment">% time scale for speech samples</span>
+0308     tsa=[1:tf(1) tf(end)+kframe+1:ns];  <span class="comment">% indexes for unprocessed speech [-1 term is an error methinks]</span>
+0309     sup=repmat(NaN,ns,1);               <span class="comment">% unprocessed speech - plot in black</span>
+0310     sup(tsa)=s(tsa);
+0311     sv=reshape(s(tf(1)+1:tf(end)+kframe),kframe,nframe);               <span class="comment">% processed speech</span>
+0312     su=sv;
+0313     su(:,best&gt;1)=NaN;                   <span class="comment">% delete all voiced samples</span>
+0314     sv(:,best==1)=NaN;                  <span class="comment">% delete all unvoiced samples</span>
+0315     tsuv=(tf(1)+1:tf(end)+kframe)/fs;
+0316     su=su(:);
+0317     sv=sv(:);
+0318     ax=zeros(2,1);
+0319     ax(1)=subplot(211);
+0320     plot(ts,sup,<span class="string">'-k'</span>,tsuv,su,<span class="string">'r-'</span>,tsuv,sv,<span class="string">'b-'</span>);
+0321     title(<span class="string">'Speech'</span>);
+0322     ax(2)=subplot(212);
+0323     plot((tf+(kframe+1)/2)/fs,lagval*1000/fs,<span class="string">'xr'</span>,(tf+(kframe+1)/2)/fs,blag*1000/fs,<span class="string">'-b'</span>)
+0324     xlabel(<span class="string">'Time (s)'</span>);
+0325     ylabel(<span class="string">'Period (ms)'</span>);
+0326     title(<span class="string">'Lag Candidates'</span>);
+0327     linkaxes(ax,<span class="string">'x'</span>);
+0328 <span class="keyword">end</span>
+0329 <span class="keyword">if</span> ~any(mode==<span class="string">'u'</span>)
+0330     tt(isnan(fx),:)=[];    <span class="comment">% remove NaN spurts</span>
+0331     fx(isnan(fx),:)=[];
+0332 <span class="keyword">end</span>
+0333 
+0334 
+0335 
+0336 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0337 
+0338 <a name="_sub1" href="#_subfunctions" class="code">function v=normxcor(x,y,d)</a>
+0339 <span class="comment">% Calculate the normalized cross correlation of column vectors x and y</span>
+0340 <span class="comment">% we can calculate this in two ways but fft is much faster even for nx small</span>
+0341 <span class="comment">% We must have nx&lt;=ny and the output length is ny-nx+1</span>
+0342 <span class="comment">% note that this routine does not do mean subtraction even though this is normally a good idea</span>
+0343 <span class="comment">% if y is a matrix, we correlate with each column</span>
+0344 <span class="comment">% d is a constant added onto the normalization factor</span>
+0345 <span class="comment">% v(j)=x'*yj/sqrt(d + x'*x * yj'*yj) where yj=y(j:j+nx-1) for j=1:ny-nx+1</span>
+0346 
+0347 <span class="keyword">if</span> nargin&lt;3
+0348     d=0;
+0349 <span class="keyword">end</span>
+0350 nx=length(x);
+0351 [ny,my]=size(y);
+0352 nv=1+ny-nx;
+0353 <span class="keyword">if</span> nx&gt;ny
+0354     error(<span class="string">'second argument is shorter than the first'</span>);
+0355 <span class="keyword">end</span>
+0356 
+0357 nf=pow2(nextpow2(ny));
+0358 w=<a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>(repmat(conj(<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(x,nf,1)),1,my).*<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(y,nf,1));
+0359 s=zeros(ny+1,my);
+0360 s(2:<span class="keyword">end</span>,:)=cumsum(y.^2,1);
+0361 v=w(1:nv,:)./sqrt(d+(x'*x).*(s(nx+1:<span class="keyword">end</span>,:)-s(1:end-nx,:)));</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

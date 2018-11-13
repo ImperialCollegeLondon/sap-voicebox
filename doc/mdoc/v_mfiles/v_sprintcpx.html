@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_sprintcpx</title>
+  <meta name="keywords" content="v_sprintcpx">
+  <meta name="description" content="SPRINTCPX  format a complex number for printing S=(Z,F)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_sprintcpx.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_sprintcpx
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SPRINTCPX  format a complex number for printing S=(Z,F)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function s=v_sprintcpx(z,f) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SPRINTCPX  format a complex number for printing S=(Z,F)
+
+ Usage: fprintf('%s',v_sprintcpx(z));
+
+  Inputs: z   a complex number to print
+          f   optional formatting string as in fprintf e.g. '0.2f' [default: 'g']
+              may also include 'i' or 'j' [default] to control sqrt(-1) symbol.
+
+ Outputs: s   formatted output string</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_sprintcpx(z,f)</a>
+0002 <span class="comment">%SPRINTCPX  format a complex number for printing S=(Z,F)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: fprintf('%s',v_sprintcpx(z));</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%  Inputs: z   a complex number to print</span>
+0007 <span class="comment">%          f   optional formatting string as in fprintf e.g. '0.2f' [default: 'g']</span>
+0008 <span class="comment">%              may also include 'i' or 'j' [default] to control sqrt(-1) symbol.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Outputs: s   formatted output string</span>
+0011 
+0012 <span class="comment">%      Copyright (C) Mike Brookes 2015</span>
+0013 <span class="comment">%      Version: $Id: v_sprintcpx.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0016 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0019 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0020 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0021 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0022 <span class="comment">%   (at your option) any later version.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0025 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0026 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0027 <span class="comment">%   GNU General Public License for more details.</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0030 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0031 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0032 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0033 
+0034 <span class="keyword">if</span> nargin&lt;2 || ~numel(f)
+0035     f=<span class="string">'g'</span>;
+0036 <span class="keyword">end</span>
+0037 <span class="keyword">if</span> any(f==<span class="string">'i'</span>)
+0038     ij=<span class="string">'i'</span>;
+0039 <span class="keyword">else</span>
+0040     ij=<span class="string">'j'</span>;
+0041 <span class="keyword">end</span>
+0042 f((f==<span class="string">'i'</span>)|(f==<span class="string">'j'</span>))=[]; <span class="comment">% remove i and j specifiers</span>
+0043 <span class="keyword">if</span> ~numel(f)
+0044     f=<span class="string">'g'</span>;
+0045 <span class="keyword">end</span>
+0046 <span class="keyword">if</span> any(f==<span class="string">'+'</span>)
+0047     pl=<span class="string">''</span>;
+0048 <span class="keyword">else</span>
+0049     pl=<span class="string">'+'</span>;
+0050 <span class="keyword">end</span>
+0051 f=[<span class="string">'%'</span> f];
+0052 a=real(z);
+0053 b=imag(z);
+0054 jx=[1 3 2 4 3 4 1 3 2];
+0055 ix=jx(3*sign(a)+sign(b)+5);
+0056 <span class="keyword">switch</span>(ix)
+0057     <span class="keyword">case</span> 1
+0058         s=sprintf([f f ij],a,b);
+0059     <span class="keyword">case</span> 2
+0060         s=sprintf([f pl f ij],a,b);
+0061     <span class="keyword">case</span> 3
+0062         s=sprintf(f,a);
+0063     <span class="keyword">case</span> 4
+0064         s=sprintf([f ij],b);
+0065 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

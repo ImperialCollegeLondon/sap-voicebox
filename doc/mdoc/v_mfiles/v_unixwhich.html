@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_unixwhich</title>
+  <meta name="keywords" content="v_unixwhich">
+  <meta name="description" content="UNIXWHICH Search system path for an executable program [F]=(C,E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_unixwhich.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_unixwhich
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>UNIXWHICH Search system path for an executable program [F]=(C,E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function f=v_unixwhich(c,e) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">UNIXWHICH Search system path for an executable program [F]=(C,E)
+
+ Inputs: C  name of file to search for (excluding extension)
+         E  list of extensions [default = '.com;.exe;.bat' unless C contains '.']
+
+ Outputs: F  Full pathname of executable (use FILEPARTS() to split up)
+
+ Notes: (1) This is WINDOWS specific and needs to be fixed to work on UNIX systems
+        (2) The search is case insensitive (like most of WINDOWS). 
+        (3) The routine does not cache the directory listings so you
+            should avoid doing the same search many times if you care
+            about speed.
+        (4) To include all files that CMD.EXE will search, set e=v_winenvar('pathext')
+        (5) As well as their normal full-length name, WINDOWS files and folders have 
+            a short name assigned by the operating system that is 8 characters long
+            (+ 3 more for the extension). These short names are usually hidden from the
+            user and UNIXWHICH, unlike the operating system, will not search for them.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function f=v_unixwhich(c,e)</a>
+0002 <span class="comment">%UNIXWHICH Search system path for an executable program [F]=(C,E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: C  name of file to search for (excluding extension)</span>
+0005 <span class="comment">%         E  list of extensions [default = '.com;.exe;.bat' unless C contains '.']</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Outputs: F  Full pathname of executable (use FILEPARTS() to split up)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Notes: (1) This is WINDOWS specific and needs to be fixed to work on UNIX systems</span>
+0010 <span class="comment">%        (2) The search is case insensitive (like most of WINDOWS).</span>
+0011 <span class="comment">%        (3) The routine does not cache the directory listings so you</span>
+0012 <span class="comment">%            should avoid doing the same search many times if you care</span>
+0013 <span class="comment">%            about speed.</span>
+0014 <span class="comment">%        (4) To include all files that CMD.EXE will search, set e=v_winenvar('pathext')</span>
+0015 <span class="comment">%        (5) As well as their normal full-length name, WINDOWS files and folders have</span>
+0016 <span class="comment">%            a short name assigned by the operating system that is 8 characters long</span>
+0017 <span class="comment">%            (+ 3 more for the extension). These short names are usually hidden from the</span>
+0018 <span class="comment">%            user and UNIXWHICH, unlike the operating system, will not search for them.</span>
+0019 
+0020 <span class="comment">%   Copyright (c) 2005 Mike Brookes,  mike.brookes@ic.ac.uk</span>
+0021 <span class="comment">%      Version: $Id: v_unixwhich.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0024 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0028 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0029 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0030 <span class="comment">%   (at your option) any later version.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0033 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0034 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0035 <span class="comment">%   GNU General Public License for more details.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0038 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0039 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0040 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0041 <span class="keyword">if</span> nargin&lt;2
+0042     <span class="keyword">if</span> any(c==<span class="string">'.'</span>)
+0043         e=[];
+0044     <span class="keyword">else</span>
+0045         e=<span class="string">'.com;.exe;.bat'</span>;
+0046     <span class="keyword">end</span>
+0047 <span class="keyword">end</span>
+0048 ei=[0 find(e==<span class="string">';'</span>) length(e)+1];
+0049 [v,pth]=system(<span class="string">'path'</span>);
+0050 <span class="keyword">while</span> pth(end)&lt;=<span class="string">' '</span>
+0051     pth(end)=[];    <span class="comment">% remove junk from end</span>
+0052 <span class="keyword">end</span>
+0053 lpth=length(pth);
+0054 sc=[0 find(pth==<span class="string">';'</span>) lpth+1];
+0055 f=[];   <span class="comment">% initialize to null string = not found</span>
+0056 <span class="keyword">for</span> i=2:length(sc)
+0057     hd=pth(sc(i-1)+1:sc(i)-1);
+0058     <span class="keyword">if</span> length(hd)
+0059         [v,fl]=system([<span class="string">'dir /B &quot;'</span>,hd,<span class="string">'&quot;'</span>]);
+0060         fi=[0 find(fl==10)]; <span class="comment">% split into individual file names using LF character</span>
+0061         <span class="keyword">for</span> j=2:length(fi)
+0062             fn=fl(fi(j-1)+1:fi(j)-1);
+0063             <span class="keyword">for</span> k=2:length(ei)
+0064                 ma=strcmpi(fn,[c e(ei(k-1)+1:ei(k)-1)]);
+0065                 <span class="keyword">if</span> ma
+0066                     f=fullfile(hd,fn);
+0067                     <span class="keyword">return</span>;
+0068                 <span class="keyword">end</span>
+0069             <span class="keyword">end</span>
+0070         <span class="keyword">end</span>
+0071     <span class="keyword">end</span>
+0072 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

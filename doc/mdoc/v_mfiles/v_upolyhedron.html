@@ -1,0 +1,1090 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_upolyhedron</title>
+  <meta name="keywords" content="v_upolyhedron">
+  <meta name="description" content="UPOLYHEDRON calculate uniform polyhedron characteristics">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_upolyhedron.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_upolyhedron
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>UPOLYHEDRON calculate uniform polyhedron characteristics</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [vlist,edgeq,flist,info]=v_upolyhedron(w,md) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> UPOLYHEDRON calculate uniform polyhedron characteristics
+
+ Inputs:  W    Specifies the desired polyhedron in one of three forms:
+                 (a) name e.g. W='cube'; precede by 'dual' for dual or
+                 'laevo' or 'dextro' [default] for chiral polyhedra
+                 (b) index in the list given below e.g. W=6 is the cube; negative for dual
+                     n.{1,2,3,4,5} gives n-sided prism, antiprism, grammic prism, grammic antiprism or grammic crossed antiprism
+                 (c) Wythoff symbol (see below) e.g. W=[3 0 2 4] is the cube
+                          |p q r, p|q r, p q|r or p q r| respectively with 0 for |
+                         using -1 instead of 0 gives the dual of the polyhedron
+                         using -2 (or -3 for dual) gives a reflected version of a snub polyhedron
+          MD   specifies a mode string
+                 'g' plot image
+                 'w' plot wireframe
+                 'f' plot coloured faces
+                 'v' number vertices
+                 't' plot vertex figure (a slice centred on a vertex)
+
+                 ? homogeneous output coordinates
+                 ? create net
+                 ? segment faces to remove internal portions of the surfaces
+                 ? size: [max] diameter=1, [longest] edge=1, include anisotropic normalization
+                   to minimize variance of vertex radius or edge vector length
+                 ? orientation: vertex at the top, largest stable base at bottom
+
+ Outputs:
+          VLIST(:,7)  gives the [x y z d n e t] for each vertex
+                       x,y,z = position, d=distance from origin, n=valency, e=edge index, t=type (-ve for reflected)
+          EDGEQ(:,9) has one row for each direction of each edge:
+                         1  v1   first vertex (normally start)
+                         2  v2   second vertex
+                         3  f1   first face (normally on left)
+                         4  f2   second face
+                         5  ev1  next edge around vertex 1 (normally anticlockwise)
+                         6  ef1  next edge around f1 (normally anticlockwise)
+                         7  er   reverse edge
+                         8  z    twisted edge: clockwise neighbours around v1 and v2 are on the same face
+                         9  sf   swap face order: ???
+                        10  sv   swap vertex order: v2 preceeds v1 around f1
+          FLIST(:,7)  gives the [x y z d n e t] for each face
+                       x,y,z = unit normal, d=distance from origin, n=valency, e=edge index, t=type (-ve for reflected)
+          INFO        structure containing the following fields:
+                         hemi      true if faces are hemispherical (i.e. pass through the origin)
+                         onesided  true is one-sided (like a moebius strip)
+                         snub      true if a snub polyhedron</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [vlist,edgeq,flist,info]=v_upolyhedron(w,md)</a>
+0002 <span class="comment">% UPOLYHEDRON calculate uniform polyhedron characteristics</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:  W    Specifies the desired polyhedron in one of three forms:</span>
+0005 <span class="comment">%                 (a) name e.g. W='cube'; precede by 'dual' for dual or</span>
+0006 <span class="comment">%                 'laevo' or 'dextro' [default] for chiral polyhedra</span>
+0007 <span class="comment">%                 (b) index in the list given below e.g. W=6 is the cube; negative for dual</span>
+0008 <span class="comment">%                     n.{1,2,3,4,5} gives n-sided prism, antiprism, grammic prism, grammic antiprism or grammic crossed antiprism</span>
+0009 <span class="comment">%                 (c) Wythoff symbol (see below) e.g. W=[3 0 2 4] is the cube</span>
+0010 <span class="comment">%                          |p q r, p|q r, p q|r or p q r| respectively with 0 for |</span>
+0011 <span class="comment">%                         using -1 instead of 0 gives the dual of the polyhedron</span>
+0012 <span class="comment">%                         using -2 (or -3 for dual) gives a reflected version of a snub polyhedron</span>
+0013 <span class="comment">%          MD   specifies a mode string</span>
+0014 <span class="comment">%                 'g' plot image</span>
+0015 <span class="comment">%                 'w' plot wireframe</span>
+0016 <span class="comment">%                 'f' plot coloured faces</span>
+0017 <span class="comment">%                 'v' number vertices</span>
+0018 <span class="comment">%                 't' plot vertex figure (a slice centred on a vertex)</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%                 ? homogeneous output coordinates</span>
+0021 <span class="comment">%                 ? create net</span>
+0022 <span class="comment">%                 ? segment faces to remove internal portions of the surfaces</span>
+0023 <span class="comment">%                 ? size: [max] diameter=1, [longest] edge=1, include anisotropic normalization</span>
+0024 <span class="comment">%                   to minimize variance of vertex radius or edge vector length</span>
+0025 <span class="comment">%                 ? orientation: vertex at the top, largest stable base at bottom</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Outputs:</span>
+0028 <span class="comment">%          VLIST(:,7)  gives the [x y z d n e t] for each vertex</span>
+0029 <span class="comment">%                       x,y,z = position, d=distance from origin, n=valency, e=edge index, t=type (-ve for reflected)</span>
+0030 <span class="comment">%          EDGEQ(:,9) has one row for each direction of each edge:</span>
+0031 <span class="comment">%                         1  v1   first vertex (normally start)</span>
+0032 <span class="comment">%                         2  v2   second vertex</span>
+0033 <span class="comment">%                         3  f1   first face (normally on left)</span>
+0034 <span class="comment">%                         4  f2   second face</span>
+0035 <span class="comment">%                         5  ev1  next edge around vertex 1 (normally anticlockwise)</span>
+0036 <span class="comment">%                         6  ef1  next edge around f1 (normally anticlockwise)</span>
+0037 <span class="comment">%                         7  er   reverse edge</span>
+0038 <span class="comment">%                         8  z    twisted edge: clockwise neighbours around v1 and v2 are on the same face</span>
+0039 <span class="comment">%                         9  sf   swap face order: ???</span>
+0040 <span class="comment">%                        10  sv   swap vertex order: v2 preceeds v1 around f1</span>
+0041 <span class="comment">%          FLIST(:,7)  gives the [x y z d n e t] for each face</span>
+0042 <span class="comment">%                       x,y,z = unit normal, d=distance from origin, n=valency, e=edge index, t=type (-ve for reflected)</span>
+0043 <span class="comment">%          INFO        structure containing the following fields:</span>
+0044 <span class="comment">%                         hemi      true if faces are hemispherical (i.e. pass through the origin)</span>
+0045 <span class="comment">%                         onesided  true is one-sided (like a moebius strip)</span>
+0046 <span class="comment">%                         snub      true if a snub polyhedron</span>
+0047 
+0048 <span class="comment">% This software is based closely on a Mathmatica program described in [1] which, in turn, was based on a</span>
+0049 <span class="comment">% C program described in [2].</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% Wythoff Symbol</span>
+0052 <span class="comment">%    p,q,r define a spherical triangle whose angles at the corners are pi/p, pi/q and pi/r;</span>
+0053 <span class="comment">%    this triangle tiles the sphere if repeatedly reflected in its sides. The</span>
+0054 <span class="comment">%    polyhedron vertices are at the reflections of a seed vertex as follows</span>
+0055 <span class="comment">%    where the Vertex configuration gives the polygon orders of the faces around each vertex:</span>
+0056 <span class="comment">%       |p q r  : Vertex at a point such that when rotated around any of p,q,r by twice the angle at that</span>
+0057 <span class="comment">%                 corner is displaced by the same distance for each corner. This is a snub polyhedron and</span>
+0058 <span class="comment">%                 only even numbers of reflections are used to generate vertices. Configuration {3 p 3 q 3 r}</span>
+0059 <span class="comment">%        p|q r  : Vertex at p. Configuration = {q r q r ... q r} with 2n terms where n is the numerator of p</span>
+0060 <span class="comment">%        p q|r  : Vertex on pq and on the bisector of angle r. Configuration {p 2r q 2r}</span>
+0061 <span class="comment">%        p q r| : Vertex at incentre: meeting point of all the angle bisectors. Configuration {2p 2q 2r}</span>
+0062 <span class="comment">%        |3/2 5/3 3 5/2  This special case is the great dirhombicosidodecahedron. It is a bit weird because</span>
+0063 <span class="comment">%                 many of the edges are shared by four faces instead of the usual two.</span>
+0064 <span class="comment">%    If two of p,q,r = 2 then the third is arbitrary (prisms and antiprisms), otherwise only the numerators</span>
+0065 <span class="comment">%    1:5 can occur, and 4 and 5 cannot occur together. If all are integers then the poyhedron is convex.</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">% References:</span>
+0068 <span class="comment">%   [1] R. E. Maeder. Uniform polyhedra. The Mathematica Journal, 3 (4): 48–57, 1993.</span>
+0069 <span class="comment">%   [2] Z. Har’El. Uniform solution for uniform polyhedra. Geometriae Dedicata, 47: 57–110, 1993.</span>
+0070 <span class="comment">%   [3] H. S. M. Coxeter, M. S. Longuet-Higgins, and J. C. P. Miller. Uniform polyhedra.</span>
+0071 <span class="comment">%       Philosophical Transactions of the Royal Society A, 246 (916): 401–450, May 1954.</span>
+0072 <span class="comment">%   [4] P. W. Messer. Closed-form expressions for uniform polyhedra and their duals.</span>
+0073 <span class="comment">%       Discrete and Computational Geometry, 27 (3): 353–375, Jan. 2002.</span>
+0074 
+0075 <span class="comment">%%%% BUGS and SUGGESTIONS %%%%%%</span>
+0076 <span class="comment">% (1) we should ensure the &quot;first&quot; edges of the vertices and faces are consistent</span>
+0077 <span class="comment">% (2) need to sort faces and vertices into a type order</span>
+0078 <span class="comment">% (3) should ensure that for a non-chiral polyhedron, the vertex polarity alternates</span>
+0079 <span class="comment">% (4) w=75 does not work</span>
+0080 <span class="comment">% (5) dual of henispherical poyhedron</span>
+0081 <span class="comment">% (6) flist not calculated correctly for duals</span>
+0082 <span class="comment">% (7) add additional stuff into info.*</span>
+0083 <span class="comment">% (8) vertex figures seem to include additional (duplicated) lines</span>
+0084 <span class="comment">% (9) sort out when reflected vertices are really rotationally congruent</span>
+0085 <span class="comment">% (10) could optionally colour by face type</span>
+0086 <span class="comment">% (11) order alphabetically by noun</span>
+0087 <span class="comment">% (12) allow abbreviated names + prisms with preceding decimal number</span>
+0088 <span class="comment">% (13) calculate correct names</span>
+0089 <span class="comment">% (14) include names for duals</span>
+0090 <span class="comment">% (15) make &quot;names&quot; etc persistent</span>
+0091 
+0092 <span class="comment">% Example slide show:</span>
+0093 <span class="comment">% for i=1:74, disp(num2str(i)); v_upolyhedron(i); pause(2); end</span>
+0094 <span class="comment">% for i=5:10, disp(num2str(i)); for j=1:5, v_upolyhedron(i+j/10); pause(2); end, end</span>
+0095 
+0096 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0097 <span class="comment">%      Version: $Id: v_upolyhedron.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0098 <span class="comment">%</span>
+0099 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0100 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0101 <span class="comment">%</span>
+0102 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0103 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0104 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0105 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0106 <span class="comment">%   (at your option) any later version.</span>
+0107 <span class="comment">%</span>
+0108 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0109 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0110 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0111 <span class="comment">%   GNU General Public License for more details.</span>
+0112 <span class="comment">%</span>
+0113 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0114 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0115 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0116 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0117 
+0118 <span class="comment">% [line nn]  referes to the kaleido Mathematica program on which this is based</span>
+0119 <span class="comment">% see http://www.mathconsult.ch/showroom/unipoly/unipoly.html#Images</span>
+0120 
+0121 <span class="comment">% Variables used</span>
+0122 <span class="comment">%   adjacent    adjacency matrix</span>
+0123 <span class="comment">%   chi         characteristic</span>
+0124 <span class="comment">%   cosa        cos of the angle subtended by a half edge</span>
+0125 <span class="comment">%   d           density</span>
+0126 <span class="comment">%   e           number of edges</span>
+0127 <span class="comment">%   even        number of even faces to remove</span>
+0128 <span class="comment">%   f           number of faces</span>
+0129 <span class="comment">%   fi(n)       number of faces of type i</span>
+0130 <span class="comment">%   g           order of group</span>
+0131 <span class="comment">%   gamma(n)    included spherical triangle angle between centre of face,</span>
+0132 <span class="comment">%               vertex and edge for face type i</span>
+0133 <span class="comment">%   hemiQ       =1 for hemispherical faces (includes polyhedron centre)</span>
+0134 <span class="comment">%   incidence   faces incident at vertex</span>
+0135 <span class="comment">%   k           type of group (2=dihedral, 3=tetrahedral, 4=octahedral, 5=icosahedral)</span>
+0136 <span class="comment">%   m           number of edges meeting at each vertex (valence)</span>
+0137 <span class="comment">%   mi(n)       Number of faces of type i</span>
+0138 <span class="comment">%   n           number of face types</span>
+0139 <span class="comment">%   ni(n)       number of edges on i'th face type</span>
+0140 <span class="comment">%   p           1st Wythoff number</span>
+0141 <span class="comment">%   q           2nd Wythoff number</span>
+0142 <span class="comment">%   r           3rd Wythoff number</span>
+0143 <span class="comment">%   rot(m)      vertex configuration: anti-clockwise list of face types</span>
+0144 <span class="comment">%               around a vertex</span>
+0145 <span class="comment">%   snub(m)     =1 for snub triangles</span>
+0146 <span class="comment">%   snubQ       =1 for snub polyhedron</span>
+0147 <span class="comment">%   v           number of vertices</span>
+0148 <span class="comment">%   vcoord      vertex coordinates</span>
+0149 <span class="comment">%   wy(4)       Wythoff Symbol</span>
+0150 <span class="comment">%   wyd(4)      Wythoff Symbol Denominators</span>
+0151 <span class="comment">%   wyn(4)      Wythoff Symbol Numerators</span>
+0152 
+0153 <span class="comment">% names: [name abbreviation synonym dual dual-synonym]</span>
+0154 <span class="keyword">persistent</span> names wys prefs
+0155 <span class="keyword">if</span> ~numel(names)
+0156     prefs={<span class="string">'dual '</span>; <span class="string">'dextro '</span>; <span class="string">'laevo '</span>};
+0157     names={
+0158         <span class="string">'Tetrahedron'</span> <span class="string">'Tet'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                              <span class="comment">%  1</span>
+0159         <span class="string">'truncated tetrahedron'</span> <span class="string">'Tut'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                    <span class="comment">%  2</span>
+0160         <span class="string">'octahemioctahedron'</span> <span class="string">'Oho'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                       <span class="comment">%  3</span>
+0161         <span class="string">'tetrahemihexahedron'</span> <span class="string">'Thah'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                      <span class="comment">%  4</span>
+0162         <span class="string">'Octahedron'</span> <span class="string">'Oct'</span> <span class="string">''</span> <span class="string">'Cube'</span> <span class="string">''</span>;                               <span class="comment">%  5</span>
+0163         <span class="string">'cube'</span> <span class="string">'Cube'</span> <span class="string">''</span> <span class="string">'Octahedron'</span> <span class="string">''</span>;                                     <span class="comment">%  6</span>
+0164         <span class="string">'cuboctahedron'</span> <span class="string">'Co'</span> <span class="string">''</span> <span class="string">'rhombic dodecahedron'</span> <span class="string">''</span>;                            <span class="comment">%  7</span>
+0165         <span class="string">'truncated octahedron'</span> <span class="string">'Toe'</span> <span class="string">''</span> <span class="string">'tetrakishexahedron'</span> <span class="string">''</span>;                     <span class="comment">%  8</span>
+0166         <span class="string">'truncated cube'</span> <span class="string">'Tic'</span> <span class="string">''</span> <span class="string">'triakisoctahedron'</span> <span class="string">''</span>;                           <span class="comment">%  9</span>
+0167         <span class="string">'rhombicuboctahedron'</span> <span class="string">'Sirco'</span> <span class="string">''</span> <span class="string">'deltoidal icositetrahedron'</span> <span class="string">''</span>;                      <span class="comment">% 10</span>
+0168         <span class="string">'truncated cuboctahedron'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">'disdyakisdodecahedron'</span> <span class="string">''</span>;                  <span class="comment">% 11</span>
+0169         <span class="string">'snub cube'</span> <span class="string">'Snic'</span> <span class="string">''</span> <span class="string">'pentagonal icositetrahedron'</span> <span class="string">''</span>;                                <span class="comment">% 12</span>
+0170         <span class="string">'small cubicuboctahedron'</span> <span class="string">'Socco'</span> <span class="string">''</span> <span class="string">'small hexacronic icositetrahedron'</span> <span class="string">''</span>;                  <span class="comment">% 13</span>
+0171         <span class="string">'great cubicuboctahedron'</span> <span class="string">'Gocco'</span> <span class="string">''</span> <span class="string">'great hexacronic icositetrahedron'</span> <span class="string">''</span>;                  <span class="comment">% 14</span>
+0172         <span class="string">'cubohemioctahedron'</span> <span class="string">'Cho'</span> <span class="string">''</span> <span class="string">'hexahemioctacron'</span> <span class="string">''</span>;                       <span class="comment">% 15</span>
+0173         <span class="string">'cubitruncated cuboctahedron'</span> <span class="string">'Cotco'</span> <span class="string">''</span> <span class="string">'tetradyakishexahedron'</span> <span class="string">''</span>;              <span class="comment">% 16</span>
+0174         <span class="string">'great rhombicuboctahedron'</span> <span class="string">'Girco'</span> <span class="string">''</span> <span class="string">'great deltoidal icositetrahedron'</span> <span class="string">''</span>;                <span class="comment">% 17 or Querco</span>
+0175         <span class="string">'small rhombihexahedron'</span> <span class="string">'Sroh'</span> <span class="string">''</span> <span class="string">'small rhombihexacron'</span> <span class="string">''</span>;                   <span class="comment">% 18</span>
+0176         <span class="string">'stellated truncated hexahedron'</span> <span class="string">'Quith'</span> <span class="string">''</span> <span class="string">'great triakisoctahedron'</span> <span class="string">''</span>;              <span class="comment">% 19</span>
+0177         <span class="string">'great truncated cuboctahedron'</span> <span class="string">'Quitco'</span> <span class="string">''</span> <span class="string">'great disdyakisdodecahedron'</span> <span class="string">''</span>;               <span class="comment">% 20</span>
+0178         <span class="string">'great rhombihexahedron'</span> <span class="string">'Groh'</span> <span class="string">''</span> <span class="string">'great rhombihexacron'</span> <span class="string">''</span>;                   <span class="comment">% 21</span>
+0179         <span class="string">'icosahedron'</span> <span class="string">'Ike'</span> <span class="string">''</span> <span class="string">'dodecahedron'</span> <span class="string">''</span>;                              <span class="comment">% 22</span>
+0180         <span class="string">'dodecahedron'</span> <span class="string">'Doe'</span> <span class="string">''</span> <span class="string">'icosahedron'</span> <span class="string">''</span>;                             <span class="comment">% 23</span>
+0181         <span class="string">'icosidodecahedron'</span> <span class="string">'Id'</span> <span class="string">''</span> <span class="string">'rhombic triacontahedron'</span> <span class="string">''</span>;                        <span class="comment">% 24</span>
+0182         <span class="string">'truncated icosahedron'</span> <span class="string">'Ti'</span> <span class="string">''</span> <span class="string">'pentakisdodecahedron'</span> <span class="string">''</span>;                    <span class="comment">% 25</span>
+0183         <span class="string">'truncated dodecahedron'</span> <span class="string">'Tid'</span> <span class="string">''</span> <span class="string">'triakisicosahedron'</span> <span class="string">''</span>;                   <span class="comment">% 26</span>
+0184         <span class="string">'rhombicosidodecahedron'</span> <span class="string">'Srid'</span> <span class="string">''</span> <span class="string">'deltoidal hexecontahedron'</span> <span class="string">''</span>;                   <span class="comment">% 27</span>
+0185         <span class="string">'truncated icosidodechedon'</span> <span class="string">'Grid'</span> <span class="string">'great rhombiicosidodecahedron'</span> <span class="string">'disdyakistriacontahedron'</span> <span class="string">''</span>;                <span class="comment">% 28</span>
+0186         <span class="string">'snub dodecahedron'</span> <span class="string">'Snid'</span> <span class="string">''</span> <span class="string">'pentagonal hexecontahedron'</span> <span class="string">''</span>;                        <span class="comment">% 29</span>
+0187         <span class="string">'small ditrigonal icosidodecahedron'</span> <span class="string">'Sidtid'</span> <span class="string">''</span> <span class="string">'small triambic icosahedron'</span> <span class="string">''</span>;         <span class="comment">% 30</span>
+0188         <span class="string">'small icosicosidodecahedron'</span> <span class="string">'Siid'</span> <span class="string">''</span> <span class="string">'small icosacronic hexecontahedron'</span> <span class="string">''</span>;              <span class="comment">% 31</span>
+0189         <span class="string">'small snub icosicosidodecahedron'</span> <span class="string">'Seside'</span> <span class="string">''</span> <span class="string">'small hexagonal hexecontahedron'</span> <span class="string">''</span>;            <span class="comment">% 32</span>
+0190         <span class="string">'small dodecicosidodecahedron'</span> <span class="string">'Saddid'</span> <span class="string">''</span> <span class="string">'small dodecacronic hexecontahedron'</span> <span class="string">''</span>;                <span class="comment">% 33</span>
+0191         <span class="string">'small stellated dodecahedron'</span> <span class="string">'Sissid'</span> <span class="string">''</span> <span class="string">'great dodecahedron'</span> <span class="string">''</span>;                <span class="comment">% 34</span>
+0192         <span class="string">'great dodecahedron'</span> <span class="string">'Gad'</span> <span class="string">''</span> <span class="string">'small stellated dodecahedron'</span> <span class="string">''</span>;                       <span class="comment">% 35</span>
+0193         <span class="string">'dodecadodecahedron'</span> <span class="string">'Did'</span> <span class="string">''</span> <span class="string">'medial rhombic triacontahedron'</span> <span class="string">''</span>;                       <span class="comment">% 36</span>
+0194         <span class="string">'truncated great dodecahedron'</span> <span class="string">'Tigid'</span> <span class="string">''</span> <span class="string">'small stellapentakisdodecahedron'</span> <span class="string">''</span>;                <span class="comment">% 37</span>
+0195         <span class="string">'rhombidodecadodecahedron'</span> <span class="string">'Raded'</span> <span class="string">''</span> <span class="string">'medial deltoidal hexecontahedron'</span> <span class="string">''</span>;                 <span class="comment">% 38</span>
+0196         <span class="string">'small rhombidodecahedron'</span> <span class="string">'Sird'</span> <span class="string">''</span> <span class="string">'small rhombidodecacron'</span> <span class="string">''</span>;                 <span class="comment">% 39</span>
+0197         <span class="string">'snub dodecadodecahedron'</span> <span class="string">'Siddid'</span> <span class="string">''</span> <span class="string">'medial pentagonal hexecontahedron'</span> <span class="string">''</span>;                  <span class="comment">% 40</span>
+0198         <span class="string">'ditrigonal dodecadodecahedron'</span> <span class="string">'Ditdid'</span> <span class="string">''</span> <span class="string">'medial triambic icosahedron'</span> <span class="string">''</span>;              <span class="comment">% 41</span>
+0199         <span class="string">'great ditrigonal dodecicosidodecahedron'</span> <span class="string">'Gidditdid'</span> <span class="string">''</span> <span class="string">'great ditrigonal dodecacronic hexecontahedron'</span> <span class="string">''</span>;    <span class="comment">% 42</span>
+0200         <span class="string">'small ditrigonal dodecicosidodecahedron'</span> <span class="string">'Sidditdid'</span> <span class="string">''</span> <span class="string">'small ditrigonal dodecacronic hexecontahedron'</span> <span class="string">''</span>;    <span class="comment">% 43</span>
+0201         <span class="string">'icosidodecadodecahedron'</span> <span class="string">'Ided'</span> <span class="string">''</span> <span class="string">'medial icosacronic hexecontahedron'</span> <span class="string">''</span>;                  <span class="comment">% 44</span>
+0202         <span class="string">'icositruncated dodecadodecahedron'</span> <span class="string">'Idtid'</span> <span class="string">''</span> <span class="string">'tridyakisicosahedron'</span> <span class="string">''</span>;        <span class="comment">% 45</span>
+0203         <span class="string">'snub icosidodecadodecahedron'</span> <span class="string">'Sided'</span> <span class="string">''</span> <span class="string">'medial hexagonal hexecontahedron'</span> <span class="string">''</span>;             <span class="comment">% 46</span>
+0204         <span class="string">'great ditrigonal icosidodecahedron'</span> <span class="string">'Gidtid'</span> <span class="string">''</span> <span class="string">'great triambic icosahedron'</span> <span class="string">''</span>;       <span class="comment">% 47</span>
+0205         <span class="string">'great icosicosidodecahedron'</span> <span class="string">'Giid'</span> <span class="string">''</span> <span class="string">'great icosacronic hexecontahedron'</span> <span class="string">''</span>;              <span class="comment">% 48</span>
+0206         <span class="string">'small icosihemidodecahedron'</span> <span class="string">'Seihid'</span> <span class="string">''</span> <span class="string">'small icosihemidodecacron'</span> <span class="string">''</span>;              <span class="comment">% 49</span>
+0207         <span class="string">'small dodecicosahedron'</span> <span class="string">'Siddy'</span> <span class="string">''</span> <span class="string">'small dodecicosacron'</span> <span class="string">''</span>;                   <span class="comment">% 50</span>
+0208         <span class="string">'small dodecahemidodecahedron'</span> <span class="string">'Sidhid'</span> <span class="string">''</span> <span class="string">'small dodecahemidodecacron'</span> <span class="string">''</span>;             <span class="comment">% 51</span>
+0209         <span class="string">'great stellated dodecahedron'</span> <span class="string">'Gissid'</span> <span class="string">''</span> <span class="string">'great icosahedron'</span> <span class="string">''</span>;               <span class="comment">% 52</span>
+0210         <span class="string">'great icosahedron'</span> <span class="string">'Gike'</span> <span class="string">''</span> <span class="string">'great stellated dodecahedron'</span> <span class="string">''</span>;                        <span class="comment">% 53</span>
+0211         <span class="string">'great icosidodecahedron'</span> <span class="string">'Gid'</span> <span class="string">''</span> <span class="string">'great rhombic triacontahedron'</span> <span class="string">''</span>;                  <span class="comment">% 54</span>
+0212         <span class="string">'great truncated icosahedron'</span> <span class="string">'Tiggy'</span> <span class="string">''</span> <span class="string">'great stellapentakisdodecahedron'</span> <span class="string">''</span>;              <span class="comment">% 55</span>
+0213         <span class="string">'rhombicosahedron'</span> <span class="string">'Ri'</span> <span class="string">''</span> <span class="string">'rhombicosacron'</span> <span class="string">''</span>;                         <span class="comment">% 56</span>
+0214         <span class="string">'great snub icosidodecahedron'</span> <span class="string">'Gosid'</span> <span class="string">''</span> <span class="string">'great pentagonal hexecontahedron'</span> <span class="string">''</span>;             <span class="comment">% 57</span>
+0215         <span class="string">'small stellated truncated dodecahedron'</span> <span class="string">'Quitsissid'</span> <span class="string">''</span> <span class="string">'great pentakisdodekahedron'</span> <span class="string">''</span>;     <span class="comment">% 58</span>
+0216         <span class="string">'truncated dodecadodecahedron'</span> <span class="string">'Quitdid'</span> <span class="string">''</span> <span class="string">'medial disdyakistriacontahedron'</span> <span class="string">''</span>;               <span class="comment">% 59</span>
+0217         <span class="string">'inverted snub dodecadodecahedron'</span> <span class="string">'Isdid'</span> <span class="string">''</span> <span class="string">'medial inverted pentagonal hexecontahedron'</span> <span class="string">''</span>;           <span class="comment">% 60</span>
+0218         <span class="string">'great dodecicosidodecahedron'</span> <span class="string">'Gaddid'</span> <span class="string">''</span> <span class="string">'great dodecacronic hexecontahedron'</span> <span class="string">''</span>;               <span class="comment">% 61</span>
+0219         <span class="string">'small dodecahemicosahedron'</span> <span class="string">'Sidhei'</span> <span class="string">''</span> <span class="string">'small dodecahemicosacron'</span> <span class="string">''</span>;               <span class="comment">% 62</span>
+0220         <span class="string">'great dodecicosahedron'</span> <span class="string">'Giddy'</span> <span class="string">''</span> <span class="string">'great dodecicosacron'</span> <span class="string">''</span>;                   <span class="comment">% 63</span>
+0221         <span class="string">'great snub dodecicosidodecahedron'</span> <span class="string">'Gisdid'</span> <span class="string">''</span> <span class="string">'great hexagonal hexecontahedron'</span> <span class="string">''</span>;          <span class="comment">% 64</span>
+0222         <span class="string">'great dodecahemicosahedron'</span> <span class="string">'Gidhei'</span> <span class="string">''</span> <span class="string">'great dodecahemicosacron'</span> <span class="string">''</span>;               <span class="comment">% 65</span>
+0223         <span class="string">'great stellated truncated dodecahedron'</span> <span class="string">'Quitgissid'</span> <span class="string">''</span> <span class="string">'great triakisicosahedron'</span> <span class="string">''</span>;      <span class="comment">% 66</span>
+0224         <span class="string">'great rhombicosidodecahedron'</span> <span class="string">'Qrid'</span> <span class="string">''</span> <span class="string">'great deltoidal hexecontahedron'</span> <span class="string">''</span>;                <span class="comment">% 67 or Qrid</span>
+0225         <span class="string">'great truncated icosidodecahedron'</span> <span class="string">'Gaquatid'</span> <span class="string">''</span> <span class="string">'great disdyakistriacontahedron'</span> <span class="string">''</span>;          <span class="comment">% 68</span>
+0226         <span class="string">'great inverted snub icosidodecahedron'</span> <span class="string">'Gisid'</span> <span class="string">''</span> <span class="string">'great inverted pentagonal hexecontahedron'</span> <span class="string">''</span>;       <span class="comment">% 69</span>
+0227         <span class="string">'great dodecahemidodecahedron'</span> <span class="string">'Gidhid'</span> <span class="string">''</span> <span class="string">'great dodecahemidodecacron'</span> <span class="string">''</span>;                <span class="comment">% 70</span>
+0228         <span class="string">'great icosihemidodecahedron'</span> <span class="string">'Geihid'</span> <span class="string">''</span> <span class="string">'great icosihemidodecacron'</span> <span class="string">''</span>;              <span class="comment">% 71</span>
+0229         <span class="string">'small retrosnub icosicosidodecahedron'</span> <span class="string">'Sirsid'</span> <span class="string">''</span> <span class="string">'small hexagrammic hexecontahedron'</span> <span class="string">''</span>;       <span class="comment">% 72</span>
+0230         <span class="string">'great rhombidodecahedron'</span> <span class="string">'Gird'</span> <span class="string">''</span> <span class="string">'great rhombidodecacron'</span> <span class="string">''</span>;                 <span class="comment">% 73</span>
+0231         <span class="string">'great retrosnub icosidodecahedron'</span> <span class="string">'Girsid'</span> <span class="string">''</span> <span class="string">'great pentagrammic hexecontahedron'</span> <span class="string">''</span>;        <span class="comment">% 74</span>
+0232         <span class="string">'great dirhombicosidodecahedron'</span> <span class="string">'Gidrid'</span> <span class="string">''</span> <span class="string">'great dirhombicosidodecacron'</span> <span class="string">''</span>;             <span class="comment">% 75</span>
+0233         <span class="string">'pentagonal prism'</span> <span class="string">'Pip'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                         <span class="comment">% 76</span>
+0234         <span class="string">'pentagonal antiprism'</span> <span class="string">'Pap'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                     <span class="comment">% 77</span>
+0235         <span class="string">'pentagrammic prism'</span> <span class="string">'Stip'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                       <span class="comment">% 78</span>
+0236         <span class="string">'pentagrammic antiprism'</span> <span class="string">'Stap'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;                   <span class="comment">% 79</span>
+0237         <span class="string">'pentagrammic crossed antiprism'</span>  <span class="string">'Starp'</span>   <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;          <span class="comment">% 80</span>
+0238         <span class="string">'triangular prism'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;      <span class="comment">% 81</span>
+0239         <span class="string">'triangular antiprism'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;     <span class="comment">% 82</span>
+0240         <span class="string">'square prism'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>;     <span class="comment">% 83</span>
+0241         <span class="string">'square antiprism'</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span> <span class="string">''</span>};    <span class="comment">% 84</span>
+0242 
+0243     <span class="comment">% could multiply by 12 to make integer</span>
+0244     wys=[
+0245         2, 3, 2, 3;        <span class="comment">%  1   'tetrahedron' 'Tet';</span>
+0246         3, 2, 3, 3;        <span class="comment">%  2   'truncated tetrahedron' 'Tut';</span>
+0247         3, 3/2, 3, 3;      <span class="comment">%  3   'octahemioctahedron' 'Oho';</span>
+0248         3, 3/2, 3, 2;      <span class="comment">%  4   'tetrahemihexahedron' 'Thah';</span>
+0249         2, 4, 2, 3;        <span class="comment">%  5   'octahedron' 'Oct';</span>
+0250         2, 3, 2, 4;        <span class="comment">%  6   'cube' 'Cube';</span>
+0251         2, 2, 3, 4;        <span class="comment">%  7   'cuboctahedron' 'Co';</span>
+0252         3, 2, 4, 3;        <span class="comment">%  8   'truncated octahedron' 'Toe';</span>
+0253         3, 2, 3, 4;        <span class="comment">%  9   'truncated cube' 'Tic';</span>
+0254         3, 3, 4, 2;        <span class="comment">% 10   'rhombicuboctahedron' 'Sirco';</span>
+0255         4, 2, 3, 4;        <span class="comment">% 11   'truncated cuboctahedron' '?';</span>
+0256         1, 2, 3, 4;        <span class="comment">% 12   'snub cube' 'Snic';</span>
+0257         3, 3/2, 4, 4;      <span class="comment">% 13   'small cubicuboctahedron' 'Socco';</span>
+0258         3, 3, 4, 4/3;      <span class="comment">% 14   'great cubicuboctahedron' 'Gocco';</span>
+0259         3, 4/3, 4, 3;      <span class="comment">% 15   'cubohemioctahedron' 'Cho';</span>
+0260         4, 4/3, 3, 4;      <span class="comment">% 16   'cubitruncated cuboctahedron' 'Cotco';</span>
+0261         3, 3/2, 4, 2;      <span class="comment">% 17   'great rhombicuboctahedron' 'Girco?';</span>
+0262         4, 3/2, 2, 4;      <span class="comment">% 18   'small rhombihexahedron' 'Sroh';</span>
+0263         3, 2, 3, 4/3;      <span class="comment">% 19   'stellated truncated hexahedron' 'Quith';</span>
+0264         4, 4/3, 2, 3;      <span class="comment">% 20   'great truncated cuboctahedron' 'Quitco';</span>
+0265         4, 4/3, 3/2, 2;    <span class="comment">% 21   'great rhombihexahedron' 'Groh';</span>
+0266         2, 5, 2, 3;        <span class="comment">% 22   'icosahedron' 'Ike';</span>
+0267         2, 3, 2, 5;        <span class="comment">% 23   'dodecahedron' 'Doe';</span>
+0268         2, 2, 3, 5;        <span class="comment">% 24   'icosidodecahedron' 'Id';</span>
+0269         3, 2, 5, 3;        <span class="comment">% 25   'truncated icosahedron' 'Ti';</span>
+0270         3, 2, 3, 5;        <span class="comment">% 26   'truncated dodecahedron' 'Tid';</span>
+0271         3, 3, 5, 2;        <span class="comment">% 27   'rhombicosidodecahedron' 'Srid';</span>
+0272         4, 2, 3, 5;        <span class="comment">% 28   'truncated icosidodecahedron' 'Grid'; or 'great rhombiicosidodecahedron' Grid</span>
+0273         1, 2, 3, 5;        <span class="comment">% 29   'snub dodecahedron' 'Snid';</span>
+0274         2, 3, 5/2, 3;      <span class="comment">% 30   'small ditrigonal icosidodecahedron' 'Sidtid';</span>
+0275         3, 5/2, 3, 3;      <span class="comment">% 31   'small icosicosidodecahedron' 'Siid';</span>
+0276         1, 5/2, 3, 3;      <span class="comment">% 32   'small snub icosicosidodecahedron' 'Seside';</span>
+0277         3, 3/2, 5, 5;      <span class="comment">% 33   'small dodecicosidodecahedron' 'Saddid';</span>
+0278         2, 5, 2, 5/2;      <span class="comment">% 34   'small stellated dodecahedron' 'Sissid';</span>
+0279         2, 5/2, 2, 5;      <span class="comment">% 35   'great dodecahedron' 'Gad';</span>
+0280         2, 2, 5/2, 5;      <span class="comment">% 36   'dodecadodecahedron' 'Did';</span>
+0281         3, 2, 5/2, 5;      <span class="comment">% 37   'truncated great dodecahedron' 'Tigid';</span>
+0282         3, 5/2, 5, 2;      <span class="comment">% 38   'rhombidodecadodecahedron' 'Raded';</span>
+0283         4, 2, 5/2, 5;      <span class="comment">% 39   'small rhombidodecahedron' 'Sird';</span>
+0284         1, 2, 5/2, 5;      <span class="comment">% 40   'snub dodecadodecahedron' 'Siddid';</span>
+0285         2, 3, 5/3, 5;      <span class="comment">% 41   'ditrigonal dodecadodecahedron' 'Ditdid';</span>
+0286         3, 3, 5, 5/3;      <span class="comment">% 42   'great ditrigonal dodecicosidodecahedron' 'Gidditdid'</span>
+0287         3, 5/3, 3, 5;      <span class="comment">% 43   'small ditrigonal dodecicosidodecahedron' 'Sidditdid'</span>
+0288         3, 5/3, 5, 3;      <span class="comment">% 44   'icosidodecadodecahedron' 'Ided';</span>
+0289         4, 5/3, 3, 5;      <span class="comment">% 45   'icositruncated dodecadodecahedron' 'Idtid';</span>
+0290         1, 5/3, 3, 5;      <span class="comment">% 46   'snub icosidodecadodecahedron' 'Sided';</span>
+0291         2, 3/2, 3, 5;      <span class="comment">% 47   'great ditrigonal icosidodecahedron' 'Gidtid';</span>
+0292         3, 3/2, 5, 3;      <span class="comment">% 48   'great icosicosidodecahedron' 'Giid';</span>
+0293         3, 3/2, 3, 5;      <span class="comment">% 49   'small icosihemidodecahedron' 'Seihid';</span>
+0294         4, 3/2, 3, 5;      <span class="comment">% 50   'small dodecicosahedron' 'Siddy';</span>
+0295         3, 5/4, 5, 5;      <span class="comment">% 51   'small dodecahemidodecahedron' 'Sidhid';</span>
+0296         2, 3, 2, 5/2;      <span class="comment">% 52   'great stellated dodecahedron' 'Gissid';</span>
+0297         2, 5/2, 2, 3;      <span class="comment">% 53   'great icosahedron' 'Gike';</span>
+0298         2, 2, 5/2, 3;      <span class="comment">% 54   'great icosidodecahedron' 'Gid';</span>
+0299         3, 2, 5/2, 3;      <span class="comment">% 55   'great truncated icosahedron' 'Tiggy';</span>
+0300         4, 2, 5/2, 3;      <span class="comment">% 56   'rhombicosahedron' 'Ri';</span>
+0301         1, 2, 5/2, 3;      <span class="comment">% 57   'great snub icosidodecahedron' 'Gosid';</span>
+0302         3, 2, 5, 5/3;      <span class="comment">% 58   'small stellated truncated dodecahedron' 'Quitsissid'</span>
+0303         4, 5/3, 2, 5;      <span class="comment">% 59   'truncated dodecadodecahedron' 'Quitdid';</span>
+0304         1, 5/3, 2, 5;      <span class="comment">% 60   'inverted snub dodecadodecahedron' 'Isdid';</span>
+0305         3, 5/2, 3, 5/3;    <span class="comment">% 61   'great dodecicosidodecahedron' 'Gaddid';</span>
+0306         3, 5/3, 5/2, 3;    <span class="comment">% 62   'small dodecahemicosahedron' 'Sidhei';</span>
+0307         4, 5/3, 5/2, 3;    <span class="comment">% 63   'great dodecicosahedron' 'Giddy';</span>
+0308         1, 5/3, 5/2, 3;    <span class="comment">% 64   'great snub dodecicosidodecahedron' 'Gisdid';</span>
+0309         3, 5/4, 5, 3;      <span class="comment">% 65   'great dodecahemicosahedron' 'Gidhei';</span>
+0310         3, 2, 3, 5/3;      <span class="comment">% 66   'great stellated truncated dodecahedron' 'Quitgissid'</span>
+0311         3, 5/3, 3, 2;      <span class="comment">% 67   'quasirhombicosidodecahedron' 'Qrid'; 'great rhombicosidodecahedron' 'Nonconvex great rhombicosidodecahedron</span>
+0312         4, 5/3, 2, 3;      <span class="comment">% 68   'great truncated icosidodecahedron' 'Gaquatid';</span>
+0313         1, 5/3, 2, 3;      <span class="comment">% 69   'great inverted snub icosidodecahedron' 'Gisid';</span>
+0314         3, 5/3, 5/2, 5/3;  <span class="comment">% 70   'great dodecahemidodecahedron' 'Gidhid';</span>
+0315         3, 3/2, 3, 5/3;    <span class="comment">% 71   'great icosihemidodecahedron' 'Geihid';</span>
+0316         1, 3/2, 3/2, 5/2;  <span class="comment">% 72   'small retrosnub icosicosidodecahedron' 'Sirsid';</span>
+0317         4, 3/2, 5/3, 2;    <span class="comment">% 73   'great rhombidodecahedron' 'Gird';</span>
+0318         1, 3/2, 5/3, 2;    <span class="comment">% 74   'great retrosnub icosidodecahedron' 'Girsid';</span>
+0319         5, 3/2, 5/3, 3;    <span class="comment">% 75   'great dirhombicosidodecahedron' 'Gidrid';</span>
+0320         3, 2, 5, 2;        <span class="comment">% 76   'pentagonal prism' 'Pip';</span>
+0321         1, 2, 2, 5;        <span class="comment">% 77   'pentagonal antiprism' 'Pap';</span>
+0322         3, 2, 5/2, 2;      <span class="comment">% 78   'pentagrammic prism' 'Stip';</span>
+0323         1, 2, 2, 5/2;      <span class="comment">% 79   'pentagrammic antiprism' 'Stap';</span>
+0324         1, 2, 2, 5/3;     <span class="comment">% 80   'pentagrammic crossed antiprism'  'Starp'</span>
+0325         3, 2, 3, 2;        <span class="comment">% 81   'triangular prism' ;</span>
+0326         1, 2, 2, 3;        <span class="comment">% 82   'triangular antiprism' ;</span>
+0327         3, 2, 4, 2;        <span class="comment">% 83   'square prism' ;</span>
+0328         1, 2, 2, 4];        <span class="comment">% 84   'square antiprism' ;</span>
+0329 <span class="keyword">end</span>
+0330 
+0331 <span class="keyword">if</span> nargin&lt;2
+0332     md=<span class="string">''</span>;
+0333 <span class="keyword">end</span>
+0334 dual=0;  <span class="comment">% dual polyhedron</span>
+0335 dextro=0; <span class="comment">% reflected (for snub polyhedra only)</span>
+0336 <span class="keyword">if</span> ischar(w)
+0337     i=0;
+0338     <span class="keyword">while</span> i&lt;length(prefs)
+0339         i=i+1;
+0340         <span class="keyword">if</span> length(w)&gt;length(prefs{i}) &amp;&amp; strcmpi(w(1:length(prefs{i})),prefs{i})
+0341             <span class="keyword">switch</span> i
+0342                 <span class="keyword">case</span> 1
+0343                     dual=1;
+0344                 <span class="keyword">case</span> 2
+0345                     dextro=1;
+0346             <span class="keyword">end</span>
+0347             w=w(length(prefs{i})+1:end);
+0348             i=0;
+0349         <span class="keyword">end</span>
+0350     <span class="keyword">end</span>
+0351 
+0352     wyidx=find(strcmpi(w,names(:)),1);
+0353     <span class="keyword">if</span> isempty(wyidx)
+0354         <span class="comment">% check for prism names here</span>
+0355         error(<span class="string">'Cannot find %s'</span>,w);
+0356     <span class="keyword">end</span>
+0357     <span class="keyword">if</span> wyidx&gt;3*size(names,1)
+0358         dual=1-dual;
+0359     <span class="keyword">end</span>
+0360     wyidx=1+rem(wyidx-1,size(names,1));
+0361     wy=wys(wyidx,:);
+0362 <span class="keyword">else</span>
+0363     <span class="keyword">if</span> length(w)==1
+0364         dual=w&lt;0;
+0365         wyidx=abs(w);
+0366         wyjdx=floor(wyidx);
+0367         wykdx=round(10*(wyidx-wyjdx));
+0368         <span class="keyword">switch</span> wykdx
+0369             <span class="keyword">case</span> 1  <span class="comment">% prism</span>
+0370                 wy=[3 2 wyjdx 2];
+0371             <span class="keyword">case</span> 2  <span class="comment">% antiprism</span>
+0372                 wy=[1 2 2 wyjdx];
+0373             <span class="keyword">case</span> 3  <span class="comment">% grammic prism</span>
+0374                 wy=[3 2 wyjdx/2 2];
+0375             <span class="keyword">case</span> 4  <span class="comment">% grammic antiprism</span>
+0376                 wy=[1 2 2 wyjdx/2];
+0377             <span class="keyword">case</span> 5  <span class="comment">% grammic crossed antiprism</span>
+0378                 wy=[1 2 2 wyjdx/3];
+0379             <span class="keyword">otherwise</span>
+0380                 <span class="keyword">if</span> wyjdx&gt;=1 &amp;&amp; wyjdx&lt;=size(wys,1)
+0381                     wy=wys(wyjdx,:);
+0382                 <span class="keyword">else</span>
+0383                     error(<span class="string">'Polyhedron number out of range'</span>);
+0384                 <span class="keyword">end</span>
+0385         <span class="keyword">end</span>
+0386     <span class="keyword">elseif</span> length(w)==4
+0387         vbar=find(w&lt;=0,1);
+0388         <span class="keyword">if</span> ~numel(vbar)
+0389             error(<span class="string">'Invalid Wythoff symbol: %g %g %g %g %g'</span>,w);
+0390         <span class="keyword">end</span>
+0391         dual=mod(w(vbar),2);    <span class="comment">% least significant bit indicates dual</span>
+0392         dextro=mod(1+w(vbar),4)&gt;=2; <span class="comment">% second bit indicates reflected version</span>
+0393         wy=[vbar w(1:vbar-1) w(vbar+1:4)];
+0394         [xx,wyidx]=min(sum((wys-repmat(wy,size(wys,1),1)).^2,2));
+0395         <span class="keyword">if</span> abs(xx)&gt;1e-3
+0396             <span class="keyword">if</span> sum(wy==2)&lt;2
+0397                 error(<span class="string">'Invalid Wythoff symbol: %g %g %g %g %g'</span>,w);
+0398             <span class="keyword">else</span>
+0399                 <span class="comment">% need to sort out prism names here</span>
+0400             <span class="keyword">end</span>
+0401         <span class="keyword">end</span>
+0402     <span class="keyword">elseif</span> length(w)==5
+0403         <span class="keyword">if</span> w(1)&lt;=0 &amp;&amp; all(round(12*w(2:end))==[18 40 36 30])   <span class="comment">% [3/2 5/3 3 5/2]</span>
+0404             dual=w(1)&lt;0;
+0405             wyidx=75;
+0406             wy=wys(wyidx,:);
+0407         <span class="keyword">else</span>
+0408             error(<span class="string">'Invalid Wythoff symbol: %g %g %g %g %g'</span>,w);
+0409         <span class="keyword">end</span>
+0410     <span class="keyword">else</span>
+0411         error(<span class="string">'Invalid polyhedron specification'</span>);
+0412     <span class="keyword">end</span>
+0413 <span class="keyword">end</span>
+0414 
+0415 
+0416 [wyn,wyd]=rat(wy(2:4));    <span class="comment">% convert to rational numbers</span>
+0417 wy(2:4)=wyn./wyd;           <span class="comment">% force exact rational values</span>
+0418 p=wy(2);
+0419 q=wy(3);
+0420 r=wy(4);
+0421 hemiQ = 0;          <span class="comment">% includes hemispherical faces that go through polyhedron centre [ p q | r] with pq=p+q</span>
+0422 onesidedQ = 0;      <span class="comment">% one-sided polyhedron (aka: non-orientable) [ p q r |] with exactly one of p,q,r having an even denominator</span>
+0423 evenQ = 0;           <span class="comment">% identifies which of p, q, r has an even denominator</span>
+0424 even=1;
+0425 snubQ = 0;          <span class="comment">% snub polyhedron: [ | p q r ]</span>
+0426 allrot = 1;         <span class="comment">% all vertices a congruent with rotations (no reflections needed)</span>
+0427 
+0428 <span class="comment">% call to AnalyseWythoff[line 105]</span>
+0429 
+0430 k= max(wyn);
+0431 <span class="keyword">if</span> sum(wy(2:4)==2)&gt;=2      <span class="comment">% check if it is a prism</span>
+0432     <span class="comment">% this is a prism - treat specially [note mathematica line 86 has redundant chack for 2 &gt;5]</span>
+0433     g=4*k;      <span class="comment">% order of group</span>
+0434     k=2;
+0435 <span class="keyword">else</span>                       <span class="comment">% not a prism: only numerators 1,2,3,4,5 are allowed</span>
+0436     <span class="keyword">if</span> (any(wy(2:4)&lt;=1) || (k&gt;5) || any(wyn==4) &amp;&amp; any(wyn==5))
+0437         error(<span class="string">'Invalid Wythoff numbers [%d/%d %d/%d %d/%d]'</span>,[wyn;wyd]);
+0438     <span class="keyword">end</span>
+0439     g=24*k/(6-k);       <span class="comment">% order of group</span>
+0440 <span class="keyword">end</span>
+0441 <span class="keyword">if</span> abs(wy(1))==5 <span class="comment">% special case</span>
+0442     chi = 0;
+0443     d = 0;
+0444 <span class="keyword">else</span>
+0445     chi = (sum(wyn.^(-1))-1)*g/2;
+0446     d = (sum(wy(2:4).^(-1))-1)*g/4;
+0447     <span class="keyword">if</span> d&lt;0
+0448         error(<span class="string">'density &lt; 0'</span>);
+0449     <span class="keyword">end</span>
+0450 <span class="keyword">end</span>
+0451 <span class="keyword">if</span> abs(wy(1))==5
+0452     error(<span class="string">'great dirhombicosidodecahedron not implemented'</span>);
+0453 <span class="keyword">end</span>
+0454 <span class="keyword">switch</span> abs(wy(1))
+0455     <span class="keyword">case</span> {1,5}    <span class="comment">% [ | p q r ] snub polyhedron</span>
+0456         n=4;            <span class="comment">% number of face types</span>
+0457         m=6;            <span class="comment">% valence of vertices</span>
+0458         v=g/2;          <span class="comment">% number of vertices</span>
+0459 <span class="comment">%         ni=[3 wy(2:4)]; % type of each face</span>
+0460 <span class="comment">%         mi=[3 1 1 1];   % number of faces of each type</span>
+0461         nimi=[3 wy(2:4); 3 1 1 1]';
+0462 <span class="comment">%         rot = [1 2+dextro 1 3-dextro 1 4];</span>
+0463         snubQ=1;
+0464 <span class="comment">%         snub=[1 0 1 0 1 0];</span>
+0465         rotsnub=[1 2+dextro 1 3-dextro 1 4; repmat([1 0],1,3)]';
+0466     <span class="keyword">case</span> 2  <span class="comment">% [ p | q r ]</span>
+0467         n=2;
+0468         m=2*wyn(1);
+0469         v=g/m;
+0470 <span class="comment">%         ni=wy(3:4);</span>
+0471 <span class="comment">%         mi=[p p];         % these face counts may be fractional: m counts their numerators</span>
+0472 <span class="comment">% we could ill in the numerator denominator columns, nimi(:,3:4) here instead of later</span>
+0473         nimi=[wy(3:4); p p]';
+0474 <span class="comment">%         rot = repmat(1:2,1,wyn(1));</span>
+0475         rotsnub = repmat([1 0; 2 0],wyn(1),1);
+0476     <span class="keyword">case</span> 3  <span class="comment">% [ p q | r ]</span>
+0477         n=3;
+0478         m=4;
+0479         v=g/2;
+0480 <span class="comment">%         ni=[2*r wy(2:3)];</span>
+0481 <span class="comment">%         mi = [2 1 1];</span>
+0482         nimi=[2*r wy(2:3); 2 1 1]';
+0483 <span class="comment">%         rot = [1 2 1 3];</span>
+0484         rotsnub = [1 2 1 3; zeros(1,4)]';
+0485         <span class="keyword">if</span> abs(p-q/(q-1))&lt;1e-6
+0486             hemiQ=1;
+0487             d=0;
+0488             <span class="keyword">if</span> (p~=2 &amp;&amp; ~(wy(4)==3 &amp;&amp; any(wy(2:3)==3)))
+0489                 onesidedQ=1;
+0490                 v=v/2;
+0491                 chi=chi/2;
+0492             <span class="keyword">end</span>
+0493         <span class="keyword">end</span>
+0494     <span class="keyword">case</span> 4  <span class="comment">% [ p q r | ]</span>
+0495         n=3;
+0496         m=3;
+0497         v=g;
+0498 <span class="comment">%         ni=2*wy(2:4);</span>
+0499 <span class="comment">%         mi=ones(1,3);</span>
+0500         nimi=[2*wy(2:4); ones(1,3)]';
+0501 <span class="comment">%         rot=1:3;</span>
+0502         rotsnub=[1:3; zeros(1,3)]';
+0503         allrot=(wy(2)==wy(3)) || (wy(2)==wy(4)) || (wy(3)==wy(4)); <span class="comment">% isosceles so all</span>
+0504         evenden=find(~rem(wyd,2)); <span class="comment">% check for even denominators</span>
+0505         <span class="keyword">if</span> (length(evenden)&gt;1)
+0506             error(<span class="string">'Multiple even denominators are not allowed'</span>);
+0507         <span class="keyword">end</span>
+0508         <span class="keyword">if</span> ~isempty(evenden)
+0509             even = evenden;
+0510             evenQ=1;
+0511             onesidedQ = 1;
+0512             d=0;
+0513             v=v/2;
+0514             chi = chi - g/wyn(even)/2;  <span class="comment">% check this *****</span>
+0515         <span class="keyword">end</span>
+0516     <span class="keyword">otherwise</span>
+0517         error(<span class="string">'Invalid polyhedron type %d'</span>,wy(1));
+0518 <span class="keyword">end</span>
+0519 <span class="comment">% [line 155] call sortAndMerge [sortAndMerge: line 220]</span>
+0520 <span class="comment">% save stuff to prevent overwriting</span>
+0521 n_1=n;
+0522 m_1=m;
+0523 <span class="comment">% now do sort merge based on rotsnub and nimi</span>
+0524 <span class="comment">% rotsnub(:,2) = [rot snub]</span>
+0525 <span class="comment">% nimi(:,4) = [ni mi mi-num mi-den]</span>
+0526 
+0527 nimi(nimi(:,1)==2,1)=-2;            <span class="comment">% make equal to -2 to force to bottom of list</span>
+0528 [nimi,inim]=sortrows(nimi,-1);
+0529 jnim=zeros(n,1);
+0530 jnim(inim)=1:n;
+0531 msk=[~0; nimi(2:<span class="keyword">end</span>,1)&lt;nimi(1:end-1,1)]; <span class="comment">% identify distinct values</span>
+0532 cmsk=cumsum(msk); <span class="comment">% destination of each value</span>
+0533 nimi(msk,2)=sparse(1,cmsk,nimi(:,2));  <span class="comment">% add up repreated counts</span>
+0534 nimi=nimi(msk,:);       <span class="comment">% select just the distinct values</span>
+0535 <span class="comment">% cmsk(jnim) maps original to new positions</span>
+0536 [nimi(:,3),nimi(:,4)]=rat(nimi(:,2));
+0537 rotsnub(:,1)=cmsk(jnim(rotsnub(:,1)));
+0538 even=cmsk(jnim(even));
+0539 <span class="keyword">if</span> nimi(<span class="keyword">end</span>,1)&lt;0        <span class="comment">% remove digons</span>
+0540     <span class="keyword">if</span> size(nimi,1)==1
+0541         error(<span class="string">'Degenerate polyhedron (digons only)'</span>);
+0542     <span class="keyword">end</span>
+0543     m=m-nimi(<span class="keyword">end</span>,3);  <span class="comment">% note that m=sum(nimi(:,3)) not sum(nimi(:,2)) as you might expect</span>
+0544     nimi(<span class="keyword">end</span>,:)=[];
+0545     n=size(nimi,1);
+0546     rotsnub(rotsnub(:,1)&gt;n,:)=[];         <span class="comment">% abolish references to digons</span>
+0547 <span class="keyword">end</span>
+0548 
+0549 <span class="comment">% original sort and merge</span>
+0550 
+0551 <span class="comment">% [ss,tr]=sort(-ni);          % sort into descending order</span>
+0552 <span class="comment">% itr=zeros(1,n);</span>
+0553 <span class="comment">% itr(tr)=1:n;</span>
+0554 <span class="comment">% ni=ni(tr);</span>
+0555 <span class="comment">% mi=mi(tr);</span>
+0556 <span class="comment">% rot = itr(rot);</span>
+0557 <span class="comment">% if evenQ</span>
+0558 <span class="comment">%     even = itr(even);</span>
+0559 <span class="comment">% end</span>
+0560 <span class="comment">% % now merge equal faces</span>
+0561 <span class="comment">% i=1;</span>
+0562 <span class="comment">% while i&lt;n</span>
+0563 <span class="comment">%     if ni(i)==ni(i+1)</span>
+0564 <span class="comment">%         mi(i)=mi(i)+mi(i+1);</span>
+0565 <span class="comment">%         mi(i+1)=[];</span>
+0566 <span class="comment">%         ni(i+1)=[];</span>
+0567 <span class="comment">%         n=n-1;</span>
+0568 <span class="comment">%         even=even-(even&gt;i);</span>
+0569 <span class="comment">%         rot = rot - (rot&gt;i);</span>
+0570 <span class="comment">%     else</span>
+0571 <span class="comment">%         i=i+1;</span>
+0572 <span class="comment">%     end</span>
+0573 <span class="comment">% end</span>
+0574 <span class="comment">% [mii,mij]=rat(mi);    % find numerator</span>
+0575 <span class="comment">% i=find(ni==2);  % find digons</span>
+0576 <span class="comment">% if ~isempty(i)</span>
+0577 <span class="comment">%     if n==1</span>
+0578 <span class="comment">%         error('Degenerate (digons only)');</span>
+0579 <span class="comment">%     end</span>
+0580 <span class="comment">%     i=i(1);</span>
+0581 <span class="comment">%     m=m-mii(i);      % reduce total valance</span>
+0582 <span class="comment">%     ni(i)=[];</span>
+0583 <span class="comment">%     mi(i)=[];</span>
+0584 <span class="comment">%     mii(i)=[];</span>
+0585 <span class="comment">%     even=even-(even&gt;i);</span>
+0586 <span class="comment">%     if snubQ</span>
+0587 <span class="comment">%         snub(rot==i)=[];</span>
+0588 <span class="comment">%     end</span>
+0589 <span class="comment">%     rot(rot==i)=[];</span>
+0590 <span class="comment">%     rot = rot - (rot&gt;i);</span>
+0591 <span class="comment">%     n=n-1;</span>
+0592 <span class="comment">% end</span>
+0593 <span class="comment">%</span>
+0594 <span class="comment">% % check that new version is correct</span>
+0595 <span class="comment">%</span>
+0596 <span class="comment">%</span>
+0597 <span class="comment">% if any(nimi(:,1:3)~=[ni' mi' mii'])</span>
+0598 <span class="comment">%     error('nimi has errors');</span>
+0599 <span class="comment">% end</span>
+0600 <span class="comment">% if snubQ</span>
+0601 <span class="comment">%     if any(rotsnub~=[rot' snub'])</span>
+0602 <span class="comment">%         error('rotsnub has errors');</span>
+0603 <span class="comment">%     end</span>
+0604 <span class="comment">% else</span>
+0605 <span class="comment">%     if any(rotsnub(:,1)~=rot')</span>
+0606 <span class="comment">%         error('rotsnub has errors');</span>
+0607 <span class="comment">%     end</span>
+0608 <span class="comment">% end</span>
+0609 <span class="comment">% if evenQ &amp;&amp; even~=even_1</span>
+0610 <span class="comment">%     error('even has errors');</span>
+0611 <span class="comment">% end</span>
+0612 
+0613 <span class="comment">% [line 159] Solve fundamental equations [line 266]</span>
+0614 <span class="comment">% doesn't converge well for a dodecahedron</span>
+0615 <span class="comment">% we could avoid the iteration when n=1</span>
+0616 <span class="comment">%</span>
+0617 <span class="comment">% We want to solve the following set of equations for cosa and gammai:</span>
+0618 <span class="comment">%  (a) sum(mi.*gammai)=pi</span>
+0619 <span class="comment">%  (b) cos(alphai) = cosa*sin(gammai)</span>
+0620 <span class="comment">%      where ni, mi, alphai and gammai are vectors of length m, the number of edges at a vertex</span>
+0621 <span class="comment">%      ni gives the number of sides in each face type in decreasing order (possibly fractional)</span>
+0622 <span class="comment">%      mi is the repretition count of each face type (possibly fractional)</span>
+0623 <span class="comment">%      alphai=pi * ni.^(-1) is the angle subtended by a half edge at the centre of a face</span>
+0624 <span class="comment">%      gammai (&gt; pi/2 - alphai) is half the spherical angle subtended by a face at the vertex</span>
+0625 <span class="comment">%      cosa (&lt; 1) is the distance of the edge centre from the origin if the radius of the vertex is unity</span>
+0626 <span class="comment">% we solve this iteratively using gammai(1) as the independent variable</span>
+0627 
+0628 
+0629 alphai = pi*nimi(:,1).^(-1); <span class="comment">% half of external angle of polygon</span>
+0630 calphai = cos(alphai);
+0631 ca1 = calphai(1);
+0632 calphai(1)=[];
+0633 <span class="comment">% initial values</span>
+0634 gammai = pi/2 - alphai; <span class="comment">% half of internal angle of polygon</span>
+0635 delta = pi - nimi(:,2)'*gammai;
+0636 <span class="comment">% we could initialize it to be exact for a single face type</span>
+0637 <span class="comment">% g1n=gammai(1)*pi/(mi*gammai')</span>
+0638 <span class="comment">% cosa = ca1/sin(g1n);</span>
+0639 <span class="comment">% gammai = [g1n asin(calphai/cosa)];</span>
+0640 <span class="comment">% delta = pi - mi*gammai';</span>
+0641 <span class="comment">% should check here to see if delta is better than before and g1n is valid</span>
+0642 iter=0;
+0643 <span class="keyword">while</span> (abs(delta) &gt; 1e-10)
+0644     g1n = gammai(1) + delta*tan(gammai(1))/(nimi(:,2)'*tan(gammai));
+0645     <span class="keyword">if</span> (g1n&lt;0 || g1n&gt;pi)
+0646         error (<span class="string">'Gamma out of range'</span>);
+0647     <span class="keyword">end</span>
+0648     cosa = ca1/sin(g1n);
+0649     gammai = [g1n; asin(calphai/cosa)];
+0650     delta = pi - nimi(:,2)'*gammai;
+0651     iter=iter+1;
+0652 <span class="keyword">end</span>
+0653 gamma = gammai;
+0654 cosa = ca1/sin(gammai(1));
+0655 
+0656 <span class="comment">% [line 165] postprocess special cases</span>
+0657 
+0658 <span class="keyword">if</span> evenQ
+0659     nimi(even,:)=[];
+0660     gamma(even)=[];
+0661     nh=n-1;
+0662     n=2*nh;
+0663     m=4;
+0664 <span class="comment">%     ni=[ni 1+fliplr(ni-1).^(-1)];</span>
+0665 nimi=repmat(nimi,2,1);
+0666 nimi(nh+1:<span class="keyword">end</span>,1)=1+(nimi(nh:-1:1,1)-1).^(-1);
+0667     gamma=[gamma; -flipud(gamma)];
+0668 <span class="comment">%     mi=repmat(3-nh,1,n);</span>
+0669 <span class="comment">%     mii=mi;</span>
+0670 nimi(:,2:3)=repmat(3-nh,n,2);
+0671     rotsnub=[1 nh n 1+nh; zeros(1,4)]';
+0672 <span class="keyword">end</span>
+0673 <span class="keyword">if</span> wy(1)==5
+0674     error(<span class="string">'not yet implemented'</span>);
+0675     <span class="comment">% needs to use rotsnub and nimi</span>
+0676     n=5;
+0677     m=8;
+0678     hemiQ = 1;
+0679     d=0;
+0680     mi=[4 1 1 1 1];
+0681     mii=mi;
+0682     ni=[4 ni(1:3) ni(1)/(ni(1)-1)];
+0683     gamma=[pi/2 gamma(1:3) -gamma(1)];
+0684     rot=[rot+[0 1 0 1 0 1] 1 5]; <span class="comment">% [1 4 1 3 1 2 1 5]</span>
+0685     snub=[snub 1 0];
+0686 <span class="keyword">end</span>
+0687 
+0688 
+0689 
+0690 <span class="comment">% [line 197] count vertices and faces [count: line 286]</span>
+0691 
+0692 e = m*v/2;          <span class="comment">% number of edges = valency * vertices /2</span>
+0693 [nii,nij]=rat(nimi(:,1));  <span class="comment">% find numerators</span>
+0694 fi = v*nimi(:,3)./nii;
+0695 f = sum(fi);
+0696 <span class="keyword">if</span> (d&gt;0) &amp;&amp; (gamma(1)&gt; pi/2) <span class="comment">% [might be better to use cycles rather than radians for gamma]</span>
+0697     d = fi(1)-d;
+0698 <span class="keyword">end</span>
+0699 <span class="keyword">if</span> wy(1)==5
+0700     chi = v - e + f; <span class="comment">% Euler characteristic</span>
+0701 <span class="keyword">end</span>
+0702 
+0703 <span class="comment">% [line 199] generate vertex coordinates and adjacency matrix [vertices: line 297]</span>
+0704 <span class="comment">% we currently scale it so the edge mid-points have unit radius</span>
+0705 
+0706 adj=zeros(v,m);         <span class="comment">% j'th vertex adjacent to vertex i anti-clockwise;</span>
+0707 frot = zeros(1,v);
+0708 rev = zeros(v,1);
+0709 vlist = zeros(v+1,7); <span class="comment">% vertex information: [x y z d n e t] for each vertex</span>
+0710 <span class="comment">%                       x,y,z = position, d=distance from origin, n=valency, e=edge index, t=type (-ve for reflected)</span>
+0711 vlist(:,5)=m;           <span class="comment">% all vertices have the same valency</span>
+0712 v1 = [0 0 1]/cosa;        <span class="comment">% first vertex</span>
+0713 frot(1) = 1;
+0714 adj(1,1) = 2;
+0715 v2 = [2*cosa*sqrt(1-cosa^2), 0, 2*cosa^2-1]/cosa;   <span class="comment">% second vertex</span>
+0716 <span class="keyword">if</span> snubQ
+0717     frot(2) = m*(1-rotsnub(m,2))+rotsnub(m,2); <span class="comment">% inefficient</span>
+0718     adj(2,1)=1;
+0719 <span class="keyword">else</span>                    <span class="comment">% reflexible</span>
+0720     frot(2) = 1;
+0721     rev(2) = 1;
+0722     adj(2,m)=1;
+0723 <span class="keyword">end</span>
+0724 vlist(1,1:3)=v1;
+0725 vlist(2,1:3)=v2;
+0726 nv = 2;
+0727 i = 1;
+0728 skew=zeros(3,3);
+0729 skewp=[6 7 2];  <span class="comment">% index of positive entries</span>
+0730 skewn=[8 3 4];  <span class="comment">% index of negative entries</span>
+0731 cosg=cos(2*gamma);
+0732 sing=sin(2*gamma);
+0733 eye3=eye(3);
+0734 <span class="comment">% veqth=cos(acos(cosa)/(d+1));   % threshold for vertex equality test = cosa * |vlist(1,1:3)|^2</span>
+0735 veqth=0.999999/(cosa^2);  <span class="comment">% threshold for vertex equality test = cosa * |vlist(1,1:3)|^2</span>
+0736 <span class="keyword">while</span> i&lt;=nv  <span class="comment">% loop for each vertex</span>
+0737     <span class="keyword">if</span> rev(i)
+0738         one = -1;
+0739         start = m-1;
+0740         limit = 1;
+0741     <span class="keyword">else</span>
+0742         one = 1;
+0743         start = 2;
+0744         limit = m;
+0745     <span class="keyword">end</span>
+0746     k = frot(i);    <span class="comment">% v_rotation to use first</span>
+0747     v1 = vlist(i,1:3);    <span class="comment">% the centre of v_rotation</span>
+0748     v1 = v1/sqrt(v1*v1');   <span class="comment">% normalize to unit length [not clear why we don't make unit length in the first place]</span>
+0749     v2 = vlist(adj(i,start-one),1:3);
+0750     <span class="keyword">for</span> j=start:one:limit
+0751         <span class="comment">%             R=wwT+cos(x)(I-wwT)+sin(x)SKEW(w)</span>
+0752         <span class="comment">%             SKEW(a) =  [0 -a3 a2; a3 0 -a1; -a2 a1 0]</span>
+0753         skew(skewp)=v1;
+0754         skew(skewn)=-v1;
+0755         rsym=v1'*v1;
+0756         rotk=rotsnub(k,1);
+0757         rotmat=rsym+cosg(rotk)*(eye3-rsym)-one*sing(rotk)*skew;
+0758         v2=v2*rotmat;  <span class="comment">% rotate v2 poition around v1</span>
+0759         vlist(nv+1,1:3)=v2;   <span class="comment">% add into list in case it is good</span>
+0760         nvi=find(vlist(:,1:3)*v2'&gt;veqth,1); <span class="comment">% take the first matching vertex</span>
+0761         <span class="comment">%         cmatch=1-vlist(nvi,:)*v2'*cosa^2      % diagnostic printout for vertex match test (0 for perfect match)</span>
+0762         adj(i,j)=nvi; <span class="comment">% save as next vertex</span>
+0763         lastk = k;
+0764         k=1+mod(k,m); <span class="comment">% increment k circularly in the range 1:m</span>
+0765         <span class="keyword">if</span> nvi&gt;nv       <span class="comment">% we have a new vertex</span>
+0766             <span class="keyword">if</span> snubQ <span class="comment">% if a snub polyhedron</span>
+0767                 <span class="comment">% Mathematica: frot[[nvi]] = If[ !sn[[lastk]], lastk, If[ !sn[[k]], next[k, m], k ] ];</span>
+0768                 <span class="comment">% A snub triangle plays the role of the next available snub triangle for the next vertex</span>
+0769                 frot(nvi)=lastk+rotsnub(lastk,2)*(rotsnub(k,2)*k-lastk+(1-rotsnub(k,2))*(1+mod(k,m)));
+0770                 rev(nvi)=0;   <span class="comment">% snub polyhedra always have rev=0</span>
+0771                 adj(nvi,1)=i;
+0772             <span class="keyword">else</span>
+0773                 frot(nvi)=k;
+0774                 rev(nvi)=(1+one)/2; <span class="comment">% = 1-rev(i)</span>
+0775                 adj(nvi,1+(m-1)*rev(nvi))=i;
+0776             <span class="keyword">end</span>
+0777             nv=nvi;
+0778             <span class="keyword">if</span> nv&gt;v
+0779                 error(<span class="string">'Too many vertices found'</span>);
+0780             <span class="keyword">end</span>
+0781         <span class="keyword">end</span>
+0782     <span class="keyword">end</span>
+0783     i=i+1;
+0784 <span class="keyword">end</span>
+0785 <span class="keyword">if</span> (nv~=v)
+0786     error(<span class="string">'Not all vertices found'</span>);
+0787 <span class="keyword">end</span>
+0788 vlist(v+1,:)=[];    <span class="comment">% remove the dummy extra vertex</span>
+0789 vlist(:,7)=1-2*rev;     <span class="comment">% vertex types all all +1 or -1</span>
+0790 
+0791 <span class="comment">% construct edge map</span>
+0792 <span class="comment">% edgeq: 1=v1 2=v2 3=f1 4=f2 5=ev1 6=ef1 7=er 8=z 9=sf 10=sv]</span>
+0793 <span class="comment">%    1  v1   first vertex (normally start)</span>
+0794 <span class="comment">%    2  v2   second vertex</span>
+0795 <span class="comment">%    3  f1   first face (normally on left)</span>
+0796 <span class="comment">%    4  f2   second face</span>
+0797 <span class="comment">%    5  ev1  next edge around vertex 1 (normally anticlockwise)</span>
+0798 <span class="comment">%    6  ef1  next edge around f1 (normally anticlockwise)</span>
+0799 <span class="comment">%    7  er   reverse edge</span>
+0800 <span class="comment">%    8  z    twisted edge: clockwise neighbours around v1 and v2 are on the same face</span>
+0801 <span class="comment">%    9  sf   swap face order: ???</span>
+0802 <span class="comment">%   10  sv   swap vertex order: v2 preceeds v1 around f1</span>
+0803 
+0804 edgeq=zeros(v*m,10); <span class="comment">% OLD *** ===[reverse_edge start_vertex left_face next_edge_at_vertex next_edge_on_face]</span>
+0805 edgeq(:,1:2)=[repmat((1:v)',m,1) adj(:)];  <span class="comment">% 2=v_start 3=v_end</span>
+0806 edgeq(:,3:4)=edgeq(:,1:2)*[v 1; 1 v];      <span class="comment">% encode start and end as a single integer</span>
+0807 [xx,ia]=sort(edgeq(:,3));
+0808 [xx,ib]=sort(edgeq(:,4));
+0809 edgeq(:,3:4)=0;
+0810 ib(ib)=1:v*m;               <span class="comment">% make reverse index</span>
+0811 edgeq(:,7)=ia(ib);          <span class="comment">% index to reverse direction edge: 1=e_reverse</span>
+0812 edgeq(:,5)=[v+1:v*m 1:v];   <span class="comment">% adjacent edge anti-clockwise around vertex: 6=e_next_at_start</span>
+0813 ia(edgeq(:,5))=1:v*m;       <span class="comment">% adjacent edge clockwise around vertex; alternatively ia = mod((1:v*m)-v,v*m)'</span>
+0814 edgeq(:,6)=ia(edgeq(:,7));  <span class="comment">% adjacent edge anti-clockwise around face [but not necessarily correct</span>
+0815 fpt=zeros(f,2);             <span class="comment">% edge count and pointer to an edge on a face</span>
+0816 iff=0;                      <span class="comment">% face index</span>
+0817 <span class="keyword">if</span> onesidedQ
+0818     edgeq(:,8)=reshape(mod(repmat(frot',1,m)+repmat((1:m),v,1),2),v*m,1); <span class="comment">%face type modulo 2</span>
+0819     edgeq(:,8)=abs(edgeq(:,8)-edgeq(edgeq(:,6),8)); <span class="comment">% 1 = twisted edge</span>
+0820     <span class="keyword">while</span> iff&lt;f
+0821         iee=find(edgeq(:,3)==0,1); <span class="comment">% find an edge without a left face</span>
+0822         <span class="keyword">if</span> ~numel(iee)
+0823             error(<span class="string">'Not enough faces found'</span>);
+0824         <span class="keyword">end</span>
+0825         iff=iff+1;
+0826         fpt(iff,2)=iee;
+0827         nee=0;
+0828         flip=abs((edgeq(iee,6)==edgeq(edgeq(iee,7),5))-edgeq(iee,8)); <span class="comment">% check if this initial edge is flipped on output</span>
+0829         <span class="keyword">while</span> edgeq(iee,3)~=iff
+0830             <span class="keyword">if</span> edgeq(iee,3)  <span class="comment">% use the reverse edge if this one is already taken</span>
+0831                 iee=edgeq(iee,7);
+0832                 edgeq(pee,6)=iee;           <span class="comment">% correct the previous exit edge taken</span>
+0833                 edgeq(iee,10)=1;     <span class="comment">% use it in the reverse direction</span>
+0834                 edgeq(iee,6)=ia(iee); <span class="comment">% normal exit for this direction</span>
+0835                 jee=edgeq(iee,5);  <span class="comment">% alternate exit edge if flipping</span>
+0836             <span class="keyword">else</span>
+0837                 <span class="keyword">if</span> flip &amp;&amp; ~edgeq(iee,4) <span class="comment">% we are entering on the usual reverse exit</span>
+0838                     edgeq(edgeq(iee,7),6)=edgeq(iee,5); <span class="comment">% So give the reverse exit a valid path</span>
+0839                 <span class="keyword">end</span>
+0840                 jee=edgeq(edgeq(iee,7),5); <span class="comment">% alternate exit edge if flipping</span>
+0841             <span class="keyword">end</span>
+0842             <span class="keyword">if</span> edgeq(iee,3)
+0843                 error(<span class="string">'Edge already in use'</span>);
+0844             <span class="keyword">end</span>
+0845             edgeq(iee,3)=iff;
+0846             edgeq(edgeq(iee,7),4)=iff;      <span class="comment">% mark right face in reverse edge</span>
+0847             nee=nee+1;
+0848             flip=abs(flip-edgeq(iee,8));
+0849             <span class="keyword">if</span> flip   <span class="comment">% use alternate edge</span>
+0850                 edgeq(iee,6)=jee;           <span class="comment">% mark actual edge used</span>
+0851             <span class="keyword">end</span>
+0852             pee=iee;            <span class="comment">% save previous iee value</span>
+0853             iee=edgeq(iee,6);   <span class="comment">% step around the face</span>
+0854         <span class="keyword">end</span>
+0855         fpt(iff,1)=nee;
+0856     <span class="keyword">end</span>
+0857 <span class="keyword">else</span>  <span class="comment">% a normal two-sided polygon</span>
+0858     <span class="keyword">while</span> iff&lt;f
+0859         iee=find(edgeq(:,3)==0,1); <span class="comment">% find an edge without a left face</span>
+0860         iff=iff+1;
+0861         fpt(iff,2)=iee;
+0862         nee=0;
+0863         <span class="keyword">while</span> edgeq(iee,3)~=iff
+0864             <span class="keyword">if</span> edgeq(iee,3)
+0865                 error(<span class="string">'Edge already in use'</span>);
+0866             <span class="keyword">end</span>
+0867             edgeq(iee,3)=iff;
+0868             edgeq(edgeq(iee,7),4)=iff;      <span class="comment">% mark right face in reverse edge</span>
+0869             nee=nee+1;
+0870             iee=edgeq(iee,6);   <span class="comment">% step around the face</span>
+0871         <span class="keyword">end</span>
+0872         fpt(iff,1)=nee;
+0873     <span class="keyword">end</span>
+0874 <span class="keyword">end</span>
+0875 <span class="comment">% [(1:v*m)' edgeq]</span>
+0876 
+0877 vlist(:,4)=sqrt(sum(vlist(:,1:3).^2,2));        <span class="comment">% fill in the radii</span>
+0878 vlist(:,6)=(1:v)';
+0879 <span class="comment">% now fill in the flist array</span>
+0880 <span class="comment">% [x y z d n e t] for each face</span>
+0881 flist=zeros(f,7);
+0882 [ia,ib]=sort(edgeq(:,3));           <span class="comment">% finst all the edges belonging to each face</span>
+0883 ix=[1; 1+find(ia(2:end)&gt;ia(1:end-1)); 2*e+1];
+0884 flist(:,6)=ib(ix(1:f));         <span class="comment">% pointer to first edge for each face</span>
+0885 flist(:,5)=ix(2:end)-ix(1:end-1);       <span class="comment">% size of each face</span>
+0886 <span class="comment">% edgeq: 1=v1 2=v2 3=f1 4=f2 5=ev1 6=ef1 7=er 8=z 9=sf 10=sv]</span>
+0887 tedge=flist(:,6);           <span class="comment">% this edge</span>
+0888 nedge=edgeq(tedge,6);       <span class="comment">% next edge</span>
+0889 vmid=vlist(edgeq(tedge+2*e*(1-edgeq(tedge,10))),1:3);
+0890 flist(:,1:3)=cross(vlist(edgeq(nedge+2*e*(1-edgeq(nedge,10))),1:3)-vmid,vlist(edgeq(tedge+2*e*edgeq(tedge,10)),1:3)-vmid,2);
+0891 flist(:,1:3)=flist(:,1:3)./repmat(sqrt(sum(flist(:,1:3).^2,2)),1,3);
+0892 flist(:,4)=sum(flist(:,1:3).*vmid,2);
+0893 
+0894 <span class="comment">% now check for dual</span>
+0895 
+0896 <span class="keyword">if</span> dual
+0897     vlisto=vlist;        <span class="comment">% save vlist</span>
+0898     vlist=flist;         <span class="comment">% old faces are new vertices</span>
+0899     flist=vlisto;
+0900     <span class="comment">% edgeq: 1=v1 2=v2 3=f1 4=f2 5=ev1 6=ef1 7=er 8=z 9=sf 10=sv]</span>
+0901     edgeq=edgeq(:,[3 4 2 1 6 5 7 8 10 9]);  <span class="comment">% swap vertices and faces in the edge list</span>
+0902     erev=edgeq(:,7);        <span class="comment">% reverse edge</span>
+0903     edgeq(:,6)=erev(edgeq(erev,6));
+0904     flist(:,6)=erev(flist(:,6));
+0905     <span class="keyword">if</span> hemiQ             <span class="comment">% cannot invert through centre</span>
+0906         error(<span class="string">'Cannot take dual'</span>);
+0907     <span class="keyword">else</span>
+0908         vlist(:,4)=vlist(:,4).^(-1);
+0909     <span class="keyword">end</span>
+0910     vlist(:,1:3)=vlist(:,1:3).*repmat(vlist(:,4),1,3);
+0911     v=size(vlist,1);
+0912     vlist(:,1:3)=vlist(:,1:3)-repmat(mean(vlist(:,1:3),1),v,1);
+0913     f=size(flist,1);            <span class="comment">% recalculate face positions from scratch</span>
+0914     tedge=flist(:,6);           <span class="comment">% this edge</span>
+0915     nedge=edgeq(tedge,6);       <span class="comment">% next edge</span>
+0916     vmid=vlist(edgeq(tedge+2*e*(1-edgeq(tedge,10))),1:3);
+0917     flist(:,1:3)=cross(vlist(edgeq(nedge+2*e*(1-edgeq(nedge,10))),1:3)-vmid,vlist(edgeq(tedge+2*e*edgeq(tedge,10)),1:3)-vmid,2);
+0918     flist(:,1:3)=flist(:,1:3)./repmat(sqrt(sum(flist(:,1:3).^2,2)),1,3);
+0919     flist(:,4)=sum(flist(:,1:3).*vmid,2);
+0920 <span class="keyword">end</span>
+0921 
+0922 info.snub=snubQ&gt;0;
+0923 info.onesided=onesidedQ&gt;0;
+0924 info.hemi=hemiQ&gt;0;
+0925 
+0926 <span class="comment">% create Wythoff string</span>
+0927 wystr=<span class="string">''</span>;
+0928 j=0;
+0929 <span class="keyword">for</span> i=1:4
+0930     <span class="keyword">if</span> i==abs(wy(1))
+0931         wystr=[wystr <span class="string">'| '</span>];
+0932         j=1;
+0933     <span class="keyword">else</span>
+0934         <span class="keyword">if</span> (wyd(i-j)==1)
+0935             wystr=[wystr num2str(wyn(i-j)) <span class="string">' '</span>];
+0936         <span class="keyword">else</span>
+0937             wystr=[wystr num2str(wyn(i-j)) <span class="string">'/'</span> num2str(wyd(i-j)) <span class="string">' '</span>];
+0938         <span class="keyword">end</span>
+0939     <span class="keyword">end</span>
+0940 <span class="keyword">end</span>
+0941 info.wythoff=wystr(1:end-1);
+0942 info.vef=[v e f];
+0943 info.chi=chi;   <span class="comment">% Euler Characteristic</span>
+0944 
+0945 <span class="comment">% now draw an image if requested</span>
+0946 
+0947 <span class="keyword">if</span> ~nargout || any(md==<span class="string">'g'</span>)
+0948     clf;
+0949     <span class="keyword">if</span> any(md==<span class="string">'t'</span>)
+0950         [nii,nij]=rat(nimi(:,1));      <span class="comment">% face sizes as rational numbers</span>
+0951         veca=0:1;
+0952         plot(0,0,<span class="string">'ok'</span>);
+0953         hold on
+0954         <span class="keyword">for</span> j=1:m
+0955             i=rotsnub(j);
+0956             veca=veca(2)*[1 exp(2i*gamma(i))];
+0957             th=(0:nii(i))*2*pi/nimi(i,1);
+0958             sc=[sin(th); 1-cos(th)];
+0959             scv=sc(:,[2 end-1]);  <span class="comment">% first and last vertices</span>
+0960             veci=veca/scv;
+0961             plot(real(veci*sc), imag(veci*sc),<span class="string">'-k'</span>,real(veci*scv), imag(veci*scv),<span class="string">':b'</span>);
+0962         <span class="keyword">end</span>
+0963         hold off
+0964     <span class="keyword">else</span>
+0965         <span class="keyword">if</span> (all(wyd==1) &amp;&amp; ~any(md==<span class="string">'w'</span>)) || any(md==<span class="string">'f'</span>)
+0966 
+0967             <span class="comment">% now render the polyhedron</span>
+0968 
+0969             <span class="keyword">for</span> i=1:f
+0970                 <span class="comment">%     patch('Faces',fa{i},'Vertices',vlist,'FaceVertexCData',rgb(i,:),'FaceColor','flat')</span>
+0971                 fa=zeros(flist(i,5),1);
+0972                 ix=flist(i,6);
+0973                 <span class="keyword">for</span> j=1:numel(fa)
+0974                     fa(j)=edgeq(ix,1+edgeq(ix,10));   <span class="comment">% first vertex of this edge</span>
+0975                     ix=edgeq(ix,6); <span class="comment">% next edge around the face</span>
+0976                 <span class="keyword">end</span>
+0977                 patch(vlist(fa,1),vlist(fa,2),vlist(fa,3),1-((flist(i,1:3)+1)/2).^2,<span class="string">'facealpha'</span>,0.95);
+0978             <span class="keyword">end</span>
+0979         <span class="keyword">else</span>
+0980             edges=edgeq(edgeq(:,1)&lt;edgeq(:,2),1:2);
+0981             plot3(reshape(vlist(edges,1),size(edges))',reshape(vlist(edges,2),size(edges))',reshape(vlist(edges,3),size(edges))',<span class="string">'k'</span>);
+0982         <span class="keyword">end</span>
+0983         <span class="keyword">if</span> any(md==<span class="string">'v'</span>)
+0984             <span class="keyword">for</span> i=1:v
+0985                 text(vlist(i,1),vlist(i,2),vlist(i,3),sprintf(<span class="string">'%d'</span>,i));
+0986             <span class="keyword">end</span>
+0987         <span class="keyword">end</span>
+0988     <span class="keyword">end</span>
+0989     axis equal
+0990     <span class="keyword">if</span> dual
+0991         tdual=<span class="string">'Dual '</span>;
+0992     <span class="keyword">else</span>
+0993         tdual=<span class="string">''</span>;
+0994     <span class="keyword">end</span>
+0995     <span class="keyword">if</span> wyidx==round(wyidx) &amp;&amp; wyidx&gt;=1 &amp;&amp; wyidx&lt;=size(wys,1)
+0996         title(sprintf(<span class="string">'%s%s: %s (%s)'</span>,tdual,info.wythoff,names{wyidx,1:2}));
+0997     <span class="keyword">else</span>
+0998         title(sprintf(<span class="string">'%s%s'</span>,tdual,info.wythoff));
+0999     <span class="keyword">end</span>
+1000 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

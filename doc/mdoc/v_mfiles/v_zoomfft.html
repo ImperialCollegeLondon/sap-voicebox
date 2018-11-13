@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_zoomfft</title>
+  <meta name="keywords" content="v_zoomfft">
+  <meta name="description" content="ZOOMFFT    DTFT evaluated over a linear frequency range Y=(X,N,M,S,D)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_zoomfft.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_zoomfft
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ZOOMFFT    DTFT evaluated over a linear frequency range Y=(X,N,M,S,D)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,f]=v_zoomfft(x,n,m,s,d) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">ZOOMFFT    DTFT evaluated over a linear frequency range Y=(X,N,M,S,D)
+ Inputs:
+    x    vector (or matrix)
+    n    reciprocal of normalized frequency increment (can be non-integer).
+         The frequency increment is fs/n where fs is the sample frequency
+         [default n=size(x,d)]
+    m    mumber of output points is floor(m) [default m=n]
+    s    starting frequency index (can be non-integer).
+         The starting frequency is s*fs/n [default s=0]
+    d    dimension along which to do fft [default d=first non-singleton]
+
+ Outputs:
+    y       Output dtft coefficients. y has the same dimensions as x except
+            that size(y,d)=floor(m).
+    f(1,m)  normalized frequencies (1 corresponds to fs)
+
+ This routine allows the evaluation of the DFT over an arbitrary range of
+ frequencies; as its name implies this lets you zoom into a narrow portion
+ of the spectrum.
+ The DTFT of X will be evaluated along dimension D at the M frequencies
+ f=fs*(s+(0:m-1))/n where fs is the sample frequency. Note that N and S
+ need not be integers although M will be rounded down to an integer.
+ Thus v_zoomfft(x,n,n,0,d) is equivalent to fft(x,n,d) for n&gt;=length(x).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,f]=v_zoomfft(x,n,m,s,d)</a>
+0002 <span class="comment">%ZOOMFFT    DTFT evaluated over a linear frequency range Y=(X,N,M,S,D)</span>
+0003 <span class="comment">% Inputs:</span>
+0004 <span class="comment">%    x    vector (or matrix)</span>
+0005 <span class="comment">%    n    reciprocal of normalized frequency increment (can be non-integer).</span>
+0006 <span class="comment">%         The frequency increment is fs/n where fs is the sample frequency</span>
+0007 <span class="comment">%         [default n=size(x,d)]</span>
+0008 <span class="comment">%    m    mumber of output points is floor(m) [default m=n]</span>
+0009 <span class="comment">%    s    starting frequency index (can be non-integer).</span>
+0010 <span class="comment">%         The starting frequency is s*fs/n [default s=0]</span>
+0011 <span class="comment">%    d    dimension along which to do fft [default d=first non-singleton]</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Outputs:</span>
+0014 <span class="comment">%    y       Output dtft coefficients. y has the same dimensions as x except</span>
+0015 <span class="comment">%            that size(y,d)=floor(m).</span>
+0016 <span class="comment">%    f(1,m)  normalized frequencies (1 corresponds to fs)</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% This routine allows the evaluation of the DFT over an arbitrary range of</span>
+0019 <span class="comment">% frequencies; as its name implies this lets you zoom into a narrow portion</span>
+0020 <span class="comment">% of the spectrum.</span>
+0021 <span class="comment">% The DTFT of X will be evaluated along dimension D at the M frequencies</span>
+0022 <span class="comment">% f=fs*(s+(0:m-1))/n where fs is the sample frequency. Note that N and S</span>
+0023 <span class="comment">% need not be integers although M will be rounded down to an integer.</span>
+0024 <span class="comment">% Thus v_zoomfft(x,n,n,0,d) is equivalent to fft(x,n,d) for n&gt;=length(x).</span>
+0025 
+0026 <span class="comment">% [1] L.R.Rabiner,  R.W.Schafer and C.M.Rader, &quot;The chirp z-transform algorithm&quot;</span>
+0027 <span class="comment">%     IEEE Trans. Audio Electroacoustics 17 (2), 86–92 (1969).</span>
+0028 
+0029 <span class="comment">%      Copyright (C) Mike Brookes 2007</span>
+0030 <span class="comment">%      Version: $Id: v_zoomfft.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 <span class="keyword">persistent</span> n0 k0 s0 m0 b c h g
+0051 e=size(x);
+0052 p=prod(e);
+0053 <span class="keyword">if</span> nargin&lt;5
+0054     d=find(e&gt;1);
+0055     <span class="keyword">if</span> ~isempty(d)
+0056         d=d(1);
+0057     <span class="keyword">else</span>
+0058         d=1;
+0059     <span class="keyword">end</span>
+0060 <span class="keyword">end</span>
+0061 k=e(d);
+0062 q=p/k;
+0063 <span class="keyword">if</span> d==1
+0064     z=reshape(x,k,q);
+0065 <span class="keyword">else</span>
+0066     z=shiftdim(x,d-1);
+0067     r=size(z);
+0068     z=reshape(z,k,q);
+0069 <span class="keyword">end</span>
+0070 <span class="keyword">if</span> nargin&lt;2 || isempty(n)
+0071     n=k;
+0072 <span class="keyword">end</span>
+0073 <span class="keyword">if</span> nargin&lt;3 || isempty(m)
+0074     m=floor(n);
+0075 <span class="keyword">else</span>
+0076     m=floor(m);
+0077 <span class="keyword">end</span>
+0078 <span class="keyword">if</span> nargin&lt;4 || isempty(s)
+0079     s=0;
+0080 <span class="keyword">end</span>
+0081 l=pow2(nextpow2(m+k-1));    <span class="comment">% round up to next power of 2</span>
+0082 <span class="keyword">if</span> n==fix(n) &amp;&amp; s==fix(s) &amp;&amp; n&lt;2*l &amp;&amp; n&gt;=k
+0083     a=fft(z,n,1);           <span class="comment">% quickest to do a normal fft</span>
+0084     y=a(1+mod(s:s+m-1,n),:);
+0085 <span class="keyword">else</span>
+0086     <span class="comment">% can precaluclate all this for fixed n, k, s and m</span>
+0087     <span class="keyword">if</span> isempty(b) || n~=n0 || k~=k0 || s~=s0 || m~=m0
+0088         n0=n;
+0089         k0=k;
+0090         s0=s;
+0091         m0=m;
+0092         b=exp(1i*pi*mod((s+(1-k:m-1)').^2,2*n)/n);
+0093         c=conj(b(k:k+m-1));
+0094         h=fft(b,l,1);
+0095         g=exp(-1i*pi*mod(((0:k-1)').^2,2*n)/n);
+0096     <span class="keyword">end</span>
+0097     a=ifft(fft(z.*repmat(g,1,q),l,1).*repmat(h,1,q)); <span class="comment">% calculate correlation</span>
+0098     y=a(k:k+m-1,:).*repmat(c,1,q);
+0099 <span class="keyword">end</span>
+0100 <span class="keyword">if</span> d==1
+0101     e(d)=m;
+0102     y=reshape(y,e);
+0103 <span class="keyword">else</span>
+0104     r(1)=m;
+0105     y=shiftdim(reshape(y,r),length(e)+1-d);
+0106 <span class="keyword">end</span>
+0107 f=(s+(0:m-1))/n;</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

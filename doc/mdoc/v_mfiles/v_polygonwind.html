@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_polygonwind</title>
+  <meta name="keywords" content="v_polygonwind">
+  <meta name="description" content="POLYGONWIND Test if points are inside a polygon">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_polygonwind.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_polygonwind
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>POLYGONWIND Test if points are inside a polygon</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function w=v_polygonwind(p,x) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">POLYGONWIND Test if points are inside a polygon
+ Inputs:
+    P(n,2)  polygon vertices
+    X(m,2)  points to test
+
+ Outputs:
+    W(m)    winding number for each point
+
+ For a normal polygon whose vertices are listed
+ anti-clockwise, the winding number is 0 or 1 according to whether the
+ point is outside or inside the polygon. The winding number will
+ be -1 if the polygon vertices go colckwise around the point.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function w=v_polygonwind(p,x)</a>
+0002 <span class="comment">%POLYGONWIND Test if points are inside a polygon</span>
+0003 <span class="comment">% Inputs:</span>
+0004 <span class="comment">%    P(n,2)  polygon vertices</span>
+0005 <span class="comment">%    X(m,2)  points to test</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Outputs:</span>
+0008 <span class="comment">%    W(m)    winding number for each point</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% For a normal polygon whose vertices are listed</span>
+0011 <span class="comment">% anti-clockwise, the winding number is 0 or 1 according to whether the</span>
+0012 <span class="comment">% point is outside or inside the polygon. The winding number will</span>
+0013 <span class="comment">% be -1 if the polygon vertices go colckwise around the point.</span>
+0014 
+0015 
+0016 <span class="comment">%      Copyright (C) Mike Brookes 2009</span>
+0017 <span class="comment">%      Version: $Id: v_polygonwind.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0020 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0023 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0024 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0025 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0026 <span class="comment">%   (at your option) any later version.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0029 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0030 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0031 <span class="comment">%   GNU General Public License for more details.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0034 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0035 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 n=size(p,1);
+0038 m=size(x,1);
+0039 q=zeros(2,n+1);
+0040 q(:,1:n)=p';
+0041 q(:,n+1)=q(:,1);      <span class="comment">% append an extra point</span>
+0042 i=1:n;
+0043 j=2:n+1;
+0044 ym=repmat(2,m,1);
+0045 yn=repmat(2,1,n);
+0046 w=sum((2*((repmat(q(1,i).*q(2,j)-q(2,i).*q(1,j),m,1)+x(:,1)*(q(2,i)-q(2,j))+x(:,2)*(q(1,j)-q(1,i)))&gt;0)-1).*abs((q(ym,j)&gt;x(:,yn))-(q(ym,i)&gt;x(:,yn))),2)/2;
+0047 <span class="keyword">if</span> ~nargout
+0048     w0=w==0;
+0049     wp=w&gt;0;
+0050     wn=w&lt;0;
+0051     plot(q(1,:),q(2,:),<span class="string">'k-'</span>,x(w0,1),x(w0,2),<span class="string">'go'</span>,x(wp,1),x(wp,2),<span class="string">'r+'</span>,x(wn,1),x(wn,2),<span class="string">'bx'</span>);
+0052     mnx=[1.05 -0.05;-0.05 1.05]*[min([p; x]);max([p; x])];
+0053     set(gca,<span class="string">'xlim'</span>,mnx(:,1)',<span class="string">'ylim'</span>,mnx(:,2)');
+0054     title(<span class="string">'Winding numbers: o=0, +=pos, x=neg'</span>);
+0055 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

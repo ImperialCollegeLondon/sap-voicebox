@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_histndim</title>
+  <meta name="keywords" content="v_histndim">
+  <meta name="description" content="HISTNDIM - generates and/or plots an n-dimensional histogram">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_histndim.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_histndim
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>HISTNDIM - generates and/or plots an n-dimensional histogram</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [v,t]=v_histndim(x,b,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">HISTNDIM - generates and/or plots an n-dimensional histogram
+
+  Inputs:  X(m,d)   is the input data: each row is one d-dimensiona data point
+           B(3,d)   specifies the histogram bins.
+                         B(1,:) gives the number of bins in each dmension [default 10]
+                         B(2,:) gives the minimum of the first bin in each dimension [default min(X)]
+                         B(3,:) gives the maximum of the last bin in each dimension [default max(X)]
+                    If B has only one column, the same values are use for al dimensions 
+                    If B(1,i)=0 then that dimension will be ignored (and excluded from V)
+           MODE     is a character string containing a combination of the following:
+                        'z' for zero base in the 2D plot [default base = min(V)]
+                        'p' to scale V as probabilities [default actual counts]
+                        'h' to plot a histogam even if output arguments are present
+
+ Outputs:  V        d-dimensional array containing the histogram counts
+           T        d-element cell array. d{i} contains the bin boundary values for
+                    the i'th dimension. The length of d{i} is one more than the number of bins
+                    in that dimension.
+
+                    Note that if any of B(1,:) are zero then the number of dimensions in V and elements
+                    of T will be correspondingly reduced.
+
+ Example: v_histndim(randn(100000,2),[20 -3 3]','pz');</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [v,t]=v_histndim(x,b,mode)</a>
+0002 <span class="comment">%HISTNDIM - generates and/or plots an n-dimensional histogram</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  X(m,d)   is the input data: each row is one d-dimensiona data point</span>
+0005 <span class="comment">%           B(3,d)   specifies the histogram bins.</span>
+0006 <span class="comment">%                         B(1,:) gives the number of bins in each dmension [default 10]</span>
+0007 <span class="comment">%                         B(2,:) gives the minimum of the first bin in each dimension [default min(X)]</span>
+0008 <span class="comment">%                         B(3,:) gives the maximum of the last bin in each dimension [default max(X)]</span>
+0009 <span class="comment">%                    If B has only one column, the same values are use for al dimensions</span>
+0010 <span class="comment">%                    If B(1,i)=0 then that dimension will be ignored (and excluded from V)</span>
+0011 <span class="comment">%           MODE     is a character string containing a combination of the following:</span>
+0012 <span class="comment">%                        'z' for zero base in the 2D plot [default base = min(V)]</span>
+0013 <span class="comment">%                        'p' to scale V as probabilities [default actual counts]</span>
+0014 <span class="comment">%                        'h' to plot a histogam even if output arguments are present</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Outputs:  V        d-dimensional array containing the histogram counts</span>
+0017 <span class="comment">%           T        d-element cell array. d{i} contains the bin boundary values for</span>
+0018 <span class="comment">%                    the i'th dimension. The length of d{i} is one more than the number of bins</span>
+0019 <span class="comment">%                    in that dimension.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%                    Note that if any of B(1,:) are zero then the number of dimensions in V and elements</span>
+0022 <span class="comment">%                    of T will be correspondingly reduced.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% Example: v_histndim(randn(100000,2),[20 -3 3]','pz');</span>
+0025 
+0026 <span class="comment">%       Copyright (C) Mike Brookes 2004</span>
+0027 <span class="comment">%      Version: $Id: v_histndim.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0030 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0033 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0034 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0035 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0036 <span class="comment">%   (at your option) any later version.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0039 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0040 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0041 <span class="comment">%   GNU General Public License for more details.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0044 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0045 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0047 
+0048 [n,d]=size(x);
+0049 <span class="keyword">if</span> nargin&lt;3
+0050     mode=<span class="string">' '</span>;
+0051     <span class="keyword">if</span>(nargin&lt;2)
+0052         b=repmat(10,1,d);
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">end</span>
+0055 
+0056 <span class="keyword">if</span> size(b,2)==1
+0057     b=repmat(b,1,d);
+0058 <span class="keyword">end</span>
+0059 <span class="keyword">if</span> size(b,1)&lt;3
+0060     mi=min(x,[],1);
+0061     ma=max(x,[],1);
+0062     w=(ma-mi)./(b(1,:)-0.001);  <span class="comment">% nudge slightly to make sure al points included</span>
+0063     b(3,:)=ma+0.0005*w;
+0064     b(2,:)=mi-0.0005*w;
+0065 <span class="keyword">end</span>
+0066 
+0067 acd=find(b(1,:)&gt;0);
+0068 sv=b(1,acd);
+0069 nbt=prod(sv);
+0070 t=cell(length(acd),1);
+0071 
+0072 <span class="comment">% loop through each dimension</span>
+0073 k=1;        <span class="comment">% indexing factor</span>
+0074 ok=repmat(1&gt;0,n,1);
+0075 ix=repmat(nbt-sum(cumprod(sv)),n,1);
+0076 <span class="keyword">for</span> i=1:length(acd)
+0077     j=acd(i);
+0078     bw=b(1,j)/(b(3,j)-b(2,j));
+0079     bi=ceil((x(:,j)-b(2,j))*bw);
+0080     ok=ok &amp; (bi&gt;0) &amp; (bi&lt;=b(1,j));
+0081     ix(ok)=ix(ok)+k*bi(ok);
+0082     k=k*b(1,j);
+0083     t{i}=b(2,j)+(0:b(1,j))/bw;
+0084 <span class="keyword">end</span>
+0085 v=full(sparse(ix(ok),1,1,nbt,1));
+0086 <span class="keyword">if</span> length(sv)&gt;1
+0087     v=reshape(v,sv);
+0088 <span class="keyword">end</span>
+0089 <span class="keyword">if</span> any(mode==<span class="string">'p'</span>)
+0090     v=v/n;
+0091 <span class="keyword">end</span>
+0092 
+0093 <span class="keyword">if</span> ~nargout | any(mode==<span class="string">'h'</span>)
+0094     svg=find(sv&gt;1);
+0095     <span class="keyword">if</span> length(svg)==1
+0096         j=acd(svg);
+0097         bar(b(2,j)+(0.5:sv(svg)-0.5)*(b(3,j)-b(2,j))/b(1,j),v(:));
+0098     <span class="keyword">elseif</span> length(svg)==2
+0099         j=acd(svg(1));
+0100         k=acd(svg(2));
+0101         bj=b(1,j);
+0102         bk=b(1,k);
+0103         <span class="comment">%     imagesc(b(2:3,k),b(2:3,j),reshape(v,b(1,j),b(1,k)));</span>
+0104         vda=kron(reshape(v,bj,bk),[1 1;1 1]);
+0105         <span class="keyword">if</span> any(mode==<span class="string">'z'</span>)
+0106             ba=0;
+0107         <span class="keyword">else</span>
+0108             ba=min(vda(:));
+0109         <span class="keyword">end</span>
+0110         vda=[repmat(ba,1,2*bk+2);repmat(ba,2*bj,1) vda repmat(ba,2*bj,1);repmat(ba,1,2*bk+2)];
+0111         jda=kron(t{svg(1)},[1 1]);
+0112         jda=jda-(jda(3)-jda(2))*0.01*[-0.5 (-1).^(1:2*bj) 0.5]; <span class="comment">% nudge slightly to avoid MATLAB plotting bug</span>
+0113         kda=kron(t{svg(2)},[1 1]);
+0114         kda=kda-(kda(3)-kda(2))*0.01*[-0.5 (-1).^(1:2*bk) 0.5];
+0115         surf(jda,kda,vda');
+0116         ylabel(sprintf(<span class="string">'Axis %d'</span>,k));
+0117         xlabel(sprintf(<span class="string">'Axis %d'</span>,j));
+0118         colorbar;
+0119     <span class="keyword">else</span>
+0120         fprintf(2,<span class="string">'Error in %s: Cannot plot 3-D histogram\n'</span>,mfilename);
+0121     <span class="keyword">end</span>
+0122 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

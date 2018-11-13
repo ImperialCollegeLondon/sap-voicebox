@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<title>Matlab routines for Linear Predictive Coding (LPC)</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+<h1>Matlab routines for Rotations</h1>
+<hr>
+<p>Return to <a href="voicebox.html">voicebox home page</a></p>
+<hr>
+<h2>Rotation Representations</h2>
+<p>Rotations can be represented in any of the eight forms listed below; each has 
+a two-letter mnemonic given in the first column. The conversion routine from 
+form <i>xx</i> to form <i>yy</i> is called rot<em>xx</em>2<em>yy</em>. The 
+second column lists the parameters required: <b>A</b>,<b>a</b>,<i>a</i>,a denote 
+matrix, vector, scalar and text arguments and the subscripts indicate their 
+dimension. The <i>ro</i> and <i>pl</i> forms can be used in a <i>n</i>-dimensional space; the 
+other forms are restricted to 3-dimensions. To visualize a rotation, call 
+rotqr2ro(q) without any output argument.</p>
+<h2>Rotation conventions</h2>
+<p>In 3-dimensions, the <b>x</b>, <b>y</b> and <b>z</b> axes form a right-handed 
+triple. A positive rotation of pi/2 radians around one of these axes will rotate
+<b>y</b>-&gt;<b>z</b>, <b>z</b>-&gt;<b>x</b> or <b>x</b>-&gt;<b>y</b> respectively, 
+i.e. it corresponds to a clockwise rotation when looking along the corresponding 
+axis from the origin..</p>
+<p>Applying a sequence of rotations to an object can have one of four 
+interpretations. We show below the Euler angle (eu) representation for each case 
+where we do a rotation of 0.1 around <b>z</b> followed by a rotation of 0.2 
+around <b>x</b>; in each case, multiplying by the rotation matrix converts the 
+coordinates of a point on the object to its new value. </p>
+<ol>
+  <li>m='zx', t=[0.1; 0.2]: keeping the axes fixed in space, rotate the object first around the <b>z</b> 
+  axis and then rotate it around 
+  the original <b>x</b> axis. . 
+  This is the point of view from which the routines have been written.</li>
+  <li>m='xz', t=[0.2; 
+  0.1]: rotate the object&nbsp; first around the <b>z</b> axis and then rotate it 
+  around the line on the object that was originally aligned with the <b>x</b> 
+  axis (i.e. the rotation axes have moved with the object).</li>
+  <li>m='xz', t=[-0.2; -0.1]: keeping the object fixed in space, rotate the frame of reference around 
+  the <b>z</b> axis and then rotate it around the original <b>x</b> axis (which 
+	has not moved relative to the object).</li>
+	<li>m='zx', t=[-0.1; -0.2]: keeping the object fixed in space, rotate the frame of reference around 
+  the <b>z</b> axis and then rotate it around the new position of the <b>x</b> 
+  	axis.</li>
+</ol>
+<table border="0" cellpadding="6" cellspacing="0" width="100%">
+<tr>
+<td valign="top" width="50"><b>Code</b></td>
+<td valign="top" width="70"><b>Params</b></td>
+<td valign="top" width="120"><b>Convert from</b></td>
+<td valign="top" width="120"><b>Convert to</b></td>
+<td valign="top"><b>Description</b></td>
+</tr>
+<tr>
+<td valign="top" width="50">ro</td>
+<td valign="top" width="70"><b>R</b><i><sub>n#n</sub></i></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_roteu2ro.html">eu</a>,
+<a href="mdoc/v_mfiles/v_rotpl2ro.html">pl</a>,
+<a href="mdoc/v_mfiles/v_rotqr2ro.html">qr</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotro2eu.html">eu</a>,
+<a href="mdoc/v_mfiles/v_rotro2pl.html">pl</a>,
+<a href="mdoc/v_mfiles/v_rotro2qr.html">qr</a></td>
+<td valign="top"><b>Rotation Matrix:</b> This is an <i>n</i> by <i>n</i> 
+rotation matrix. Multiplying the coordinates of an object by R gives the 
+coordinates of the rotated object. [<a href="http://www.ee.ic.ac.uk/hp/staff/dmb/matrix/special.html#Rotation">rotation 
+matrix properties</a>]</td>
+</tr>
+<tr>
+<td valign="top" width="50">eu</td>
+<td valign="top" width="70">m,<b>t</b><sub>3</sub></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqr2eu.html">qr</a>,
+<a href="mdoc/v_mfiles/v_rotro2eu.html">ro</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_roteu2qr.html">qr</a>,
+<a href="mdoc/v_mfiles/v_roteu2ro.html">ro</a></td>
+<td valign="top"><b>Euler Angles: t</b> contains a sequence of &quot;euler angles&quot; 
+while m contains the sequence of axes around which the rotations should be 
+performed (e.g. 'xzy' means rotate around <i>x</i> first). The axes are fixed in 
+space and do not rotate with the object.</td>
+</tr>
+<tr>
+<td valign="top" width="50">ax</td>
+<td valign="top" width="70"><b>a</b><sub>3</sub>,<i>t</i></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqr2ax.html">qr</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotax2qr.html">qr</a></td>
+<td valign="top"><b>Axis of Rotation: </b>the axis of rotation is <b>a</b>, 
+while <i>t</i> gives the rotation angle in radians.</td>
+</tr>
+<tr>
+<td valign="top" width="50">pl</td>
+<td valign="top" width="70"><b>u</b><sub><i>n</i></sub>,<b>v</b><sub><i>n</i></sub>,<i>t</i></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotro2pl.html">ro</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotpl2ro.html">ro</a></td>
+<td valign="top"><b>Plane of Rotation:</b> The plane of rotation is that 
+containing <b>u</b> and <b>v</b> while <i>t</i> gives the rotation angle in 
+radians. If t is omitted, the rotation moves direction <b>u</b> to direction <b>
+v</b>.</td>
+</tr>
+<tr>
+<td valign="top" width="50">qr</td>
+<td valign="top" width="70"><b>q</b><sub>4</sub></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_roteu2qr.html">eu</a>,
+<a href="mdoc/v_mfiles/v_rotmr2qr.html">mr</a>,
+<a href="mdoc/v_mfiles/v_rotqc2qr.html">qc</a>, <a href="mdoc/v_mfiles/v_rotro2qr.html">ro</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqr2ax.html">ax</a>,
+<a href="mdoc/v_mfiles/v_rotqr2eu.html">eu</a>, <a href="mdoc/v_mfiles/v_rotqr2mr.html">mr</a>,
+<a href="mdoc/v_mfiles/v_rotqr2qc.html">qc</a>, <a href="mdoc/v_mfiles/v_rotqr2ro.html">ro</a></td>
+<td valign="top"><b>Real Quaternion Vector:</b> <b>q </b>= [<i>c</i>; <i>s</i>*<b>a</b>] 
+where <i>c</i>=cos(<i>t</i>/2), <i>s</i>=sin(<i>t</i>/2) and <b>a</b> is the 
+axis of rotation. The values <b>q</b> and -<b>q</b> represent the same rotation. 
+[<a href="http://www.ee.ic.ac.uk/hp/staff/dmb/matrix/special.html#Quaternion">quaternion 
+properties</a>]</td>
+</tr>
+<tr>
+<td valign="top" width="50">mr</td>
+<td valign="top" width="70"><b>Q</b><sub>4#4</sub></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqr2mr.html">qr</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotmr2qr.html">qr</a></td>
+<td valign="top"><b>Real Quaternion Matrix:</b> A 4 by 4 real matrix whose first 
+column is the real quaternion vector defined above. Multiplication of quaternion 
+matrices is homomorphic to multiplication of the corresponding rotation 
+matrices.</td>
+</tr>
+<tr>
+<td valign="top" width="50">qc</td>
+<td valign="top" width="70"><b>q</b><sub>2</sub></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotmc2qc.html">mc</a>, <a href="mdoc/v_mfiles/v_rotqr2qc.html">qr</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqc2mc.html">mc</a>,
+<a href="mdoc/v_mfiles/v_rotqc2qr.html">qr</a></td>
+<td valign="top"><b>Complex Quaternion Vector:</b> A 2 element vector of the 
+form <b>a</b>+j<b>b</b>&nbsp; where [<b>a</b>; <b>b</b>] is the real quaternion 
+vector defined above.</td>
+</tr>
+<tr>
+<td valign="top" width="50">mc</td>
+<td valign="top" width="70"><b>Q</b><sub>2#2</sub></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqc2mc.html">qc</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotmc2qc.html">qc</a></td>
+<td valign="top"><b>Complex Quaternion Matrix:</b>&nbsp; A 2 by 2 complex matrix 
+whose first column is the complex quaternion vector defined above. 
+Multiplication of quaternion matrices is homomorphic to multiplication of the 
+corresponding rotation matrices.</td>
+</tr>
+</table>
+<p>&nbsp;</p>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6956824-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

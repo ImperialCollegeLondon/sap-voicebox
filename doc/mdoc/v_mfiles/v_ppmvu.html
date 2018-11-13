@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_ppmvu</title>
+  <meta name="keywords" content="v_ppmvu">
+  <meta name="description" content="V_PPMVU calculate PPM, VU or EBU level of an audio signal [V,FX,FX1]=(X,FSX,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_ppmvu.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_ppmvu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_PPMVU calculate PPM, VU or EBU level of an audio signal [V,FX,FX1]=(X,FSX,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [v,fx,fx1]=v_ppmvu(x,fsx,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_PPMVU calculate PPM, VU or EBU level of an audio signal [V,FX,FX1]=(X,FSX,M)
+
+ Usage: (1) v=v_ppmvu(x,fs,'a')      % calculate PPM level of signal x with sampling freq fs
+        (2) [v,f]=v_ppmvu(x,fs,'aw') % calculate PPM + fast version as well
+        (3) v=v_ppmvu(x,fs,'au')     % calculate VU level in linear units rather than dB
+        (4) v=v_ppmvu(x,fs,'c')      % calculate VU level
+        (5) v=v_ppmvu(x,fs,'e')      % calculate EBU loudness level
+        (6) [v1,fx]=v_ppmvu(x1,fs,'a')   
+                 v2=v_ppmvu(x2,fx)   % process in chunks: same as  v_ppmvu([x1; x2],fs,'a')
+
+  Inputs: x = input signal, one **column** per channel
+          fsx = sample frequency or fx output from a previous call
+          m = either a structure with algorithm parameters (see below)
+              or an attack/decay time constsant or a character string:
+              'a' UK PPM characteristic [default]
+              'b' DIN PPM
+              'c' VU American
+              'd' VU French
+              'e' EBU short   [default toggle: 'q']
+              'f' EBU medium  [default toggle: 'q']
+            followed by any combination of modifier toggles:
+              'z' remove mean (not yet implemented)
+              'p' preemphasis (not yet implemented)
+              's' set rise time to zero
+              'o' oversample x 4
+              'w' give fast output (with 0 decay time) as well as slow output
+              'v' plot graph
+              'q' average squared signal
+              'u' output magnitude (or mean square value if 'q') instead of dB
+
+ Outputs:  y = selected output (same size as x)
+           fx = cell array holding algorithm state
+                or, if 'w' option specified, the fast version of the output
+           fx1 = cell array holding algorithm state (only if 'w' specified)
+
+ Algorithm Parameters:
+           mm   text string with options
+           ta   attach time constant or zero if no attack smoothing (seconds)
+           tm   averaging filter duration or zero (seconds)
+           td   decay time constant or zero if no decay smoothing (seconds)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [v,fx,fx1]=v_ppmvu(x,fsx,m)</a>
+0002 <span class="comment">%V_PPMVU calculate PPM, VU or EBU level of an audio signal [V,FX,FX1]=(X,FSX,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) v=v_ppmvu(x,fs,'a')      % calculate PPM level of signal x with sampling freq fs</span>
+0005 <span class="comment">%        (2) [v,f]=v_ppmvu(x,fs,'aw') % calculate PPM + fast version as well</span>
+0006 <span class="comment">%        (3) v=v_ppmvu(x,fs,'au')     % calculate VU level in linear units rather than dB</span>
+0007 <span class="comment">%        (4) v=v_ppmvu(x,fs,'c')      % calculate VU level</span>
+0008 <span class="comment">%        (5) v=v_ppmvu(x,fs,'e')      % calculate EBU loudness level</span>
+0009 <span class="comment">%        (6) [v1,fx]=v_ppmvu(x1,fs,'a')</span>
+0010 <span class="comment">%                 v2=v_ppmvu(x2,fx)   % process in chunks: same as  v_ppmvu([x1; x2],fs,'a')</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%  Inputs: x = input signal, one **column** per channel</span>
+0013 <span class="comment">%          fsx = sample frequency or fx output from a previous call</span>
+0014 <span class="comment">%          m = either a structure with algorithm parameters (see below)</span>
+0015 <span class="comment">%              or an attack/decay time constsant or a character string:</span>
+0016 <span class="comment">%              'a' UK PPM characteristic [default]</span>
+0017 <span class="comment">%              'b' DIN PPM</span>
+0018 <span class="comment">%              'c' VU American</span>
+0019 <span class="comment">%              'd' VU French</span>
+0020 <span class="comment">%              'e' EBU short   [default toggle: 'q']</span>
+0021 <span class="comment">%              'f' EBU medium  [default toggle: 'q']</span>
+0022 <span class="comment">%            followed by any combination of modifier toggles:</span>
+0023 <span class="comment">%              'z' remove mean (not yet implemented)</span>
+0024 <span class="comment">%              'p' preemphasis (not yet implemented)</span>
+0025 <span class="comment">%              's' set rise time to zero</span>
+0026 <span class="comment">%              'o' oversample x 4</span>
+0027 <span class="comment">%              'w' give fast output (with 0 decay time) as well as slow output</span>
+0028 <span class="comment">%              'v' plot graph</span>
+0029 <span class="comment">%              'q' average squared signal</span>
+0030 <span class="comment">%              'u' output magnitude (or mean square value if 'q') instead of dB</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% Outputs:  y = selected output (same size as x)</span>
+0033 <span class="comment">%           fx = cell array holding algorithm state</span>
+0034 <span class="comment">%                or, if 'w' option specified, the fast version of the output</span>
+0035 <span class="comment">%           fx1 = cell array holding algorithm state (only if 'w' specified)</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% Algorithm Parameters:</span>
+0038 <span class="comment">%           mm   text string with options</span>
+0039 <span class="comment">%           ta   attach time constant or zero if no attack smoothing (seconds)</span>
+0040 <span class="comment">%           tm   averaging filter duration or zero (seconds)</span>
+0041 <span class="comment">%           td   decay time constant or zero if no decay smoothing (seconds)</span>
+0042 
+0043 <span class="comment">%      Copyright (C) Mike Brookes 2013</span>
+0044 <span class="comment">%      Version: $Id: v_ppmvu.m 3387 2013-08-23 12:32:47Z dmb $</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0047 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0051 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0052 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0053 <span class="comment">%   (at your option) any later version.</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0056 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0057 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0058 <span class="comment">%   GNU General Public License for more details.</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0061 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0062 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0063 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0064 
+0065 <span class="comment">% define persistent constants</span>
+0066 <span class="keyword">persistent</span> m4 k4 h1 g1 tamd deft p0
+0067 <span class="keyword">if</span> isempty(m4)
+0068     <span class="comment">% upsample by 4 using two cascaded half-band filters</span>
+0069     m4=5;   <span class="comment">% one quarter of the first filter order</span>
+0070     h1f=kaiser(4*m4+1,5.3)'.*sinc(-m4:0.5:m4);
+0071     h1=h1f(2:2:4*m4);
+0072     k4=3;
+0073     g1f=kaiser(4*k4+1,5.3)'.*sinc(-k4:0.5:k4);
+0074     g1=g1f(2:2:4*k4);
+0075     tamd=[0.00632 0 1.01335; <span class="comment">% 'a' UK PPM characteristic [default]</span>
+0076         0.00316 0 0.73830; <span class="comment">% 'b' DIN PPM</span>
+0077         0.10433 0 0; <span class="comment">% 'c' VU American</span>
+0078         0.13089 0 0; <span class="comment">% 'd' VU French</span>
+0079         0 0.4 0; <span class="comment">% 'e' EBU momentary</span>
+0080         0 3 0]; <span class="comment">% 'f' EBU short</span>
+0081     deft={<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">'q'</span>,<span class="string">'q'</span>};
+0082     p0.mm=<span class="string">'a'</span>;
+0083     p0.ta=0;
+0084     p0.tm=0;
+0085     p0.td=0;
+0086 <span class="keyword">end</span>
+0087 <span class="comment">% decode input arguments</span>
+0088 <span class="keyword">if</span> iscell(fsx)
+0089     fx=fsx;
+0090     [nx,nc]=size(x);
+0091     fsp=fx{1};
+0092     fsx=fsp(1);
+0093     fy=fsp(2);
+0094     nt=fsp(3);
+0095     nm=fsp(4);
+0096     p=fx{2};
+0097     mop=fx{3};
+0098 <span class="keyword">else</span>
+0099     p=p0;  <span class="comment">% default values</span>
+0100     <span class="keyword">if</span> nargin&lt;3 || isempty(m)
+0101         m=<span class="string">'a'</span>;
+0102     <span class="keyword">end</span>
+0103     <span class="keyword">if</span> ischar(m)
+0104         p.mm=m;
+0105         ix=m(1)-<span class="string">'a'</span>+1;
+0106         <span class="keyword">if</span> ix&lt;=0 || ix&gt;6
+0107             ix=1;
+0108         <span class="keyword">end</span>
+0109         p.ta=tamd(ix,1);
+0110         p.tm=tamd(ix,2);
+0111         p.td=tamd(ix,3);
+0112         p.mm=[p.mm deft{ix}]; <span class="comment">% add in default toggles</span>
+0113     <span class="keyword">elseif</span> isstruct(m)
+0114         p=m;
+0115     <span class="keyword">else</span>
+0116         p.mm=<span class="string">' '</span>;
+0117         p.ta=m;
+0118         p.tm=0;
+0119         p.td=m;
+0120     <span class="keyword">end</span>
+0121     [nx,nc]=size(x);
+0122     mop=rem(sum(repmat(<span class="string">'zpsowvqu'</span>,length(p.mm),1)-p.mm(ones(8,1),:)'==0,1),2); <span class="comment">% set option toggles</span>
+0123     fy=fsx*(1+3*mop(4)); <span class="comment">% effective sample rate</span>
+0124     nt=round(fy*0.1);       <span class="comment">% 0.1 s resolution in samples fro MA filter</span>
+0125     nm=round(fy*p.tm/nt);   <span class="comment">% number of blocks for MA filter</span>
+0126     fsp=[fsx fy nt nm];
+0127     fx={fsp p mop zeros(m4,nc),zeros(2*m4-1,nc),zeros(k4,nc),zeros(2*k4-1,nc), zeros(1,nc), 0, zeros(nm+1,nc), zeros(0,nc)};
+0128 <span class="keyword">end</span>
+0129 
+0130 <span class="comment">% Stage 1: oversampling we use two cascaded half-band filters to upsample by 4</span>
+0131 
+0132 <span class="keyword">if</span> mop(4)
+0133     nx2=2*nx;
+0134     v=zeros(nx2,nc);
+0135     v(1:2:2*m4,:)=fx{4};
+0136     v(2*m4+1:2:nx2,:)=x(1:nx-m4,:);
+0137     fx{4}=x(nx-m4+1:nx,:);
+0138     [v(2:2:nx2,:),fx{5}]=filter(h1,1,x,fx{5});   <span class="comment">% delayed by 2*m4 samples</span>
+0139     nx4=4*nx;
+0140     y=zeros(nx4,nc);
+0141     y(1:2:2*k4,:)=fx{6};
+0142     y(2*k4+1:2:nx4-1,:)=v(1:nx2-k4,:);
+0143     fx{6}=v(nx2-k4+1:nx2,:);
+0144     [y(2:2:nx4,nc),fx{7}]=filter(g1,1,v,fx{7});   <span class="comment">% delayed by 4*m4+2*k4 samples</span>
+0145 <span class="keyword">else</span>
+0146     y=x;
+0147 <span class="keyword">end</span>
+0148 ty=1/fy;
+0149 <span class="comment">% Stage 2 make positive</span>
+0150 <span class="keyword">if</span> mop(7)
+0151     y=y.^2;
+0152 <span class="keyword">else</span>
+0153     y=abs(y);
+0154 <span class="keyword">end</span>
+0155 <span class="comment">% Stage 2: attack filter</span>
+0156 <span class="keyword">if</span> p.ta&gt;0 &amp;&amp; ~mop(3)
+0157     za=exp(-ty/p.ta);
+0158     [y,fx{8}]=filter(1-za,[1 -za],y,fx{8});
+0159 <span class="keyword">end</span>
+0160 
+0161 <span class="comment">% Stage 3: moving average filter</span>
+0162 <span class="keyword">if</span> nm&gt;0
+0163     ny=size(y,1);
+0164     y=cumsum(y,1);
+0165     nr=fx{9};
+0166     jj=nt-nr:nt:ny; <span class="comment">% end of frame indices</span>
+0167     kk=length(jj);
+0168     <span class="keyword">if</span> kk&gt;0
+0169         nmkk=nm+kk;
+0170         v=zeros(nmkk,nc);
+0171         v(nm+2:nmkk,:)=y(jj(2:kk),:)-y(jj(1:kk-1),:); <span class="comment">% v(:,nc) contains the sum of 0.1 second blocks</span>
+0172         v(nm+1,:)=y(jj(1),:)+fx{10}(2,:);
+0173         fx{10}(2,:)=y(ny,:)-y(jj(kk),:);
+0174         v(2:nm,:)=fx{10}(3:nm+1,:);   <span class="comment">% saved values</span>
+0175         fx{10}(3:nm+1,:)=v(2+kk:nmkk,:);
+0176         v=cumsum(v,1);
+0177         v(nm+1:nmkk,:)=v(nm+1:nmkk,:)-v(1:kk,:); <span class="comment">% perform MA filter</span>
+0178         v(nm,:)=fx{10}(1,:);                <span class="comment">% final MA output from previous chunk</span>
+0179         y=v(nm+floor((nr+1:nr+ny)/nt),:)/(nm*nt);   <span class="comment">% copy MA ouptuts into output buffer</span>
+0180         fx{10}(1,:)=v(nmkk,:);                <span class="comment">% save the final MA filter output for the next chunk</span>
+0181         fx{9}=ny-jj(kk);                    <span class="comment">% update the length of the tail</span>
+0182     <span class="keyword">else</span>                                    <span class="comment">% no completed 100 ms blocks in this chunk</span>
+0183         fx{9}(1)=ny+nr;                     <span class="comment">% update the length of the tail</span>
+0184         fx{10}(2,:)=y(ny,:)+fx{10}(2,:);    <span class="comment">% update the sum of the tail</span>
+0185         y=fx{10}(ones(ny,1),:);             <span class="comment">% set outputs to the final MA output from previous chunk</span>
+0186     <span class="keyword">end</span>
+0187 <span class="keyword">end</span>
+0188 <span class="comment">% Stage 4: decay filter</span>
+0189 <span class="keyword">if</span> p.td&gt;0
+0190     [v,vk,fx{11}]=maxfilt(y,exp(-ty/p.td),Inf,1,fx{11});
+0191 <span class="keyword">else</span>
+0192     v=y;
+0193 <span class="keyword">end</span>
+0194 
+0195 <span class="comment">% Stage 5: decimate and ouput</span>
+0196 <span class="keyword">if</span> mop(5)    <span class="comment">% if 'w' option specified, output y as well</span>
+0197     <span class="keyword">if</span> mop(4) <span class="comment">% if oversampling, we need to decimate</span>
+0198         y=y(1:4:<span class="keyword">end</span>,:);
+0199         v=v(1:4:<span class="keyword">end</span>,:);
+0200     <span class="keyword">end</span>
+0201     <span class="keyword">if</span> ~mop(8)
+0202         y=(20-10*mop(7))*log10(y);
+0203         v=(20-10*mop(7))*log10(v);
+0204     <span class="keyword">end</span>
+0205     fx1=fx;
+0206     fx=y;
+0207 <span class="keyword">else</span>
+0208     <span class="keyword">if</span> mop(4) <span class="comment">% if oversampling, we need to decimate</span>
+0209         v=v(1:4:<span class="keyword">end</span>,:);
+0210     <span class="keyword">end</span>
+0211     <span class="keyword">if</span> ~mop(8)
+0212         v=(20-10*mop(7))*log10(v);
+0213     <span class="keyword">end</span>
+0214 <span class="keyword">end</span>
+0215 <span class="keyword">if</span> mop(6) || nargout==0
+0216     t=(1:length(x))/fsx;
+0217     ax(1)=subplot(211);
+0218     plot(t,x,<span class="string">'-b'</span>);
+0219     <span class="keyword">if</span> mop(7)&gt;0 &amp;&amp; mop(8)&gt;0
+0220         v=sqrt(v);
+0221         <span class="keyword">if</span> mop(5)
+0222             y=sqrt(y);
+0223         <span class="keyword">end</span>
+0224     <span class="keyword">end</span>
+0225     ax(2)=subplot(212);
+0226     <span class="keyword">if</span> mop(5)    <span class="comment">% if 'w' option specified, output y as well</span>
+0227         plot(t,v,<span class="string">'-b'</span>,t,y,<span class="string">'-r'</span>);
+0228     <span class="keyword">else</span>
+0229         plot(t,v,<span class="string">'-b'</span>);
+0230     <span class="keyword">end</span>
+0231     <span class="keyword">if</span> ~mop(8)
+0232         set(gca,<span class="string">'ylim'</span>,[max(min(v)-1,max(v)-40) max(v)+1]);
+0233         ylabel(<span class="string">'dB'</span>);
+0234     <span class="keyword">elseif</span> mop(7)
+0235         ylabel(<span class="string">'x_{RMS}'</span>);
+0236     <span class="keyword">else</span>
+0237         ylabel(<span class="string">'|x|'</span>);
+0238     <span class="keyword">end</span>
+0239     linkaxes(ax,<span class="string">'x'</span>);
+0240     xlabel([<span class="string">'Time ('</span> xticksi <span class="string">'s)'</span>]);
+0241 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

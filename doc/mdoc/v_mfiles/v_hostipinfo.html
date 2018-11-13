@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_hostipinfo</title>
+  <meta name="keywords" content="v_hostipinfo">
+  <meta name="description" content="HOSTIPINFO get host name and internet connection information">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_hostipinfo.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_hostipinfo
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>HOSTIPINFO get host name and internet connection information</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ipinfo,tt]=v_hostipinfo(m,t) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">HOSTIPINFO get host name and internet connection information
+  Usage:    hostname   = v_hostipinfo;        % computer name
+            ip_address = v_hostipinfo('i');   % IP address
+
+  Inputs:   m  mode input selects the information to output (see below)
+            t  optional output from an &quot;ipconfig -all&quot; command
+
+  Outputs:  ipinfo   cell array with one row per IP connection. The number
+                     of columns is detemined by the m input (see below).
+                     If only a single output value is selected by the m input, then
+                     ipinfo will be a string rather than a cell array.
+            tt       output from the &quot;ipconfig -all&quot; command
+
+  The &quot;m&quot; input selects whch IP connections to supply information about
+  (rows of IPINFO) and what information to supply (columns of IPINFO).
+  
+  Row selection: A   include all connections
+                 L   Local Internet Connection [default if m non-empty]
+                 B   Bluetooth Connection
+                 P   PPP connection (e.g. a VPn connection)
+
+  Col selection: h   hostname (same for all connections) [default if m is empty]
+                 c   Connection type code: L=local, B=bluetooth, P=PPP or ?=other
+                 t   Connection type (e.g. &quot;Ethernet&quot; or &quot;PPP&quot;)
+                 n   Connection name (e.g. &quot;Local Area Connection&quot;)
+                 m   MAC address (e.g. &quot;00-53-45-00-00-00&quot;
+                 i   IP address (e.g. &quot;192.168.1.1&quot;) [default if m non-empty]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ipinfo,tt]=v_hostipinfo(m,t)</a>
+0002 <span class="comment">%HOSTIPINFO get host name and internet connection information</span>
+0003 <span class="comment">%  Usage:    hostname   = v_hostipinfo;        % computer name</span>
+0004 <span class="comment">%            ip_address = v_hostipinfo('i');   % IP address</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%  Inputs:   m  mode input selects the information to output (see below)</span>
+0007 <span class="comment">%            t  optional output from an &quot;ipconfig -all&quot; command</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Outputs:  ipinfo   cell array with one row per IP connection. The number</span>
+0010 <span class="comment">%                     of columns is detemined by the m input (see below).</span>
+0011 <span class="comment">%                     If only a single output value is selected by the m input, then</span>
+0012 <span class="comment">%                     ipinfo will be a string rather than a cell array.</span>
+0013 <span class="comment">%            tt       output from the &quot;ipconfig -all&quot; command</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%  The &quot;m&quot; input selects whch IP connections to supply information about</span>
+0016 <span class="comment">%  (rows of IPINFO) and what information to supply (columns of IPINFO).</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%  Row selection: A   include all connections</span>
+0019 <span class="comment">%                 L   Local Internet Connection [default if m non-empty]</span>
+0020 <span class="comment">%                 B   Bluetooth Connection</span>
+0021 <span class="comment">%                 P   PPP connection (e.g. a VPn connection)</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%  Col selection: h   hostname (same for all connections) [default if m is empty]</span>
+0024 <span class="comment">%                 c   Connection type code: L=local, B=bluetooth, P=PPP or ?=other</span>
+0025 <span class="comment">%                 t   Connection type (e.g. &quot;Ethernet&quot; or &quot;PPP&quot;)</span>
+0026 <span class="comment">%                 n   Connection name (e.g. &quot;Local Area Connection&quot;)</span>
+0027 <span class="comment">%                 m   MAC address (e.g. &quot;00-53-45-00-00-00&quot;</span>
+0028 <span class="comment">%                 i   IP address (e.g. &quot;192.168.1.1&quot;) [default if m non-empty]</span>
+0029 
+0030 <span class="comment">%      Copyright (C) Mike Brookes 2012</span>
+0031 <span class="comment">%      Version: $Id: v_hostipinfo.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0034 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0038 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0039 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0040 <span class="comment">%   (at your option) any later version.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0043 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0044 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0045 <span class="comment">%   GNU General Public License for more details.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0048 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0049 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 <span class="keyword">if</span> nargin&lt;2
+0053     t=evalc(<span class="string">'!ipconfig -all'</span>);
+0054     <span class="keyword">if</span> nargin&lt;1
+0055         m=<span class="string">''</span>;
+0056     <span class="keyword">end</span>
+0057 <span class="keyword">end</span>
+0058 tt=t;
+0059 <span class="keyword">if</span> ~numel(m)
+0060     m=<span class="string">'Lh'</span>;
+0061 <span class="keyword">end</span>
+0062 host=regexp(t,<span class="string">'Host Name[ .]*:\s*([\w-]*)'</span>,<span class="string">'tokens'</span>,<span class="string">'once'</span>); <span class="comment">% get host name</span>
+0063 <span class="keyword">if</span> ~numel(m)
+0064     ipinfo=host{1};
+0065 <span class="keyword">else</span>
+0066     [iad,ad]=regexp(t,<span class="string">'\n(\w*) adapter ([ \w]*):'</span>,<span class="string">'start'</span>,<span class="string">'tokens'</span>); <span class="comment">% get adapters</span>
+0067     [iadx,adx]=regexp(t,<span class="string">'\n(\w* adapter [ \w]*):'</span>,<span class="string">'start'</span>,<span class="string">'tokens'</span>); <span class="comment">% get entire adapter names</span>
+0068     [imac,mac]=regexp(t,<span class="string">'Physical Address[ .]*:\s*(\S*)'</span>,<span class="string">'start'</span>,<span class="string">'tokens'</span>); <span class="comment">% get MAC addresses</span>
+0069     [iip,ip]=regexp(t,<span class="string">'IP Address[ .]*:\s*(\S*)'</span>,<span class="string">'start'</span>,<span class="string">'tokens'</span>); <span class="comment">% get IP addresses</span>
+0070     nad=numel(iad);  <span class="comment">% number of adapters listed in ipconfig</span>
+0071     iad(nad+1)=length(t); <span class="comment">% add an extra fake adapter at the end of the list</span>
+0072     fty=<span class="string">'hctnmi'</span>; <span class="comment">% possible output fields</span>
+0073     nfty=numel(fty);    <span class="comment">% number of fields</span>
+0074     ipinfo=cell(nad,nfty); <span class="comment">% cell array to store the fields for each adapter</span>
+0075     nr=nad;
+0076     aty=<span class="string">'LBP'</span>;   <span class="comment">% types of adapter</span>
+0077     naty=numel(aty);
+0078     assx={<span class="string">'Ethernet adapter Local Area Connection'</span>; <span class="string">'Ethernet adapter Bluetooth Network Connection'</span> ; <span class="string">'PPP adapter '</span>};
+0079     <span class="keyword">for</span> i=1:nad
+0080         ipinfo{i,1}=host{1};
+0081         ipinfo(i,3:4)=ad{i};
+0082         ix=find((imac&gt;iad(i)) &amp; (imac&lt;iad(i+1)),1);
+0083         <span class="keyword">if</span> numel(ix)
+0084             ipinfo{i,5}=mac{ix}{1};
+0085         <span class="keyword">else</span>
+0086             ipinfo{i,5}=<span class="string">''</span>;
+0087         <span class="keyword">end</span>
+0088         ix=find((iip&gt;iad(i)) &amp; (iip&lt;iad(i+1)),1);
+0089         <span class="keyword">if</span> numel(ix)
+0090             ipinfo{i,6}=ip{ix}{1};
+0091         <span class="keyword">else</span>
+0092             ipinfo{i,6}=<span class="string">''</span>;
+0093         <span class="keyword">end</span>
+0094         jx=cell(length(assx),1);
+0095         <span class="keyword">for</span> j=1:length(assx)
+0096             jx{j}=strfind(adx{i}{1},assx{j});    <span class="comment">% compare adapter strings with adapter types</span>
+0097         <span class="keyword">end</span>
+0098         jx=find(~cellfun(<span class="string">'isempty'</span>,jx));
+0099         <span class="keyword">if</span> numel(jx)
+0100             ipinfo{i,2}=aty(jx);
+0101         <span class="keyword">else</span>
+0102             ipinfo{i,2}=<span class="string">'?'</span>;
+0103         <span class="keyword">end</span>
+0104     <span class="keyword">end</span>
+0105     <span class="comment">% Select the requested adapters from the rows of ipinfo{}</span>
+0106     <span class="keyword">if</span> ~any(m==<span class="string">'A'</span>)
+0107         ix=(1:naty)*(aty(ones(numel(m),1),:)'==m(ones(naty,1),:));
+0108         ix=ix(ix&gt;0);
+0109         nr=numel(ix);
+0110         <span class="keyword">if</span> ~nr
+0111             ix=1;  <span class="comment">% default to 'L' = Local Internet</span>
+0112         <span class="keyword">end</span>
+0113         jx=ix;      <span class="comment">% jx will hold first match</span>
+0114         <span class="keyword">for</span> i=1:numel(ix)
+0115             a=strmatch(aty(ix(i)),ipinfo(:,2));
+0116             <span class="keyword">if</span> numel(a)
+0117                 jx(i)=a(1);
+0118             <span class="keyword">else</span>
+0119                 jx(i)=0;
+0120             <span class="keyword">end</span>
+0121         <span class="keyword">end</span>
+0122         jx=jx(jx&gt;0);
+0123         ipinfo=ipinfo(jx,:);
+0124     <span class="keyword">end</span>
+0125     <span class="comment">% Select the requested fields from the columns of ipinfo{}</span>
+0126     ix=(1:nfty)*(fty(ones(numel(m),1),:)'==m(ones(nfty,1),:));
+0127     ix=ix(ix&gt;0);
+0128     nc=numel(ix);
+0129     <span class="keyword">if</span> ~nc
+0130         ix=6;  <span class="comment">% default to 'i' = IP address</span>
+0131     <span class="keyword">end</span>
+0132     ipinfo=ipinfo(:,ix);
+0133     <span class="keyword">if</span> nr&lt;2 &amp;&amp; nc&lt;2
+0134         ipinfo=ipinfo{1};  <span class="comment">% just output a string if only one element requested</span>
+0135     <span class="keyword">end</span>
+0136 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

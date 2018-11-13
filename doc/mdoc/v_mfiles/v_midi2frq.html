@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_midi2frq</title>
+  <meta name="keywords" content="v_midi2frq">
+  <meta name="description" content="MIDI2FRQ	Convert musical note numbers to frequencies F=(N,S)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_midi2frq.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_midi2frq
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MIDI2FRQ	Convert musical note numbers to frequencies F=(N,S)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function f=v_midi2frq(n,s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MIDI2FRQ    Convert musical note numbers to frequencies F=(N,S)
+        s is:    'e' equal tempered (default)
+            'p' pythagorean scale
+            'j' just intonation
+
+ notes are numbered in semitones with middle C being 60
+ On the equal tempered scale, note 69 (the A above middle C)
+ has a frequency of 440 Hz.
+
+ see FRQ2NOTE for the inverse transform</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function f=v_midi2frq(n,s)</a>
+0002 <span class="comment">%MIDI2FRQ    Convert musical note numbers to frequencies F=(N,S)</span>
+0003 <span class="comment">%        s is:    'e' equal tempered (default)</span>
+0004 <span class="comment">%            'p' pythagorean scale</span>
+0005 <span class="comment">%            'j' just intonation</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% notes are numbered in semitones with middle C being 60</span>
+0008 <span class="comment">% On the equal tempered scale, note 69 (the A above middle C)</span>
+0009 <span class="comment">% has a frequency of 440 Hz.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% see FRQ2NOTE for the inverse transform</span>
+0012 
+0013 <span class="comment">% Pythagorean</span>
+0014 <span class="comment">%     sharps 1 2187/2048 9/8 19683/16384 81/64 4/3 729/512  3/2 6561/4096 27/16 59049/32768 243/128 2</span>
+0015 <span class="comment">%     flats  1 256/243   9/8 32/27       81/64 4/3 1024/729 3/2 128/81    27/16 16/9        243/128 2</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Just Intonation</span>
+0018 <span class="comment">%     sharps 1 25/24 9/8 75/64 5/4 4/3 45/32  3/2 25/16 5/3 225/128 15/8 2</span>
+0019 <span class="comment">%     flats  1 16/15 9/8 6/5   5/4 4/3 108/75 3/2 8/5   5/3 18/10   15/8 2</span>
+0020 
+0021 
+0022 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0023 <span class="comment">%      Version: $Id: v_midi2frq.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0026 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0029 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0030 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0031 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0032 <span class="comment">%   (at your option) any later version.</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0035 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0036 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0037 <span class="comment">%   GNU General Public License for more details.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0040 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0041 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0042 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0043 
+0044 <span class="keyword">if</span> nargin &gt; 1
+0045   <span class="keyword">if</span> s(1)==<span class="string">'p'</span>
+0046     r=[256/243 9/8 32/27 81/64 4/3 729/512 3/2 128/81 27/16 16/9 243/128];
+0047   <span class="keyword">elseif</span> s(1)==<span class="string">'j'</span>
+0048     r=[16/15 9/8 6/5 5/4 4/3 36/25 3/2 8/5 5/3 9/5 15/8];
+0049   <span class="keyword">else</span>
+0050     r=0;
+0051   <span class="keyword">end</span>
+0052   <span class="keyword">if</span> r(1)
+0053     c=[0 0 12*log(r)/log(2)-(1:11) 0];
+0054     nm=mod(n,12);
+0055     na=floor(nm);
+0056     nb=nm-na;
+0057     f=440*exp((n+c(na+2).*(1-nb)+c(na+3).*nb-69)*log(2)/12);
+0058   <span class="keyword">else</span>
+0059     f=440*exp((n-69)*log(2)/12);
+0060   <span class="keyword">end</span>
+0061 <span class="keyword">else</span>
+0062   f=440*exp((n-69)*log(2)/12);
+0063 <span class="keyword">end</span>
+0064</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

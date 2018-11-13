@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_rotqr2ro</title>
+  <meta name="keywords" content="v_rotqr2ro">
+  <meta name="description" content="ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_rotqr2ro.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_rotqr2ro
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function r=v_rotqr2ro(q) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix
+ Inputs:
+
+     Q(4,1)   real-valued quaternion (possibly unnormalized)
+
+ Outputs:
+
+     R(3,3)   Input v_rotation matrix
+              Plots a diagram if no output specified
+
+ In the quaternion representation of a v_rotation, and q(1) = cos(t/2)
+ where t is the angle of v_rotation in the range 0 to 2pi
+ and q(2:4)/sin(t/2) is a unit vector lying along the axis of v_rotation
+ a positive v_rotation about [0 0 1] takes the X axis towards the Y axis.
+
+      Copyright (C) Mike Brookes 2007
+      Version: $Id: v_rotqr2ro.m 10865 2018-09-21 17:22:45Z dmb $
+
+   VOICEBOX is a MATLAB toolbox for speech processing.
+   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You can obtain a copy of the GNU General Public License from
+   http://www.gnu.org/copyleft/gpl.html or by writing to
+   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_roteu2ro.html" class="code" title="function r=v_roteu2ro(m,t)">v_roteu2ro</a>	ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_rotqrvec.html" class="code" title="function y=v_rotqrvec(q,x)">v_rotqrvec</a>	ROTQRVEC applies a quaternion v_rotation ot a vector array y=[q,x]</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function r=v_rotqr2ro(q)</a>
+0002 <span class="comment">%ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix</span>
+0003 <span class="comment">% Inputs:</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%     Q(4,1)   real-valued quaternion (possibly unnormalized)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Outputs:</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%     R(3,3)   Input v_rotation matrix</span>
+0010 <span class="comment">%              Plots a diagram if no output specified</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% In the quaternion representation of a v_rotation, and q(1) = cos(t/2)</span>
+0013 <span class="comment">% where t is the angle of v_rotation in the range 0 to 2pi</span>
+0014 <span class="comment">% and q(2:4)/sin(t/2) is a unit vector lying along the axis of v_rotation</span>
+0015 <span class="comment">% a positive v_rotation about [0 0 1] takes the X axis towards the Y axis.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%      Copyright (C) Mike Brookes 2007</span>
+0018 <span class="comment">%      Version: $Id: v_rotqr2ro.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0021 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0024 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0025 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0026 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0027 <span class="comment">%   (at your option) any later version.</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0030 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0031 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0032 <span class="comment">%   GNU General Public License for more details.</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0035 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0036 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0037 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0038 
+0039 <span class="keyword">persistent</span> a b c d e f g
+0040 <span class="keyword">if</span> isempty(a)
+0041     a=[1 5 9];
+0042     b=[11 16 6];
+0043     c=[16 6 11];
+0044     d=[4 8 3];
+0045     e=[10 15 14];
+0046     f=[4 2 3];
+0047     g=[2 6 7];
+0048 <span class="keyword">end</span>
+0049 p=2*(q*q.')/(q.'*q);            <span class="comment">% force normalized</span>
+0050 r=zeros(3,3);
+0051 r(a)=1-p(b)-p(c);
+0052 r(d)=p(e)-p(f);
+0053 r(g)=p(e)+p(f);
+0054 <span class="keyword">if</span> ~nargout
+0055     <span class="comment">% display rotated cube</span>
+0056     clf(<span class="string">'reset'</span>); <span class="comment">% clear current axis</span>
+0057     <span class="comment">%     vv=[0,0,0;1,0,0;0,1,0;0,0,1]*r';  % pyramid</span>
+0058     <span class="comment">%     ff=[1 2 4; 2 1 3; 3 1 4; 4 2 3];</span>
+0059     <span class="comment">%     cc=[0 1 0; 0 0 1; 1 0 0; 1 1 0];</span>
+0060     vv=[0,0,0;1,0,0;0,1,0;0,0,1;0 1 1; 1 0 1; 1 1 0; 1 1 1]*r';    <span class="comment">% cube</span>
+0061     ff=[1 2 6 4; 2 7 8 6; 7 3 5 8; 4 5 3 1; 3 7 2 1; 6 8 5 4];
+0062     <span class="comment">%     cc=[0 1 0; 1 0 0; 0 1 0; 1 0 0; 0 0 1; 0 0 1];</span>
+0063     cc=[1 0 1 0 2 2]';
+0064     pa=patch(<span class="string">'Vertices'</span>,vv,<span class="string">'Faces'</span>,ff,<span class="string">'FaceVertexCData'</span>,cc,<span class="string">'FaceColor'</span>,<span class="string">'Flat'</span>);
+0065     colormap([1 0 0; 0 1 0; 0 0 1]);
+0066     xlabel(<span class="string">'x axis'</span>);
+0067     ylabel(<span class="string">'y axis'</span>);
+0068     zlabel(<span class="string">'z axis'</span>);
+0069     title(sprintf(<span class="string">'qr = [%.2f, %.2f, %.2f, %.2f]''    initial xyz=0 are rgb'</span>,q))
+0070     axis([-1 1 -1 1 -1 1 0 1]*sqrt(3));
+0071     grid on
+0072     view(3);
+0073     axis equal;
+0074 <span class="keyword">end</span>
+0075</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

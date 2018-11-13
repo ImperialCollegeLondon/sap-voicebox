@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readhtk</title>
+  <meta name="keywords" content="v_readhtk">
+  <meta name="description" content="READHTK  read an HTK parameter file [D,FP,DT,TC,T]=(FILE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readhtk.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readhtk
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READHTK  read an HTK parameter file [D,FP,DT,TC,T]=(FILE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [d,fp,dt,tc,t]=v_readhtk(file) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READHTK  read an HTK parameter file [D,FP,DT,TC,T]=(FILE)
+
+ Input:
+    FILE = name of HTX file
+ Outputs:
+       D = data: column vector for waveforms, one row per frame for other types
+      FP = frame period in seconds
+      DT = data type (also includes Voicebox code for generating data)
+             0  WAVEFORM     Acoustic waveform
+             1  LPC          Linear prediction coefficients
+             2  LPREFC       LPC Reflection coefficients:  -v_lpcar2rf([1 LPC]);LPREFC(1)=[];
+             3  LPCEPSTRA    LPC Cepstral coefficients
+             4  LPDELCEP     LPC cepstral+delta coefficients (obsolete)
+             5  IREFC        LPC Reflection coefficients (16 bit fixed point)
+             6  MFCC         Mel frequency cepstral coefficients
+             7  FBANK        Log Fliter bank energies
+             8  MELSPEC      linear Mel-scaled spectrum
+             9  USER         User defined features
+            10  DISCRETE     Vector quantised codebook
+            11  PLP          Perceptual Linear prediction
+            12  ANON
+      TC = full type code = DT plus (optionally) one or more of the following modifiers
+               64  _E  Includes energy terms
+              128  _N  Suppress absolute energy
+              256  _D  Include delta coefs
+              512  _A  Include acceleration coefs
+             1024  _C  Compressed
+             2048  _Z  Zero mean static coefs
+             4096  _K  CRC checksum (not implemented yet)
+             8192  _0  Include 0'th cepstral coef
+            16384  _V  Attach VQ index
+            32768  _T  Attach delta-delta-delta index
+       T = text version of type code e.g. LPC_C_K</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [d,fp,dt,tc,t]=v_readhtk(file)</a>
+0002 <span class="comment">%READHTK  read an HTK parameter file [D,FP,DT,TC,T]=(FILE)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input:</span>
+0005 <span class="comment">%    FILE = name of HTX file</span>
+0006 <span class="comment">% Outputs:</span>
+0007 <span class="comment">%       D = data: column vector for waveforms, one row per frame for other types</span>
+0008 <span class="comment">%      FP = frame period in seconds</span>
+0009 <span class="comment">%      DT = data type (also includes Voicebox code for generating data)</span>
+0010 <span class="comment">%             0  WAVEFORM     Acoustic waveform</span>
+0011 <span class="comment">%             1  LPC          Linear prediction coefficients</span>
+0012 <span class="comment">%             2  LPREFC       LPC Reflection coefficients:  -v_lpcar2rf([1 LPC]);LPREFC(1)=[];</span>
+0013 <span class="comment">%             3  LPCEPSTRA    LPC Cepstral coefficients</span>
+0014 <span class="comment">%             4  LPDELCEP     LPC cepstral+delta coefficients (obsolete)</span>
+0015 <span class="comment">%             5  IREFC        LPC Reflection coefficients (16 bit fixed point)</span>
+0016 <span class="comment">%             6  MFCC         Mel frequency cepstral coefficients</span>
+0017 <span class="comment">%             7  FBANK        Log Fliter bank energies</span>
+0018 <span class="comment">%             8  MELSPEC      linear Mel-scaled spectrum</span>
+0019 <span class="comment">%             9  USER         User defined features</span>
+0020 <span class="comment">%            10  DISCRETE     Vector quantised codebook</span>
+0021 <span class="comment">%            11  PLP          Perceptual Linear prediction</span>
+0022 <span class="comment">%            12  ANON</span>
+0023 <span class="comment">%      TC = full type code = DT plus (optionally) one or more of the following modifiers</span>
+0024 <span class="comment">%               64  _E  Includes energy terms</span>
+0025 <span class="comment">%              128  _N  Suppress absolute energy</span>
+0026 <span class="comment">%              256  _D  Include delta coefs</span>
+0027 <span class="comment">%              512  _A  Include acceleration coefs</span>
+0028 <span class="comment">%             1024  _C  Compressed</span>
+0029 <span class="comment">%             2048  _Z  Zero mean static coefs</span>
+0030 <span class="comment">%             4096  _K  CRC checksum (not implemented yet)</span>
+0031 <span class="comment">%             8192  _0  Include 0'th cepstral coef</span>
+0032 <span class="comment">%            16384  _V  Attach VQ index</span>
+0033 <span class="comment">%            32768  _T  Attach delta-delta-delta index</span>
+0034 <span class="comment">%       T = text version of type code e.g. LPC_C_K</span>
+0035 
+0036 <span class="comment">%   Thanks to Dan Ellis (ee.columbia.edu) for sorting out decompression.</span>
+0037 <span class="comment">%   Thanks to Stuart Anderson (whispersys.com) for making it work on 64 bit machines.</span>
+0038 
+0039 <span class="comment">%      Copyright (C) Mike Brookes 2005</span>
+0040 <span class="comment">%      Version: $Id: v_readhtk.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0043 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0047 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0048 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0049 <span class="comment">%   (at your option) any later version.</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0052 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0053 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0054 <span class="comment">%   GNU General Public License for more details.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0057 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0058 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0059 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0060 
+0061 fid=fopen(file,<span class="string">'r'</span>,<span class="string">'b'</span>);
+0062 <span class="keyword">if</span> fid &lt; 0
+0063     error(sprintf(<span class="string">'Cannot read from file %s'</span>,file));
+0064 <span class="keyword">end</span>
+0065 nf=fread(fid,1,<span class="string">'int32'</span>);             <span class="comment">% number of frames</span>
+0066 fp=fread(fid,1,<span class="string">'int32'</span>)*1.E-7;       <span class="comment">% frame interval (converted to seconds)</span>
+0067 by=fread(fid,1,<span class="string">'int16'</span>);            <span class="comment">% bytes per frame</span>
+0068 tc=fread(fid,1,<span class="string">'int16'</span>);            <span class="comment">% type code (see comments above for interpretation)</span>
+0069 tc=tc+65536*(tc&lt;0);
+0070 cc=<span class="string">'ENDACZK0VT'</span>;                    <span class="comment">% list of suffix codes</span>
+0071 nhb=length(cc);                     <span class="comment">% number of suffix codes</span>
+0072 ndt=6;                              <span class="comment">% number of bits for base type</span>
+0073 hb=floor(tc*pow2(-(ndt+nhb):-ndt));
+0074 hd=hb(nhb+1:-1:2)-2*hb(nhb:-1:1);   <span class="comment">% extract bits from type code</span>
+0075 dt=tc-pow2(hb(end),ndt);            <span class="comment">% low six bits of tc represent data type</span>
+0076 
+0077 <span class="comment">% hd(7)=1 CRC check</span>
+0078 <span class="comment">% hd(5)=1 compressed data</span>
+0079 <span class="keyword">if</span> (dt==5)  <span class="comment">% hack to fix error in IREFC files which are sometimes stored as compressed LPREFC</span>
+0080     fseek(fid,0,<span class="string">'eof'</span>);
+0081     flen=ftell(fid);        <span class="comment">% find length of file</span>
+0082     fseek(fid,12,<span class="string">'bof'</span>);
+0083     <span class="keyword">if</span> flen&gt;14+by*nf        <span class="comment">% if file is too long (including possible CRCC) then assume compression constants exist</span>
+0084         dt=2;               <span class="comment">% change type to LPREFC</span>
+0085         hd(5)=1;            <span class="comment">% set compressed flag</span>
+0086         nf=nf+4;            <span class="comment">% frame count doesn't include compression constants in this case</span>
+0087     <span class="keyword">end</span>
+0088 <span class="keyword">end</span>
+0089 
+0090 <span class="keyword">if</span> any(dt==[0,5,10])        <span class="comment">% 16 bit data for waveforms, IREFC and DISCRETE</span>
+0091     d=fread(fid,[by/2,nf],<span class="string">'int16'</span>).';
+0092     <span class="keyword">if</span> ( dt == 5),
+0093         d=d/32767;                    <span class="comment">% scale IREFC</span>
+0094     <span class="keyword">end</span>
+0095 <span class="keyword">else</span>
+0096     <span class="keyword">if</span> hd(5)                            <span class="comment">% compressed data - first read scales</span>
+0097         nf = nf - 4;                    <span class="comment">% frame count includes compression constants</span>
+0098         ncol = by / 2;
+0099         scales = fread(fid, ncol, <span class="string">'float'</span>);
+0100         biases = fread(fid, ncol, <span class="string">'float'</span>);
+0101         d = ((fread(fid,[ncol, nf], <span class="string">'int16'</span>)+repmat(biases,1,nf)).*repmat(1./scales,1,nf)).';
+0102     <span class="keyword">else</span>                              <span class="comment">% uncompressed data</span>
+0103         d=fread(fid,[by/4,nf],<span class="string">'float'</span>).';
+0104     <span class="keyword">end</span>
+0105 <span class="keyword">end</span>;
+0106 fclose(fid);
+0107 <span class="keyword">if</span> nargout &gt; 4
+0108     ns=sum(hd);                 <span class="comment">% number of suffixes</span>
+0109     kinds={<span class="string">'WAVEFORM'</span> <span class="string">'LPC'</span> <span class="string">'LPREFC'</span> <span class="string">'LPCEPSTRA'</span> <span class="string">'LPDELCEP'</span> <span class="string">'IREFC'</span> <span class="string">'MFCC'</span> <span class="string">'FBANK'</span> <span class="string">'MELSPEC'</span> <span class="string">'USER'</span> <span class="string">'DISCRETE'</span> <span class="string">'PLP'</span> <span class="string">'ANON'</span> <span class="string">'???'</span>};
+0110     t=[kinds{min(dt+1,length(kinds))} reshape([<span class="string">'_'</span>*ones(1,ns);cc(hd&gt;0)],1,2*ns)];
+0111 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_lambda2rgb</title>
+  <meta name="keywords" content="v_lambda2rgb">
+  <meta name="description" content="LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_lambda2rgb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_lambda2rgb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function x=v_lambda2rgb(l,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)
+
+Inputs:   l(n,1)  column vector of wavelengths in nanometres
+          m       mode:
+                    r - output is [R G B] using the 1931 observer with negative values eliminated [default]
+                    s - output is [R G B] using the 1931 observer with signed values
+                    x - output ix [X Y Z] using the 1931 observer
+
+                    Use uppercase 'X', 'R' etc for the 1964 observer instead
+
+ Outputs: x(n,3)  tristimulus output values
+
+ The formulae are taken from [1] and were obtained by numerical curve
+ fitting to the CIE standard observer data available from [2].
+
+ References:
+  [1]    C. Wyman, P.-P. Sloan, and P. Shirley.
+       Simple analytic approximations to the CIE XYZ color matching functions.
+       Journal of Computer Graphics Techniques, 2 (2): 1–11, 2013.
+  [2]    D. Wyble. Useful color data. Website, Rochester Institute of Technology, 2001.
+       URL http://www.rit.edu/cos/colorscience/rc_useful_data.php</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_lambda2rgb.html" class="code" title="function x=v_lambda2rgb(l,m)">v_lambda2rgb</a>	LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_lambda2rgb.html" class="code" title="function x=v_lambda2rgb(l,m)">v_lambda2rgb</a>	LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_lambda2rgb(l,m)</a>
+0002 <span class="comment">%LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%Inputs:   l(n,1)  column vector of wavelengths in nanometres</span>
+0005 <span class="comment">%          m       mode:</span>
+0006 <span class="comment">%                    r - output is [R G B] using the 1931 observer with negative values eliminated [default]</span>
+0007 <span class="comment">%                    s - output is [R G B] using the 1931 observer with signed values</span>
+0008 <span class="comment">%                    x - output ix [X Y Z] using the 1931 observer</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%                    Use uppercase 'X', 'R' etc for the 1964 observer instead</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Outputs: x(n,3)  tristimulus output values</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% The formulae are taken from [1] and were obtained by numerical curve</span>
+0015 <span class="comment">% fitting to the CIE standard observer data available from [2].</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% References:</span>
+0018 <span class="comment">%  [1]    C. Wyman, P.-P. Sloan, and P. Shirley.</span>
+0019 <span class="comment">%       Simple analytic approximations to the CIE XYZ color matching functions.</span>
+0020 <span class="comment">%       Journal of Computer Graphics Techniques, 2 (2): 1–11, 2013.</span>
+0021 <span class="comment">%  [2]    D. Wyble. Useful color data. Website, Rochester Institute of Technology, 2001.</span>
+0022 <span class="comment">%       URL http://www.rit.edu/cos/colorscience/rc_useful_data.php</span>
+0023 
+0024 <span class="comment">%      Copyright (C) Mike Brookes 2014</span>
+0025 <span class="comment">%      Version: $Id: v_lambda2rgb.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0028 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0031 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0032 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0033 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0034 <span class="comment">%   (at your option) any later version.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0037 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0038 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0039 <span class="comment">%   GNU General Public License for more details.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0042 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0043 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0044 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0045 <span class="keyword">persistent</span> c d xr rx
+0046 <span class="keyword">if</span> isempty(c)
+0047     c=[1.065 -0.5/33.33^2 595.8 0.366 -0.5/19.44^2 446.8 1.014 -0.5/0.075^2 log(556.3) 1.839 -0.5/0.051^2 log(449.8)];
+0048     d=[0.398 -1250 -570.1 -log(1014) 1.132 -234 1338 1300 -log(743.5) 1.011 -0.5/46.14^2 556.1 2.06 -32 265.8 -log(180.4)];
+0049     xr=[0.49 0.31 0.2; 0.17697 0.8124 0.01063; 0 0.01 0.99];
+0050     xr=xr'/xr(2);
+0051     rx=inv(xr);
+0052 <span class="keyword">end</span>
+0053 <span class="keyword">if</span> nargin&lt;1
+0054     l=[];
+0055 <span class="keyword">end</span>
+0056 lv=l(:);
+0057 <span class="keyword">if</span> nargin&lt;2
+0058     m=<span class="string">'r'</span>;
+0059 <span class="keyword">end</span>
+0060 lm=lower(m);
+0061 <span class="keyword">if</span> m==lm <span class="comment">% use 1931 standard observer</span>
+0062     ll=log(lv);
+0063     x=[c(1)*exp(c(2)*(lv-c(3)).^2)+c(4)*exp(c(5)*(lv-c(6)).^2) c(7)*exp(c(8)*(ll-c(9)).^2) c(10)*exp(c(11)*(ll-c(12)).^2)];
+0064 <span class="keyword">else</span> <span class="comment">% use 1964 standard observer</span>
+0065     x=[d(1)*exp(d(2)*(log(lv-d(3))+d(4)).^2)+d(5)*exp(d(6)*(log(d(7)-min(lv,d(8)))+d(9)).^2) d(10)*exp(d(11)*(lv-d(12)).^2) d(13)*exp(d(14)*(log(lv-d(15))+d(16)).^2)];
+0066 <span class="keyword">end</span>
+0067 <span class="keyword">if</span> lm==<span class="string">'s'</span>
+0068     x=x*rx;
+0069 <span class="keyword">elseif</span> lm==<span class="string">'r'</span>
+0070     x=max(x*rx,0);
+0071 <span class="keyword">end</span>
+0072 <span class="keyword">if</span> ~nargout
+0073     <span class="keyword">if</span> numel(l)&lt;10
+0074         la=linspace(360,740,200)';
+0075         xa=<a href="v_lambda2rgb.html" class="code" title="function x=v_lambda2rgb(l,m)">v_lambda2rgb</a>(la,m);
+0076     <span class="keyword">else</span>
+0077         la=l;
+0078         xa=x;
+0079     <span class="keyword">end</span>
+0080     plot(la,xa(:,1),<span class="string">'r-'</span>,la,xa(:,2),<span class="string">'g-'</span>,la,xa(:,3),<span class="string">'b-'</span>);
+0081     <span class="keyword">if</span> numel(l)&lt;10 &amp;&amp; numel(l)&gt;0
+0082         hold on
+0083         plot(l,x(:,1),<span class="string">'ro'</span>,l,x(:,2),<span class="string">'go'</span>,l,x(:,3),<span class="string">'bo'</span>);
+0084         hold off
+0085     <span class="keyword">end</span>
+0086     xlabel(<span class="string">'Wavelength, \lambda (nm)'</span>);
+0087     <span class="keyword">switch</span> lm
+0088         <span class="keyword">case</span> <span class="string">'x'</span>
+0089             cstr=<span class="string">'XYZ'</span>;
+0090         <span class="keyword">case</span> <span class="string">'s'</span>
+0091             cstr=<span class="string">'RGB'</span>;
+0092         <span class="keyword">case</span> <span class="string">'r'</span>
+0093             cstr=<span class="string">'RGB+'</span>;
+0094     <span class="keyword">end</span>
+0095     <span class="keyword">if</span> lm==m
+0096         yr=1931;
+0097     <span class="keyword">else</span>
+0098         yr=1964;
+0099     <span class="keyword">end</span>
+0100     legend(cstr(1), cstr(2), cstr(3));
+0101     title(sprintf(<span class="string">'%d Standard Observer (%s)'</span>,yr,cstr));
+0102 <span class="keyword">end</span>
+0103 
+0104</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_convfft</title>
+  <meta name="keywords" content="v_convfft">
+  <meta name="description" content="CONFFT 1-D convolution or correlation using FFT">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_convfft.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_convfft
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>CONFFT 1-D convolution or correlation using FFT</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function z=v_convfft(x,h,d,m,h0,x1,x2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CONFFT 1-D convolution or correlation using FFT
+
+  Usage: (1) z=v_convfft(x,h,d1,'',1,1,size(x,d)+length(h)-1);            % equivalent to conv(x,h)
+
+         (2) hh=v_convfft(length(x),h,2,'z',1,1,length(x)+length(h)-1);   % precalculate fft(h) for multiple calls
+             z=v_convfft(x,hh);                                           % also equivalent to conv(x,h)
+
+         (3) z=v_convfft(x,h);                                            % equivalent to filter(h,1,x)
+             z=v_convfft(x,h,d1,'',1,1,size(x,d));                        % equivalent to filter(h,1,x)
+
+         (4) z=v_convfft(x,h,d,'X',1,2-max(size(x,d),length(h)),max(size(x,d),length(h)));  % equivalent to xcorr(x,h)
+   
+         (5) z=v_convfft(x,h,d,'x',floor((1+length(h))/2),1,size(x,d));   % equivalent to imfilter(x,h) 
+
+  Inputs: x     input vector or array (or size(x,d) for the 'z' option)
+          h     impulse response (or z output from previous call with the 'z' option)
+          d     dimension of x to do convolution along [first non-singleton]
+          m     mode options (see below)
+          h0    origin sample number in h (can be outside the range 1:length(h)) [default: 1]
+          x1,x2 range of rows/columns in x to align with origin of h (can be outside the range 1:size(x,d)) [default: 1,size(x,d)]
+
+ Outputs: z     output from convolution/correlation. The same size and shape as x except that size(z,d)=x2-x1+1
+                If m='z' is specified, then z is a structure that can be used as h in a subsequent call
+
+ Mode is any sensible combination of the following
+          'x'   perform real correlation rather than convolution (reflects h around sample h0)
+          'X'   perform complex correlation rather than convolution (reflects and conjugates h around sample h0)
+          'z'   Precalculate fft(h) for efficiency. Input d must be given explicitly and input x equals size(x,d).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function z=v_convfft(x,h,d,m,h0,x1,x2)</a>
+0002 <span class="comment">%CONFFT 1-D convolution or correlation using FFT</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Usage: (1) z=v_convfft(x,h,d1,'',1,1,size(x,d)+length(h)-1);            % equivalent to conv(x,h)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%         (2) hh=v_convfft(length(x),h,2,'z',1,1,length(x)+length(h)-1);   % precalculate fft(h) for multiple calls</span>
+0007 <span class="comment">%             z=v_convfft(x,hh);                                           % also equivalent to conv(x,h)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%         (3) z=v_convfft(x,h);                                            % equivalent to filter(h,1,x)</span>
+0010 <span class="comment">%             z=v_convfft(x,h,d1,'',1,1,size(x,d));                        % equivalent to filter(h,1,x)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%         (4) z=v_convfft(x,h,d,'X',1,2-max(size(x,d),length(h)),max(size(x,d),length(h)));  % equivalent to xcorr(x,h)</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%         (5) z=v_convfft(x,h,d,'x',floor((1+length(h))/2),1,size(x,d));   % equivalent to imfilter(x,h)</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%  Inputs: x     input vector or array (or size(x,d) for the 'z' option)</span>
+0017 <span class="comment">%          h     impulse response (or z output from previous call with the 'z' option)</span>
+0018 <span class="comment">%          d     dimension of x to do convolution along [first non-singleton]</span>
+0019 <span class="comment">%          m     mode options (see below)</span>
+0020 <span class="comment">%          h0    origin sample number in h (can be outside the range 1:length(h)) [default: 1]</span>
+0021 <span class="comment">%          x1,x2 range of rows/columns in x to align with origin of h (can be outside the range 1:size(x,d)) [default: 1,size(x,d)]</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Outputs: z     output from convolution/correlation. The same size and shape as x except that size(z,d)=x2-x1+1</span>
+0024 <span class="comment">%                If m='z' is specified, then z is a structure that can be used as h in a subsequent call</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Mode is any sensible combination of the following</span>
+0027 <span class="comment">%          'x'   perform real correlation rather than convolution (reflects h around sample h0)</span>
+0028 <span class="comment">%          'X'   perform complex correlation rather than convolution (reflects and conjugates h around sample h0)</span>
+0029 <span class="comment">%          'z'   Precalculate fft(h) for efficiency. Input d must be given explicitly and input x equals size(x,d).</span>
+0030 
+0031 <span class="comment">%      Copyright (C) Mike Brookes 2016-2017</span>
+0032 <span class="comment">%      Version: $Id: v_convfft.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0035 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0038 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0039 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0040 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0041 <span class="comment">%   (at your option) any later version.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0044 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0045 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0046 <span class="comment">%   GNU General Public License for more details.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0049 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0050 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0051 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0052 <span class="keyword">if</span> ~isstruct(h) <span class="comment">% normal input calling sequence</span>
+0053     <span class="keyword">if</span> nargin&lt;4 || isempty(m)
+0054         m=<span class="string">''</span>;                       <span class="comment">% set default mode string</span>
+0055     <span class="keyword">end</span>
+0056     <span class="keyword">if</span> nargin&lt;5 || isempty(h0)
+0057         h0=1;                       <span class="comment">% set default h origin</span>
+0058     <span class="keyword">end</span>
+0059     s=size(x);                      <span class="comment">% get the structure of x</span>
+0060     ps=numel(x);                      <span class="comment">% number of elements in x</span>
+0061     ns=length(s);                   <span class="comment">% number of dimensions in x</span>
+0062     <span class="keyword">if</span> any(m==<span class="string">'z'</span>)      <span class="comment">% output pre-computed structure instead of convolution</span>
+0063         <span class="keyword">if</span> nargin&lt;3 || isempty(d)   <span class="comment">% if d unspecified</span>
+0064             error(<span class="string">'d must be specified explicitly'</span>);
+0065         <span class="keyword">end</span>
+0066         <span class="keyword">if</span> numel(x)~=1              <span class="comment">% x contains nx for a future call</span>
+0067             error(<span class="string">'x must equal size(*,d)'</span>);
+0068         <span class="keyword">end</span>
+0069         nx=x;                       <span class="comment">% save x as the value of nx</span>
+0070     <span class="keyword">else</span>
+0071         <span class="keyword">if</span> nargin&lt;3 || isempty(d)       <span class="comment">% if d unspecified</span>
+0072             <span class="keyword">if</span> ps&lt;2
+0073                 d=1;                    <span class="comment">% if d is a singleton or is empty</span>
+0074             <span class="keyword">else</span>
+0075                 d=find(s&gt;1,1);          <span class="comment">% d = first nonsingleton dimension</span>
+0076             <span class="keyword">end</span>
+0077         <span class="keyword">end</span>
+0078         nx=s(d);                        <span class="comment">% length in correlation dimension</span>
+0079     <span class="keyword">end</span>
+0080     k=ps/nx;                        <span class="comment">% total size of all other dimensions</span>
+0081     <span class="keyword">if</span> nargin&lt;6 || isempty(x1)
+0082         x1=1;                       <span class="comment">% default initial lag</span>
+0083     <span class="keyword">end</span>
+0084     <span class="keyword">if</span> nargin&lt;7 || isempty(x2)
+0085         x2=nx;                      <span class="comment">% default final lag</span>
+0086     <span class="keyword">end</span>
+0087     nz=x2-x1+1;                     <span class="comment">% number of output lags required</span>
+0088     h=h(:);                         <span class="comment">% force h to be a column</span>
+0089     nh=length(h);
+0090     <span class="keyword">if</span> any(m==<span class="string">'X'</span>)                  <span class="comment">% do complex correlation rather than convolution</span>
+0091         h=conj(h(nh:-1:1));         <span class="comment">% reflect and conjugate h</span>
+0092         h0=nh+1-h0;                 <span class="comment">% reflect the position of h0</span>
+0093     <span class="keyword">elseif</span> any(m==<span class="string">'x'</span>)              <span class="comment">% do real correlation</span>
+0094         h=h(nh:-1:1);               <span class="comment">% reflect h</span>
+0095         h0=nh+1-h0;                 <span class="comment">% reflect the position of h0</span>
+0096     <span class="keyword">end</span>
+0097     hmin=h0+x1-nx;                  <span class="comment">% smallest h index ever used</span>
+0098     hmax=h0+x2-1;                   <span class="comment">% largest h index ever used</span>
+0099     xmin=x1+h0-nh;                  <span class="comment">% smallest x index ever used</span>
+0100     xmax=x2+h0-1;                   <span class="comment">% largest x index ever used</span>
+0101     <span class="keyword">if</span> hmin&gt;1 || hmax&lt;nh            <span class="comment">% we can delete some unused h values</span>
+0102         hmin=max(hmin,1);
+0103         h=h(hmin:min(hmax,nh));     <span class="comment">% trim h if possible</span>
+0104         nh=length(h);
+0105         h0=h0-hmin+1;               <span class="comment">% update h0 to new position</span>
+0106     <span class="keyword">end</span>
+0107     <span class="keyword">if</span> xmin&gt;1 || xmax&lt;nx            <span class="comment">% we can delete some unused x values</span>
+0108         vmin=max(xmin,1);           <span class="comment">% we will trim v to v(vmin:vmax)</span>
+0109         vmax=min(xmax,nx);
+0110         x1=x1-vmin+h0;              <span class="comment">% update x1,x2 to new positions assuming h0=0</span>
+0111         x2=x2-vmin+h0;
+0112     <span class="keyword">else</span>
+0113         vmin=1;
+0114         vmax=nx;
+0115         x1=x1+h0-1;                 <span class="comment">% update x1,x2 to new positions assuming h0=0</span>
+0116         x2=x2+h0-1;
+0117     <span class="keyword">end</span>
+0118     nv=vmax-vmin+1;                 <span class="comment">% number of elements of v to retain</span>
+0119     nxz=min(max(max(nh-x1,0),max(x2-nv,0)),nh-1); <span class="comment">% number of zeros to add to v is the larger of the number needed at each end</span>
+0120     [fnx,enx]=log2(nv+nxz);         <span class="comment">% round up length of zero-padded v to next power of 2</span>
+0121     nf=pow2(1,enx-(fnx==0.5));      <span class="comment">% actual length of dft is a power of 2</span>
+0122     fmin=max(x1,1);                 <span class="comment">% range of indices to extract from circular convolution</span>
+0123     fmax=min(x2,min(nf,nx+nh-1));
+0124     zmin=max(1,2-x1);               <span class="comment">% range of indices for non-zero output values</span>
+0125     zmax=zmin+fmax-fmin;
+0126     fh=fft(h,nf,1);
+0127 <span class="keyword">else</span>                <span class="comment">% h is the z output of a previous call with the 'z' option</span>
+0128     d=h.d;          <span class="comment">% x dimension to convolve along</span>
+0129     nx=h.nx;        <span class="comment">% original size(x,d)</span>
+0130     ns=h.ns;        <span class="comment">% number of dimensions of x</span>
+0131     nv=h.nv;        <span class="comment">% number x values needed (might be &lt; nx)</span>
+0132     vmin=h.vmin;    <span class="comment">% first x value needed (might be &gt; 1)</span>
+0133     vmax=h.vmax;    <span class="comment">% last x value needed (might be &lt; nx)</span>
+0134     nf=h.nf;        <span class="comment">% dft length</span>
+0135     fh=h.fh;        <span class="comment">% dft of impulse response h</span>
+0136     fmin=h.fmin;    <span class="comment">% first fh value needed</span>
+0137     fmax=h.fmax;    <span class="comment">% last fh value needed</span>
+0138     nz=h.nz;        <span class="comment">% output size(z,d)</span>
+0139     zmin=h.zmin;    <span class="comment">% first non-zero z value</span>
+0140     zmax=h.zmax;    <span class="comment">% last non-zero z value</span>
+0141     s=size(x);      <span class="comment">% get the structure of x</span>
+0142     k=numel(x)/nx;  <span class="comment">% total size of the rest of x</span>
+0143     <span class="keyword">if</span> size(x,d)~=nx || length(s)~=ns
+0144         error(<span class="string">'input x has incompatible dimensions'</span>);
+0145     <span class="keyword">end</span>
+0146 <span class="keyword">end</span>
+0147 <span class="keyword">if</span>  ~isstruct(h) &amp;&amp; any(m==<span class="string">'z'</span>)    <span class="comment">% save required information as a structure for next call</span>
+0148     z.d=d;          <span class="comment">% x dimension to convolve along</span>
+0149     z.nx=nx;        <span class="comment">% original size(x,d)</span>
+0150     z.ns=ns;        <span class="comment">% number of dimensions of x</span>
+0151     z.nv=nv;        <span class="comment">% number x values needed (might be &lt; nx)</span>
+0152     z.vmin=vmin;    <span class="comment">% first x value needed (might be &gt; 1)</span>
+0153     z.vmax=vmax;    <span class="comment">% last x value needed (might be &lt; nx)</span>
+0154     z.nf=nf;        <span class="comment">% dft length</span>
+0155     z.fh=fh;        <span class="comment">% dft of impulse response h</span>
+0156     z.fmin=fmin;    <span class="comment">% first fh value needed</span>
+0157     z.fmax=fmax;    <span class="comment">% last fh value needed</span>
+0158     z.nz=nz;        <span class="comment">% output size(z,d)</span>
+0159     z.zmin=zmin;    <span class="comment">% first non-zero z value</span>
+0160     z.zmax=zmax;    <span class="comment">% last non-zero z value</span>
+0161 <span class="keyword">elseif</span> ~isempty(x)  <span class="comment">% there is data to convolve</span>
+0162     <span class="keyword">if</span> d==1         <span class="comment">% reshape x if necessary</span>
+0163         v=reshape(x,nx,k);
+0164     <span class="keyword">else</span>
+0165         v=reshape(permute(x,[d:ns 1:d-1]),nx,k);
+0166     <span class="keyword">end</span>
+0167     <span class="keyword">if</span> nv&lt;nx        <span class="comment">% we can delete some unused v values</span>
+0168         v=v(vmin:vmax,:);
+0169     <span class="keyword">end</span>
+0170     zz=ifft(fft(v,nf,1).*repmat(fh,1,k));    <span class="comment">% do the convolution</span>
+0171     z=zeros(nz,k);                  <span class="comment">% reserve space for the output</span>
+0172     z(zmin:zmax,:)=zz(fmin:fmax,:); <span class="comment">% extract values from the convolution</span>
+0173     s(d)=nz;                        <span class="comment">% update the size of the output</span>
+0174     <span class="keyword">if</span> d==1
+0175         z=reshape(z,s);
+0176     <span class="keyword">else</span>
+0177         z=permute(reshape(z,s([d:ns 1:d-1])),[ns+2-d:ns 1:ns+1-d]);
+0178     <span class="keyword">end</span>
+0179 <span class="keyword">else</span>
+0180     z=[];           <span class="comment">% no input data</span>
+0181 <span class="keyword">end</span>
+0182 
+0183 
+0184</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

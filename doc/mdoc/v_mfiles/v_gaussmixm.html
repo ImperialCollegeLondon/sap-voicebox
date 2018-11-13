@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmixm</title>
+  <meta name="keywords" content="v_gaussmixm">
+  <meta name="description" content="GAUSSMIXM estimate mean and variance of the magnitude of a GMM">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gaussmixm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gaussmixm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAUSSMIXM estimate mean and variance of the magnitude of a GMM</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [mm,mc]=v_gaussmixm(m,v,w,z) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GAUSSMIXM estimate mean and variance of the magnitude of a GMM
+
+  Inputs:  M(K,P)   is the mean vectors (one row per mixture)
+           V(K,P)   are diagonal covariances (one row per mixture) [ones(K,P)]
+        or V(P,P,K) are full covariance matrices (one per mixture)
+           W(K)     are the mixture weights [ones(K,1)/K]
+           Z(T,P)   each row is an origin to measure magnitude from [zeros(1,P)]
+
+ Outputs:  MM(T,1)  mean of sqrt((x-z(t))'*(x-z(t))) where x is the GMM random variate
+           MC(T,T)  covariance matrix of sqrt((x-z(t))'*(x-z(t)))
+
+ We approximate the magnitude of each mixture as a Nakagami-m distribution and
+ match the moments of its squared variate. We approximate the normalized 
+ correlation matrix of |x| (i.e. with unit diagonal) to be the same as that
+ of |x|^2 which we can calculate exactly.
+ Answers are exact for P=1 or when all M=0. Accuracy improves otherwise for
+ large P or M.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mm,mc]=v_gaussmixm(m,v,w,z)</a>
+0002 <span class="comment">% GAUSSMIXM estimate mean and variance of the magnitude of a GMM</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  M(K,P)   is the mean vectors (one row per mixture)</span>
+0005 <span class="comment">%           V(K,P)   are diagonal covariances (one row per mixture) [ones(K,P)]</span>
+0006 <span class="comment">%        or V(P,P,K) are full covariance matrices (one per mixture)</span>
+0007 <span class="comment">%           W(K)     are the mixture weights [ones(K,1)/K]</span>
+0008 <span class="comment">%           Z(T,P)   each row is an origin to measure magnitude from [zeros(1,P)]</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Outputs:  MM(T,1)  mean of sqrt((x-z(t))'*(x-z(t))) where x is the GMM random variate</span>
+0011 <span class="comment">%           MC(T,T)  covariance matrix of sqrt((x-z(t))'*(x-z(t)))</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% We approximate the magnitude of each mixture as a Nakagami-m distribution and</span>
+0014 <span class="comment">% match the moments of its squared variate. We approximate the normalized</span>
+0015 <span class="comment">% correlation matrix of |x| (i.e. with unit diagonal) to be the same as that</span>
+0016 <span class="comment">% of |x|^2 which we can calculate exactly.</span>
+0017 <span class="comment">% Answers are exact for P=1 or when all M=0. Accuracy improves otherwise for</span>
+0018 <span class="comment">% large P or M.</span>
+0019 
+0020 <span class="comment">%      Copyright (C) Mike Brookes 2015</span>
+0021 <span class="comment">%      Version: $Id: v_gaussmixm.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0024 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0028 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0029 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0030 <span class="comment">%   (at your option) any later version.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0033 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0034 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0035 <span class="comment">%   GNU General Public License for more details.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0038 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0039 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0040 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0041 [k,p]=size(m);                          <span class="comment">% k = # mixtures, p = vector dimension</span>
+0042 <span class="keyword">if</span> nargin&lt;4 || ~numel(z)
+0043     z=zeros(1,p);
+0044 <span class="keyword">end</span>
+0045 <span class="keyword">if</span> nargin&lt;3 || ~numel(w)
+0046     w=ones(k,1);
+0047 <span class="keyword">end</span><span class="comment">% default to uniform weights</span>
+0048 <span class="keyword">if</span> nargin&lt;2 || ~numel(v)
+0049     v=ones(k,p);                    <span class="comment">% default to unit variance</span>
+0050 <span class="keyword">end</span>
+0051 [t,p1]=size(z);
+0052 <span class="keyword">if</span> p~=p1 || (p&gt;2 &amp;&amp; t&gt;1 &amp;&amp; nargout&gt;2)
+0053     error(<span class="string">'unable to calculate a covariance matrix'</span>);
+0054 <span class="keyword">end</span>
+0055 w=w(:)/sum(w);                          <span class="comment">% make the weights sum to 1 and force column vector</span>
+0056 <span class="keyword">if</span> p==1                                 <span class="comment">% treat 1D case specially since we have an exact formula</span>
+0057     s=sqrt(v(:));                       <span class="comment">% normalize mixture means by the std dev</span>
+0058     mt=m(:,ones(1,t))-z(:,ones(1,k))';  <span class="comment">% shifted mean for each mixture x origin</span>
+0059     mts=mt./s(:,ones(1,t));             <span class="comment">% shifted mean for each mixture x origin normalized to unit SD</span>
+0060     ncdf=normcdf(-mts);
+0061     npdf=normpdf(-mts);
+0062     mm=(mts.*(1-2*ncdf)+2*npdf)'*(s.*w); <span class="comment">% exact mean of |X|</span>
+0063     mc=diag((mts.^2+1)'*(v(:).*w)); <span class="comment">% diagonal variance elements in case t==1</span>
+0064     <span class="keyword">if</span> nargout&gt;1 &amp;&amp; t&gt;1                 <span class="comment">% we need to calculate a covariance matrix</span>
+0065         <span class="keyword">for</span> it=1:t
+0066             <span class="keyword">for</span> jt=1:it-1
+0067                 mc(it,jt)=w.'*((v(:)+mt(:,it).*mt(:,jt)).*(1-2*abs(ncdf(:,it)-ncdf(:,jt)))+ <span class="keyword">...</span>
+0068                     2*s.*sign(mt(:,jt)-mt(:,it)).*(npdf(:,it).*mt(:,jt)-npdf(:,jt).*mt(:,it)));
+0069                 mc(jt,it)=mc(it,jt);
+0070             <span class="keyword">end</span>
+0071         <span class="keyword">end</span>   
+0072     <span class="keyword">end</span>
+0073     mc=mc-mm*mm';                       <span class="comment">% convert to variance</span>
+0074 <span class="keyword">else</span>                                        <span class="comment">% p&gt;1 case</span>
+0075     fullv=ndims(v)&gt;2 || size(v,1)&gt;k;          <span class="comment">% full covariance matrix is supplied</span>
+0076     <span class="keyword">if</span> fullv                                <span class="comment">% full covariance matrix is supplied</span>
+0077         ms=repmat(sum(m.^2+v(repmat((1:p+1:p^2)',1,k)+repmat(0:p^2:(k-1)*p^2,p,1))',2),1,t)-2*m*z'+repmat(sum(z.^2,2)',k,1);  <span class="comment">% mean of |x|^2 for each mixture x origin</span>
+0078         vsf=zeros(t,t,k);
+0079         vs=zeros(k,t);
+0080         <span class="keyword">for</span> i=1:k
+0081             zmi=repmat(m(i,:),t,1)-z;
+0082             si=v(:,:,i);
+0083             vsi=2*trace(si^2)+4*zmi*si*zmi';
+0084             vsf(:,:,i)=vsi;
+0085             vs(i,:)=diag(vsi);
+0086         <span class="keyword">end</span>
+0087     <span class="keyword">else</span>                                        <span class="comment">% else diagonal covariance matrix supplied</span>
+0088         ms=repmat(sum(m.^2,2)+sum(v,2),1,t)-2*m*z'+repmat(sum(z.^2,2)',k,1);  <span class="comment">% mean of |x|^2 for each mixture x origin</span>
+0089         vsc=sum(v.*(2*v+4*m.^2),2);             <span class="comment">% origin-independent part of  |x|^2 variance for each mixture</span>
+0090         vmz=4*(v.*m)*z';                        <span class="comment">% origin-linear part of  |x|^2 variannce for each mixture x origin</span>
+0091         vs=repmat(vsc,1,t)-2*vmz+4*v*z.^2';     <span class="comment">% variance of |x|^2 for each mixture x origin</span>
+0092     <span class="keyword">end</span>
+0093     nm=ms.^2./vs;                               <span class="comment">% Nakagami-m parameter per mixture x origin</span>
+0094     mmk=(exp(gammaln(nm+0.5)-gammaln(nm)).*sqrt(ms./nm)); <span class="comment">% mean of Nakagami-m distrbution per mixture x origin</span>
+0095     mm=mmk'*w;                                  <span class="comment">% mean per origin</span>
+0096     mc = ms'*w-mm.^2 ;                          <span class="comment">% variance in case t==1</span>
+0097     <span class="keyword">if</span> nargout&gt;1 &amp;&amp; t&gt;1                         <span class="comment">% we need to calculate the t x t covariance matrix w.r.t. origins</span>
+0098         mvksd=sqrt(ms-mmk.^2);                  <span class="comment">% std deviation of |x| per mixture x origin</span>
+0099         mc=zeros(t,t);
+0100         <span class="keyword">if</span> fullv                                <span class="comment">% full covariance matrix is supplied</span>
+0101             <span class="keyword">for</span> i=1:k
+0102                 vsisd=sqrt(vs(i,:));
+0103                 mcm=(mvksd(i,:)'*mvksd(i,:)).*vsf(:,:,i)./(vsisd'*vsisd)+ mmk(i,:)'*mmk(i,:); <span class="comment">% estimated |x| correlation matrix for mixture i</span>
+0104                 mc=mc+w(i)*mcm;             <span class="comment">% add onto total correlation matrix</span>
+0105             <span class="keyword">end</span>
+0106         <span class="keyword">else</span>                                <span class="comment">% else diagonal covariance matrix supplied</span>
+0107             <span class="keyword">for</span> i=1:k                       <span class="comment">% loop for each mixture component</span>
+0108                 iit=repmat(i,t,1);
+0109                 vsi=vsc(i)-vmz(iit,:)-vmz(iit,:)'+4*z.*v(iit,:)*z'; <span class="comment">% covariance matriz for |x|^2 for mixture i</span>
+0110                 vsisd=sqrt(vs(i,:));
+0111                 mcm=(mvksd(i,:)'*mvksd(i,:)).*vsi./(vsisd'*vsisd)+ mmk(i,:)'*mmk(i,:); <span class="comment">% estimated |x| correlation matrix for mixture i</span>
+0112                 mc=mc+w(i)*mcm;   <span class="comment">% add onto total correlation matrix</span>
+0113             <span class="keyword">end</span>
+0114         <span class="keyword">end</span>
+0115         mc=mc-mm*mm'; <span class="comment">% convert to covariance matrix</span>
+0116     <span class="keyword">end</span>
+0117 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_ssubmmse</title>
+  <meta name="keywords" content="v_ssubmmse">
+  <meta name="description" content="SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_ssubmmse.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_ssubmmse
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)
+
+ Usage:
+    (1) %%%%%%%%%%%% Simple Enhancement %%%%%%%%%%%%
+        y=v_ssubmmse(x,fs);               % enhance the noisy speech using default parameters
+
+    (2) %%%%%%%%%%%% Reading input signal in chunks %%%%%%%%%%%%
+        [y1,zo]=v_ssubmmse(x(1:1000,fs);       % enhance the first chunck of x
+        [y2,zo]=v_ssubmmse(x(1001:2000),zo);   % enhance the second  chunck of x
+        y3=v_ssubmmse(x(1001:2000),zo);        % enhance the remainder of x outputting all samples
+        y=[y1; y2; y3];                      % reassembling the chunks gives same y as example (1)
+
+    (3) %%%%%%%%%%%% Multiple channels using the same gain %%%%%%%%%%%%
+        y=v_ssubmmse([s+n s n],fs);       % enhance the noisy speech, s+n, and
+                                          also apply the same gain to s and n separately
+
+    (4) %%%%%%%%%%%% Multiple channels using maximum of gains %%%%%%%%%%%%
+        pp.gw=[0 0 0 0 1];              % find the maximum of the calculated time-frequency gains
+        y=v_ssubmmse([x1 x2 x3],fs,pp);   % and apply this maximum gain to each of the signals
+
+    (5) %%%%%%%%%%%% Plot gain function %%%%%%%%%%%%
+        [y,g,t,f]=v_ssubmmse(x,fs);       % save the time-frequency gain function
+        imagesc(t,f,20*log10(g'));      % display the time-frequency gain
+        axis 'xy';                      % origin at bottom left
+        xlabel('Time (s)');             % time axis
+        ylabel('Frequency (Hz)');       % frequency axis
+        colorbar;                       % show a color bar
+        v_cblabel('Gain dB');             % label the color bar
+        set(gca,'clim',[-30,5]);        % limit the displayed range to [-30,5] dB
+
+
+ Inputs:
+   si(n,c,p) input speech signal with n samples in each of c channels where each channel has p planes.
+             All planes will use the same set of gain functions.
+   fsz       sample frequency in Hz
+             Alternatively, the input state from a previous call (see below)
+   pp        algorithm parameters [optional]
+
+ Outputs:
+   ss(n,c,p)   output enhanced speech. Same number of samples as si unless
+               zo output is given in which case incomplete frames will be retained
+   gg(t,f,c,p,length(pp.tf)) selected time-frequency values (see pp.tf below)
+               note that multiple planes will only be included if pp.tf  includes 'i', 'I', 'o' or 'O'
+               Note also that the tt output MUST also be specified
+   tt          centre of frames (in seconds)
+   ff          centre of frequency bins (in Hz)
+   zo          output state (or the 2nd argument if gg,tt,ff are omitted)
+
+ The algorithm operation is controlled by a small number of parameters:
+
+        pp.of          % overlap factor = (fft length)/(frame increment) [2]
+        pp.ti          % desired frame increment [0.016 seconds]
+        pp.ri          % set to 1 to round ti to the nearest power of 2 samples [0]
+        pp.ta          % time const for smoothing SNR estimate [0.396 seconds]
+        pp.gx          % maximum posterior SNR as a power ratio [1000 = +30dB]
+        pp.gn          % min posterior SNR as a power ratio when estimating prior SNR [1 = 0dB]
+        pp.gz          % min posterior SNR as a power ratio [0.001 = -30dB]
+        pp.xn          % minimum prior SNR [0]
+        pp.xb          % bias compensation factor for prior SNR [1]
+        pp.lg          % MMSE target: 0=amplitude, 1=log amplitude, 2=perceptual Bayes [1]
+        pp.ne          % noise estimation: 0=min statistics, 1=MMSE [1]
+        pp.bt          % threshold for binary gain or -1 for continuous gain [-1]
+        pp.mx          % input mixture gain [0]
+        pp.gc          % maximum amplitude gain [10 = 20 dB]
+        pp.rf          % round output signal to an exact number of frames [0]
+        pp.gw          % multichannel gain weights: [chan-n chan-1 ave min max] default:[0 1 0 0 0]
+        pp.tf          % selects one or more time-frequency planes to output in the gg() variable ['g']
+                           'i' = input power spectrum
+                           'I' = input complex spectrum
+                           'n' = noise power spectrum
+                           'z' = &quot;posterior&quot; SNR (i.e. (S+N)/N )
+                           'x' = &quot;prior&quot; SNR (i.e. S/N )
+                           'G' = raw gain (before clipping and multichannel weighting)
+                           'g' = final gain
+                           'o' = output power spectrum
+                           'O' = output complex spectrum
+
+ The applied gain is mx+(1-mx)*optgain where optgain is calculated according to [1] or [2].
+ If pp.bt&gt;=0 then optgain is first thresholded with pp.bt to produce a binary gain 0 or 1.
+
+ The default parameters implement the original algorithm in [1,2].
+
+ Several parameters relate to the estimation of xi, the so-called &quot;prior SNR&quot;,
+
+             xi=max(a*pp.xb*xu+(1-a)*max(gami-1,pp.gn-1),pp.xn);
+
+ This is estimated as a smoothed version of 1 less than gami, the &quot;posterior SNR&quot;
+ which is the noisy speech power divided by the noise power. This is
+ clipped to a min of (pp.gn-1), smoothed using a factor &quot;a&quot; which corresponds to a
+ time-constant of pp.ta and then clipped to a minimum of pp.xn. The
+ previous value is taken to be pp.xb*xu where xu is the ratio of the
+ estimated speech amplitude squared to the noise power.
+
+ In addition it is possible to specify parameters for the noise estimation algorithm
+ which implements reference [3] or [7] according to the setting of pp.ne
+
+ Minimum statistics noise estimate [3]: pp.ne=0
+        pp.taca      % (11): smoothing time constant for alpha_c [0.0449 seconds]
+        pp.tamax     % (3): max smoothing time constant [0.392 seconds]
+        pp.taminh    % (3): min smoothing time constant (upper limit) [0.0133 seconds]
+        pp.tpfall    % (12): time constant for P to fall [0.064 seconds]
+        pp.tbmax     % (20): max smoothing time constant [0.0717 seconds]
+        pp.qeqmin    % (23): minimum value of Qeq [2]
+        pp.qeqmax    % max value of Qeq per frame [14]
+        pp.av        % (23)+13 lines: fudge factor for bc calculation  [2.12]
+        pp.td        % time to take minimum over [1.536 seconds]
+        pp.nu        % number of subwindows to use [3]
+        pp.qith      % Q-inverse thresholds to select maximum noise slope [0.03 0.05 0.06 Inf ]
+        pp.nsmdb     % corresponding noise slope thresholds in dB/second   [47 31.4 15.7 4.1]
+
+ MMSE noise estimate [7]: pp.ne=1
+        pp.tax      % smoothing time constant for noise power estimate [0.0717 seconds](8)
+        pp.tap      % smoothing time constant for smoothed speech prob [0.152 seconds](23)
+        pp.psthr    % threshold for smoothed speech probability [0.99] (24)
+        pp.pnsaf    % noise probability safety value [0.01] (24)
+        pp.pspri    % prior speech probability [0.5] (18)
+        pp.asnr     % active SNR in dB [15] (18)
+        pp.psini    % initial speech probability [0.5] (23)
+        pp.tavini   % assumed speech absent time at start [0.064 seconds]
+
+ If convenient, you can call v_specsub in chunks of arbitrary size. Thus the following are equivalent:
+
+                   (a) y=v_ssubmmse(s,fs);
+
+                   (b) [y1,z]=v_ssubmmse(s(1:1000),fs);
+                       [y2,z]=v_ssubmmse(s(1001:2000),z);
+                       y3=v_ssubmmse(s(2001:end),z);
+                       y=[y1; y2; y3];
+
+ If the number of output arguments is either 2 or 5, the last partial frame of samples will
+ be retained for overlap adding with the output from the next call to v_ssubmmse().
+
+ See also v_specsub() for an alternative gain function
+
+ Refs:
+    [1] Ephraim, Y. &amp; Malah, D.
+        Speech enhancement using a minimum-mean square error short-time spectral amplitude estimator
+        IEEE Trans Acoustics Speech and Signal Processing, 32(6):1109-1121, Dec 1984
+    [2] Ephraim, Y. &amp; Malah, D.
+        Speech enhancement using a minimum mean-square error log-spectral amplitude estimator
+        IEEE Trans Acoustics Speech and Signal Processing, 33(2):443-445, Apr 1985
+    [3] Rainer Martin.
+        Noise power spectral density estimation based on optimal smoothing and minimum statistics.
+        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.
+    [4] O. Cappe.
+        Elimination of the musical noise phenomenon with the ephraim and malah noise suppressor.
+        IEEE Trans Speech Audio Processing, 2 (2): 345–349, Apr. 1994. doi: 10.1109/89.279283.
+    [5] J. Erkelens, J. Jensen, and R. Heusdens.
+        A data-driven approach to optimizing spectral speech enhancement methods for various error criteria.
+        Speech Communication, 49: 530–541, 2007. doi: 10.1016/j.specom.2006.06.012.
+    [6] R. Martin.
+        Statistical methods for the enhancement of noisy speech.
+        In J. Benesty, S. Makino, and J. Chen, editors,
+        Speech Enhancement, chapter 3, pages 43–64. Springer-Verlag, 2005.
+    [7] Gerkmann, T. &amp; Hendriks, R. C.
+        Unbiased MMSE-Based Noise Power Estimation With Low Complexity and Low Tracking Delay
+        IEEE Trans Audio, Speech, Language Processing, 2012, 20, 1383-1393
+    [8] Loizou, P.
+        Speech enhancement based on perceptually motivated Bayesian estimators of the speech magnitude spectrum.
+        IEEE Trans. Speech and Audio Processing, 13(5), 857-869, 2005.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)</a>
+0002 <span class="comment">%SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:</span>
+0005 <span class="comment">%    (1) %%%%%%%%%%%% Simple Enhancement %%%%%%%%%%%%</span>
+0006 <span class="comment">%        y=v_ssubmmse(x,fs);               % enhance the noisy speech using default parameters</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%    (2) %%%%%%%%%%%% Reading input signal in chunks %%%%%%%%%%%%</span>
+0009 <span class="comment">%        [y1,zo]=v_ssubmmse(x(1:1000,fs);       % enhance the first chunck of x</span>
+0010 <span class="comment">%        [y2,zo]=v_ssubmmse(x(1001:2000),zo);   % enhance the second  chunck of x</span>
+0011 <span class="comment">%        y3=v_ssubmmse(x(1001:2000),zo);        % enhance the remainder of x outputting all samples</span>
+0012 <span class="comment">%        y=[y1; y2; y3];                      % reassembling the chunks gives same y as example (1)</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%    (3) %%%%%%%%%%%% Multiple channels using the same gain %%%%%%%%%%%%</span>
+0015 <span class="comment">%        y=v_ssubmmse([s+n s n],fs);       % enhance the noisy speech, s+n, and</span>
+0016 <span class="comment">%                                          also apply the same gain to s and n separately</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%    (4) %%%%%%%%%%%% Multiple channels using maximum of gains %%%%%%%%%%%%</span>
+0019 <span class="comment">%        pp.gw=[0 0 0 0 1];              % find the maximum of the calculated time-frequency gains</span>
+0020 <span class="comment">%        y=v_ssubmmse([x1 x2 x3],fs,pp);   % and apply this maximum gain to each of the signals</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%    (5) %%%%%%%%%%%% Plot gain function %%%%%%%%%%%%</span>
+0023 <span class="comment">%        [y,g,t,f]=v_ssubmmse(x,fs);       % save the time-frequency gain function</span>
+0024 <span class="comment">%        imagesc(t,f,20*log10(g'));      % display the time-frequency gain</span>
+0025 <span class="comment">%        axis 'xy';                      % origin at bottom left</span>
+0026 <span class="comment">%        xlabel('Time (s)');             % time axis</span>
+0027 <span class="comment">%        ylabel('Frequency (Hz)');       % frequency axis</span>
+0028 <span class="comment">%        colorbar;                       % show a color bar</span>
+0029 <span class="comment">%        v_cblabel('Gain dB');             % label the color bar</span>
+0030 <span class="comment">%        set(gca,'clim',[-30,5]);        % limit the displayed range to [-30,5] dB</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% Inputs:</span>
+0034 <span class="comment">%   si(n,c,p) input speech signal with n samples in each of c channels where each channel has p planes.</span>
+0035 <span class="comment">%             All planes will use the same set of gain functions.</span>
+0036 <span class="comment">%   fsz       sample frequency in Hz</span>
+0037 <span class="comment">%             Alternatively, the input state from a previous call (see below)</span>
+0038 <span class="comment">%   pp        algorithm parameters [optional]</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% Outputs:</span>
+0041 <span class="comment">%   ss(n,c,p)   output enhanced speech. Same number of samples as si unless</span>
+0042 <span class="comment">%               zo output is given in which case incomplete frames will be retained</span>
+0043 <span class="comment">%   gg(t,f,c,p,length(pp.tf)) selected time-frequency values (see pp.tf below)</span>
+0044 <span class="comment">%               note that multiple planes will only be included if pp.tf  includes 'i', 'I', 'o' or 'O'</span>
+0045 <span class="comment">%               Note also that the tt output MUST also be specified</span>
+0046 <span class="comment">%   tt          centre of frames (in seconds)</span>
+0047 <span class="comment">%   ff          centre of frequency bins (in Hz)</span>
+0048 <span class="comment">%   zo          output state (or the 2nd argument if gg,tt,ff are omitted)</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">% The algorithm operation is controlled by a small number of parameters:</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%        pp.of          % overlap factor = (fft length)/(frame increment) [2]</span>
+0053 <span class="comment">%        pp.ti          % desired frame increment [0.016 seconds]</span>
+0054 <span class="comment">%        pp.ri          % set to 1 to round ti to the nearest power of 2 samples [0]</span>
+0055 <span class="comment">%        pp.ta          % time const for smoothing SNR estimate [0.396 seconds]</span>
+0056 <span class="comment">%        pp.gx          % maximum posterior SNR as a power ratio [1000 = +30dB]</span>
+0057 <span class="comment">%        pp.gn          % min posterior SNR as a power ratio when estimating prior SNR [1 = 0dB]</span>
+0058 <span class="comment">%        pp.gz          % min posterior SNR as a power ratio [0.001 = -30dB]</span>
+0059 <span class="comment">%        pp.xn          % minimum prior SNR [0]</span>
+0060 <span class="comment">%        pp.xb          % bias compensation factor for prior SNR [1]</span>
+0061 <span class="comment">%        pp.lg          % MMSE target: 0=amplitude, 1=log amplitude, 2=perceptual Bayes [1]</span>
+0062 <span class="comment">%        pp.ne          % noise estimation: 0=min statistics, 1=MMSE [1]</span>
+0063 <span class="comment">%        pp.bt          % threshold for binary gain or -1 for continuous gain [-1]</span>
+0064 <span class="comment">%        pp.mx          % input mixture gain [0]</span>
+0065 <span class="comment">%        pp.gc          % maximum amplitude gain [10 = 20 dB]</span>
+0066 <span class="comment">%        pp.rf          % round output signal to an exact number of frames [0]</span>
+0067 <span class="comment">%        pp.gw          % multichannel gain weights: [chan-n chan-1 ave min max] default:[0 1 0 0 0]</span>
+0068 <span class="comment">%        pp.tf          % selects one or more time-frequency planes to output in the gg() variable ['g']</span>
+0069 <span class="comment">%                           'i' = input power spectrum</span>
+0070 <span class="comment">%                           'I' = input complex spectrum</span>
+0071 <span class="comment">%                           'n' = noise power spectrum</span>
+0072 <span class="comment">%                           'z' = &quot;posterior&quot; SNR (i.e. (S+N)/N )</span>
+0073 <span class="comment">%                           'x' = &quot;prior&quot; SNR (i.e. S/N )</span>
+0074 <span class="comment">%                           'G' = raw gain (before clipping and multichannel weighting)</span>
+0075 <span class="comment">%                           'g' = final gain</span>
+0076 <span class="comment">%                           'o' = output power spectrum</span>
+0077 <span class="comment">%                           'O' = output complex spectrum</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">% The applied gain is mx+(1-mx)*optgain where optgain is calculated according to [1] or [2].</span>
+0080 <span class="comment">% If pp.bt&gt;=0 then optgain is first thresholded with pp.bt to produce a binary gain 0 or 1.</span>
+0081 <span class="comment">%</span>
+0082 <span class="comment">% The default parameters implement the original algorithm in [1,2].</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">% Several parameters relate to the estimation of xi, the so-called &quot;prior SNR&quot;,</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">%             xi=max(a*pp.xb*xu+(1-a)*max(gami-1,pp.gn-1),pp.xn);</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">% This is estimated as a smoothed version of 1 less than gami, the &quot;posterior SNR&quot;</span>
+0089 <span class="comment">% which is the noisy speech power divided by the noise power. This is</span>
+0090 <span class="comment">% clipped to a min of (pp.gn-1), smoothed using a factor &quot;a&quot; which corresponds to a</span>
+0091 <span class="comment">% time-constant of pp.ta and then clipped to a minimum of pp.xn. The</span>
+0092 <span class="comment">% previous value is taken to be pp.xb*xu where xu is the ratio of the</span>
+0093 <span class="comment">% estimated speech amplitude squared to the noise power.</span>
+0094 <span class="comment">%</span>
+0095 <span class="comment">% In addition it is possible to specify parameters for the noise estimation algorithm</span>
+0096 <span class="comment">% which implements reference [3] or [7] according to the setting of pp.ne</span>
+0097 <span class="comment">%</span>
+0098 <span class="comment">% Minimum statistics noise estimate [3]: pp.ne=0</span>
+0099 <span class="comment">%        pp.taca      % (11): smoothing time constant for alpha_c [0.0449 seconds]</span>
+0100 <span class="comment">%        pp.tamax     % (3): max smoothing time constant [0.392 seconds]</span>
+0101 <span class="comment">%        pp.taminh    % (3): min smoothing time constant (upper limit) [0.0133 seconds]</span>
+0102 <span class="comment">%        pp.tpfall    % (12): time constant for P to fall [0.064 seconds]</span>
+0103 <span class="comment">%        pp.tbmax     % (20): max smoothing time constant [0.0717 seconds]</span>
+0104 <span class="comment">%        pp.qeqmin    % (23): minimum value of Qeq [2]</span>
+0105 <span class="comment">%        pp.qeqmax    % max value of Qeq per frame [14]</span>
+0106 <span class="comment">%        pp.av        % (23)+13 lines: fudge factor for bc calculation  [2.12]</span>
+0107 <span class="comment">%        pp.td        % time to take minimum over [1.536 seconds]</span>
+0108 <span class="comment">%        pp.nu        % number of subwindows to use [3]</span>
+0109 <span class="comment">%        pp.qith      % Q-inverse thresholds to select maximum noise slope [0.03 0.05 0.06 Inf ]</span>
+0110 <span class="comment">%        pp.nsmdb     % corresponding noise slope thresholds in dB/second   [47 31.4 15.7 4.1]</span>
+0111 <span class="comment">%</span>
+0112 <span class="comment">% MMSE noise estimate [7]: pp.ne=1</span>
+0113 <span class="comment">%        pp.tax      % smoothing time constant for noise power estimate [0.0717 seconds](8)</span>
+0114 <span class="comment">%        pp.tap      % smoothing time constant for smoothed speech prob [0.152 seconds](23)</span>
+0115 <span class="comment">%        pp.psthr    % threshold for smoothed speech probability [0.99] (24)</span>
+0116 <span class="comment">%        pp.pnsaf    % noise probability safety value [0.01] (24)</span>
+0117 <span class="comment">%        pp.pspri    % prior speech probability [0.5] (18)</span>
+0118 <span class="comment">%        pp.asnr     % active SNR in dB [15] (18)</span>
+0119 <span class="comment">%        pp.psini    % initial speech probability [0.5] (23)</span>
+0120 <span class="comment">%        pp.tavini   % assumed speech absent time at start [0.064 seconds]</span>
+0121 <span class="comment">%</span>
+0122 <span class="comment">% If convenient, you can call v_specsub in chunks of arbitrary size. Thus the following are equivalent:</span>
+0123 <span class="comment">%</span>
+0124 <span class="comment">%                   (a) y=v_ssubmmse(s,fs);</span>
+0125 <span class="comment">%</span>
+0126 <span class="comment">%                   (b) [y1,z]=v_ssubmmse(s(1:1000),fs);</span>
+0127 <span class="comment">%                       [y2,z]=v_ssubmmse(s(1001:2000),z);</span>
+0128 <span class="comment">%                       y3=v_ssubmmse(s(2001:end),z);</span>
+0129 <span class="comment">%                       y=[y1; y2; y3];</span>
+0130 <span class="comment">%</span>
+0131 <span class="comment">% If the number of output arguments is either 2 or 5, the last partial frame of samples will</span>
+0132 <span class="comment">% be retained for overlap adding with the output from the next call to v_ssubmmse().</span>
+0133 <span class="comment">%</span>
+0134 <span class="comment">% See also v_specsub() for an alternative gain function</span>
+0135 <span class="comment">%</span>
+0136 <span class="comment">% Refs:</span>
+0137 <span class="comment">%    [1] Ephraim, Y. &amp; Malah, D.</span>
+0138 <span class="comment">%        Speech enhancement using a minimum-mean square error short-time spectral amplitude estimator</span>
+0139 <span class="comment">%        IEEE Trans Acoustics Speech and Signal Processing, 32(6):1109-1121, Dec 1984</span>
+0140 <span class="comment">%    [2] Ephraim, Y. &amp; Malah, D.</span>
+0141 <span class="comment">%        Speech enhancement using a minimum mean-square error log-spectral amplitude estimator</span>
+0142 <span class="comment">%        IEEE Trans Acoustics Speech and Signal Processing, 33(2):443-445, Apr 1985</span>
+0143 <span class="comment">%    [3] Rainer Martin.</span>
+0144 <span class="comment">%        Noise power spectral density estimation based on optimal smoothing and minimum statistics.</span>
+0145 <span class="comment">%        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.</span>
+0146 <span class="comment">%    [4] O. Cappe.</span>
+0147 <span class="comment">%        Elimination of the musical noise phenomenon with the ephraim and malah noise suppressor.</span>
+0148 <span class="comment">%        IEEE Trans Speech Audio Processing, 2 (2): 345–349, Apr. 1994. doi: 10.1109/89.279283.</span>
+0149 <span class="comment">%    [5] J. Erkelens, J. Jensen, and R. Heusdens.</span>
+0150 <span class="comment">%        A data-driven approach to optimizing spectral speech enhancement methods for various error criteria.</span>
+0151 <span class="comment">%        Speech Communication, 49: 530–541, 2007. doi: 10.1016/j.specom.2006.06.012.</span>
+0152 <span class="comment">%    [6] R. Martin.</span>
+0153 <span class="comment">%        Statistical methods for the enhancement of noisy speech.</span>
+0154 <span class="comment">%        In J. Benesty, S. Makino, and J. Chen, editors,</span>
+0155 <span class="comment">%        Speech Enhancement, chapter 3, pages 43–64. Springer-Verlag, 2005.</span>
+0156 <span class="comment">%    [7] Gerkmann, T. &amp; Hendriks, R. C.</span>
+0157 <span class="comment">%        Unbiased MMSE-Based Noise Power Estimation With Low Complexity and Low Tracking Delay</span>
+0158 <span class="comment">%        IEEE Trans Audio, Speech, Language Processing, 2012, 20, 1383-1393</span>
+0159 <span class="comment">%    [8] Loizou, P.</span>
+0160 <span class="comment">%        Speech enhancement based on perceptually motivated Bayesian estimators of the speech magnitude spectrum.</span>
+0161 <span class="comment">%        IEEE Trans. Speech and Audio Processing, 13(5), 857-869, 2005.</span>
+0162 
+0163 <span class="comment">% Bugs/suggestions:</span>
+0164 <span class="comment">%   (1) sort out behaviour when si() is a matrix rather than a vector</span>
+0165 <span class="comment">%</span>
+0166 <span class="comment">%      Copyright (C) Mike Brookes 2004-2017</span>
+0167 <span class="comment">%      Version: $Id: v_ssubmmse.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0168 <span class="comment">%</span>
+0169 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0170 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0171 <span class="comment">%</span>
+0172 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0173 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0174 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0175 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0176 <span class="comment">%   (at your option) any later version.</span>
+0177 <span class="comment">%</span>
+0178 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0179 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0180 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0181 <span class="comment">%   GNU General Public License for more details.</span>
+0182 <span class="comment">%</span>
+0183 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0184 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0185 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0186 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0187 <span class="keyword">persistent</span> cc kk
+0188 <span class="keyword">if</span> ~numel(kk)           <span class="comment">% if precomputed constants don't exist yet</span>
+0189     kk=sqrt(2*pi);      <span class="comment">% sqrt(8)*Gamma(1.5)</span>
+0190     cc=sqrt(2/pi);      <span class="comment">% sqrt(2)/Gamma(0.5)</span>
+0191 <span class="keyword">end</span>
+0192 szs=size(si);
+0193 <span class="keyword">if</span> szs(1)==1 &amp;&amp; szs(2)&gt;1 &amp;&amp; (~isstruct(fsz) || ~size(fsz.si,1) || size(fsz.si,2)==1)
+0194     si=si'; <span class="comment">% flip if only one channel and size(si,1)==1</span>
+0195     szs=size(si);
+0196 <span class="keyword">end</span>
+0197 nc=szs(2);    <span class="comment">% number of channels</span>
+0198 <span class="keyword">if</span> length(szs)&gt;2
+0199     np=szs(3);  <span class="comment">% number of planes</span>
+0200 <span class="keyword">else</span>
+0201     np=1;
+0202 <span class="keyword">end</span>
+0203 ncp=nc*np;
+0204 <span class="keyword">if</span> isstruct(fsz)
+0205     fs=fsz.fs;          <span class="comment">% sample frequency</span>
+0206     qq=fsz.qq;          <span class="comment">% parameter structure</span>
+0207     qp=fsz.qp;
+0208     ze=fsz.ze;          <span class="comment">% saved structure for noise estimation</span>
+0209     nrs=size(fsz.si,1);         <span class="comment">% number of samples saved from last time</span>
+0210     s=zeros(nrs+szs(1),nc*np);     <span class="comment">% allocate space for speech</span>
+0211     s(1:nrs,:)=fsz.si;          <span class="comment">% preappend the saved samples</span>
+0212     s(nrs+1:<span class="keyword">end</span>,:)=reshape(si,[],ncp);  <span class="comment">% append the new samples</span>
+0213 <span class="keyword">else</span>
+0214     fs=fsz;     <span class="comment">% sample frequency</span>
+0215     s=si;
+0216     <span class="comment">% default algorithm constants</span>
+0217     
+0218     qq.of=2;        <span class="comment">% overlap factor = (fft length)/(frame increment)</span>
+0219     qq.ti=16e-3;    <span class="comment">% desired frame increment (16 ms)</span>
+0220     qq.ri=0;        <span class="comment">% round ni to the nearest power of 2</span>
+0221     qq.ta=0.396;    <span class="comment">% Time const for smoothing SNR estimate = -tinc/log(0.98) from [1]</span>
+0222     qq.gx=1000;     <span class="comment">% maximum posterior SNR = 30dB</span>
+0223     qq.gn=1;        <span class="comment">% min posterior SNR as a power ratio when estimating prior SNR [1]</span>
+0224     qq.gz=0.001;    <span class="comment">% min posterior SNR as a power ratio [0.001 = -30dB]</span>
+0225     qq.xn=0;        <span class="comment">% minimum prior SNR = -Inf dB</span>
+0226     qq.xb=1;        <span class="comment">% bias compensation factor for prior SNR [1]</span>
+0227     qq.lg=1;        <span class="comment">% use log-domain estimator by default</span>
+0228     qq.ne=1;        <span class="comment">% noise estimation: 0=min statistics, 1=MMSE [1]</span>
+0229     qq.bt=-1;       <span class="comment">% suppress binary masking</span>
+0230     qq.mx=0;        <span class="comment">% no input mixing</span>
+0231     qq.gc=10;       <span class="comment">% maximum amplitude gain [10 = 20 dB]</span>
+0232     qq.gw=[0 1 0 0 0];  <span class="comment">% multichannel gain weights: [chan-n chan-1 ave min max]</span>
+0233     qq.tf=<span class="string">'g'</span>;      <span class="comment">% output the gain time-frequency plane by default</span>
+0234     qq.rf=0;
+0235     <span class="keyword">if</span> nargin&gt;=3 &amp;&amp; ~isempty(pp)
+0236         qp=pp;      <span class="comment">% save for v_estnoisem call</span>
+0237         qqn=fieldnames(qq);
+0238         <span class="keyword">for</span> i=1:length(qqn)
+0239             <span class="keyword">if</span> isfield(pp,qqn{i})
+0240                 qq.(qqn{i})=pp.(qqn{i});
+0241             <span class="keyword">end</span>
+0242         <span class="keyword">end</span>
+0243         <span class="keyword">if</span> length(qq.gw)&lt;5
+0244             qq.gw(5)=0;
+0245         <span class="keyword">end</span>
+0246         qq.gw=qq.gw(1:5)/sum(qq.gw(1:5)); <span class="comment">% ensure gain weights are normaized and trim to length 5</span>
+0247     <span class="keyword">else</span>
+0248         qp=struct;  <span class="comment">% make an empty structure for v_estnoisem</span>
+0249     <span class="keyword">end</span>
+0250 <span class="keyword">end</span>
+0251 <span class="comment">% derived algorithm constants</span>
+0252 <span class="keyword">if</span> qq.ri
+0253     ni=pow2(nextpow2(qq.ti*fs*sqrt(0.5)));
+0254 <span class="keyword">else</span>
+0255     ni=round(qq.ti*fs);    <span class="comment">% frame increment in samples</span>
+0256 <span class="keyword">end</span>
+0257 tinc=ni/fs;         <span class="comment">% true frame increment time</span>
+0258 a=exp(-tinc/qq.ta); <span class="comment">% SNR smoothing coefficient</span>
+0259 gx=qq.gx;           <span class="comment">% max posterior SNR as a power ratio</span>
+0260 gz=qq.gz;           <span class="comment">% min posterior SNR as a power ratio</span>
+0261 xn=qq.xn;           <span class="comment">% floor for prior SNR, xi</span>
+0262 ne=qq.ne;           <span class="comment">% noise estimation: 0=min statistics, 1=MMSE [0]</span>
+0263 gn1=max(qq.gn-1,0); <span class="comment">% floor for posterior SNR when estimating prior SNR</span>
+0264 xb=qq.xb;
+0265 tf=qq.tf;
+0266 
+0267 <span class="comment">% calculate power spectrum in frames</span>
+0268 
+0269 no=round(qq.of);                      <span class="comment">% integer overlap factor</span>
+0270 nf=ni*no;                           <span class="comment">% fft length</span>
+0271 w=sqrt(hamming(nf+1))'; w(end)=[];  <span class="comment">% for now always use sqrt hamming window</span>
+0272 w=w/sqrt(sum(w(1:ni:nf).^2));       <span class="comment">% normalize to give overall gain of 1</span>
+0273 rf=qq.rf || nargout==2 || nargout==5;   <span class="comment">% rf=1 if we need to round down to an exact number of frames</span>
+0274 <span class="keyword">if</span> rf&gt;0                             <span class="comment">% set flag for call to v_enframe</span>
+0275     rfm=<span class="string">''</span>;                         <span class="comment">% truncate input to an exact number of frames</span>
+0276 <span class="keyword">else</span>
+0277     rfm=<span class="string">'r'</span>;                        <span class="comment">% reflect final few input samples to fill up final frame</span>
+0278 <span class="keyword">end</span>
+0279 [y,tt]=<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s(:,1),w,ni,rfm);    <span class="comment">% v_enframe channel 1</span>
+0280 tt=tt/fs;                           <span class="comment">% frame times</span>
+0281 yf=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(y,nf,2);                    <span class="comment">% complex spectrum of input speech</span>
+0282 [nr,nf2]=size(yf);                  <span class="comment">% nr = number of frames in this chunk</span>
+0283 nf2nc=nf2*nc;                       <span class="comment">% number of gains to calculate per frame</span>
+0284 nf2ncp=nf2*ncp;                     <span class="comment">% number of STFT values per frame</span>
+0285 yf(1,1,ncp)=yf(1,1);                <span class="comment">% enlarge yf to cope with nc*np channels</span>
+0286 <span class="keyword">for</span> ic=2:ncp                        <span class="comment">% loop for each additional channel</span>
+0287     yf(:,:,ic)=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s(:,ic),w,ni,rfm),nf,2);   <span class="comment">% complex spectrum of channel ic</span>
+0288 <span class="keyword">end</span>
+0289 yf=reshape(yf,nr,nf2ncp);           <span class="comment">% concatenate all the channels</span>
+0290 tfe=<span class="string">'nzxG'</span>;                         <span class="comment">% tf entries that require enhancement on all channels</span>
+0291 nzxG=nargout&gt;2 &amp;&amp; ~isempty(tf) &amp;&amp; any(any(tf(ones(length(tfe),1),:) == tfe(ones(length(tf),1),:)')); <span class="comment">% tf parameter includes 'n','z','x' or 'G'</span>
+0292 nce= 1 + (nc-1)*(qq.gw(2)&lt;1 || nzxG); <span class="comment">% channels to enhance</span>
+0293 nf2nce=nf2*nce;                     <span class="comment">% total number of frequency bins for enhancement</span>
+0294 <span class="keyword">if</span> nc &gt; nce                         <span class="comment">% only need the gain from channel 1</span>
+0295     yp=yf(:,1:nf2).*conj(yf(:,1:nf2));  <span class="comment">% power spectrum of channel 1 of input speech</span>
+0296 <span class="keyword">else</span>
+0297     yp=yf(:,1:nf2nc).*conj(yf(:,1:nf2nc));  <span class="comment">% power spectrum of all channels but only plane 1 of input speech</span>
+0298 <span class="keyword">end</span>
+0299 ff=(0:nf2-1)*fs/nf;                 <span class="comment">% frequency axis</span>
+0300 <span class="keyword">if</span> isstruct(fsz)                    <span class="comment">% check if we are following a previous call</span>
+0301     <span class="keyword">if</span> ne&gt;0                         <span class="comment">% check noise estimation method</span>
+0302         [dp,ze]=<a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>(yp,ze);   <span class="comment">% estimate the noise using MMSE in all frequency bins of nce channels</span>
+0303     <span class="keyword">else</span>
+0304         [dp,ze]=<a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>(yp,ze);   <span class="comment">% estimate the noise using minimum statistics</span>
+0305     <span class="keyword">end</span>
+0306     ssv=fsz.ssv;                    <span class="comment">% saved output samples from previous call for overlap adding</span>
+0307     xu=fsz.xu;                      <span class="comment">% saved unsmoothed SNR</span>
+0308 <span class="keyword">else</span>
+0309     <span class="keyword">if</span> ne&gt;0                         <span class="comment">% check noise estimation method</span>
+0310         [dp,ze]=<a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>(yp,tinc,qp);    <span class="comment">% estimate the noise using MMSE</span>
+0311     <span class="keyword">else</span>
+0312         [dp,ze]=<a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>(yp,tinc,qp);    <span class="comment">% estimate the noise using minimum statistics</span>
+0313     <span class="keyword">end</span>
+0314     ssv=zeros(ni*(no-1),ncp);       <span class="comment">% dummy saved output samples from previous call for overlap adding</span>
+0315     xu=1;                           <span class="comment">% dummy unsmoothed SNR from previous frame %%%%%%%%%%% check dimensions</span>
+0316 <span class="keyword">end</span>
+0317 
+0318 ss=[]; <span class="comment">% in case of no data frames</span>
+0319 gg=[]; <span class="comment">% in case of no data frames or empty tf</span>
+0320 <span class="keyword">if</span> nr&gt;0
+0321     gam=max(min(yp./dp,gx),gz);        <span class="comment">% gamma = posterior SNR</span>
+0322     g=zeros(nr,nf2nce);                 <span class="comment">% create space for gain matrix</span>
+0323     x=zeros(nr,nf2nce);                 <span class="comment">% create space for prior SNR</span>
+0324     <span class="keyword">switch</span> qq.lg
+0325         <span class="keyword">case</span> 0                      <span class="comment">% use amplitude domain estimator from [1]</span>
+0326             <span class="keyword">for</span> i=1:nr              <span class="comment">% loop for each frame</span>
+0327                 gami=gam(i,:);
+0328                 xi=max(a*xb*xu+(1-a)*max(gami-1,gn1),xn);  <span class="comment">% prior SNR</span>
+0329                 v=0.5*xi.*gami./(1+xi);    <span class="comment">% note that this equals 0.5*vk in [1]</span>
+0330                 gi=(0.277+2*v)./gami;     <span class="comment">% accurate to 0.02 dB for v&gt;0.5</span>
+0331                 mv=v&lt;0.5;
+0332                 <span class="keyword">if</span> any(mv)
+0333                     vmv=v(mv);
+0334                     gi(mv)=kk*sqrt(vmv).*((0.5+vmv).*besseli(0,vmv)+vmv.*besseli(1,vmv))./(gami(mv).*exp(vmv));
+0335                 <span class="keyword">end</span>
+0336                 g(i,:)=gi;           <span class="comment">% save gain for later</span>
+0337                 x(i,:)=xi;          <span class="comment">% save prior SNR</span>
+0338                 xu=gami.*gi.^2;       <span class="comment">% unsmoothed prior SNR</span>
+0339             <span class="keyword">end</span>
+0340         <span class="keyword">case</span> 2                        <span class="comment">% perceptually motivated estimator from [8]</span>
+0341             <span class="keyword">for</span> i=1:nr              <span class="comment">% loop for each frame</span>
+0342                 gami=gam(i,:);
+0343                 xi=max(a*xb*xu+(1-a)*max(gami-1,gn1),xn);  <span class="comment">% prior SNR</span>
+0344                 v=0.5*xi.*gami./(1+xi);    <span class="comment">% note that this is 0.5*vk in [8]</span>
+0345                 gi=cc*sqrt(v).*exp(v)./(gami.*besseli(0,v));
+0346                 g(i,:)=gi;              <span class="comment">% save gain for later</span>
+0347                 x(i,:)=xi;              <span class="comment">% save prior SNR</span>
+0348                 xu=gami.*gi.^2;         <span class="comment">% unsmoothed prior SNR</span>
+0349             <span class="keyword">end</span>
+0350         <span class="keyword">otherwise</span>                       <span class="comment">% use log domain estimator from [2]</span>
+0351             <span class="keyword">for</span> i=1:nr              <span class="comment">% loop for each frame</span>
+0352                 gami=gam(i,:);
+0353                 xi=max(a*xb*xu+(1-a)*max(gami-1,gn1),xn);  <span class="comment">% prior SNR</span>
+0354                 xir=xi./(1+xi);
+0355                 gi=xir.*exp(0.5*expint(xir.*gami));
+0356                 g(i,:)=gi;                 <span class="comment">% save gain for later</span>
+0357                 x(i,:)=xi;              <span class="comment">% save prior SNR</span>
+0358                 xu=gami.*gi.^2;         <span class="comment">% unsmoothed prior SNR</span>
+0359             <span class="keyword">end</span>
+0360     <span class="keyword">end</span>
+0361     <span class="keyword">if</span> nc&gt;nce                           <span class="comment">% only calculated the gain from channel 1</span>
+0362         g=repmat(g,1,nc);               <span class="comment">% replicate channel 1 gain for all channels</span>
+0363     <span class="keyword">else</span>
+0364         gr=g;                           <span class="comment">% save raw gain in case we need to output it</span>
+0365         gwx=find(qq.gw(2:end));         <span class="comment">% find which channel-independent gain terms to include</span>
+0366         <span class="keyword">if</span> nc&gt;1 &amp;&amp; ~isempty(gwx)
+0367             g3=reshape(g,[nr,nf2,nc]);
+0368             gx=zeros(nr,nf2);              <span class="comment">% space for channel-independent gain component</span>
+0369             <span class="keyword">for</span> ig=gwx                  <span class="comment">% loop for each gain component with a non-zero weight</span>
+0370                 <span class="keyword">switch</span> ig
+0371                     <span class="keyword">case</span> 1                      <span class="comment">% chan 1</span>
+0372                         gx=g3(:,:,1)*qq.gw(2);
+0373                     <span class="keyword">case</span> 2                      <span class="comment">% average</span>
+0374                         gx=gx+mean(g3,3)*qq.gw(3);
+0375                     <span class="keyword">case</span> 3                      <span class="comment">% min</span>
+0376                         gx=gx+min(g3,[],3)*qq.gw(4);
+0377                     <span class="keyword">case</span> 4                      <span class="comment">% max</span>
+0378                         gx=gx+max(g3,[],3)*qq.gw(5);
+0379                 <span class="keyword">end</span>
+0380             <span class="keyword">end</span>
+0381             g=g*qq.gw(1)+repmat(gx,1,nc); <span class="comment">% add in the channel-independent gain components</span>
+0382         <span class="keyword">end</span>
+0383     <span class="keyword">end</span>
+0384     g=min(qq.mx+(1-qq.mx)*g,qq.gc);                 <span class="comment">% mix in some of the input and clip to qq.gc</span>
+0385     <span class="keyword">if</span> qq.bt&gt;=0
+0386         g=g&gt;qq.bt;                      <span class="comment">% apply binary masking threshold</span>
+0387     <span class="keyword">end</span>
+0388     se=<a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>(reshape(yf.*repmat(g,1,np),[nr nf2 nc*np]),nf,2).*repmat(w,[nr 1 nc*np]);     <span class="comment">% inverse dft and apply output window</span>
+0389     ss=zeros(ni*(nr+no-1),nc*np,no);                <span class="comment">% space for overlapped output speech</span>
+0390     ss(1:ni*(no-1),:,end)=ssv;                      <span class="comment">% insert saved output speech (already overlap-added)</span>
+0391     <span class="keyword">for</span> i=1:no                                      <span class="comment">% insert frames into no columns for overlap-adding</span>
+0392         nm=nf*(1+floor((nr-i)/no));                 <span class="comment">% number of samples in this column</span>
+0393         ss(1+(i-1)*ni:nm+(i-1)*ni,:,i)=reshape(permute(se(i:no:nr,:,:),[2 1 3]),nm,nc*np); <span class="comment">% concatenate every no'th frame</span>
+0394     <span class="keyword">end</span>
+0395     ss=reshape(sum(ss,3),[],nc,np);                 <span class="comment">% perform overlap add and split into planes</span>
+0396     <span class="keyword">if</span> nargout&gt;2 &amp;&amp; ~isempty(tf)
+0397         <span class="keyword">if</span> (any(lower(tf)==<span class="string">'i'</span>) || any(lower(tf)==<span class="string">'o'</span>))                         <span class="comment">% tf entries that require all planes</span>
+0398             npg=np;  <span class="comment">% number of planes in gg array</span>
+0399         <span class="keyword">else</span>
+0400             npg=1;
+0401         <span class="keyword">end</span>
+0402         gg=zeros(nr,nf2nc*npg,length(tf));  <span class="comment">% make space</span>
+0403         <span class="keyword">if</span> ncp&gt;nce &amp;&amp; (any(tf==<span class="string">'i'</span>) || any(tf==<span class="string">'o'</span>))
+0404             yp=yf.*conj(yf);        <span class="comment">% calculate power spectrum for all channels/planes</span>
+0405         <span class="keyword">end</span>
+0406         <span class="keyword">for</span> i=1:length(tf)
+0407             <span class="keyword">switch</span> tf(i)
+0408                 <span class="keyword">case</span> <span class="string">'i'</span>            <span class="comment">% 'i' = input power spectrum (nc*np)</span>
+0409                     gg(:,:,i)=yp;
+0410                 <span class="keyword">case</span> <span class="string">'I'</span>            <span class="comment">% 'I' = input complex spectrum (nc*np)</span>
+0411                     gg(:,:,i)=yf;
+0412                 <span class="keyword">case</span> <span class="string">'n'</span>            <span class="comment">% 'n' = noise power spectrum (nc)</span>
+0413                     gg(:,:,i)=repmat(dp,1,npg);
+0414                 <span class="keyword">case</span> <span class="string">'z'</span>            <span class="comment">% 'z' = posterior SNR (i.e. (S+N)/N ) (nc)</span>
+0415                     gg(:,:,i)=repmat(gam,1,npg);
+0416                 <span class="keyword">case</span> <span class="string">'x'</span>            <span class="comment">% 'x' = prior SNR (nc)</span>
+0417                     gg(:,:,i)=repmat(x,1,npg);
+0418                 <span class="keyword">case</span> <span class="string">'g'</span>            <span class="comment">% 'G' = raw gain (nc)</span>
+0419                     gg(:,:,i)=repmat(gr,1,npg);
+0420                 <span class="keyword">case</span> <span class="string">'g'</span>            <span class="comment">% 'g' = final gain (nc)</span>
+0421                     gg(:,:,i)=repmat(g,1,npg);
+0422                 <span class="keyword">case</span> <span class="string">'o'</span>            <span class="comment">% 'o' = output power spectrum (nc*np)</span>
+0423                     gg(:,:,i)=yp.*g.^2;
+0424                 <span class="keyword">case</span> <span class="string">'O'</span>            <span class="comment">% 'O' = output complex spectrum (nc*np)</span>
+0425                     gg(:,:,i)=yf.*g;
+0426             <span class="keyword">end</span>
+0427         <span class="keyword">end</span>
+0428         gg=reshape(gg,[nr,nf2,nc,npg,length(tf)]); <span class="comment">% make it 5D</span>
+0429     <span class="keyword">end</span>
+0430 <span class="keyword">end</span> <span class="comment">% if ~nr</span>
+0431 <span class="keyword">if</span> nargout==2 || nargout==5         <span class="comment">% we have a zo output argument</span>
+0432     <span class="keyword">if</span> nr
+0433         zo.ssv=ss(end-ni*(no-1)+1:<span class="keyword">end</span>,:);    <span class="comment">% save the last no-1 hops for overlap-adding next time</span>
+0434         ss(end-ni*(no-1)+1:<span class="keyword">end</span>,:)=[];        <span class="comment">% only output the frames that are completed</span>
+0435     <span class="keyword">else</span>
+0436         zo.ssv=ssv;                 <span class="comment">% if no new frames just keep the old tail</span>
+0437     <span class="keyword">end</span>
+0438     zo.si=s(length(ss)+1:<span class="keyword">end</span>,:);      <span class="comment">% save the tail end of the input speech signal</span>
+0439     zo.fs=fs;                       <span class="comment">% save sample frequency</span>
+0440     zo.qq=qq;                       <span class="comment">% save local parameters</span>
+0441     zo.qp=qp;                       <span class="comment">% save v_estnoisem parameters</span>
+0442     zo.ze=ze;                       <span class="comment">% save state of noise estimation</span>
+0443     zo.xu=xu;
+0444     <span class="keyword">if</span> nargout==2
+0445         gg=zo;                      <span class="comment">% 2nd of two arguments is zo</span>
+0446     <span class="keyword">end</span>
+0447 <span class="keyword">elseif</span> rf==0
+0448     ss=ss(1:size(s,1),:,:);             <span class="comment">% trim to the correct length if not an exact number of frames</span>
+0449 <span class="keyword">end</span>
+0450 <span class="keyword">if</span> ~nargout &amp;&amp; nr&gt;0
+0451     ffax=ff/1000;
+0452     ax=zeros(4,1);
+0453     ax(1)=subplot(223);
+0454     imagesc(tt,ffax,20*log10(g(:,1:nf2))');
+0455     colorbar;
+0456     axis(<span class="string">'xy'</span>);
+0457     title(sprintf(<span class="string">'Filter Gain (dB): ta=%.2g'</span>,qq.ta));
+0458     xlabel(<span class="string">'Time (s)'</span>);
+0459     ylabel(<span class="string">'Frequency (kHz)'</span>);
+0460     
+0461     ax(2)=subplot(222);
+0462     imagesc(tt,ffax,10*log10(yp(:,1:nf2))');
+0463     colorbar;
+0464     axis(<span class="string">'xy'</span>);
+0465     title(<span class="string">'Noisy Speech (dB)'</span>);
+0466     xlabel(<span class="string">'Time (s)'</span>);
+0467     ylabel(<span class="string">'Frequency (kHz)'</span>);
+0468     
+0469     ax(3)=subplot(224);
+0470     imagesc(tt,ffax,10*log10(yp(:,1:nf2).*g(:,1:nf2).^2)');
+0471     colorbar;
+0472     axis(<span class="string">'xy'</span>);
+0473     title(<span class="string">'Enhanced Speech (dB)'</span>);
+0474     xlabel(<span class="string">'Time (s)'</span>);
+0475     ylabel(<span class="string">'Frequency (kHz)'</span>);
+0476     
+0477     ax(4)=subplot(221);
+0478     imagesc(tt,ffax,10*log10(dp(:,1:nf2))');
+0479     colorbar;
+0480     axis(<span class="string">'xy'</span>);
+0481     title(<span class="string">'Noise Estimate (dB)'</span>);
+0482     xlabel(<span class="string">'Time (s)'</span>);
+0483     ylabel(<span class="string">'Frequency (kHz)'</span>);
+0484     linkaxes(ax);
+0485 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

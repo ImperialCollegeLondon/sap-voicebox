@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_voicebox</title>
+  <meta name="keywords" content="v_voicebox">
+  <meta name="description" content="VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_voicebox.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_voicebox
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y=v_voicebox(f,v) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)
+
+  Inputs:  F   is a field name
+           V   is a new value for the field
+
+ Outputs:  Y   is set equal to the structure of parameters if the
+               f and v inputs are both present or both absent. If only
+               input f is specified, then y is set to the value of the
+               corresponding field or null if it doesn't exist.
+
+ You can override the defaults set here by setting the environment variable &quot;VOICEBOX&quot;
+ to the path of an m-file that contains lines like &quot;% PP.dir_temp='F:\TEMP';&quot;
+
+ This routine contains default values for constants that are used by
+ other functions in the VOICEBOX toolbox. Values in the first section below,
+ entitled &quot;System-dependent directory paths&quot; should be set as follows:
+
+    PP.dir_temp     directory for storing temporary files
+    PP.dir_data     default directory to preappend to speech data file names
+                    when the &quot;d&quot; option is specified in READWAV etc.
+    PP.shorten      location of SHORTEN executable. SHORTEN is a proprietary file compression
+                    algorithm that is used for some SPHERE-format files. READSPH
+                    will try to call an external decoder if it is asked to
+                    read such a compressed file.
+    PP.sfsbin       location of Speech Filing Sysytem binaries. If the &quot;c&quot; option
+                    is given to READSFS, it will try to create a requested item
+                    if it is not present in the SFS file. This parameter tells it
+                    where to find the SFS executables.
+    PP.sfssuffix    suffix for Speech Filing Sysytem binaries. READSFS uses this paremeter
+                    to create the name of an SFS executable (see PP.sfsbin above).
+ Other values defined in this routine are the defaults for specific algorithm constants.
+ If you want to change these, please refer to the individual routines for a fuller description.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_winenvar.html" class="code" title="function d=v_winenvar(n)">v_winenvar</a>	WINENVAR get windows environment variable [D]=(N)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_correlogram.html" class="code" title="function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)">v_correlogram</a>	make v_correlogram,</li><li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li><li><a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>	GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>	KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</li><li><a href="v_readaif.html" class="code" title="function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip)">v_readaif</a>	READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readau.html" class="code" title="function [y,fs,h]=v_readau(filename,mode)">v_readau</a>	READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readcnx.html" class="code" title="function [y,fs,h]=v_readcnx(filename,mode)">v_readcnx</a>	READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readflac.html" class="code" title="function [y,fs]=v_readflac(filename,mode)">v_readflac</a>	READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</li><li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_voicebox(f,v)</a>
+0002 <span class="comment">%VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  F   is a field name</span>
+0005 <span class="comment">%           V   is a new value for the field</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Outputs:  Y   is set equal to the structure of parameters if the</span>
+0008 <span class="comment">%               f and v inputs are both present or both absent. If only</span>
+0009 <span class="comment">%               input f is specified, then y is set to the value of the</span>
+0010 <span class="comment">%               corresponding field or null if it doesn't exist.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% You can override the defaults set here by setting the environment variable &quot;VOICEBOX&quot;</span>
+0013 <span class="comment">% to the path of an m-file that contains lines like &quot;% PP.dir_temp='F:\TEMP';&quot;</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% This routine contains default values for constants that are used by</span>
+0016 <span class="comment">% other functions in the VOICEBOX toolbox. Values in the first section below,</span>
+0017 <span class="comment">% entitled &quot;System-dependent directory paths&quot; should be set as follows:</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%    PP.dir_temp     directory for storing temporary files</span>
+0020 <span class="comment">%    PP.dir_data     default directory to preappend to speech data file names</span>
+0021 <span class="comment">%                    when the &quot;d&quot; option is specified in READWAV etc.</span>
+0022 <span class="comment">%    PP.shorten      location of SHORTEN executable. SHORTEN is a proprietary file compression</span>
+0023 <span class="comment">%                    algorithm that is used for some SPHERE-format files. READSPH</span>
+0024 <span class="comment">%                    will try to call an external decoder if it is asked to</span>
+0025 <span class="comment">%                    read such a compressed file.</span>
+0026 <span class="comment">%    PP.sfsbin       location of Speech Filing Sysytem binaries. If the &quot;c&quot; option</span>
+0027 <span class="comment">%                    is given to READSFS, it will try to create a requested item</span>
+0028 <span class="comment">%                    if it is not present in the SFS file. This parameter tells it</span>
+0029 <span class="comment">%                    where to find the SFS executables.</span>
+0030 <span class="comment">%    PP.sfssuffix    suffix for Speech Filing Sysytem binaries. READSFS uses this paremeter</span>
+0031 <span class="comment">%                    to create the name of an SFS executable (see PP.sfsbin above).</span>
+0032 <span class="comment">% Other values defined in this routine are the defaults for specific algorithm constants.</span>
+0033 <span class="comment">% If you want to change these, please refer to the individual routines for a fuller description.</span>
+0034 
+0035 <span class="comment">% Bugs/Suggestions</span>
+0036 <span class="comment">%    (1)  Could allow a * at the end of F to act as a wildcard and return/print a part structure</span>
+0037 
+0038 <span class="comment">%      Copyright (C) Mike Brookes 2003</span>
+0039 <span class="comment">%      Version: $Id: v_voicebox.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0042 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0045 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0046 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0047 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0048 <span class="comment">%   (at your option) any later version.</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0051 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0052 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0053 <span class="comment">%   GNU General Public License for more details.</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0056 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0057 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0058 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0059 
+0060 <span class="keyword">persistent</span> PP
+0061 <span class="keyword">if</span> isempty(PP)
+0062     
+0063     <span class="comment">% System-dependent directory paths and constants</span>
+0064     
+0065     PP.dir_temp=<span class="string">'F:\TEMP'</span>;                      <span class="comment">% directory for storing temporary files</span>
+0066     PP.dir_data=<span class="string">'E:\dmb\data\speech'</span>;           <span class="comment">% default directory to preappend to speech data file names</span>
+0067     PP.shorten=<span class="string">'C:\bin\shorten.exe'</span>;            <span class="comment">% location of shorten executable</span>
+0068     PP.flac=<span class="string">'C:\bin\flac.exe'</span>;                  <span class="comment">% location of flac executable</span>
+0069     PP.sfsbin=<span class="string">'F:\Program Files\SFS\Program'</span>;   <span class="comment">% location of Speech Filing Sysytem binaries</span>
+0070     PP.sfssuffix=<span class="string">'.exe'</span>;                        <span class="comment">% suffix for Speech Filing Sysytem binaries</span>
+0071     PP.memsize=50e6;                            <span class="comment">% Maximum amount of temporary memory to use (Bytes)</span>
+0072     
+0073     <span class="comment">% DYPSA glottal closure identifier</span>
+0074     
+0075     PP.dy_cpfrac=0.3;           <span class="comment">% presumed closed phase fraction of larynx cycle</span>
+0076     PP.dy_cproj=0.2;            <span class="comment">% cost of projected candidate</span>
+0077     PP.dy_cspurt=-0.45;         <span class="comment">% cost of a talkspurt</span>
+0078     PP.dy_dopsp=1;              <span class="comment">% Use phase slope projection (1) or not (0)?</span>
+0079     PP.dy_ewdly=0.0008;         <span class="comment">% window delay for energy cost function term [~ energy peak delay from closure] (sec)</span>
+0080     PP.dy_ewlen=0.003;          <span class="comment">% window length for energy cost function term (sec)</span>
+0081     PP.dy_ewtaper=0.001;        <span class="comment">% taper length for energy cost function window (sec)</span>
+0082     PP.dy_fwlen=0.00045;        <span class="comment">% window length used to smooth group delay (sec)</span>
+0083     PP.dy_fxmax=500;            <span class="comment">% max larynx frequency (Hz)</span>
+0084     PP.dy_fxmin=50;             <span class="comment">% min larynx frequency (Hz)</span>
+0085     PP.dy_fxminf=60;            <span class="comment">% min larynx frequency (Hz) [used for Frobenius norm only]</span>
+0086     PP.dy_gwlen=0.0030;         <span class="comment">% group delay evaluation window length (sec)</span>
+0087     PP.dy_lpcdur=0.020;         <span class="comment">% lpc analysis frame length (sec)</span>
+0088     PP.dy_lpcn=2;               <span class="comment">% lpc additional poles</span>
+0089     PP.dy_lpcnf=0.001;          <span class="comment">% lpc poles per Hz (1/Hz)</span>
+0090     PP.dy_lpcstep=0.010;        <span class="comment">% lpc analysis step (sec)</span>
+0091     PP.dy_nbest=5;              <span class="comment">% Number of NBest paths to keep</span>
+0092     PP.dy_preemph=50;           <span class="comment">% pre-emphasis filter frequency (Hz) (to avoid preemphasis, make this very large)</span>
+0093     PP.dy_spitch=0.2;           <span class="comment">% scale factor for pitch deviation cost</span>
+0094     PP.dy_wener=0.3;            <span class="comment">% DP energy weighting</span>
+0095     PP.dy_wpitch=0.5;           <span class="comment">% DP pitch weighting</span>
+0096     PP.dy_wslope=0.1;           <span class="comment">% DP group delay slope weighting</span>
+0097     PP.dy_wxcorr=0.8;           <span class="comment">% DP cross correlation weighting</span>
+0098     PP.dy_xwlen=0.01;           <span class="comment">% cross-correlation length for waveform similarity (sec)</span>
+0099     
+0100     <span class="comment">% now see if an environment variable has been set</span>
+0101     
+0102     <span class="keyword">if</span> ispc()
+0103         vbenv=<a href="v_winenvar.html" class="code" title="function d=v_winenvar(n)">v_winenvar</a>(<span class="string">'VOICEBOX'</span>);
+0104         <span class="keyword">if</span> exist(vbenv,<span class="string">'file'</span>);     <span class="comment">% update with locally defined values if defined</span>
+0105             run(vbenv)
+0106         <span class="keyword">end</span>
+0107     <span class="keyword">end</span>
+0108     
+0109     <span class="comment">% now check some of the key values for validity</span>
+0110     
+0111     <span class="keyword">if</span> exist(PP.dir_temp,<span class="string">'dir'</span>)~=7        <span class="comment">% check that temp directory exists</span>
+0112         PP.dir_temp = <a href="v_winenvar.html" class="code" title="function d=v_winenvar(n)">v_winenvar</a>(<span class="string">'temp'</span>);     <span class="comment">% else use windows temp directory</span>
+0113     <span class="keyword">end</span>
+0114     
+0115     [fnp,fnn,fne]=fileparts(mfilename(<span class="string">'fullpath'</span>));
+0116     <span class="keyword">if</span> exist(PP.shorten,<span class="string">'file'</span>)~=2        <span class="comment">% check that shorten executable exists</span>
+0117         PP.shorten=fullfile(fnp,<span class="string">'shorten.exe'</span>,<span class="string">'file'</span>); <span class="comment">% next try local directory</span>
+0118         <span class="keyword">if</span> exist(PP.shorten,<span class="string">'file'</span>)~=2        <span class="comment">% check if it exists in local directory</span>
+0119             PP.shorten=fullfile(fnp(1:end-9),<span class="string">'external\shorten\shorten.exe'</span>); <span class="comment">% check if it exists in ..\external\shorten directory</span>
+0120             <span class="keyword">if</span> exist(PP.shorten,<span class="string">'file'</span>)~=2
+0121                 PP.shorten=<span class="string">'shorten.exe'</span>; <span class="comment">% finally assume it is on the search path</span>
+0122             <span class="keyword">end</span>
+0123         <span class="keyword">end</span>
+0124     <span class="keyword">end</span>
+0125     
+0126     <span class="keyword">if</span> exist(PP.flac)~=2        <span class="comment">% check that flac executable exists</span>
+0127         PP.flac=fullfile(fnp,<span class="string">'flac.exe'</span>); <span class="comment">% next try local directory</span>
+0128         <span class="keyword">if</span> exist(PP.flac)~=2        <span class="comment">% check if it exists in local directory</span>
+0129             PP.flac=<span class="string">'flac.exe'</span>; <span class="comment">% finally assume it is on the search path</span>
+0130         <span class="keyword">end</span>
+0131     <span class="keyword">end</span>
+0132     
+0133 <span class="keyword">end</span>
+0134 <span class="keyword">if</span> nargin==0
+0135     <span class="keyword">if</span> nargout==0
+0136         <span class="comment">% list all fields</span>
+0137         nn=sort(fieldnames(PP));
+0138         cnn=char(nn);
+0139         fprintf(<span class="string">'%d Voicebox parameters:\n'</span>,length(nn));
+0140         
+0141         <span class="keyword">for</span> i=1:length(nn);
+0142             <span class="keyword">if</span> ischar(PP.(nn{i}))
+0143                 fmt=<span class="string">'  %s = %s\n'</span>;
+0144             <span class="keyword">else</span>
+0145                 fmt=<span class="string">'  %s = %g\n'</span>;
+0146             <span class="keyword">end</span>
+0147             fprintf(fmt,cnn(i,:),PP.(nn{i}));
+0148         <span class="keyword">end</span>
+0149     <span class="keyword">else</span>
+0150         y=PP;
+0151     <span class="keyword">end</span>
+0152 <span class="keyword">elseif</span> nargin==1
+0153     <span class="keyword">if</span> isfield(PP,f)
+0154         y=PP.(f);
+0155     <span class="keyword">else</span>
+0156         y=[];
+0157     <span class="keyword">end</span>
+0158 <span class="keyword">else</span>
+0159     <span class="keyword">if</span> isfield(PP,f)
+0160         PP.(f)=v;
+0161         y=PP;
+0162     <span class="keyword">else</span>
+0163         error(sprintf(<span class="string">'''%s'' is not a valid voicebox field name'</span>,f));
+0164     <span class="keyword">end</span>
+0165 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

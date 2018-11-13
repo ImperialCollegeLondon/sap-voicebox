@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_snrseg</title>
+  <meta name="keywords" content="v_snrseg">
+  <meta name="description" content="SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_snrseg.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_snrseg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [seg,glo]=v_snrseg(s,r,fs,m,tf) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)
+
+Usage: (1) seg=v_snrseg(s,r,fs);                  % s &amp; r are noisy and clean signal
+       (2) seg=v_snrseg(s,r,fs,'wz');             % no VAD or inerpolation used ['Vq' is default]
+       (3) [seg,glo]=v_snrseg(s,r,fs,'Vq',0.03);  % 30 ms frames
+
+ Inputs:    s  test signal
+            r  reference signal
+           fs  sample frequency (Hz)
+            m  mode [default = 'V']
+                 w = No VAD - use whole file
+                 v = use sohn VAD to discard silent portions
+                 V = use P.56-based VAD to discard silent portions [default]
+                 a = A-weight the signals
+                 b = weight signals by BS-468
+                 q = use quadratic interpolation to remove delays +- 1 sample
+                 z = do not do any alignment
+                 p = plot results
+           tf  frame increment [0.01]
+
+ Outputs: seg = Segmental SNR in dB
+          glo = Global SNR in dB (typically 7 dB greater than SNR-seg)
+
+ This function compares a noisy signal, S, with a clean reference, R, and
+ computes the segemntal signal-to-noise ratio (SNR) in dB. The signals,
+ which must be of the same length, are split into non-overlapping frames
+ of length TF (default 10 ms) and the SNR of each frame in dB is calculated.
+ The segmental SNR is the average of these values, i.e.
+         SEG = mean(10*log10(sum(Ri^2)/sum((Si-Ri)^2))
+ where the mean is over frames and the sum runs over one particular frame.
+ Two optional modifications can be made to this basic formula:
+
+    (a) Frames are excluded if there is no significant energy in the R
+        signal. The idea is to limit the calculation to frames in which
+        speech is active. By default, the v_voicebox function &quot;v_activlev&quot; is
+        used to detect the inactive frames (the 'V' mode option).
+
+    (b) In each frame independently, the reference signal is shifted by up
+        to +- 1 sample to find the alignment than minimizes the noise
+        component (S-R)^2. This shifting accounts for small misalignments
+        and/or sample frequency differences between the two signals. For
+        larger shifts, you can use the v_voicebox function &quot;v_sigalign&quot;.
+        Accurate alignemnt is especially important at high SNR values.
+
+ If no M argument is specified, both these modifications will be applied;
+ this is equivalent to specifying M='Vq'.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li><li><a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>	VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [seg,glo]=v_snrseg(s,r,fs,m,tf)</a>
+0002 <span class="comment">%SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%Usage: (1) seg=v_snrseg(s,r,fs);                  % s &amp; r are noisy and clean signal</span>
+0005 <span class="comment">%       (2) seg=v_snrseg(s,r,fs,'wz');             % no VAD or inerpolation used ['Vq' is default]</span>
+0006 <span class="comment">%       (3) [seg,glo]=v_snrseg(s,r,fs,'Vq',0.03);  % 30 ms frames</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Inputs:    s  test signal</span>
+0009 <span class="comment">%            r  reference signal</span>
+0010 <span class="comment">%           fs  sample frequency (Hz)</span>
+0011 <span class="comment">%            m  mode [default = 'V']</span>
+0012 <span class="comment">%                 w = No VAD - use whole file</span>
+0013 <span class="comment">%                 v = use sohn VAD to discard silent portions</span>
+0014 <span class="comment">%                 V = use P.56-based VAD to discard silent portions [default]</span>
+0015 <span class="comment">%                 a = A-weight the signals</span>
+0016 <span class="comment">%                 b = weight signals by BS-468</span>
+0017 <span class="comment">%                 q = use quadratic interpolation to remove delays +- 1 sample</span>
+0018 <span class="comment">%                 z = do not do any alignment</span>
+0019 <span class="comment">%                 p = plot results</span>
+0020 <span class="comment">%           tf  frame increment [0.01]</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% Outputs: seg = Segmental SNR in dB</span>
+0023 <span class="comment">%          glo = Global SNR in dB (typically 7 dB greater than SNR-seg)</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% This function compares a noisy signal, S, with a clean reference, R, and</span>
+0026 <span class="comment">% computes the segemntal signal-to-noise ratio (SNR) in dB. The signals,</span>
+0027 <span class="comment">% which must be of the same length, are split into non-overlapping frames</span>
+0028 <span class="comment">% of length TF (default 10 ms) and the SNR of each frame in dB is calculated.</span>
+0029 <span class="comment">% The segmental SNR is the average of these values, i.e.</span>
+0030 <span class="comment">%         SEG = mean(10*log10(sum(Ri^2)/sum((Si-Ri)^2))</span>
+0031 <span class="comment">% where the mean is over frames and the sum runs over one particular frame.</span>
+0032 <span class="comment">% Two optional modifications can be made to this basic formula:</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%    (a) Frames are excluded if there is no significant energy in the R</span>
+0035 <span class="comment">%        signal. The idea is to limit the calculation to frames in which</span>
+0036 <span class="comment">%        speech is active. By default, the v_voicebox function &quot;v_activlev&quot; is</span>
+0037 <span class="comment">%        used to detect the inactive frames (the 'V' mode option).</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%    (b) In each frame independently, the reference signal is shifted by up</span>
+0040 <span class="comment">%        to +- 1 sample to find the alignment than minimizes the noise</span>
+0041 <span class="comment">%        component (S-R)^2. This shifting accounts for small misalignments</span>
+0042 <span class="comment">%        and/or sample frequency differences between the two signals. For</span>
+0043 <span class="comment">%        larger shifts, you can use the v_voicebox function &quot;v_sigalign&quot;.</span>
+0044 <span class="comment">%        Accurate alignemnt is especially important at high SNR values.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">% If no M argument is specified, both these modifications will be applied;</span>
+0047 <span class="comment">% this is equivalent to specifying M='Vq'.</span>
+0048 
+0049 <span class="comment">% Bugs/suggestions</span>
+0050 <span class="comment">% (1) Optionally restrict the bandwidth to the smaller of the two</span>
+0051 <span class="comment">%     bandwidths either with an extra parameter or automatically determined</span>
+0052 
+0053 <span class="comment">%      Copyright (C) Mike Brookes 2011</span>
+0054 <span class="comment">%      Version: $Id: v_snrseg.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0057 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0060 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0061 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0062 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0063 <span class="comment">%   (at your option) any later version.</span>
+0064 <span class="comment">%</span>
+0065 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0066 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0067 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0068 <span class="comment">%   GNU General Public License for more details.</span>
+0069 <span class="comment">%</span>
+0070 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0071 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0072 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0073 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0074 
+0075 <span class="keyword">if</span> nargin&lt;4 || ~ischar(m)
+0076     m=<span class="string">'Vq'</span>;
+0077 <span class="keyword">end</span>
+0078 <span class="keyword">if</span> nargin&lt;5 || ~numel(tf)
+0079     tf=0.01; <span class="comment">% default frame length is 10 ms</span>
+0080 <span class="keyword">end</span>
+0081 snmax=100;  <span class="comment">% clipping limit for SNR</span>
+0082 
+0083 <span class="comment">% filter the input signals if required</span>
+0084 
+0085 <span class="keyword">if</span> any(m==<span class="string">'a'</span>)  <span class="comment">% A-weighting</span>
+0086     [b,a]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(2,<span class="string">'z'</span>,fs);
+0087     s=filter(b,a,s);
+0088     r=filter(b,a,r);
+0089 <span class="keyword">elseif</span> any(m==<span class="string">'b'</span>) <span class="comment">%  BS-468 weighting</span>
+0090     [b,a]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(8,<span class="string">'z'</span>,fs);
+0091     s=filter(b,a,s);
+0092     r=filter(b,a,r);
+0093 <span class="keyword">end</span>
+0094 
+0095 mq=~any(m==<span class="string">'z'</span>);
+0096 nr=min(length(r), length(s));
+0097 kf=round(tf*fs); <span class="comment">% length of frame in samples</span>
+0098 ifr=kf+mq:kf:nr-mq; <span class="comment">% ending sample of each frame</span>
+0099 ifl=ifr(end);
+0100 nf=numel(ifr); <span class="comment">% number of frames</span>
+0101 <span class="keyword">if</span> mq <span class="comment">% perform interpolation</span>
+0102     ssm=reshape(s(2:ifl)-s(3:ifl+1),kf,nf);
+0103     ssp=reshape(s(2:ifl)-s(1:ifl-1),kf,nf);
+0104     sr=reshape(s(2:ifl)-r(2:ifl),kf,nf);
+0105     am=min(max(sum(sr.*ssm,1)./sum(ssm.^2,1),0),1); <span class="comment">%optimum dist between s(2:ifl) and s(3:ifl+1)</span>
+0106     ap=min(max(sum(sr.*ssp,1)./sum(ssp.^2,1),0),1); <span class="comment">%optimum dist between s(2:ifl) and s(1:ifl-1)</span>
+0107     ef=min(sum((sr-repmat(am,kf,1).*ssm).^2,1),sum((sr-repmat(ap,kf,1).*ssp).^2,1)); <span class="comment">% select the best for each frame</span>
+0108 <span class="keyword">else</span> <span class="comment">% no interpolation</span>
+0109     ef=sum(reshape((s(1:ifl)-r(1:ifl)).^2,kf,nf),1);
+0110 <span class="keyword">end</span>
+0111 rf=sum(reshape(r(mq+1:ifl).^2,kf,nf),1);
+0112 em=ef==0; <span class="comment">% mask for zero noise frames</span>
+0113 rm=rf==0; <span class="comment">% mask for zero reference frames</span>
+0114 snf=10*log10((rf+rm)./(ef+em));
+0115 snf(rm)=-snmax;
+0116 snf(em)=snmax;
+0117 
+0118 <span class="comment">% select the frames to include</span>
+0119 
+0120 <span class="keyword">if</span> any(m==<span class="string">'w'</span>)
+0121     vf=true(1,nf); <span class="comment">% include all frames</span>
+0122 <span class="keyword">elseif</span> any(m==<span class="string">'v'</span>)
+0123     vs=<a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>(r,fs,<span class="string">'na'</span>);
+0124     nvs=length(vs);
+0125     [vss,vix]=sort([ifr'; vs(:,2)]);
+0126     vjx=zeros(nvs+nf,5);
+0127     vjx(vix,1)=(1:nvs+nf)'; <span class="comment">% sorted position</span>
+0128     vjx(1:nf,2)=vjx(1:nf,1)-(1:nf)'; <span class="comment">% prev VAD frame end (or 0 or nvs+1 if none)</span>
+0129     vjx(nf+1:<span class="keyword">end</span>,2)=vjx(nf+1:<span class="keyword">end</span>,1)-(1:nvs)'; <span class="comment">% prev snr frame end (or 0 or nvs+1 if none)</span>
+0130     dvs=[vss(1)-mq; vss(2:end)-vss(1:end-1)];  <span class="comment">% number of samples from previous frame boundary</span>
+0131     vjx(:,3)=dvs(vjx(:,1)); <span class="comment">% number of samples from previous frame boundary</span>
+0132     vjx(1:nf,4)=vs(min(1+vjx(1:nf,2),nvs),3); <span class="comment">% VAD result for samples between prev frame boundary and this one</span>
+0133     vjx(nf+1:<span class="keyword">end</span>,4)=vs(:,3); <span class="comment">% VAD result for samples between prev frame boundary and this one</span>
+0134     vjx(1:nf,5)=1:nf; <span class="comment">% SNR frame to accumulate into</span>
+0135     vjx(vjx(nf+1:<span class="keyword">end</span>,2)&gt;=nf,3)=0;  <span class="comment">% zap any VAD frame beyond the last snr frame</span>
+0136     vjx(nf+1:<span class="keyword">end</span>,5)=min(vjx(nf+1:<span class="keyword">end</span>,2)+1,nf); <span class="comment">% SNR frame to accumulate into</span>
+0137     vf=full(sparse(1,vjx(:,5),vjx(:,3).*vjx(:,4),1,nf))&gt;kf/2; <span class="comment">% accumulate into SNR frames and compare with threshold</span>
+0138 <span class="keyword">else</span>  <span class="comment">% default is 'V'</span>
+0139     [lev,af,fso,vad]=<a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>(r,fs);    <span class="comment">% do VAD on reference signal</span>
+0140     vf=sum(reshape(vad(mq+1:ifl),kf,nf),1)&gt;kf/2; <span class="comment">% find frames that are mostly active</span>
+0141 <span class="keyword">end</span>
+0142 seg=mean(snf(vf));
+0143 glo=10*log10(sum(rf(vf))/sum(ef(vf)));
+0144 
+0145 <span class="keyword">if</span> ~nargout || any (m==<span class="string">'p'</span>)
+0146     subplot(311);
+0147     plot((1:length(s))/fs,s);
+0148     ylabel(<span class="string">'Signal'</span>);
+0149     title(sprintf(<span class="string">'SNR = %.1f dB, SNR_{seg} = %.1f dB'</span>,glo,seg));
+0150     axh(1)=gca;
+0151     subplot(312);
+0152     plot((1:length(r))/fs,r);
+0153     ylabel(<span class="string">'Reference'</span>);
+0154     axh(2)=gca;
+0155     subplot(313);
+0156     snv=snf;
+0157     snv(~vf)=NaN;
+0158     snu=snf;
+0159     snu(vf&gt;0)=NaN;
+0160     plot([1 nr]/fs,[glo seg; glo seg],<span class="string">':k'</span>,((1:nf)*kf+(1-kf)/2)/fs,snv,<span class="string">'-b'</span>,((1:nf)*kf+(1-kf)/2)/fs,snu,<span class="string">'-r'</span>);
+0161     ylabel(<span class="string">'Frame SNR'</span>);
+0162     xlabel(<span class="string">'Time (s)'</span>);
+0163     axh(3)=gca;
+0164     linkaxes(axh,<span class="string">'x'</span>);
+0165 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

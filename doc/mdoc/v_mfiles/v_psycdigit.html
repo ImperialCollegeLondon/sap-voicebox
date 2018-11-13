@@ -1,0 +1,692 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_psycdigit</title>
+  <meta name="keywords" content="v_psycdigit">
+  <meta name="description" content="PSYCDIGIT measures psychometric function using TIDIGITS stimuli">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_psycdigit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_psycdigit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>PSYCDIGIT measures psychometric function using TIDIGITS stimuli</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">PSYCDIGIT measures psychometric function using TIDIGITS stimuli
+
+ Usage:
+         (1)[m,v]=v_psycdigit([],[],'GMPWrn10',[],[],[],[],[],dfile);
+                       % measure SRT using addditive white noise, repetitions allowed, data in .WAV format
+         (2)[m,v]=v_psycdigit(@v_specsub,[],'GMPn10',[],[],[],[],[],dfile);
+                       % compare spectral subtraction with unprocessed noisy speech
+
+ Inputs:
+         proc    processing function handle (e.g. @v_specsub) called as follows:
+                    y=proc(x,fs,i,r)  % process noisy waveform x through model i with parameters r
+                    y=proc(x,fs,snr,i,r) % process clean speech degraded to snr through model i with parameters r
+                    y=proc()   % return comment text string describing algorithm (if 'c' option specified)
+         r       parameters for proc (omitted from call if r=[])
+         mode    string containing options (see below for list)
+         p,q,xp  parameters passed on to v_psycest or v_psycestu
+         noise   noise waveform or wav file containing noise
+         fn      noise waveform sample frequency [16000]
+         dfile   path to TIdigits folder
+         ofile   output text file (see below for output file format)
+
+ Outputs:
+          m(2,n,3) estimated srt and slope of all models
+                   m(i,n,k): i={1=srt, 2=slope}, n=model number, k={1=mean, 2=mode (MAP), 3=marginal mode}
+          v(3,n)   estimated covariance matrix entries:
+                   [var(srt) cov(srt,slope) var(slope)]' of n'th model
+
+ List of options for &quot;mode&quot; input:
+         a       proc adds its own noise
+         b*      base figure number for plotting results [100]
+         c       y=proc() returns comment string
+         e/E*    plot evolving psychometric functions *=1,2,3 for mean, mode, marginal mode (F=after each trial)
+         f/F*    plot psychometric functions *=1,2,3 for mean, mode, marginal mode (F=after each trial)
+         g       prompt with number of digits
+         G       prompt with SNR
+         l*      min token length (in digits)
+         L*      max token length (if different from min)
+         m*      use * external models [default 1]
+         M       include an extra model with no processing
+         n*      *=average number of trials per model
+         p/P     plot pdf (P=after each trial)
+         r       allow repetitions
+         s       respond s to save the noisy stimulus as a .wav file
+         t/T*    taper noise */10 seconds at start and end
+         v/V*    plot srt/slope convergence (V= after each trial)
+                 *=1,2,3 for mean, mode, marginal mode
+         x*      add */10 seconds of noise to the front of the speech before processing
+         X*      truncate */10 seconds from the start of the processed speech
+         W       data is in microsoft WAV format
+         z       omit tokens containing &quot;oh&quot;
+         Z       omit tokens containing &quot;zero&quot;
+
+ Output file format
+   Each line starts 'x ' where x is one of the following
+       %  Comment
+       V  File version type
+       O  mode options
+       P  details about proc
+       C  Comment returned by proc
+       M  measurement</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	Estimate multiple psychometric functions</li><li><a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>	v_psycestu estimate unimodal psychometric function</li><li><a href="v_psychofunc.html" class="code" title="function p=v_psychofunc(m,q,x,r)">v_psychofunc</a>	Calculate psychometric functions: trial success probability versus SNR</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)</a>
+0002 <span class="comment">%PSYCDIGIT measures psychometric function using TIDIGITS stimuli</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:</span>
+0005 <span class="comment">%         (1)[m,v]=v_psycdigit([],[],'GMPWrn10',[],[],[],[],[],dfile);</span>
+0006 <span class="comment">%                       % measure SRT using addditive white noise, repetitions allowed, data in .WAV format</span>
+0007 <span class="comment">%         (2)[m,v]=v_psycdigit(@v_specsub,[],'GMPn10',[],[],[],[],[],dfile);</span>
+0008 <span class="comment">%                       % compare spectral subtraction with unprocessed noisy speech</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Inputs:</span>
+0011 <span class="comment">%         proc    processing function handle (e.g. @v_specsub) called as follows:</span>
+0012 <span class="comment">%                    y=proc(x,fs,i,r)  % process noisy waveform x through model i with parameters r</span>
+0013 <span class="comment">%                    y=proc(x,fs,snr,i,r) % process clean speech degraded to snr through model i with parameters r</span>
+0014 <span class="comment">%                    y=proc()   % return comment text string describing algorithm (if 'c' option specified)</span>
+0015 <span class="comment">%         r       parameters for proc (omitted from call if r=[])</span>
+0016 <span class="comment">%         mode    string containing options (see below for list)</span>
+0017 <span class="comment">%         p,q,xp  parameters passed on to v_psycest or v_psycestu</span>
+0018 <span class="comment">%         noise   noise waveform or wav file containing noise</span>
+0019 <span class="comment">%         fn      noise waveform sample frequency [16000]</span>
+0020 <span class="comment">%         dfile   path to TIdigits folder</span>
+0021 <span class="comment">%         ofile   output text file (see below for output file format)</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Outputs:</span>
+0024 <span class="comment">%          m(2,n,3) estimated srt and slope of all models</span>
+0025 <span class="comment">%                   m(i,n,k): i={1=srt, 2=slope}, n=model number, k={1=mean, 2=mode (MAP), 3=marginal mode}</span>
+0026 <span class="comment">%          v(3,n)   estimated covariance matrix entries:</span>
+0027 <span class="comment">%                   [var(srt) cov(srt,slope) var(slope)]' of n'th model</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% List of options for &quot;mode&quot; input:</span>
+0030 <span class="comment">%         a       proc adds its own noise</span>
+0031 <span class="comment">%         b*      base figure number for plotting results [100]</span>
+0032 <span class="comment">%         c       y=proc() returns comment string</span>
+0033 <span class="comment">%         e/E*    plot evolving psychometric functions *=1,2,3 for mean, mode, marginal mode (F=after each trial)</span>
+0034 <span class="comment">%         f/F*    plot psychometric functions *=1,2,3 for mean, mode, marginal mode (F=after each trial)</span>
+0035 <span class="comment">%         g       prompt with number of digits</span>
+0036 <span class="comment">%         G       prompt with SNR</span>
+0037 <span class="comment">%         l*      min token length (in digits)</span>
+0038 <span class="comment">%         L*      max token length (if different from min)</span>
+0039 <span class="comment">%         m*      use * external models [default 1]</span>
+0040 <span class="comment">%         M       include an extra model with no processing</span>
+0041 <span class="comment">%         n*      *=average number of trials per model</span>
+0042 <span class="comment">%         p/P     plot pdf (P=after each trial)</span>
+0043 <span class="comment">%         r       allow repetitions</span>
+0044 <span class="comment">%         s       respond s to save the noisy stimulus as a .wav file</span>
+0045 <span class="comment">%         t/T*    taper noise */10 seconds at start and end</span>
+0046 <span class="comment">%         v/V*    plot srt/slope convergence (V= after each trial)</span>
+0047 <span class="comment">%                 *=1,2,3 for mean, mode, marginal mode</span>
+0048 <span class="comment">%         x*      add */10 seconds of noise to the front of the speech before processing</span>
+0049 <span class="comment">%         X*      truncate */10 seconds from the start of the processed speech</span>
+0050 <span class="comment">%         W       data is in microsoft WAV format</span>
+0051 <span class="comment">%         z       omit tokens containing &quot;oh&quot;</span>
+0052 <span class="comment">%         Z       omit tokens containing &quot;zero&quot;</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">% Output file format</span>
+0055 <span class="comment">%   Each line starts 'x ' where x is one of the following</span>
+0056 <span class="comment">%       %  Comment</span>
+0057 <span class="comment">%       V  File version type</span>
+0058 <span class="comment">%       O  mode options</span>
+0059 <span class="comment">%       P  details about proc</span>
+0060 <span class="comment">%       C  Comment returned by proc</span>
+0061 <span class="comment">%       M  measurement</span>
+0062 
+0063 <span class="comment">% Future mode options:</span>
+0064 <span class="comment">%        [ d     score as single digits ]</span>
+0065 <span class="comment">%        [ i/I   plot SRT improvement (I=after each trial) ]</span>
+0066 <span class="comment">%        [ j*    scaling: 0=autoscale each token, 1=constant speech,2=const noise, 3=const noisy ]</span>
+0067 <span class="comment">%        [N*     ignore the first * trials ]</span>
+0068 <span class="comment">%        [o/O    write to output file, O write result of each probe]</span>
+0069 <span class="comment">%        [ S     save all stimuli as wav files ]</span>
+0070 <span class="comment">%        [ u     do not normalize the noise level ]</span>
+0071 <span class="comment">%        [ y*    type of noise ]</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">% Bugs/Suggestions</span>
+0074 <span class="comment">% (1) Add sounds to indicate error and end of test</span>
+0075 <span class="comment">% (2) Routine could return a label to replace &quot;SNR&quot; in necessary</span>
+0076 <span class="comment">% (3) Add an input option to &quot;discard&quot; this sample</span>
+0077 <span class="comment">% (4) output file should include mode argument + date + IP address + computer name + r arguments + p/q values</span>
+0078 <span class="comment">% (5) Quote filenames in output file or else never have anything else on the line</span>
+0079 <span class="comment">% (6) silence detection doesn't work</span>
+0080 
+0081 <span class="comment">%      Copyright (C) Mike Brookes 2010</span>
+0082 <span class="comment">%      Version: $Id: v_psycdigit.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0085 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0088 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0089 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0090 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0091 <span class="comment">%   (at your option) any later version.</span>
+0092 <span class="comment">%</span>
+0093 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0094 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0095 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0096 <span class="comment">%   GNU General Public License for more details.</span>
+0097 <span class="comment">%</span>
+0098 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0099 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0100 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0101 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0102 
+0103 <span class="comment">%     25+4     m*      use * external models [default 1]</span>
+0104 <span class="comment">%     26    M       include an extra model with no processing</span>
+0105 <span class="comment">%      1   a       proc adds its own noise</span>
+0106 <span class="comment">%      27+5   n*      *=average number of trials per model</span>
+0107 <span class="comment">%     23+2    l*      min token length (in digits)</span>
+0108 <span class="comment">%      24+3   L*      max token length (if different from min)</span>
+0109 <span class="comment">%      7   d       score as single digits</span>
+0110 <span class="comment">%      37   s       speech-shaped noise instead of white</span>
+0111 <span class="comment">%       19+1  j*      scaling: 0=autoscale each token, 1=constant speech, 2=const noise, 3=const noisy</span>
+0112 <span class="comment">%      35   r       allow repetitions</span>
+0113 <span class="comment">%     41    u       unimodal psychometric function</span>
+0114 <span class="comment">%     32    P       plot pdf</span>
+0115 <span class="comment">%     31   p       plot srt convergence</span>
+0116 <span class="comment">%     13    g       prompt with number of digits</span>
+0117 <span class="comment">%      14   G       prompt with SNR</span>
+0118 <span class="comment">%      47+6   x*      add */10 seconds of noise to the front of the speech</span>
+0119 <span class="comment">%      48+7   X*      truncate */10 from the start of the processed speech</span>
+0120 <span class="comment">% input parameters</span>
+0121 <span class="keyword">persistent</span> tok mtok tigflgp digitsp
+0122 <span class="keyword">if</span> nargin&lt;10
+0123     ofile=<span class="string">''</span>;
+0124     <span class="keyword">if</span> nargin&lt;9
+0125         dfile=<span class="string">'F:\home\dmb\data\old_speech\tidigits'</span>;
+0126         <span class="comment">%         dfile='Y:\Speech\TIDigits\Disc 1\TIDIGITS';</span>
+0127         <span class="keyword">if</span> nargin&lt;8
+0128             fn=16000;
+0129             <span class="keyword">if</span> nargin&lt;7
+0130                 noise=[];
+0131                 <span class="keyword">if</span> nargin&lt;6
+0132                     xp=[];
+0133                     <span class="keyword">if</span> nargin&lt;5
+0134                         q=[];
+0135                         <span class="keyword">if</span> nargin&lt;4
+0136                             p=[];
+0137                             <span class="keyword">if</span> nargin&lt;3
+0138                                 mode=<span class="string">''</span>;
+0139                                 <span class="keyword">if</span> nargin&lt;2
+0140                                     r=[];
+0141                                 <span class="keyword">end</span>
+0142                             <span class="keyword">end</span>
+0143                         <span class="keyword">end</span>
+0144                     <span class="keyword">end</span>
+0145                 <span class="keyword">end</span>
+0146             <span class="keyword">end</span>
+0147         <span class="keyword">end</span>
+0148     <span class="keyword">end</span>
+0149 <span class="keyword">end</span>
+0150 
+0151 <span class="comment">% parse the mode string</span>
+0152 
+0153 i=1;
+0154 pv=[0 3 3 1 25  0  0 1 1 1 1 100]; <span class="comment">% pv default values if option is unspecified</span>
+0155 px=[0 3 3 1 25 20 18 1 1 1 1 100]; <span class="comment">% pv values if option is given without a value</span>
+0156 pvs=<span class="string">'jlLmnxXvVfFb'</span>;
+0157 pf=zeros(1,52);
+0158 mval=0;
+0159 lmode=length(mode);
+0160 <span class="keyword">while</span> i&lt;=lmode
+0161     <span class="keyword">if</span> i&lt;lmode  <span class="comment">% read a following integer if it exists</span>
+0162         [v,nv,e,ni]=sscanf(mode(i+1:end),<span class="string">'%d'</span>,1);
+0163     <span class="keyword">else</span>
+0164         nv=0;
+0165         ni=1;
+0166     <span class="keyword">end</span>
+0167     j=find(mode(i)==pvs,1);
+0168     k=1+2*(double(lower(mode(i)))-<span class="string">'a'</span>)+(mode(i)&lt;<span class="string">'a'</span>);
+0169     <span class="keyword">if</span> k&gt;=1 &amp;&amp; k&lt;=52
+0170         pf(k)=1-pf(k);
+0171         <span class="keyword">if</span> ~isempty(j)
+0172             <span class="keyword">if</span> nv==0
+0173                 pv(j)=px(j);
+0174             <span class="keyword">else</span>
+0175                 pv(j)=v;
+0176                 mval=mval || j==4;  <span class="comment">% m has a value specified</span>
+0177             <span class="keyword">end</span>
+0178         <span class="keyword">end</span>
+0179     <span class="keyword">end</span>
+0180     i=i+ni;
+0181 <span class="keyword">end</span>
+0182 <span class="keyword">if</span> isempty(proc)
+0183     pv(4)=0; <span class="comment">% not allowed any processed models if not process is specified</span>
+0184 <span class="keyword">end</span>
+0185 <span class="comment">% derived input parameters</span>
+0186 
+0187 varthr=20;   <span class="comment">% variance threshold for &quot;silence&quot;</span>
+0188 nxevo=30; <span class="comment">% size of evloving pdf</span>
+0189 
+0190 <span class="keyword">if</span> pf(23)&gt;pf(24) || pv(2)&gt;pv(3)
+0191     pv(3)=pv(2);                <span class="comment">% Make max token length reasonable</span>
+0192 <span class="keyword">end</span>
+0193 <span class="keyword">if</span> pf(24)&gt;pf(23)
+0194     pv(2)=1;                    <span class="comment">% min =1 if only max is specified</span>
+0195 <span class="keyword">end</span>
+0196 zmodel=pv(4)+(pf(26)&gt;0); <span class="comment">% total number of models (including null model)</span>
+0197 ntrial=zmodel*pv(5);  <span class="comment">% total number of trials</span>
+0198 <span class="keyword">if</span> pf(12)&gt;pf(11)    <span class="comment">% 'F' specified but not 'f'</span>
+0199     pv(10)=pv(11);  <span class="comment">% copy across the average type selector</span>
+0200 <span class="keyword">end</span>
+0201 <span class="keyword">if</span> pf(11)+pf(12)&gt;0 &amp;&amp; (pv(10)&lt;1 || pv(10)&gt;3)
+0202     error(<span class="string">'Invalid average type for option f/F'</span>);
+0203 <span class="keyword">end</span>
+0204 
+0205 <span class="comment">% sort out p argument to v_psycest or v_psycestu</span>
+0206 unimode=pf(41);
+0207 <span class="keyword">if</span> isempty(p)
+0208     p=0.75;     <span class="comment">% default recognition rate at threshold</span>
+0209 <span class="keyword">end</span>
+0210 <span class="keyword">if</span> size(p,1)&lt;3-unimode
+0211     p(2-unimode,1)=0.04;     <span class="comment">% miss probability</span>
+0212     p(3-unimode,1)=0;     <span class="comment">% dummy entry for guess probability</span>
+0213 <span class="keyword">end</span>
+0214 <span class="keyword">if</span> size(p,2)&lt;(zmodel)
+0215     p=p(:,1+mod(0:zmodel-1,size(p,2)));
+0216 <span class="keyword">end</span>
+0217 
+0218 <span class="comment">% first sort out the digit samples</span>
+0219 
+0220 tigflg=[pv(2:3) pf(51:52)];
+0221 <span class="keyword">if</span> isempty(tok) || any(tigflg~=tigflgp) || ~strcmp(dfile,digitsp)
+0222     disp(<span class="string">'Scanning TIDIGITS files ...'</span>);
+0223     digitsp=dfile;
+0224     tigflgp=tigflg;
+0225     <span class="keyword">if</span> any(dfile(end)==<span class="string">'/\'</span>)
+0226         dfile(end)=[];  <span class="comment">% remove a trailing separator</span>
+0227     <span class="keyword">end</span>
+0228     dirlist{1}=<span class="string">''</span>;
+0229     ntok=0;
+0230     mtok=zeros(1,pv(3));
+0231     tok=cell(1,2);
+0232     <span class="keyword">while</span> ~isempty(dirlist)
+0233         dd=dir([dfile dirlist{1}]);
+0234         <span class="keyword">for</span> i=1:length(dd)
+0235             name=dd(i).name;
+0236             <span class="keyword">if</span> name(1)~=<span class="string">'.'</span>   <span class="comment">% ignore directories starting with '.'</span>
+0237                 <span class="keyword">if</span> dd(i).isdir
+0238                     dirlist{end+1}=[dirlist{1} <span class="string">'\'</span> name];
+0239                 <span class="keyword">elseif</span> length(name)&gt;4 &amp;&amp; strcmpi(name(end-3:end),<span class="string">'.wav'</span>)
+0240                     digs=name(1:end-4);
+0241                     digz=upper(digs)==<span class="string">'Z'</span>;
+0242                     digo=upper(digs)==<span class="string">'O'</span>;
+0243                     digs(digo | digz)=<span class="string">'0'</span>;
+0244                     digs=digs(digs&gt;=<span class="string">'0'</span> &amp; digs&lt;=<span class="string">'9'</span>);
+0245                     ndigs=length(digs);
+0246                     <span class="keyword">if</span> ndigs&gt;=tigflg(1) &amp;&amp; ndigs&lt;=tigflg(2) &amp;&amp; ~(tigflg(3) &amp;&amp; any(digo)) &amp;&amp; ~(tigflg(4) &amp;&amp; any(digz))
+0247                         ntok=ntok+1;
+0248                         mtok(ndigs)=mtok(ndigs)+1;
+0249                         tok{ntok,1}=[dirlist{1} <span class="string">'\'</span> name];
+0250                         tok{ntok,2}=digs;
+0251                     <span class="keyword">end</span>
+0252                 <span class="keyword">end</span>
+0253             <span class="keyword">end</span>
+0254         <span class="keyword">end</span>
+0255         dirlist(1)=[];  <span class="comment">% remove this directory from the list</span>
+0256     <span class="keyword">end</span>
+0257 <span class="keyword">end</span>
+0258 ntok=size(tok,1);
+0259 <span class="keyword">if</span> pf(46)
+0260     [s,fs]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>([dfile tok{1,1}]); <span class="comment">% get the first speech token to set fs</span>
+0261 <span class="keyword">else</span>
+0262     [s,fs]=<a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>([dfile tok{1,1}]); <span class="comment">% get the first speech token to set fs</span>
+0263 <span class="keyword">end</span>
+0264 
+0265 <span class="comment">% calculate guess probability assuming you get the correct number of digits</span>
+0266 
+0267 <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0268     p(3-unimode,:)=0.1;
+0269 <span class="keyword">else</span>
+0270     p(3-unimode,:)=0.1.^(1:pv(3))*mtok'/ntok;
+0271 <span class="keyword">end</span>
+0272 
+0273 <span class="comment">% now initialize the models</span>
+0274 
+0275 <span class="keyword">if</span> unimode
+0276     [xx,ii,m,v]=<a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>(-zmodel,p,q,xp); <span class="comment">% initialize all models</span>
+0277     [pact,qact]=<a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>(0);  <span class="comment">% save the actual parameters</span>
+0278 <span class="keyword">else</span>
+0279     [xx,ii,m,v]=<a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>(-zmodel,p,q,xp); <span class="comment">% initialize all models</span>
+0280     [pact,qact]=<a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>(0);  <span class="comment">% save the actual parameters</span>
+0281 <span class="keyword">end</span>
+0282 <span class="keyword">if</span> pv(4) &amp;&amp; pf(5)
+0283     x=[];  <span class="comment">% set x=[] to force a description output</span>
+0284     ii=1;   <span class="comment">% for now, only do model 1</span>
+0285     <span class="keyword">if</span> pf(1)   <span class="comment">% if process adds its own noise</span>
+0286         <span class="keyword">if</span> isempty(r)  <span class="comment">% proc does not require any auxilliary parameters</span>
+0287             <span class="keyword">if</span> mval
+0288                 procdesc=proc(x,fs,xx,ii);  <span class="comment">% process the noisy speech</span>
+0289             <span class="keyword">else</span>
+0290                 procdesc=proc(x,fs,xx);  <span class="comment">% process the noisy speech</span>
+0291             <span class="keyword">end</span>
+0292         <span class="keyword">else</span>
+0293             <span class="keyword">if</span> mval
+0294                 procdesc=proc(x,fs,xx,ii,r);  <span class="comment">% process the noisy speech</span>
+0295             <span class="keyword">else</span>
+0296                 procdesc=proc(x,fs,xx,r);  <span class="comment">% process the noisy speech</span>
+0297             <span class="keyword">end</span>
+0298         <span class="keyword">end</span>
+0299     <span class="keyword">else</span>   <span class="comment">% if process does not add its own noise</span>
+0300         <span class="keyword">if</span> isempty(r)  <span class="comment">% proc does not require any auxilliary parameters</span>
+0301             <span class="keyword">if</span> mval
+0302                 procdesc=proc(x,fs,ii);  <span class="comment">% process the noisy speech</span>
+0303             <span class="keyword">else</span>
+0304                 procdesc=proc(x,fs);  <span class="comment">% process the noisy speech</span>
+0305             <span class="keyword">end</span>
+0306         <span class="keyword">else</span>
+0307             <span class="keyword">if</span> mval
+0308                 procdesc=proc(x,fs,ii,r);  <span class="comment">% process the noisy speech</span>
+0309             <span class="keyword">else</span>
+0310                 procdesc=proc(x,fs,r);  <span class="comment">% process the noisy speech</span>
+0311             <span class="keyword">end</span>
+0312         <span class="keyword">end</span>
+0313     <span class="keyword">end</span>
+0314 <span class="keyword">else</span>
+0315     procdesc=<span class="string">''</span>;
+0316 <span class="keyword">end</span>
+0317 
+0318 <span class="comment">% now initialize the output file</span>
+0319 
+0320 <span class="keyword">if</span> pf(29) || pf(30)   <span class="comment">% o/O output info</span>
+0321     nw=fix(datevec(now));
+0322     of=sprintf(<span class="string">'psy%4d%02d%02d%02d%02d.txt'</span>,nw(1:5)); <span class="comment">% filename includes date and time to nearest minute</span>
+0323     ofid=fopen(of,<span class="string">'wt'</span>);
+0324     <span class="keyword">if</span> ~ofid
+0325         error(<span class="string">'Cannot write to %s'</span>,of);
+0326     <span class="keyword">end</span>
+0327     fprintf(ofid,<span class="string">'%% %s evaluation on %s\n'</span>,mfilename,datestr(now));
+0328     fmfnm=[mfilename(<span class="string">'fullpath'</span>) <span class="string">'.m'</span>];
+0329     dd=dir(fmfnm);
+0330     fprintf(ofid,<span class="string">'%% %s = %d bytes = %s\n'</span>,fmfnm,dd.bytes,dd.date);
+0331     fprintf(ofid,<span class="string">'V %d\n'</span>,2); <span class="comment">% print file format version number</span>
+0332     fmfnm=which(func2str(proc));
+0333     dd=dir(fmfnm);
+0334     fprintf(ofid,<span class="string">'P %s = %d bytes = %s\n'</span>,fmfnm,dd.bytes,dd.date);
+0335     <span class="keyword">if</span> numel(procdesc)
+0336         fprintf(ofid,<span class="string">'C %s\n'</span>,procdesc);
+0337     <span class="keyword">end</span>
+0338     fprintf(ofid,<span class="string">'O %s\n'</span>,mode);
+0339 <span class="keyword">end</span>
+0340 
+0341 <span class="comment">% now start testing</span>
+0342 
+0343 disp([<span class="string">'Testing '</span> procdesc]);
+0344 <span class="comment">% now do the main loop</span>
+0345 mnt=zeros(2+2*unimode,zmodel,3,ntrial+1);
+0346 vnt=zeros(3+unimode,zmodel,ntrial+1);
+0347 mnt(:,:,:,1)=m;
+0348 vnt(:,:,1)=v;
+0349 i=0;
+0350 imax=0;
+0351 quitit=0;
+0352 <span class="keyword">while</span> ~quitit
+0353     i=i+1;
+0354     isp=min(1+floor(rand(1)*ntok),ntok); <span class="comment">% select a token</span>
+0355     <span class="keyword">if</span> pf(46)
+0356         [s,fs]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>([dfile tok{isp,1}]); <span class="comment">% get the speech token</span>
+0357     <span class="keyword">else</span>
+0358         [s,fs]=<a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>([dfile tok{isp,1}]); <span class="comment">% get the speech token</span>
+0359     <span class="keyword">end</span>
+0360     s=[zeros(pv(6)*round(fs/10),1); <a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>(s(:),fs,<span class="string">'n'</span>)]; <span class="comment">% preappend zeros and normalize speech level</span>
+0361     <span class="keyword">if</span> pf(1) &amp;&amp; ii&lt;=pv(4)  <span class="comment">% if process adds its own noise</span>
+0362         <span class="keyword">if</span> isempty(r)
+0363             <span class="keyword">if</span> mval
+0364                 y=proc(s,fs,xx,ii);  <span class="comment">% process the noisy speech</span>
+0365             <span class="keyword">else</span>
+0366                 y=proc(s,fs,xx);  <span class="comment">% process the noisy speech</span>
+0367             <span class="keyword">end</span>
+0368         <span class="keyword">else</span>
+0369             <span class="keyword">if</span> mval
+0370                 y=proc(s,fs,xx,ii,r);  <span class="comment">% process the noisy speech</span>
+0371             <span class="keyword">else</span>
+0372                 y=proc(s,fs,xx,r);  <span class="comment">% process the noisy speech</span>
+0373             <span class="keyword">end</span>
+0374         <span class="keyword">end</span>
+0375     <span class="keyword">else</span>
+0376         nn=randn(length(s),1);
+0377         x=nn+s*10^(xx/20);   <span class="comment">% create the data</span>
+0378         <span class="keyword">if</span> ii&lt;=pv(4)
+0379             <span class="keyword">if</span> isempty(r)
+0380                 <span class="keyword">if</span> mval
+0381                     y=proc(x,fs,ii);  <span class="comment">% process the noisy speech</span>
+0382                 <span class="keyword">else</span>
+0383                     y=proc(x,fs);  <span class="comment">% process the noisy speech</span>
+0384                 <span class="keyword">end</span>
+0385             <span class="keyword">else</span>
+0386                 <span class="keyword">if</span> mval
+0387                     y=proc(x,fs,ii,r);  <span class="comment">% process the noisy speech</span>
+0388                 <span class="keyword">else</span>
+0389                     y=proc(x,fs,r);  <span class="comment">% process the noisy speech</span>
+0390                 <span class="keyword">end</span>
+0391             <span class="keyword">end</span>
+0392         <span class="keyword">else</span>
+0393             y=x;            <span class="comment">% unprocessed for last model</span>
+0394         <span class="keyword">end</span>
+0395     <span class="keyword">end</span>
+0396     y=y(1+pv(7)*round(fs/10):end);   <span class="comment">% remove junk from the start</span>
+0397     <span class="keyword">if</span> pf(13)
+0398         prg=sprintf(<span class="string">' %d'</span>,length(tok{isp,2}));
+0399     <span class="keyword">else</span>
+0400         prg=<span class="string">''</span>;
+0401     <span class="keyword">end</span>
+0402     <span class="keyword">if</span> pf(14)
+0403         prG=sprintf(<span class="string">'SNR=%d dB, '</span>,round(xx));
+0404     <span class="keyword">else</span>
+0405         prG=<span class="string">''</span>;
+0406     <span class="keyword">end</span>
+0407     <span class="keyword">if</span> pf(35)
+0408         prr=sprintf(<span class="string">', ''r'' to repeat'</span>);
+0409     <span class="keyword">else</span>
+0410         prr=<span class="string">''</span>;
+0411     <span class="keyword">end</span>
+0412     prompt=[prG <span class="string">'enter'</span> prg <span class="string">' digits (''q'' to quit'</span> prr <span class="string">'): '</span>];
+0413     <span class="comment">%     ansr=-(var(y)&gt;varthr);  % meant to detect silences but doesn't work</span>
+0414     ansr=-1;
+0415     say=1;
+0416     <span class="keyword">while</span> ansr&lt;0
+0417         <span class="keyword">if</span> say
+0418             tdel=0;
+0419             tic;
+0420             soundsc(y,fs);      <span class="comment">% *** probably shouldn't be ...sc</span>
+0421             say=0;
+0422         <span class="keyword">end</span>
+0423         rv=input(prompt,<span class="string">'s'</span>);
+0424         tdel=toc;
+0425         <span class="keyword">if</span> ~isempty(rv)
+0426             <span class="keyword">if</span> lower(rv(1))==<span class="string">'q'</span>
+0427                 quitit=1;
+0428                 ansr=2;
+0429             <span class="keyword">elseif</span> lower(rv(1))==<span class="string">'r'</span> &amp;&amp; pf(35)
+0430                 say=1;
+0431             <span class="keyword">elseif</span> lower(rv(1))==<span class="string">'s'</span> &amp;&amp; pf(37)   <span class="comment">% save the token</span>
+0432                 ofn=input(<span class="string">'File name: '</span>,<span class="string">'s'</span>);
+0433                 <span class="keyword">if</span> numel(ofn)
+0434                     <a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>(y,fs,ofn);
+0435                 <span class="keyword">end</span>
+0436             <span class="keyword">elseif</span> all(rv&gt;=<span class="string">'0'</span>) &amp;&amp; all(rv&lt;=<span class="string">'9'</span>) &amp;&amp; ( ~pf(13) || length(rv)==length(tok{isp,2}))
+0437                 ansr=strcmp(rv,tok{isp,2});
+0438             <span class="keyword">end</span>
+0439         <span class="keyword">end</span>
+0440     <span class="keyword">end</span>
+0441     quitit=quitit || i==ntrial;   <span class="comment">% mark as quiting if we have done all the trials</span>
+0442     jj=ii;  <span class="comment">% remember which model has just been updated</span>
+0443     xxold=xx; <span class="comment">% and what the SNR was</span>
+0444     <span class="keyword">if</span> ansr&lt;2  <span class="comment">% valid answer: update the pdfs</span>
+0445         <span class="keyword">if</span> unimode
+0446             [xx,ii,m,v]=<a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>(ii,xx,ansr);
+0447         <span class="keyword">else</span>
+0448             [xx,ii,m,v]=<a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>(ii,xx,ansr);
+0449         <span class="keyword">end</span>
+0450         mnt(:,:,:,i+1)=m;
+0451         vnt(:,:,i+1)=v;
+0452         imax=i;
+0453     <span class="keyword">end</span>
+0454     <span class="keyword">if</span> pf(30) || quitit &amp;&amp; pf(29)       <span class="comment">% 'O/o': output</span>
+0455         <span class="keyword">if</span> ansr&gt;1
+0456             rv=num2str(double(rv(1)));
+0457         <span class="keyword">end</span>
+0458         <span class="comment">% could add in token name and length</span>
+0459         fprintf(ofid,<span class="string">'M %d %d %.3g %s %s %d %.1f'</span>,i,ii,xxold,tok{isp,2},rv,ansr,tdel);
+0460         fprintf(ofid,<span class="string">' %.3g'</span>,m(:,jj,:),v(:,jj));
+0461         fprintf(ofid,<span class="string">'\n'</span>);
+0462     <span class="keyword">end</span>
+0463     <span class="keyword">if</span> pf(32)                           <span class="comment">% 'P': plot PDF: figures 1:m</span>
+0464         figure(jj);
+0465         <span class="keyword">if</span> unimode
+0466             <a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>(jj);
+0467         <span class="keyword">else</span>
+0468             <a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>(jj);
+0469         <span class="keyword">end</span>
+0470     <span class="keyword">elseif</span> quitit &amp;&amp; pf(31)             <span class="comment">% 'p': plot PDF: figures 1:m</span>
+0471         <span class="keyword">for</span> jj=1:zmodel
+0472             figure(jj);
+0473             <span class="keyword">if</span> unimode
+0474                 <a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>(jj);
+0475             <span class="keyword">else</span>
+0476                 <a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>(jj);
+0477             <span class="keyword">end</span>
+0478         <span class="keyword">end</span>
+0479     <span class="keyword">end</span>
+0480     <span class="keyword">if</span> pf(12) || quitit &amp;&amp; pf(11)       <span class="comment">% 'F/f': plot Psychometric function on figure 101</span>
+0481         figure(pv(12)+1);
+0482         <span class="keyword">if</span> unimode
+0483             qqu.pk=m(1,jj,pv(10));      <span class="comment">% peak position</span>
+0484             qqu.w=m(2,1,pv(10));        <span class="comment">% peak width</span>
+0485             qqu.ll=m(3,1,pv(10));       <span class="comment">% peak slope on low side</span>
+0486             qqu.lh=m(4,1,pv(10));       <span class="comment">% peak slope on high side</span>
+0487             qqu.gu=pact(2);             <span class="comment">% guess rate</span>
+0488             qqu.la=pact(1);             <span class="comment">% lapse rate</span>
+0489             sw=qqu.w*qqu.ll*qqu.lh/(qqu.ll+qqu.lh);   <span class="comment">% normalized distance of inflections from peak</span>
+0490             xax=linspace(qqu.pk-(4+sw)/qqu.ll,qqu.pk+(4+sw)/qqu.lh,200);
+0491             bs=(qqu.lh-qqu.ll)/2;
+0492             bu=(qqu.lh+qqu.ll)/2;
+0493             plot(xax,qqu.gu+(1-qqu.gu-qqu.la)*(1+2*exp(-sw)*cosh(bs*(xax-qqu.pk)+bu*abs(xax-qqu.pk))+exp(-2*sw)).^(-1));
+0494         <span class="keyword">else</span>
+0495             sd=(pact(1,:)-pact(3,:)).*(1-pact(2,:)-pact(1,:))./(m(2,:,pv(10)).*(1-pact(3,:)-pact(2,:)));
+0496             md=m(1,:,pv(10))-sd.*log((pact(1,:)-pact(3,:))./(1-pact(2,:)-pact(1,:)));
+0497             xax=linspace(min(md-3*sd),max(md+3*sd),100);
+0498             <span class="keyword">for</span> jj=1:zmodel
+0499                 plot(xax,<a href="v_psychofunc.html" class="code" title="function p=v_psychofunc(m,q,x,r)">v_psychofunc</a>(<span class="string">''</span>,[pact(1,jj); m(:,jj,pv(10)); pact(2:3,jj); qact(10)],xax));
+0500                 hold on
+0501             <span class="keyword">end</span>
+0502             hold off
+0503         <span class="keyword">end</span>
+0504         axis([xax(1) xax(end) 0 1]);
+0505         xlabel(<span class="string">'SNR (dB)'</span>);
+0506         ylabel(<span class="string">'Recognition Probability'</span>);
+0507         title(sprintf(<span class="string">'Intelligibility: %s'</span>,procdesc));
+0508     <span class="keyword">end</span>
+0509     <span class="keyword">if</span> pf(10) || quitit &amp;&amp; pf(9)        <span class="comment">% 'E/e': plot evolving Psychometric function on figure 103</span>
+0510         figure(pv(12)+3);
+0511         psyevo=zeros(ntrial+1,nxevo);   <span class="comment">% space for evolving pdf</span>
+0512         <span class="keyword">if</span> unimode                      <span class="comment">% unimodal psychometric function</span>
+0513             qqu.pk=m(1,jj,pv(10));      <span class="comment">% peak position</span>
+0514             qqu.w=m(2,1,pv(10));        <span class="comment">% peak width</span>
+0515             qqu.ll=m(3,1,pv(10));       <span class="comment">% peak slope on low side</span>
+0516             qqu.lh=m(4,1,pv(10));       <span class="comment">% peak slope on high side</span>
+0517             qqu.gu=pact(2);             <span class="comment">% guess rate</span>
+0518             qqu.la=pact(1);             <span class="comment">% lapse rate</span>
+0519             sw=qqu.w*qqu.ll*qqu.lh/(qqu.ll+qqu.lh);   <span class="comment">% normalized distance of inflections from peak</span>
+0520             xax=linspace(qqu.pk-(4+sw)/qqu.ll,qqu.pk+(4+sw)/qqu.lh,nxevo);
+0521             <span class="keyword">for</span> iet=1:imax+1
+0522                 qqu.pk=mnt(1,1,pv(10),iet);     <span class="comment">% peak position</span>
+0523                 qqu.w=mnt(2,1,pv(10),iet);        <span class="comment">% peak width</span>
+0524                 qqu.ll=mnt(3,1,pv(10),iet);     <span class="comment">% peak slope on low side</span>
+0525                 qqu.lh=mnt(4,1,pv(10),iet);     <span class="comment">% peak slope on high side</span>
+0526                 sw=qqu.w*qqu.ll*qqu.lh/(qqu.ll+qqu.lh);   <span class="comment">% normalized distance of inflections from peak</span>
+0527                 bs=(qqu.lh-qqu.ll)/2;
+0528                 bu=(qqu.lh+qqu.ll)/2;
+0529                 psyevo(iet,:)=qqu.gu+(1-qqu.gu-qqu.la)*(1+2*exp(-sw)*cosh(bs*(xax-qqu.pk)+bu*abs(xax-qqu.pk))+exp(-2*sw)).^(-1);
+0530             <span class="keyword">end</span>
+0531             imagesc(xax,0:ntrial,psyevo);
+0532             axis <span class="string">'ij'</span>  <span class="comment">% put trial 0 at the top</span>
+0533         <span class="keyword">else</span>                            <span class="comment">% monotonic psychometric function (not implemented)</span>
+0534         <span class="keyword">end</span>
+0535         xlabel(<span class="string">'SNR (dB)'</span>);
+0536         ylabel(<span class="string">'After trial'</span>);
+0537         title(sprintf(<span class="string">'Intelligibility: %s'</span>,procdesc));
+0538     <span class="keyword">end</span>
+0539     <span class="keyword">if</span> pf(44) || quitit &amp;&amp; pf(43)   <span class="comment">% 'V/v': plot convergence on figure 102</span>
+0540         figure(pv(12)+2);
+0541         <span class="keyword">if</span> unimode                      <span class="comment">% unimodal psychometric function</span>
+0542             sw=mnt(2,1,pv(10),1:imax+1).*mnt(3,1,pv(10),1:imax+1).*mnt(4,1,pv(10),1:imax+1)./(mnt(3,1,pv(10),1:imax+1).*mnt(4,1,pv(10),1:imax+1));
+0543             subplot(221)
+0544             plot(0:imax,squeeze(mnt(1,1,pv(10),1:imax+1)));
+0545             set(gca,<span class="string">'xlim'</span>,[0 ntrial]);
+0546             xlabel(<span class="string">'After trial'</span>);
+0547             ylabel(<span class="string">'Peak position (dB SNR)'</span>);
+0548             subplot(222)
+0549             plot(0:imax,squeeze(mnt(1,1,pv(10),1:imax+1)-sw.*mnt(3,1,pv(10),1:imax+1)),<span class="string">'-b'</span>,0:imax,squeeze(mnt(1,1,pv(10),1:imax+1)+sw.*mnt(4,1,pv(10),1:imax+1)),<span class="string">'-b'</span>);
+0550             set(gca,<span class="string">'xlim'</span>,[0 ntrial]);
+0551             xlabel(<span class="string">'After trial'</span>);
+0552             ylabel(<span class="string">'Inflections (dB)'</span>);
+0553             subplot(223)
+0554             plot(0:imax,squeeze(mnt(3,1,pv(10),1:imax+1)));
+0555             set(gca,<span class="string">'xlim'</span>,[0 ntrial]);
+0556             xlabel(<span class="string">'After trial'</span>);
+0557             ylabel(<span class="string">'Upwards slope (prob/dB)'</span>);
+0558             subplot(224)
+0559             plot(0:imax,squeeze(mnt(4,1,pv(10),1:imax+1)));
+0560             set(gca,<span class="string">'xlim'</span>,[0 ntrial]);
+0561             xlabel(<span class="string">'After trial'</span>);
+0562             ylabel(<span class="string">'Downwards slope (prob/dB)'</span>);
+0563         <span class="keyword">else</span>                            <span class="comment">% monotonic psychometric function</span>
+0564             subplot(211);
+0565             <span class="keyword">for</span> jj=1:zmodel
+0566                 plot(0:imax,squeeze(mnt(1,jj,pv(10),1:imax+1)));
+0567                 hold on
+0568             <span class="keyword">end</span>
+0569             hold off
+0570             set(gca,<span class="string">'xlim'</span>,[0 ntrial]);
+0571             xlabel(<span class="string">'After trial'</span>);
+0572             ylabel(<span class="string">'SRT (dB SNR)'</span>);
+0573             subplot(212);
+0574             <span class="keyword">for</span> jj=1:zmodel
+0575                 plot(0:i,squeeze(mnt(2,jj,pv(10),1:imax+1)));
+0576                 hold on
+0577             <span class="keyword">end</span>
+0578             hold off
+0579             set(gca,<span class="string">'xlim'</span>,[0 ntrial]);
+0580             xlabel(<span class="string">'After trial'</span>);
+0581             ylabel(<span class="string">'Slope (Prob/dB)'</span>);
+0582         <span class="keyword">end</span>
+0583     <span class="keyword">end</span>
+0584 <span class="keyword">end</span>   <span class="comment">% main loop for each probe value</span>
+0585 <span class="keyword">if</span> pf(29) || pf(30)
+0586     fclose(ofid);
+0587 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

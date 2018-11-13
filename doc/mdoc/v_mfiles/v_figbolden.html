@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_figbolden</title>
+  <meta name="keywords" content="v_figbolden">
+  <meta name="description" content="FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_figbolden.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_figbolden
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function v_figbolden(pos,pv,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)
+ 
+ Inputs: pos = [xmin ymin width height] gives the lower left corner position and the window size in pixels
+               [width height] leaves the lower left corner alone
+               [width] has a standard aspect ratio of 4:3
+               [-width/height] leaves the area unchanged but fixes the aspect ratio
+         pv is a cell name containing attribute-value pairs.
+            default = {'FontName' 'Arial'; 'FontSize' 16; 'LineWidth' 2; 'MarkerSize' 8}
+            Note that the &quot;listfonts&quot; MATLAB command will list the available fonts
+         m is a mode string:
+                'l' lists the changes made
+                'd' append default pv settings (e.g. use [] for second argument)
+                'c' change default colours to improve contrast on a white background
+                    g-&gt;[0,0.7,0],c-&gt;[0,0.7,0.7],y-&gt;[0.83,0.83,0]
+                'x' suppresses all changes
+
+ Bug: gives an error message if log axes have been used</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_fig2emf.html" class="code" title="function v_fig2emf(h,s,p,f)">v_fig2emf</a>	FIG2EMF save a figure in windows metafile format (H,S,P)</li><li><a href="v_fig2pdf.html" class="code" title="function v_fig2pdf(h,s,p,f)">v_fig2pdf</a>	FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function v_figbolden(pos,pv,m)</a>
+0002 <span class="comment">%FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: pos = [xmin ymin width height] gives the lower left corner position and the window size in pixels</span>
+0005 <span class="comment">%               [width height] leaves the lower left corner alone</span>
+0006 <span class="comment">%               [width] has a standard aspect ratio of 4:3</span>
+0007 <span class="comment">%               [-width/height] leaves the area unchanged but fixes the aspect ratio</span>
+0008 <span class="comment">%         pv is a cell name containing attribute-value pairs.</span>
+0009 <span class="comment">%            default = {'FontName' 'Arial'; 'FontSize' 16; 'LineWidth' 2; 'MarkerSize' 8}</span>
+0010 <span class="comment">%            Note that the &quot;listfonts&quot; MATLAB command will list the available fonts</span>
+0011 <span class="comment">%         m is a mode string:</span>
+0012 <span class="comment">%                'l' lists the changes made</span>
+0013 <span class="comment">%                'd' append default pv settings (e.g. use [] for second argument)</span>
+0014 <span class="comment">%                'c' change default colours to improve contrast on a white background</span>
+0015 <span class="comment">%                    g-&gt;[0,0.7,0],c-&gt;[0,0.7,0.7],y-&gt;[0.83,0.83,0]</span>
+0016 <span class="comment">%                'x' suppresses all changes</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% Bug: gives an error message if log axes have been used</span>
+0019 
+0020 <span class="comment">%      Copyright (C) Mike Brookes 2003</span>
+0021 <span class="comment">%      Version: $Id: v_figbolden.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0024 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0028 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0029 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0030 <span class="comment">%   (at your option) any later version.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0033 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0034 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0035 <span class="comment">%   GNU General Public License for more details.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0038 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0039 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0040 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0041 
+0042 ps={<span class="string">'Title'</span> <span class="string">'XLabel'</span> <span class="string">'YLabel'</span> <span class="string">'Children'</span>};
+0043 <span class="keyword">if</span> nargin&lt;3
+0044     m=<span class="string">''</span>;
+0045 <span class="keyword">end</span>
+0046 <span class="keyword">if</span> nargin&lt;2 || any(m==<span class="string">'d'</span>)
+0047     pv={<span class="string">'FontName'</span> <span class="string">'Arial'</span>; <span class="string">'FontSize'</span> 16; <span class="string">'LineWidth'</span> 2; <span class="string">'MarkerSize'</span> 8};
+0048 <span class="keyword">end</span>
+0049 pp={<span class="string">'Symbol'</span>;<span class="string">'Wingdings'</span>};      <span class="comment">% protected fonts</span>
+0050 <span class="keyword">if</span> nargin&lt;1
+0051     pos=[];
+0052 <span class="keyword">end</span>
+0053 mlist=any(m==<span class="string">'l'</span>);  <span class="comment">% list changes</span>
+0054 mnotx=~any(m==<span class="string">'x'</span>); <span class="comment">% do changes</span>
+0055 scsz=get(0,<span class="string">'screensize'</span>);
+0056 <span class="keyword">if</span> length(pos)
+0057     po=get(gcf,<span class="string">'position'</span>);
+0058     <span class="keyword">if</span> length(pos)&gt;2            <span class="comment">% position is specified</span>
+0059         po(1:2)=pos(1:2);
+0060         pos(1:2)=[];      <span class="comment">% remove xmin,ymin</span>
+0061     <span class="keyword">end</span>
+0062     <span class="keyword">if</span> length(pos)&gt;1
+0063         po(3:4)=pos(1:2);
+0064     <span class="keyword">else</span>
+0065         <span class="keyword">if</span> pos(1)&gt;0
+0066             po(3:4)=[1 0.75]*pos(1);
+0067         <span class="keyword">else</span>
+0068             po(3:4)=[-pos(1) 1]*sqrt(-po(3)*po(4)/pos(1)); <span class="comment">% preserve area</span>
+0069         <span class="keyword">end</span>
+0070     <span class="keyword">end</span>
+0071     set(gcf,<span class="string">'position'</span>,po);
+0072 <span class="keyword">end</span>
+0073 <span class="keyword">if</span> any(m==<span class="string">'c'</span>)
+0074     cc=<span class="string">'gcy'</span>;
+0075     cv=[0,0.7,0;0,0.7,0.7;0.83,0.83,0];
+0076     <span class="keyword">for</span> ic=1:3
+0077         hlist=findobj(gcf,<span class="string">'color'</span>,cc(ic));
+0078         <span class="keyword">if</span> length(hlist)
+0079             <span class="keyword">if</span> mnotx
+0080                 set(hlist,<span class="string">'color'</span>,cv(ic,:));
+0081             <span class="keyword">end</span>
+0082             <span class="keyword">if</span> mlist
+0083             <span class="keyword">for</span> ih=1:length(hlist)
+0084                  fprintf([<span class="string">'change %f Color: ''%c'' -&gt; [%g %g %g]\n'</span>],hlist(ih),cc(ic),cv(ic,:));
+0085             <span class="keyword">end</span>
+0086             <span class="keyword">end</span>
+0087         <span class="keyword">end</span>
+0088     <span class="keyword">end</span>
+0089 <span class="keyword">end</span>
+0090 hlist=get(gcf,<span class="string">'children'</span>);
+0091 <span class="keyword">while</span> length(hlist)
+0092     pl=get(hlist(1));
+0093     <span class="comment">%fprintf('list length = %d, handle = %f\n',length(hlist),hlist(1));</span>
+0094     <span class="keyword">for</span> i=1:size(pv,1)
+0095         <span class="keyword">if</span> isfield(pl,pv{i,1})
+0096             <span class="keyword">if</span> i&gt;1 || all(~strcmpi(get(hlist(1),pv{i,1}),pp))
+0097                 pval=get(hlist(1),pv{i,1});
+0098                 <span class="keyword">if</span> ~all(size(pval)==size(pv{i,2})) || ~all(pval(:) == pv{i,2}(:))
+0099                     <span class="keyword">if</span> mnotx
+0100                         set(hlist(1),pv{i,1},pv{i,2})
+0101                     <span class="keyword">end</span>
+0102                     <span class="keyword">if</span> mlist
+0103                         <span class="keyword">if</span> ischar(pval)
+0104                             fch=<span class="string">'s'</span>;
+0105                         <span class="keyword">else</span>
+0106                             fch=<span class="string">'g'</span>;
+0107                         <span class="keyword">end</span>
+0108                         fprintf([<span class="string">'change %f %s: %'</span> fch <span class="string">' -&gt; %'</span> fch <span class="string">'\n'</span>],hlist(1),pv{i,1},pval,pv{i,2});
+0109                     <span class="keyword">end</span>
+0110                 <span class="keyword">end</span>
+0111             <span class="keyword">end</span>
+0112         <span class="keyword">end</span>
+0113     <span class="keyword">end</span>
+0114     <span class="keyword">for</span> i=1:length(ps)
+0115         <span class="keyword">if</span> isfield(pl,ps{i})
+0116             hlist=[hlist; get(hlist(1),ps{i})];
+0117             <span class="comment">%fprintf('add %f:%s\n',hlist(1),ps{i});</span>
+0118         <span class="keyword">end</span>
+0119     <span class="keyword">end</span>
+0120     hlist(1)=[];
+0121 <span class="keyword">end</span>
+0122</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

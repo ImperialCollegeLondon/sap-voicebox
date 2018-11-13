@@ -1,0 +1,473 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gammabank</title>
+  <meta name="keywords" content="v_gammabank">
+  <meta name="description" content="GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gammabank.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gammabank
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)
+
+ Usage:
+          (1) [b,a,fx,bx,gd,ph]=v_gammabank(0.35,fs,'',[100 6000]);
+              y = v_filterbank(b,a,s,gd);
+
+              Will create an erb-spaced v_filterbank between 100 Hz and 6kHz
+              with a filter spacing of 0.35 erb and a default bandwidth
+              of 1.019 erb. Omitting the &quot;y =&quot; from the second line will plot
+              a spectrogram.
+ Inputs:
+       n   number of filters in v_filterbank or the filter spacing in bark/erb/k-mel.
+           Set n=0 if fc lists centre frequencies explicitly.
+        fs  sample rate in Hz
+        w   any sensible combination of the following:
+           (1) Filters are uniformly spaced in
+             'e' = erb scale (aka erb-rate scale) [default]
+             'b' = bark scale
+             'm' = mel scale
+             'l' = log10 scale
+             'h' = Hz
+
+           (2) Centre frequencies, fc, are in units of
+             'f' = Hz [default]
+             'F' = the same units as the filter spacing (see (1) above)
+
+           (3) Bandwidths, bw, are specified in units of
+             'w' = Hz [default]
+             'W' = the same units as the filter spacing (see (1) above)
+             'E' = erb scale (aka erb-rate scale)
+             'B' = bark scale
+             'M' = mel scale
+             'L' = log10 scale
+             'H' = Hz
+
+           (4) Number of filters
+             'n' = n input gives number of filters [default if n&gt;=1]
+             'N' = n input gives filter spacing    [default if n&lt;1]
+
+           (5) Filter alignment
+             'k' = force a filter at 1kHz
+
+           (6) Output filter
+             'c' = Use complex gammatone filters whose impulse responses uses a complex exponential
+                   instead of a cosine; the filter order is k instead of 2k. Take the real part of
+                   the filter output to obtain the same signal as using the real-valued filter.
+                   The imaginary part is approximately the Hilbert transform of the real part and
+                   so the magnitude gives teh envelope.
+             'q' = biquad filter; b(k,6,n) has the sos coefficients in the  same form as sosfilt.m.
+                   Use y=sosfilt(b,x) to apply the filter.
+
+           (6) Future possible options
+             ['a' = use all-pole gammtone funtion: see [1]]
+             ['s' = use Slaney gammatone approximation: see [2]]
+             ['z' = use one-zero gammatone function: see [1]]
+
+           (7) Graph plotting
+             'g' = plot filter responses [default if no output arguments present]
+             'G' = plot frequency responses on a log axis
+        fc  frequency range or, if n=0, list of centre frequencies [default: [100 6000] ]
+        bw  bandwidth for all filters or a vector of bandwidths: one per filter [default = 1.019 erb ]
+       ph  phase of all gammatone impulse repsonses or a vector of phases: one per filter
+          [default is chosen to give zero gain at DC and a positive real part for the gain at low frequencies]
+       k   gammatone filter order; the filters have order 2k [default: 4]
+
+ Outputs:
+       b/a     filter coefficients: one filter per row. The gain of each
+               filter is scaled to have unit magnitude at the centre frequency.
+               Dimensions are b(n,k+max(1,k-1)) and a(n,2*k+1) normally or else
+               b(n,max(1,k-1)) and a(n,k+1) if the 'c' option is specified.
+               If the q option is given then b(k,6,n) contains the biquad coefficients for filter n.
+       fx,bx   centre frequencies and bandwidths in Hz
+       gd      group delay at the centre frequencies (in samples)
+       ph      phase of each gammatone impulse response</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)</a>
+0002 <span class="comment">%GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:</span>
+0005 <span class="comment">%          (1) [b,a,fx,bx,gd,ph]=v_gammabank(0.35,fs,'',[100 6000]);</span>
+0006 <span class="comment">%              y = v_filterbank(b,a,s,gd);</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%              Will create an erb-spaced v_filterbank between 100 Hz and 6kHz</span>
+0009 <span class="comment">%              with a filter spacing of 0.35 erb and a default bandwidth</span>
+0010 <span class="comment">%              of 1.019 erb. Omitting the &quot;y =&quot; from the second line will plot</span>
+0011 <span class="comment">%              a spectrogram.</span>
+0012 <span class="comment">% Inputs:</span>
+0013 <span class="comment">%       n   number of filters in v_filterbank or the filter spacing in bark/erb/k-mel.</span>
+0014 <span class="comment">%           Set n=0 if fc lists centre frequencies explicitly.</span>
+0015 <span class="comment">%        fs  sample rate in Hz</span>
+0016 <span class="comment">%        w   any sensible combination of the following:</span>
+0017 <span class="comment">%           (1) Filters are uniformly spaced in</span>
+0018 <span class="comment">%             'e' = erb scale (aka erb-rate scale) [default]</span>
+0019 <span class="comment">%             'b' = bark scale</span>
+0020 <span class="comment">%             'm' = mel scale</span>
+0021 <span class="comment">%             'l' = log10 scale</span>
+0022 <span class="comment">%             'h' = Hz</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%           (2) Centre frequencies, fc, are in units of</span>
+0025 <span class="comment">%             'f' = Hz [default]</span>
+0026 <span class="comment">%             'F' = the same units as the filter spacing (see (1) above)</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%           (3) Bandwidths, bw, are specified in units of</span>
+0029 <span class="comment">%             'w' = Hz [default]</span>
+0030 <span class="comment">%             'W' = the same units as the filter spacing (see (1) above)</span>
+0031 <span class="comment">%             'E' = erb scale (aka erb-rate scale)</span>
+0032 <span class="comment">%             'B' = bark scale</span>
+0033 <span class="comment">%             'M' = mel scale</span>
+0034 <span class="comment">%             'L' = log10 scale</span>
+0035 <span class="comment">%             'H' = Hz</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%           (4) Number of filters</span>
+0038 <span class="comment">%             'n' = n input gives number of filters [default if n&gt;=1]</span>
+0039 <span class="comment">%             'N' = n input gives filter spacing    [default if n&lt;1]</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%           (5) Filter alignment</span>
+0042 <span class="comment">%             'k' = force a filter at 1kHz</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%           (6) Output filter</span>
+0045 <span class="comment">%             'c' = Use complex gammatone filters whose impulse responses uses a complex exponential</span>
+0046 <span class="comment">%                   instead of a cosine; the filter order is k instead of 2k. Take the real part of</span>
+0047 <span class="comment">%                   the filter output to obtain the same signal as using the real-valued filter.</span>
+0048 <span class="comment">%                   The imaginary part is approximately the Hilbert transform of the real part and</span>
+0049 <span class="comment">%                   so the magnitude gives teh envelope.</span>
+0050 <span class="comment">%             'q' = biquad filter; b(k,6,n) has the sos coefficients in the  same form as sosfilt.m.</span>
+0051 <span class="comment">%                   Use y=sosfilt(b,x) to apply the filter.</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%           (6) Future possible options</span>
+0054 <span class="comment">%             ['a' = use all-pole gammtone funtion: see [1]]</span>
+0055 <span class="comment">%             ['s' = use Slaney gammatone approximation: see [2]]</span>
+0056 <span class="comment">%             ['z' = use one-zero gammatone function: see [1]]</span>
+0057 <span class="comment">%</span>
+0058 <span class="comment">%           (7) Graph plotting</span>
+0059 <span class="comment">%             'g' = plot filter responses [default if no output arguments present]</span>
+0060 <span class="comment">%             'G' = plot frequency responses on a log axis</span>
+0061 <span class="comment">%        fc  frequency range or, if n=0, list of centre frequencies [default: [100 6000] ]</span>
+0062 <span class="comment">%        bw  bandwidth for all filters or a vector of bandwidths: one per filter [default = 1.019 erb ]</span>
+0063 <span class="comment">%       ph  phase of all gammatone impulse repsonses or a vector of phases: one per filter</span>
+0064 <span class="comment">%          [default is chosen to give zero gain at DC and a positive real part for the gain at low frequencies]</span>
+0065 <span class="comment">%       k   gammatone filter order; the filters have order 2k [default: 4]</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">% Outputs:</span>
+0068 <span class="comment">%       b/a     filter coefficients: one filter per row. The gain of each</span>
+0069 <span class="comment">%               filter is scaled to have unit magnitude at the centre frequency.</span>
+0070 <span class="comment">%               Dimensions are b(n,k+max(1,k-1)) and a(n,2*k+1) normally or else</span>
+0071 <span class="comment">%               b(n,max(1,k-1)) and a(n,k+1) if the 'c' option is specified.</span>
+0072 <span class="comment">%               If the q option is given then b(k,6,n) contains the biquad coefficients for filter n.</span>
+0073 <span class="comment">%       fx,bx   centre frequencies and bandwidths in Hz</span>
+0074 <span class="comment">%       gd      group delay at the centre frequencies (in samples)</span>
+0075 <span class="comment">%       ph      phase of each gammatone impulse response</span>
+0076 <span class="comment">%</span>
+0077 
+0078 <span class="comment">% For k&gt;1, the impulse response of filter i is proportional to:</span>
+0079 <span class="comment">%       h[n]=(((n+1)/fs).^(k-1))*cos(2*pi*fx(i)*(n+1)/fs+ph(i))*exp(-2*pi*bx(i)*(n+1)/fs)</span>
+0080 <span class="comment">% where n&gt;=0. For k=1 replace &quot;(n+1)&quot; by &quot;n&quot;. If the 'c' option is used, replace &quot;cos(…)&quot; by &quot;exp(1i*…)&quot;.</span>
+0081 <span class="comment">% Note that the DC gain is only equal to zero for two particular value of ph(i) that differ by pi.</span>
+0082 <span class="comment">% Each filter is normalized to have unity gain at the centre frequency, fx(i).</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">% Derivation:</span>
+0085 <span class="comment">%       The cos() term in h[n] can be decomposed as a sum of complex exponentials resulting in</span>
+0086 <span class="comment">%       h[n] = a*g[n+1;p] + a'*g[n+1;p]' where p=2*pi*(-bx(i) + j*fx(i))/fs, a=fs^(1-k)*exp(j ph(i))</span>
+0087 <span class="comment">%       and g[n;p]=n^(k-1)*p^n.</span>
+0088 <span class="comment">%       The z-transform, G(z)=B(z)/A(z) where A(z)=(1 - p/z)^k. The numerator coefficents, b[r], can</span>
+0089 <span class="comment">%       be obtained by convolving a[r] and g[r] where a[r]=nchoosek(k,r)*(-p)^n.</span>
+0090 <span class="comment">%</span>
+0091 <span class="comment">% References</span>
+0092 <span class="comment">%  [1]    R. F. Lyon, A. G. Katsiamis, and E. M. Drakakis.</span>
+0093 <span class="comment">%       History and future of auditory filter models.</span>
+0094 <span class="comment">%       In Proc Intl Symp Circuits and Systems, pages 3809–3812, 2010.</span>
+0095 <span class="comment">%       doi: 10.1109/ISCAS.2010.5537724.</span>
+0096 <span class="comment">%  [2]    M. Slaney.</span>
+0097 <span class="comment">%       An efficient implementation of the patterson-holdsworth auditory filter bank.</span>
+0098 <span class="comment">%       Technical report, Apple Computer, Perception Group, Tech. Rep, 1993.</span>
+0099 
+0100 <span class="comment">%      Copyright (C) Mike Brookes 2009-2017</span>
+0101 <span class="comment">%      Version: $Id: v_gammabank.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0102 <span class="comment">%</span>
+0103 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0104 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0105 <span class="comment">%</span>
+0106 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0107 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0108 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0109 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0110 <span class="comment">%   (at your option) any later version.</span>
+0111 <span class="comment">%</span>
+0112 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0113 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0114 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0115 <span class="comment">%   GNU General Public License for more details.</span>
+0116 <span class="comment">%</span>
+0117 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0118 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0119 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0120 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0121 
+0122 <span class="keyword">if</span> nargin&lt;7
+0123     k=[];
+0124     <span class="keyword">if</span> nargin&lt;6
+0125         ph=[];
+0126         <span class="keyword">if</span> nargin&lt;5
+0127             bw=[];
+0128             <span class="keyword">if</span> nargin&lt;4
+0129                 fc=[];
+0130                 <span class="keyword">if</span> nargin&lt;3
+0131                     w=<span class="string">''</span>;
+0132                 <span class="keyword">end</span>
+0133             <span class="keyword">end</span>
+0134         <span class="keyword">end</span>
+0135     <span class="keyword">end</span>
+0136 <span class="keyword">end</span>
+0137 fx=fc(:);
+0138 bx=bw(:);
+0139 <span class="keyword">if</span> ~numel(k)
+0140     k=4;
+0141 <span class="keyword">end</span>
+0142 <span class="keyword">if</span> ~numel(fx)
+0143     fx=[100; 6000]; <span class="comment">% default</span>
+0144 <span class="keyword">end</span>
+0145 wr=<span class="string">'e'</span>;   <span class="comment">% default frequency warping is erb</span>
+0146 <span class="keyword">for</span> i=1:length(w)
+0147     <span class="keyword">if</span> any(w(i)==<span class="string">'bmlef'</span>);
+0148         wr=w(i);
+0149     <span class="keyword">end</span>
+0150 <span class="keyword">end</span>
+0151 <span class="keyword">if</span> any(w==<span class="string">'k'</span>)
+0152     fk=1000;
+0153     <span class="keyword">switch</span> wr              <span class="comment">% convert 1kHz to spacing units</span>
+0154         <span class="keyword">case</span> <span class="string">'b'</span>
+0155             fk=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fk);
+0156         <span class="keyword">case</span> <span class="string">'l'</span>
+0157             fk=log10(fk);
+0158         <span class="keyword">case</span> <span class="string">'e'</span>
+0159             fk=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fk);
+0160     <span class="keyword">end</span>
+0161 <span class="keyword">else</span>
+0162     fk=0;
+0163 <span class="keyword">end</span>
+0164 <span class="keyword">if</span> any(w==<span class="string">'W'</span>)
+0165     wb=wr;
+0166 <span class="keyword">else</span>
+0167     wb=<span class="string">'h'</span>;     <span class="comment">% default bandwidth units are Hz</span>
+0168 <span class="keyword">end</span>
+0169 <span class="keyword">for</span> i=1:length(w)
+0170     <span class="keyword">if</span> any(w(i)==<span class="string">'BMLEF'</span>);
+0171         wb=w(i)+<span class="string">'a'</span>-<span class="string">'A'</span>;        <span class="comment">% convert to lower case</span>
+0172     <span class="keyword">end</span>
+0173 <span class="keyword">end</span>
+0174 <span class="keyword">if</span> ~numel(bx)
+0175     bx=1.019;
+0176     wb=<span class="string">'e'</span>;
+0177 <span class="keyword">end</span>
+0178 <span class="keyword">if</span> any(w==<span class="string">'F'</span>)          <span class="comment">% convert centre frequencies to Hz</span>
+0179     <span class="keyword">switch</span> wr
+0180         <span class="keyword">case</span> <span class="string">'b'</span>
+0181             fx=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(fx);
+0182         <span class="keyword">case</span> <span class="string">'m'</span>
+0183             fx=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(fx);
+0184         <span class="keyword">case</span> <span class="string">'l'</span>
+0185             fx=10.^(fx);
+0186         <span class="keyword">case</span> <span class="string">'e'</span>
+0187             fx=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(fx);
+0188     <span class="keyword">end</span>
+0189 <span class="keyword">end</span>
+0190 
+0191 <span class="comment">% now sort out the centre frequencies</span>
+0192 
+0193 <span class="keyword">if</span> n&gt;0                      <span class="comment">% n&gt;0: filter end points specified</span>
+0194     bx=bx(1);               <span class="comment">% only use the first bx element</span>
+0195     <span class="keyword">if</span> n==1             <span class="comment">% only one filter requested</span>
+0196         fx=fx(1);           <span class="comment">% just use the first frequency</span>
+0197     <span class="keyword">else</span>
+0198         <span class="keyword">switch</span> wr               <span class="comment">% convert end frequencies to spacing units</span>
+0199             <span class="keyword">case</span> <span class="string">'b'</span>
+0200                 fx=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fx);
+0201             <span class="keyword">case</span> <span class="string">'m'</span>
+0202                 fx=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(fx);
+0203             <span class="keyword">case</span> <span class="string">'l'</span>
+0204                 fx=log10(fx);
+0205             <span class="keyword">case</span> <span class="string">'e'</span>
+0206                 fx=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fx);
+0207         <span class="keyword">end</span>
+0208         <span class="keyword">if</span> n&lt;1 || any(w==<span class="string">'N'</span>)       <span class="comment">% n = filter spacing</span>
+0209             <span class="keyword">if</span> fk               <span class="comment">% force filter to 1 kHz</span>
+0210                 f0=fk-n*floor((fk-fx(1))/n);
+0211             <span class="keyword">else</span>                <span class="comment">% centre filters in range</span>
+0212                 f0=(fx(2)+fx(1)-n*floor((fx(2)-fx(1))/n))/2;
+0213             <span class="keyword">end</span>
+0214             fx=(f0:n:fx(2))';
+0215             
+0216         <span class="keyword">else</span>                        <span class="comment">% n = number of filters specified</span>
+0217             <span class="comment">% Multiple filters - evenly spaced</span>
+0218             fx=linspace(fx(1),fx(2),n)';     <span class="comment">% centre frequencies in spacing units</span>
+0219             <span class="keyword">if</span> fk              <span class="comment">% force a filter at 1kHz</span>
+0220                 ik=1+ceil((fk-fx(1))*(n-1)/(fx(n)-fx(1))); <span class="comment">% index of centre freq immediately above 1 kHz</span>
+0221                 <span class="keyword">if</span> ik&gt;n || ik&gt;1 &amp;&amp; ((fk-fx(1))*(fx(n)-fx(ik-1))&gt;(fx(n)-fk)*(fx(ik)-fx(1)))
+0222                     fx=fx(1)+(fx-fx(1))*(fk-fx(1))/(fx(ik)-fx(1));
+0223                 <span class="keyword">else</span>
+0224                     fx=fx(n)+(fx-fx(n))*(fx(n)-fk)/(fx(n)-fx(ik-1));
+0225                 <span class="keyword">end</span>
+0226             <span class="keyword">end</span>
+0227         <span class="keyword">end</span>
+0228         <span class="keyword">switch</span> wr <span class="comment">% convert back to Hz</span>
+0229             <span class="keyword">case</span> <span class="string">'b'</span>
+0230                 fx=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(fx);
+0231             <span class="keyword">case</span> <span class="string">'m'</span>
+0232                 fx=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(fx);
+0233             <span class="keyword">case</span> <span class="string">'l'</span>
+0234                 fx=10.^(fx);
+0235             <span class="keyword">case</span> <span class="string">'e'</span>
+0236                 fx=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(fx);
+0237         <span class="keyword">end</span>
+0238     <span class="keyword">end</span>
+0239     
+0240 <span class="keyword">end</span>
+0241 <span class="comment">% now sort out the bandwidths</span>
+0242 nf=numel(fx);
+0243 <span class="keyword">if</span> numel(bx)==1
+0244     bx=bx(ones(nf,1));      <span class="comment">% replicate if necessary</span>
+0245 <span class="keyword">end</span>
+0246 <span class="keyword">switch</span> wb               <span class="comment">% convert bandwidth to Hz</span>
+0247     <span class="keyword">case</span> <span class="string">'b'</span>
+0248         [dum,bwf]=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fx);
+0249     <span class="keyword">case</span> <span class="string">'m'</span>
+0250         [dum,bwf]=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(fx);
+0251     <span class="keyword">case</span> <span class="string">'l'</span>
+0252         bwf=fx*log(10);
+0253     <span class="keyword">case</span> <span class="string">'e'</span>
+0254         [dum,bwf]=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fx);
+0255     <span class="keyword">case</span> <span class="string">'h'</span>
+0256         bwf=ones(nf,1);
+0257 <span class="keyword">end</span>
+0258 bx=bx.*bwf;
+0259 zph=0; <span class="comment">% flag to indicate missing phase vector</span>
+0260 <span class="keyword">if</span> ~numel(ph)
+0261     ph=zeros(nf,1);         <span class="comment">% default phase is zero</span>
+0262     zph=1;                  <span class="comment">% set missing phase flag</span>
+0263 <span class="keyword">elseif</span> numel(ph)==1
+0264     ph=ph(ones(nf,1));      <span class="comment">% replicate a scalar value</span>
+0265 <span class="keyword">else</span>
+0266     ph=ph(:);               <span class="comment">% force ph to be a column vector</span>
+0267 <span class="keyword">end</span>
+0268 <span class="comment">%</span>
+0269 <span class="comment">% t=(0:ceil(10*fs/(2*pi*bnd)))/fs;  % five time constants</span>
+0270 <span class="comment">% gt=t.^(n-1).*cos(2*pi*cfr*t+phi).*exp(-2*pi*bnd*t);</span>
+0271 <span class="comment">% gt=gt/sqrt(mean(gt.^2)); % normalize</span>
+0272 <span class="comment">% figure(1);</span>
+0273 <span class="comment">% plot(t,gt);</span>
+0274 <span class="comment">% title('Desired Impulse response');</span>
+0275 <span class="comment">% xlabel(['Time (' v_xticksi 's)']);</span>
+0276 <span class="comment">%</span>
+0277 zp=exp((1i*fx-bx)*2*pi/fs);             <span class="comment">% pole position in top half of z-plane</span>
+0278 a=round([1 cumprod((-k:-1)./(1:k))]);   <span class="comment">% create alternating sign binomial coefficients [1,k+1]</span>
+0279 wwp=repmat(zp,1,k+1).^repmat(0:k,nf,1); <span class="comment">% powers of pole position [nf,k+1]</span>
+0280 denc=repmat(a,nf,1).*wwp;               <span class="comment">% complex denominator coefficients [nf,k+1]</span>
+0281 <span class="keyword">if</span> k&gt;1
+0282     b=conv(a,(1:k-1).^(k-1));              <span class="comment">% convolve with integers to the power k-1 [1,2*k-1]</span>
+0283     b=exp(1i*ph)*b(1:k-1);                 <span class="comment">% correct for starting phase shift [nf,k-1]</span>
+0284     numc=b.*wwp(:,2:k);                   <span class="comment">% complex numerator coefficients [nf,k-1]</span>
+0285 <span class="keyword">else</span> <span class="comment">% for the special case of k=1</span>
+0286     numc=exp(1i*ph);                    <span class="comment">% complex numerator coefficients [nf,1]</span>
+0287 <span class="keyword">end</span>
+0288 kk=size(numc,2);                        <span class="comment">% = max(1,k-1)</span>
+0289 <span class="comment">% if phase is unspecified choose phase to give zero gain at DC and positive real(gain) for small w</span>
+0290 <span class="keyword">if</span> zph
+0291     sd=sum(denc,2);
+0292     sn=sum(numc,2);
+0293     snn=numc*(0:kk-1)';
+0294     sg=sign(real(conj(sn).*snn));
+0295     ph=angle(1i*sg.*conj(sn./sd));
+0296     numc=numc.*repmat(exp(1i*ph),1,kk);
+0297 <span class="keyword">end</span>
+0298 b=zeros(nf,k+kk);                          <span class="comment">% space for numerators</span>
+0299 a=zeros(nf,2*k+1);                      <span class="comment">% space for denominators</span>
+0300 gd=zeros(nf,1);                         <span class="comment">% space for group delay</span>
+0301 ww=exp(2i*fx*pi/fs);                    <span class="comment">% exp(j*centre-freq)</span>
+0302 <span class="keyword">for</span> i=1:nf
+0303     b(i,:)=real(conv(numc(i,:),conj(denc(i,:))));
+0304     a(i,:)=real(conv(denc(i,:),conj(denc(i,:)))); <span class="comment">% denominator has k repeated poles at ww and ww'</span>
+0305     u=polyval(b(i,:),ww(i));            <span class="comment">% numerator gain @ centre freqs</span>
+0306     v=polyval(a(i,:),ww(i));            <span class="comment">% denominator gain @ centre freqs</span>
+0307     ud=polyval(b(i,:).*(0:k+kk-1),ww(i));
+0308     vd=polyval(a(i,:).*(0:2*k),ww(i));
+0309     vu=abs(v/u);                        <span class="comment">% scale factor to give unity gain</span>
+0310     b(i,:)=b(i,:)*vu;                   <span class="comment">% force unity gain @ centre freqs</span>
+0311     numc(i,:)=numc(i,:)*vu;             <span class="comment">% scale the complex numerator coefficients also</span>
+0312     gd(i)=real((v*ud-u*vd)/(u*v));      <span class="comment">% group delay at centre freq in samples</span>
+0313 <span class="keyword">end</span>
+0314 
+0315 <span class="comment">% now plot graph</span>
+0316 
+0317 <span class="keyword">if</span> ~nargout || any(w==<span class="string">'g'</span>) || any(w==<span class="string">'G'</span>)
+0318     ng=200;      <span class="comment">%number of points to plot</span>
+0319     <span class="keyword">if</span> any(w==<span class="string">'G'</span>)
+0320         fax=logspace(log10(fx(1)/4),log10(fs/2),ng);
+0321     <span class="keyword">else</span>
+0322         fax=linspace(0,fs/2,ng);
+0323     <span class="keyword">end</span>
+0324     ww=exp(2i*pi*fax/fs);
+0325     gg=zeros(nf,ng);
+0326     <span class="keyword">for</span> i=1:nf
+0327         gg(i,:)=10*log10(abs(polyval(b(i,:),ww)./polyval(a(i,:),ww)));
+0328     <span class="keyword">end</span>
+0329     <span class="keyword">if</span> any(w==<span class="string">'G'</span>)
+0330         semilogx(fax,gg',<span class="string">'-b'</span>);
+0331         set(gca,<span class="string">'xlim'</span>,[fax(1) fax(end)]);
+0332     <span class="keyword">else</span>
+0333         plot(fax,gg',<span class="string">'-b'</span>);
+0334     <span class="keyword">end</span>
+0335     xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0336     set(gca,<span class="string">'ylim'</span>,[-50 1]);
+0337     title(sprintf(<span class="string">'Order-%d Gammatone Filterbank (N=%d, Opt=%s)'</span>,k,nf,w));
+0338 <span class="keyword">end</span>
+0339 
+0340 <span class="comment">% sort out output format</span>
+0341 
+0342 <span class="keyword">if</span> any(w==<span class="string">'c'</span>)                              <span class="comment">% if complex filter output</span>
+0343     b=numc;                                 <span class="comment">% output complex filter of order k</span>
+0344     a=denc;
+0345 <span class="keyword">elseif</span> any(w==<span class="string">'q'</span>)                          <span class="comment">% if biquad output</span>
+0346     bb=zeros(k,6,nf);                       <span class="comment">% space for sos</span>
+0347     <span class="keyword">for</span> i=1:nf
+0348         bb(:,:,i)=tf2sos(b(i,:),a(i,:));    <span class="comment">% calculate the biquads</span>
+0349         bb(:,5,i)=-2*real(zp(i));           <span class="comment">% force denominators to be exact</span>
+0350         bb(:,6,i)=zp(i)*conj(zp(i));
+0351     <span class="keyword">end</span>
+0352     a=[];
+0353     b=bb;
+0354 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

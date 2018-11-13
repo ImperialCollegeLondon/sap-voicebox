@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_maxfilt</title>
+  <meta name="keywords" content="v_maxfilt">
+  <meta name="description" content="MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_maxfilt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_maxfilt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,k,y0]=v_maxfilt(x,f,n,d,x0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)
+
+ Usage: (1) y=v_maxfilt(x)   % maximum filter along first non-singleton dimension
+        (2) y=v_maxfilt(x,0.95) % use a forgetting factor of 0.95 (= time const of -1/log(0.95)=19.5 samples)
+        (3) Two equivalent methods (i.e. you can process x in chunks):
+                 y=v_maxfilt([u v]);      [yu,ku,x0)=v_maxfilt(u);
+                                        yv=v_maxfilt(v,[],[],[],x0);
+                                        y=[yu yv];
+
+ Inputs:  X  Vector or matrix of input data
+          F  exponential forgetting factor in the range 0 (very forgetful) to 1 (no forgetting)
+             F=exp(-1/T) gives a time constant of T samples [default = 1]
+          n  Length of sliding window [default = Inf (equivalent to [])]
+          D  Dimension for work along [default = first non-singleton dimension]
+         X0  Initial values placed in front of the X data
+
+ Outputs: Y  Output matrix - same size as X
+          K  Index array: Y=X(K). (Note that these value may be &lt;=0 if input X0 is present)
+         Y0  Last nn-1 values (used to initialize a subsequent call to
+             v_maxfilt()) (or last output if n=Inf)
+
+ This routine calaulates y(p)=max(f^r*x(p-r), r=0:n-1) where x(r)=-inf for r&lt;1
+ y=x(k) on output</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,k,y0]=v_maxfilt(x,f,n,d,x0)</a>
+0002 <span class="comment">%MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) y=v_maxfilt(x)   % maximum filter along first non-singleton dimension</span>
+0005 <span class="comment">%        (2) y=v_maxfilt(x,0.95) % use a forgetting factor of 0.95 (= time const of -1/log(0.95)=19.5 samples)</span>
+0006 <span class="comment">%        (3) Two equivalent methods (i.e. you can process x in chunks):</span>
+0007 <span class="comment">%                 y=v_maxfilt([u v]);      [yu,ku,x0)=v_maxfilt(u);</span>
+0008 <span class="comment">%                                        yv=v_maxfilt(v,[],[],[],x0);</span>
+0009 <span class="comment">%                                        y=[yu yv];</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Inputs:  X  Vector or matrix of input data</span>
+0012 <span class="comment">%          F  exponential forgetting factor in the range 0 (very forgetful) to 1 (no forgetting)</span>
+0013 <span class="comment">%             F=exp(-1/T) gives a time constant of T samples [default = 1]</span>
+0014 <span class="comment">%          n  Length of sliding window [default = Inf (equivalent to [])]</span>
+0015 <span class="comment">%          D  Dimension for work along [default = first non-singleton dimension]</span>
+0016 <span class="comment">%         X0  Initial values placed in front of the X data</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% Outputs: Y  Output matrix - same size as X</span>
+0019 <span class="comment">%          K  Index array: Y=X(K). (Note that these value may be &lt;=0 if input X0 is present)</span>
+0020 <span class="comment">%         Y0  Last nn-1 values (used to initialize a subsequent call to</span>
+0021 <span class="comment">%             v_maxfilt()) (or last output if n=Inf)</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% This routine calaulates y(p)=max(f^r*x(p-r), r=0:n-1) where x(r)=-inf for r&lt;1</span>
+0024 <span class="comment">% y=x(k) on output</span>
+0025 
+0026 <span class="comment">% Example: find all peaks in x that are not exceeded within +-w samples</span>
+0027 <span class="comment">% w=4;m=100;x=rand(m,1);[y,k]=v_maxfilt(x,1,2*w+1);p=find(((1:m)-k)==w);plot(1:m,x,'-',p-w,x(p-w),'+')</span>
+0028 
+0029 <span class="comment">% Bugs/suggestion</span>
+0030 <span class="comment">% (1) if n&lt;0 then centre filter support of the current sample (or make it +-n)</span>
+0031 
+0032 <span class="comment">%      Copyright (C) Mike Brookes 2003-2014</span>
+0033 <span class="comment">%      Version: $Id: v_maxfilt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0036 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0039 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0040 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0041 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0042 <span class="comment">%   (at your option) any later version.</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0045 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0046 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0047 <span class="comment">%   GNU General Public License for more details.</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0050 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0051 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0052 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0053 
+0054 s=size(x);
+0055 <span class="keyword">if</span> nargin&lt;4 || isempty(d)           <span class="comment">% if d is unspecified</span>
+0056     d=find(s&gt;1,1);                  <span class="comment">% find first non-singleton dimension</span>
+0057     <span class="keyword">if</span> isempty(d)
+0058         d=1;                        <span class="comment">% else defailt to dimension 1</span>
+0059     <span class="keyword">end</span>
+0060 <span class="keyword">end</span>
+0061 <span class="keyword">if</span> nargin&gt;4 &amp;&amp; numel(x0)&gt;0          <span class="comment">% initial values specified</span>
+0062     y=shiftdim(cat(d,x0,x),d-1);    <span class="comment">% concatenate x0 and x along d</span>
+0063     nx0=size(x0,d);                 <span class="comment">% number of values added onto front of data</span>
+0064 <span class="keyword">else</span>                                
+0065     y=shiftdim(x,d-1);              <span class="comment">% dimension specified, d</span>
+0066     nx0=0;                          <span class="comment">% no values added onto front of data</span>
+0067 <span class="keyword">end</span>
+0068 s=size(y);
+0069 s1=s(1);                            <span class="comment">% size of active dimension</span>
+0070 <span class="keyword">if</span> nargin&lt;3 || isempty(n)
+0071     n0=Inf;                         <span class="comment">% default filter support is Inf</span>
+0072 <span class="keyword">else</span>
+0073     n0=max(n,1);
+0074 <span class="keyword">end</span>
+0075 <span class="keyword">if</span> nargin&lt;2 || isempty(f)
+0076     f=1;
+0077 <span class="keyword">end</span>
+0078 nn=n0;
+0079 <span class="keyword">if</span> nargout&gt;2 <span class="comment">% we need to output the tail for next time</span>
+0080     <span class="keyword">if</span> n0&lt;Inf
+0081         ny0=min(s1,nn-1);
+0082     <span class="keyword">else</span>
+0083         ny0=min(s1,1);
+0084     <span class="keyword">end</span>
+0085     sy0=s;
+0086     sy0(1)=ny0;
+0087     <span class="keyword">if</span> ny0&lt;=0 || n0==Inf
+0088         y0=zeros(sy0);
+0089     <span class="keyword">else</span>
+0090         y0=reshape(y(1+s1-ny0:<span class="keyword">end</span>,:),sy0);
+0091         y0=shiftdim(y0,ndims(x)-d+1);
+0092     <span class="keyword">end</span>
+0093 <span class="keyword">end</span>
+0094 nn=min(nn,s1);         <span class="comment">% no point in having nn&gt;s1</span>
+0095 k=repmat((1:s1)',[1 s(2:end)]);
+0096 <span class="keyword">if</span> nn&gt;1
+0097     j=1;
+0098     j2=1;
+0099     <span class="keyword">while</span> j&gt;0
+0100         g=f^j;
+0101         m=find(y(j+1:s1,:)&lt;=g*y(1:s1-j,:));
+0102         m=m+j*fix((m-1)/(s1-j));
+0103         y(m+j)=g*y(m);
+0104         k(m+j)=k(m);
+0105         j2=j2+j;
+0106         j=min(j2,nn-j2);                    <span class="comment">% j approximately doubles each iteration</span>
+0107     <span class="keyword">end</span>
+0108 <span class="keyword">end</span>
+0109 <span class="keyword">if</span> nargout==0
+0110     <span class="keyword">if</span> nargin&lt;3
+0111         x=shiftdim(x);
+0112     <span class="keyword">else</span>
+0113         x=shiftdim(x,d-1);
+0114     <span class="keyword">end</span>
+0115     ss=min(prod(s(2:end)),5);   <span class="comment">% maximum of 5 plots</span>
+0116     plot(1:s1,reshape(y(nx0+1:<span class="keyword">end</span>,1:ss),s1,ss),<span class="string">'-r'</span>,1:s1,reshape(x(:,1:ss),s1,ss),<span class="string">':b'</span>);
+0117 <span class="keyword">else</span>
+0118     <span class="keyword">if</span> nargout&gt;2 &amp;&amp; n0==Inf &amp;&amp; ny0==1 <span class="comment">% if n0==Inf, we need to save the final output</span>
+0119         y0=reshape(y(<span class="keyword">end</span>,:),sy0);
+0120         y0=shiftdim(y0,ndims(x)-d+1);
+0121     <span class="keyword">end</span>
+0122     <span class="keyword">if</span> nx0&gt;0                        <span class="comment">% pre-data specified, x0</span>
+0123         s(1)=s(1)-nx0;
+0124         y=shiftdim(reshape(y(nx0+1:<span class="keyword">end</span>,:),s),ndims(x)-d+1);
+0125         k=shiftdim(reshape(k(nx0+1:<span class="keyword">end</span>,:),s),ndims(x)-d+1)-nx0;
+0126     <span class="keyword">else</span>                            <span class="comment">% no pre-data</span>
+0127         y=shiftdim(y,ndims(x)-d+1);
+0128         k=shiftdim(k,ndims(x)-d+1);
+0129     <span class="keyword">end</span>
+0130 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

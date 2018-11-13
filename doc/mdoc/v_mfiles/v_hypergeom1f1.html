@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_hypergeom1f1</title>
+  <meta name="keywords" content="v_hypergeom1f1">
+  <meta name="description" content="HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_hypergeom1f1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_hypergeom1f1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [h,l,alg]=v_hypergeom1f1(a,b,z,tol,maxj,th) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)
+
+  Inputs: a,b,z  input arguments
+                 a and b must be real scalars, z can be a real matrix
+                 The function is undefined if b is a non-positive integer
+          tol    Optional tolerance [default 1e-10]
+          maxj   Optional iteration limit [default 500]
+          th    Threshold for choice of algorithm [default 30]
+
+ Outputs: h      output result (size of z): 1F1(a;b;z) = M(a;b;z)
+          l      actual number of iterations (size of z)
+          alg     algorithm used
+
+ This routine is functionally equivalent to the symbolic toolbox function hypergeom(a,b,z) but much faster.
+ The function calculated is the solution to z M'' + (b-z) M' - a M = 0 where
+ M' and M'' are 1st and 2nd derivatives of M with respect to z.
+ This routine is closely based on taylorb1f1.m from [4] which is explained in Sec 3.2 of [3].
+
+ Special cases and relations [2]:
+        M(a;b;z) = Inf for integer b&lt;=0
+        M(a;b;0) = 1
+        M(0;b;z) = 1
+        M(a;a;z) = exp(z)
+        M(1;2;2z) = exp(z)*sinh(z)/z
+        M(a;b;z) = exp(z)*M(b-a;b;-z)    (13.2.39 from [2])
+        M(a;a+1;-z) = exp(z)*M(1;a+1;z) = a*gamma(z,a)/z^a
+        M(a;b;z) = M(a-1;b;z) + M(a;b+1;z)*z/b
+        (b-a)M(a-1,b,z)+(2a-b+z)M(a,b,z)-aM(a+1,b,z)=0     [1] 13.4.1
+        b(b-1)M(a,b-1,z)+b(1-b-z)M(a,b,z)+z(b-a)(a,b+1,z)=0     [1] 13.4.2
+
+ References:
+ [1]    M. Abramowitz and I. A. Stegun, editors.
+       Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables.
+       Dover, New York, 9 edition, 1964. ISBN 0-486-61272-4.
+ [2]    F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors.
+       NIST Handbook of Mathematical Functions. CUP, 2010. ISBN 978-0-521-14063-8.
+ [3]    J. Pearson. Computation of hypergeometric functions. Master’s thesis, Oxford University, 2009.
+       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-pearson_final.pdf.
+ [4]    J. Pearson. Computation of hypergeometric functions. Matlab code, Oxford University, 2009.
+       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-hypergeometricpackage.zip.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_gammalns.html" class="code" title="function [y,s]=v_gammalns(x)">v_gammalns</a>	GAMMALNS Log of Gamma(x) for positive or negative real x [y,s]=(x)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [h,l,alg]=v_hypergeom1f1(a,b,z,tol,maxj,th)</a>
+0002 <span class="comment">% HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs: a,b,z  input arguments</span>
+0005 <span class="comment">%                 a and b must be real scalars, z can be a real matrix</span>
+0006 <span class="comment">%                 The function is undefined if b is a non-positive integer</span>
+0007 <span class="comment">%          tol    Optional tolerance [default 1e-10]</span>
+0008 <span class="comment">%          maxj   Optional iteration limit [default 500]</span>
+0009 <span class="comment">%          th    Threshold for choice of algorithm [default 30]</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Outputs: h      output result (size of z): 1F1(a;b;z) = M(a;b;z)</span>
+0012 <span class="comment">%          l      actual number of iterations (size of z)</span>
+0013 <span class="comment">%          alg     algorithm used</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% This routine is functionally equivalent to the symbolic toolbox function hypergeom(a,b,z) but much faster.</span>
+0016 <span class="comment">% The function calculated is the solution to z M'' + (b-z) M' - a M = 0 where</span>
+0017 <span class="comment">% M' and M'' are 1st and 2nd derivatives of M with respect to z.</span>
+0018 <span class="comment">% This routine is closely based on taylorb1f1.m from [4] which is explained in Sec 3.2 of [3].</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Special cases and relations [2]:</span>
+0021 <span class="comment">%        M(a;b;z) = Inf for integer b&lt;=0</span>
+0022 <span class="comment">%        M(a;b;0) = 1</span>
+0023 <span class="comment">%        M(0;b;z) = 1</span>
+0024 <span class="comment">%        M(a;a;z) = exp(z)</span>
+0025 <span class="comment">%        M(1;2;2z) = exp(z)*sinh(z)/z</span>
+0026 <span class="comment">%        M(a;b;z) = exp(z)*M(b-a;b;-z)    (13.2.39 from [2])</span>
+0027 <span class="comment">%        M(a;a+1;-z) = exp(z)*M(1;a+1;z) = a*gamma(z,a)/z^a</span>
+0028 <span class="comment">%        M(a;b;z) = M(a-1;b;z) + M(a;b+1;z)*z/b</span>
+0029 <span class="comment">%        (b-a)M(a-1,b,z)+(2a-b+z)M(a,b,z)-aM(a+1,b,z)=0     [1] 13.4.1</span>
+0030 <span class="comment">%        b(b-1)M(a,b-1,z)+b(1-b-z)M(a,b,z)+z(b-a)(a,b+1,z)=0     [1] 13.4.2</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% References:</span>
+0033 <span class="comment">% [1]    M. Abramowitz and I. A. Stegun, editors.</span>
+0034 <span class="comment">%       Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables.</span>
+0035 <span class="comment">%       Dover, New York, 9 edition, 1964. ISBN 0-486-61272-4.</span>
+0036 <span class="comment">% [2]    F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors.</span>
+0037 <span class="comment">%       NIST Handbook of Mathematical Functions. CUP, 2010. ISBN 978-0-521-14063-8.</span>
+0038 <span class="comment">% [3]    J. Pearson. Computation of hypergeometric functions. Master’s thesis, Oxford University, 2009.</span>
+0039 <span class="comment">%       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-pearson_final.pdf.</span>
+0040 <span class="comment">% [4]    J. Pearson. Computation of hypergeometric functions. Matlab code, Oxford University, 2009.</span>
+0041 <span class="comment">%       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-hypergeometricpackage.zip.</span>
+0042 <span class="comment">%</span>
+0043 
+0044 <span class="comment">%      Copyright (C) Mike Brookes 2016</span>
+0045 <span class="comment">%      Version: $Id: v_hypergeom1f1.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0048 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0052 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0053 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0054 <span class="comment">%   (at your option) any later version.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0057 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0058 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0059 <span class="comment">%   GNU General Public License for more details.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0062 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0063 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0065 <span class="keyword">if</span> nargin&lt;4 || isempty(tol)
+0066     tol=1e-10;
+0067 <span class="keyword">end</span>
+0068 <span class="keyword">if</span> nargin&lt;5 || isempty(maxj)
+0069     maxj=500;
+0070 <span class="keyword">end</span>
+0071 <span class="keyword">if</span> nargin&lt;6 || isempty(th)
+0072     th=30;
+0073 <span class="keyword">end</span>
+0074 a1=a-1; <span class="comment">% define some useful constants</span>
+0075 b1=b-1;
+0076 ba=b-a;
+0077 h=zeros(size(z));
+0078 l=zeros(size(z));
+0079 nz=numel(z);
+0080 <span class="keyword">for</span> i=1:nz
+0081     y=z(i);
+0082     q=0;  <span class="comment">% break criterion initially false</span>
+0083     <span class="keyword">if</span> abs(y)&lt;th            <span class="comment">% small |y|</span>
+0084         <span class="comment">% compute using the series from 13.2.2 in [2]</span>
+0085         <span class="comment">% sum(j=0:inf,prod(a+(0:j-1)) y^j /(prod(b+(0:j-1)) j!))</span>
+0086         alg=1;
+0087         d=1;
+0088         g=1;
+0089         jlim=0;             <span class="comment">% find j beyond which terms definitely decrease</span>
+0090         k=(b1+y)^2-4*(a1)*y;
+0091         <span class="keyword">if</span> k&gt;=0
+0092             jlim=max(jlim,0.5*(sqrt(k)-(b1+y)));
+0093         <span class="keyword">end</span>
+0094         k=(b1-y)^2+4*(a1)*y;
+0095         <span class="keyword">if</span> k&gt;=0
+0096             jlim=max(jlim,0.5*(sqrt(k)-(b1-y)));
+0097         <span class="keyword">end</span>
+0098         jlim=min(maxj,jlim);
+0099         <span class="keyword">for</span> j=1:maxj
+0100             d=d*y*(a1+j)/(j*(b1+j));  <span class="comment">% d = A(j)-A(j-1) = (A(j-1)-A(j-2))*r(j)*z from [4]</span>
+0101             g=g+d;                      <span class="comment">% g = A(j) from [4]</span>
+0102             p=abs(d)&lt;tol*abs(g);
+0103             <span class="keyword">if</span> q &amp;&amp; p &amp;&amp; j&gt;=jlim
+0104                 <span class="keyword">break</span>
+0105             <span class="keyword">end</span>
+0106             q=p;
+0107         <span class="keyword">end</span>
+0108     <span class="keyword">elseif</span> y&gt;0 <span class="comment">% big positive y</span>
+0109         <span class="comment">% see 13.7.1 combined with 13.2.3 [2]. Valid for large y unless a is a non-positive integer</span>
+0110         alg=2;
+0111         d=1;
+0112         g=1;
+0113         jlim=1;             <span class="comment">% find j beyond which terms definitely increase</span>
+0114         k=(ba-1-a+y)^2+4*a*(ba-1);
+0115         <span class="keyword">if</span> k&gt;=0
+0116             jlim=max(jlim,0.5*(sqrt(k)-(ba-a-1+y)));
+0117         <span class="keyword">end</span>
+0118         k=(ba-a-1-y)^2+4*a*(ba-1);
+0119         <span class="keyword">if</span> k&gt;=0
+0120             jlim=max(jlim,0.5*(sqrt(k)-(ba-a-1-y)));
+0121         <span class="keyword">end</span>
+0122         jlim=min(maxj,jlim);
+0123         <span class="keyword">for</span> j=1:jlim
+0124             d=d*(ba-1+j)*(j-a)/(j*y);
+0125             g=g+d;
+0126             p=abs(d)&lt;tol*abs(g);
+0127             <span class="keyword">if</span> q &amp;&amp; p
+0128                 <span class="keyword">break</span>
+0129             <span class="keyword">end</span>
+0130             q=p;
+0131         <span class="keyword">end</span>
+0132         [gl,gs]=<a href="v_gammalns.html" class="code" title="function [y,s]=v_gammalns(x)">v_gammalns</a>([a b]);
+0133         g=gs(1)*gs(2)*exp(y+gl(2)-gl(1)+(a-b)*log(y))*g;
+0134     <span class="keyword">else</span>   <span class="comment">% big negative y</span>
+0135         <span class="comment">% Combine M(a;b;z) = exp(z)*M(b-a;b;-z) (13.2.39 from [2]) with algorithm 2</span>
+0136         alg=3;
+0137         d=1;
+0138         g=1;
+0139                 jlim=1;             <span class="comment">% find j beyond which terms definitely increase</span>
+0140         k=(a1-ba+y)^2+4*a1*ba;
+0141         <span class="keyword">if</span> k&gt;=0
+0142             jlim=max(jlim,0.5*(sqrt(k)-(a1-ba+y)));
+0143         <span class="keyword">end</span>
+0144         k=(a1-ba-y)^2+4*a1*ba;
+0145         <span class="keyword">if</span> k&gt;=0
+0146             jlim=max(jlim,0.5*(sqrt(k)-(a1-ba-y)));
+0147         <span class="keyword">end</span>
+0148         jlim=min(maxj,jlim);
+0149         <span class="keyword">for</span> j=1:jlim
+0150             d=d*(a1+j)*(ba-j)/(j*y);
+0151             g=g+d;
+0152             p=abs(d)&lt;tol*abs(g);
+0153             <span class="keyword">if</span> q &amp;&amp; p
+0154                 <span class="keyword">break</span>
+0155             <span class="keyword">end</span>
+0156             q=p;
+0157         <span class="keyword">end</span>
+0158         [gl,gs]=<a href="v_gammalns.html" class="code" title="function [y,s]=v_gammalns(x)">v_gammalns</a>([ba b]);
+0159         g=gs(1)*gs(2)*exp(gl(2)-gl(1)-a*log(-y))*g;
+0160     <span class="keyword">end</span>
+0161     h(i)=g;
+0162     l(i)=j;
+0163 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

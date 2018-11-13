@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_pdfmoments</title>
+  <meta name="keywords" content="v_pdfmoments">
+  <meta name="description" content="PDFMOMENTS convert between central moments, raw moments and cumulants [C,R,K]=(T,M,B,A)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_pdfmoments.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_pdfmoments
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>PDFMOMENTS convert between central moments, raw moments and cumulants [C,R,K]=(T,M,B,A)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [c,r,k]=v_pdfmoments(t,m,b,a) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">PDFMOMENTS convert between central moments, raw moments and cumulants [C,R,K]=(T,M,B,A)
+  Inputs: t  text string containing:
+               'm','r','k'  Imput is central moments, raw moments, cumulants [default 'm']
+               'M','R','K'  Ouptut c is central moments, raw moments, cumulants [default 'M']
+          m    vector of input moments; m(r) is moment r, m(1) is always the mean
+          a,b  If input moments are for x, output moments are for a*x+b [defaulta=1, b=0]
+
+ Outputs: c    central moments (or as determined by 'R' or 'K' options)
+          r    raw moments
+          k    cumulants
+
+ (a) For all formats, the first element is the mean (i.e. not the first central moment or cumulant which equal zero).
+ (b) v_pdfmoments('k',[m,s^2,0,0,0])=v_pdfmoments('k',[0,1,0,0,0],m,s) gives a Gaussian with mean m and std dev s</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [c,r,k]=v_pdfmoments(t,m,b,a)</a>
+0002 <span class="comment">%PDFMOMENTS convert between central moments, raw moments and cumulants [C,R,K]=(T,M,B,A)</span>
+0003 <span class="comment">%  Inputs: t  text string containing:</span>
+0004 <span class="comment">%               'm','r','k'  Imput is central moments, raw moments, cumulants [default 'm']</span>
+0005 <span class="comment">%               'M','R','K'  Ouptut c is central moments, raw moments, cumulants [default 'M']</span>
+0006 <span class="comment">%          m    vector of input moments; m(r) is moment r, m(1) is always the mean</span>
+0007 <span class="comment">%          a,b  If input moments are for x, output moments are for a*x+b [defaulta=1, b=0]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs: c    central moments (or as determined by 'R' or 'K' options)</span>
+0010 <span class="comment">%          r    raw moments</span>
+0011 <span class="comment">%          k    cumulants</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% (a) For all formats, the first element is the mean (i.e. not the first central moment or cumulant which equal zero).</span>
+0014 <span class="comment">% (b) v_pdfmoments('k',[m,s^2,0,0,0])=v_pdfmoments('k',[0,1,0,0,0],m,s) gives a Gaussian with mean m and std dev s</span>
+0015 
+0016 <span class="comment">%   Copyright (c) 1998 Mike Brookes,  mike.brookes@ic.ac.uk</span>
+0017 <span class="comment">%      Version: $Id: v_pdfmoments.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0020 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0023 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0024 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0025 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0026 <span class="comment">%   (at your option) any later version.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0029 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0030 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0031 <span class="comment">%   GNU General Public License for more details.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0034 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0035 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="keyword">persistent</span> n0 bc mk fa
+0038 <span class="keyword">if</span> isempty(n0)
+0039     n0=3;  <span class="comment">% order 3</span>
+0040     bc=[1 1 0 0; 1 2 1 0; 1 3 3 1]; <span class="comment">% binomial coefficients</span>
+0041     mk={[1 1 1];[0 1 1 1]};  <span class="comment">%  cumulant coefficients: one row per term, powers of k(2:i+1), coef k-&gt;m, coef m-&gt;k</span>
+0042     mn=[1 0; 1 1]; <span class="comment">% [i,j] = number of terms in m(i+1) whose lowest moment is &gt;= j+1</span>
+0043     fa=1; <span class="comment">% factorial list</span>
+0044 <span class="keyword">end</span>
+0045 <span class="comment">% check arguments</span>
+0046 <span class="keyword">if</span> nargin&lt;4 || isempty(a)
+0047     a=1;
+0048 <span class="keyword">end</span>
+0049 <span class="keyword">if</span> nargin&lt;3 || isempty(b)
+0050     b=0;
+0051 <span class="keyword">end</span>
+0052 <span class="keyword">if</span> isempty(t)
+0053     t=<span class="string">''</span>;
+0054 <span class="keyword">end</span>
+0055 n=length(m);                                    <span class="comment">% number of moments required</span>
+0056 <span class="keyword">if</span> n&gt;n0                                         <span class="comment">% check if need to update coefficient arrays</span>
+0057     <span class="keyword">if</span> fix(n/2-1)&gt;length(fa)                    <span class="comment">% we need factorials up to fix(n/2-1)</span>
+0058         fal=length(fa);
+0059         fa(fix(n/2-1),1)=0;                     <span class="comment">% enlarge factorial vector</span>
+0060         <span class="keyword">for</span> i=fal+1:fix(n/2-1)
+0061             fa(i)=i*fa(i-1);                    <span class="comment">% create new factorials</span>
+0062         <span class="keyword">end</span>
+0063     <span class="keyword">end</span>
+0064     bc(n,n+1)=0;                                <span class="comment">% enlarge binomial coefficient array</span>
+0065     mk{n-1,1}=[];                               <span class="comment">% enlarge cumulant coefficient array</span>
+0066     mn(n-1,n-1)=0;                              <span class="comment">% enlarge cumulant coefficient counts</span>
+0067     <span class="keyword">for</span> i=n0+1:n
+0068         bc(i,1:i+1)=[1 bc(i-1,1:i)+bc(i-1,2:i+1)];                      <span class="comment">% update binomial coefficients</span>
+0069         j=fix((i+1)/2);                                                 <span class="comment">% first coefficient row to sum</span>
+0070         nr=1+sum(mn(((j-1:i-3)+(n-1)*(i-j-2:-1:0))));                   <span class="comment">% number of terms</span>
+0071         mki=zeros(nr,i+1);                                              <span class="comment">% coefficient matrix</span>
+0072         ix=1;
+0073         mki(1,i-1:i+1)=1;                                               <span class="comment">% first term always has a coefficient of 1</span>
+0074         <span class="keyword">for</span> r=j:i-2                                                     <span class="comment">% previous coefficients to use</span>
+0075             nk=mn(r-1+(n-1)*(i-r-2));                                   <span class="comment">% number of new coefficients for this value of r</span>
+0076             mkk=mk{r-1};                                                <span class="comment">% old coefficients for this value of r</span>
+0077             mkik=mkk(1:nk,1:r-1);                                       <span class="comment">% extract just the list of powers for each term</span>
+0078             mkik(:,i-r-1)=mkik(:,i-r-1)+1;                              <span class="comment">% increment the power of moment  i-r</span>
+0079             mki(ix+1:ix+nk,1:r-1)=mkik;                                 <span class="comment">% and save as new terms</span>
+0080             mki(ix+1:ix+nk,i)=mkk(1:nk,r)*bc(i,i-r+1)./mkik(:,i-r-1);   <span class="comment">% calculate coefficient for r-&gt;m</span>
+0081             rho=sum(mkik,2)-1;                                          <span class="comment">% rho is one less than the sum of the moment powers</span>
+0082             mki(ix+1:ix+nk,i+1)= mki(ix+1:ix+nk,i).*fa(rho).*(-1).^rho; <span class="comment">% calculate coefficient for m-&gt;r</span>
+0083             ix=ix+nk;                                                   <span class="comment">% update the number of terms so far</span>
+0084         <span class="keyword">end</span>
+0085         mki=sortrows(mki);                                              <span class="comment">% sort according to the lowest moment that is used</span>
+0086         mn(i-1,1:i-1)=[nr sum(cumprod(mki(:,1:i-2)==0,2),1)];           <span class="comment">% update count of terms with lowest moment &gt;= j+1</span>
+0087         mk{i-1}=mki;                                                    <span class="comment">% save in persistent cell array</span>
+0088     <span class="keyword">end</span>
+0089     n0=n;                                       <span class="comment">% coefficients are now calculated up to order n</span>
+0090 <span class="keyword">end</span>
+0091 <span class="comment">% apply scaling if input type is 'c' or 'k'</span>
+0092 mu=a*m(1)+b; <span class="comment">% calculate new mean</span>
+0093 c=m; <span class="comment">% initialize output shapes</span>
+0094 r=m;
+0095 k=m;
+0096 m=m(:)'; <span class="comment">% now force the input to be a row vector</span>
+0097 <span class="keyword">if</span> any(t==<span class="string">'k'</span>)
+0098     tin=3; <span class="comment">% set input type</span>
+0099     k(:)=k(:)'.*a.^(1:n);
+0100     k(1)=0; <span class="comment">% first cumulant is actually zero</span>
+0101 <span class="keyword">elseif</span> any(t==<span class="string">'r'</span>)
+0102     tin=2;
+0103 <span class="keyword">else</span>
+0104     tin=1;
+0105     c(:)=c(:)'.*a.^(1:n);
+0106     c(1)=0;  <span class="comment">% first cenral moment is actually zero</span>
+0107 <span class="keyword">end</span>
+0108 tout=[(~any(t==<span class="string">'K'</span>) &amp;&amp; ~any(t==<span class="string">'R'</span>)) (nargout&gt;=2 || any(t==<span class="string">'R'</span>)) (nargout&gt;=3 || any(t==<span class="string">'K'</span>))]; <span class="comment">% outputs required</span>
+0109 <span class="keyword">for</span> il=1:2 <span class="comment">% loop through conversion routines twice</span>
+0110     <span class="comment">% first convert between moments</span>
+0111     <span class="keyword">if</span> il==1 <span class="comment">% convert unscaled R -&gt; C</span>
+0112         v=[1 m.*a.^(1:n)];
+0113         bb=b-mu;
+0114         doit=tin==2 &amp;&amp; (tout(1) || tout(3));
+0115     <span class="keyword">else</span>  <span class="comment">% convert C -&gt; R or unscaled R -&gt; R</span>
+0116         <span class="keyword">if</span> tin==2 <span class="comment">% input type was 'r' (v is OK from previous iteration)</span>
+0117             bb=b;
+0118         <span class="keyword">else</span> <span class="comment">% input type was 'c' or 'k'</span>
+0119             v=[1 c(:)'];
+0120             bb=mu;
+0121         <span class="keyword">end</span>
+0122         doit=tout(2); <span class="comment">% convert if 'R' output required</span>
+0123     <span class="keyword">end</span>
+0124     <span class="keyword">if</span> doit
+0125         y=v(2:end);
+0126         <span class="keyword">if</span> bb~=0 <span class="comment">% don't bother if the constant term is zero</span>
+0127             <span class="keyword">for</span> i=1:n
+0128                 y(i)=polyval(bc(i,1:i+1).*v(1:i+1),bb);
+0129             <span class="keyword">end</span>
+0130         <span class="keyword">end</span>
+0131         <span class="keyword">if</span> il==1 <span class="comment">% convert unscaled R -&gt; C</span>
+0132             c(:)=y;
+0133         <span class="keyword">else</span>  <span class="comment">% convert C -&gt; R or unscaled R -&gt; R</span>
+0134             r(:)=y;
+0135         <span class="keyword">end</span>
+0136     <span class="keyword">end</span>
+0137     <span class="comment">% now convert cumulants to/from moments</span>
+0138     <span class="keyword">if</span> il==1 <span class="comment">% convert K -&gt; C</span>
+0139         x=k(:)';
+0140         doit=tin==3 &amp;&amp; (tout(1) || tout(2));
+0141     <span class="keyword">else</span>  <span class="comment">% convert C -&gt; K</span>
+0142         x=c(:)';
+0143         doit=(tin&lt;3) &amp;&amp; tout(3);
+0144     <span class="keyword">end</span>
+0145     <span class="keyword">if</span> doit
+0146         y=x;
+0147         <span class="keyword">for</span> i=4:n
+0148             mki=mk{i-1}; <span class="comment">% get coefficient matrix</span>
+0149             y(i)=mki(:,i-1+il)'*prod(repmat(x(2:i),size(mki,1),1).^mki(:,1:i-1),2); <span class="comment">% calculate moment/cumulant (neat but not efficient)</span>
+0150         <span class="keyword">end</span>
+0151         <span class="keyword">if</span> il==1 <span class="comment">% converted K -&gt; C</span>
+0152             c(:)=y;
+0153         <span class="keyword">else</span> <span class="comment">% converted C -&gt; K</span>
+0154             k(:)=y;
+0155         <span class="keyword">end</span>
+0156     <span class="keyword">end</span>
+0157 <span class="keyword">end</span>
+0158 c(1)=mu; <span class="comment">% restore the means</span>
+0159 k(1)=mu;
+0160 <span class="keyword">if</span> any(t==<span class="string">'R'</span>)
+0161     c=r;
+0162 <span class="keyword">elseif</span> any(t==<span class="string">'K'</span>)
+0163     c=k;
+0164 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

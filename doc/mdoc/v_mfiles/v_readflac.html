@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readflac</title>
+  <meta name="keywords" content="v_readflac">
+  <meta name="description" content="READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readflac.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readflac
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs]=v_readflac(filename,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)
+
+ Input Parameters:
+
+    FILENAME gives the name of the file (with optional .WAV extension) or alternatively
+                 can be the FIDX output from a previous call to READWAV
+    MODE        specifies the following (*=default):
+
+    Scaling: 's'    Auto scale to make data peak = +-1
+             'r'    Raw unscaled data (integer values)
+             'q'    Scaled to make 0dBm0 be unity mean square
+             'p' *     Scaled to make +-1 equal full scale
+             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)
+                     (can be combined with n+p,r,s modes)
+             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)
+                     (can be combined with o+p,r,s modes)
+
+ FLAC (Free lossless audio codec) is a compressed audio file format described here:
+ http://flac.sourceforge.net/</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs]=v_readflac(filename,mode)</a>
+0002 <span class="comment">%READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input Parameters:</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    FILENAME gives the name of the file (with optional .WAV extension) or alternatively</span>
+0007 <span class="comment">%                 can be the FIDX output from a previous call to READWAV</span>
+0008 <span class="comment">%    MODE        specifies the following (*=default):</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%    Scaling: 's'    Auto scale to make data peak = +-1</span>
+0011 <span class="comment">%             'r'    Raw unscaled data (integer values)</span>
+0012 <span class="comment">%             'q'    Scaled to make 0dBm0 be unity mean square</span>
+0013 <span class="comment">%             'p' *     Scaled to make +-1 equal full scale</span>
+0014 <span class="comment">%             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)</span>
+0015 <span class="comment">%                     (can be combined with n+p,r,s modes)</span>
+0016 <span class="comment">%             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)</span>
+0017 <span class="comment">%                     (can be combined with o+p,r,s modes)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% FLAC (Free lossless audio codec) is a compressed audio file format described here:</span>
+0020 <span class="comment">% http://flac.sourceforge.net/</span>
+0021 
+0022 <span class="comment">%      Copyright (C) Mike Brookes 2008</span>
+0023 <span class="comment">%      Version: $Id: v_readflac.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0026 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0029 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0030 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0031 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0032 <span class="comment">%   (at your option) any later version.</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0035 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0036 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0037 <span class="comment">%   GNU General Public License for more details.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0040 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0041 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0042 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0043 <span class="keyword">if</span> nargin&lt;2
+0044     mode=<span class="string">'p'</span>;
+0045 <span class="keyword">else</span>
+0046     mode = [mode(:).' <span class="string">'p'</span>];
+0047 <span class="keyword">end</span>
+0048 dirt=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_temp'</span>);
+0049 [fnp,fnn,fne]=fileparts(filename);
+0050 filetemp=fullfile(dirt,[fnn <span class="string">'.wav'</span>]);
+0051 doscom=[<span class="string">'&quot;'</span> <a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'flac'</span>) <span class="string">'&quot;'</span> <span class="string">' -d -f -o &quot;'</span> filetemp <span class="string">'&quot; &quot;'</span> filename <span class="string">'&quot;'</span>];
+0052 <span class="comment">%                     fprintf(1,'Executing: %s\n',doscom);</span>
+0053 [doss,dosr]=dos(doscom); <span class="comment">% run the program</span>
+0054 <span class="keyword">if</span> doss <span class="comment">% test for errors</span>
+0055     error(sprintf(<span class="string">'Error running DOS command: %s'</span>,doscom));
+0056 <span class="keyword">end</span>
+0057 <span class="keyword">if</span> exist(filetemp)~=2
+0058     error(sprintf(<span class="string">'No output file from: %s'</span>,doscom));
+0059 <span class="keyword">end</span>
+0060 [y,fs]=<a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>(filetemp,mode);
+0061 doscom=[<span class="string">'del /f &quot;'</span> filetemp <span class="string">'&quot;'</span>];
+0062 <span class="keyword">if</span> dos(doscom) <span class="comment">% run the program</span>
+0063     error(sprintf(<span class="string">'Error running DOS command: %s'</span>,doscom));
+0064 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readaif</title>
+  <meta name="keywords" content="v_readaif">
+  <meta name="description" content="READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readaif.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readaif
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
+
+ Input Parameters:
+
+    FILENAME gives the name of the file (with optional .AIF extension) or alternatively
+                 can be the FIDX output from a previous call to READAIF
+    MODE        specifies the following (*=default):
+
+    Scaling: 's'    Auto scale to make data peak = +-1
+             'r'    Raw unscaled data (integer values)
+             'q'    Scaled to make 0dBm0 be unity mean square
+             'p' *    Scaled to make +-1 equal full scale
+             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)
+                     (can be combined with n+p,r,s modes)
+             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)
+                     (can be combined with o+p,r,s modes)
+   File I/O: 'f'    Do not close file on exit
+             'd'    Look in data directory: v_voicebox('dir_data')
+
+    NMAX     maximum number of samples to read (or -1 for unlimited [default])
+    NSKIP    number of samples to skip from start of file
+               (or -1 to continue from previous read when FIDX is given instead of FILENAME [default])
+
+ Output Parameters:
+
+    Y        data matrix of dimension (samples,channels)
+    FS       sample frequency in Hz
+    WMODE    mode string needed to recreate the data file
+    FIDX     Information row vector containing the element listed below.
+
+           (1)  file id
+                (2)  current position in file
+           (3)  dataoff    byte offset in file to start of data
+           (4)  nsamp    number of samples
+           (5)  nchan    number of channels
+           (6)  nbyte    bytes per data value
+           (7)  bits    number of bits of precision
+           (8)  code    Data format: 1=PCM, 2=ADPCM, 6=A-law, 7=Mu-law (always 1 for AIFF)
+           (9)  fs    sample frequency
+           (10) offset
+           (11) block size
+
+   If no output parameters are specified, header information will be printed.
+
+   For stereo data, y(:,1) is the left channel and y(:,2) the right</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip)</a>
+0002 <span class="comment">%READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input Parameters:</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    FILENAME gives the name of the file (with optional .AIF extension) or alternatively</span>
+0007 <span class="comment">%                 can be the FIDX output from a previous call to READAIF</span>
+0008 <span class="comment">%    MODE        specifies the following (*=default):</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%    Scaling: 's'    Auto scale to make data peak = +-1</span>
+0011 <span class="comment">%             'r'    Raw unscaled data (integer values)</span>
+0012 <span class="comment">%             'q'    Scaled to make 0dBm0 be unity mean square</span>
+0013 <span class="comment">%             'p' *    Scaled to make +-1 equal full scale</span>
+0014 <span class="comment">%             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)</span>
+0015 <span class="comment">%                     (can be combined with n+p,r,s modes)</span>
+0016 <span class="comment">%             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)</span>
+0017 <span class="comment">%                     (can be combined with o+p,r,s modes)</span>
+0018 <span class="comment">%   File I/O: 'f'    Do not close file on exit</span>
+0019 <span class="comment">%             'd'    Look in data directory: v_voicebox('dir_data')</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%    NMAX     maximum number of samples to read (or -1 for unlimited [default])</span>
+0022 <span class="comment">%    NSKIP    number of samples to skip from start of file</span>
+0023 <span class="comment">%               (or -1 to continue from previous read when FIDX is given instead of FILENAME [default])</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Output Parameters:</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%    Y        data matrix of dimension (samples,channels)</span>
+0028 <span class="comment">%    FS       sample frequency in Hz</span>
+0029 <span class="comment">%    WMODE    mode string needed to recreate the data file</span>
+0030 <span class="comment">%    FIDX     Information row vector containing the element listed below.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%           (1)  file id</span>
+0033 <span class="comment">%                (2)  current position in file</span>
+0034 <span class="comment">%           (3)  dataoff    byte offset in file to start of data</span>
+0035 <span class="comment">%           (4)  nsamp    number of samples</span>
+0036 <span class="comment">%           (5)  nchan    number of channels</span>
+0037 <span class="comment">%           (6)  nbyte    bytes per data value</span>
+0038 <span class="comment">%           (7)  bits    number of bits of precision</span>
+0039 <span class="comment">%           (8)  code    Data format: 1=PCM, 2=ADPCM, 6=A-law, 7=Mu-law (always 1 for AIFF)</span>
+0040 <span class="comment">%           (9)  fs    sample frequency</span>
+0041 <span class="comment">%           (10) offset</span>
+0042 <span class="comment">%           (11) block size</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%   If no output parameters are specified, header information will be printed.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   For stereo data, y(:,1) is the left channel and y(:,2) the right</span>
+0047 
+0048 <span class="comment">%  future enhancements: (1) handle LIST and CAT files as well</span>
+0049 <span class="comment">%                       (2) deal with offset and blocksize properly</span>
+0050 <span class="comment">%                       (3) handle other chunk types sensibly</span>
+0051 
+0052 <span class="comment">%       Copyright (C) Mike Brookes 1998</span>
+0053 <span class="comment">%      Version: $Id: v_readaif.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0056 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0057 <span class="comment">%</span>
+0058 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0059 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0060 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0061 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0062 <span class="comment">%   (at your option) any later version.</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0065 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0066 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0067 <span class="comment">%   GNU General Public License for more details.</span>
+0068 <span class="comment">%</span>
+0069 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0070 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0071 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0072 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0073 
+0074 <span class="keyword">if</span> nargin&lt;1 error(<span class="string">'Usage: [y,fs,wmode,fidx]=READAIFF(filename,mode,nmax,nskip)'</span>); <span class="keyword">end</span>
+0075 
+0076 <span class="keyword">if</span> nargin&lt;2 mode=<span class="string">'p'</span>;
+0077 <span class="keyword">else</span> mode = [mode(:).' <span class="string">'p'</span>];
+0078 <span class="keyword">end</span>
+0079 k=find((mode&gt;=<span class="string">'p'</span>) &amp; (mode&lt;=<span class="string">'s'</span>));
+0080 mno=all(mode~=<span class="string">'o'</span>);                      <span class="comment">% scale to input limits not output limits</span>
+0081 sc=mode(k(1)); 
+0082 
+0083 
+0084 info=zeros(1,11);
+0085 <span class="keyword">if</span> ischar(filename)
+0086     <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0087         filename=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),filename);
+0088     <span class="keyword">end</span>
+0089     fid=fopen(filename,<span class="string">'rb'</span>,<span class="string">'b'</span>);
+0090     <span class="keyword">if</span> fid == -1
+0091         fn=[filename,<span class="string">'.aif'</span>];
+0092         fid=fopen(fn,<span class="string">'rb'</span>,<span class="string">'b'</span>); 
+0093         <span class="keyword">if</span> fid ~= -1 filename=fn; <span class="keyword">end</span>
+0094     <span class="keyword">end</span>
+0095     <span class="keyword">if</span> fid == -1 error(sprintf(<span class="string">'Can''t open %s for input'</span>,filename)); <span class="keyword">end</span>
+0096     info(1)=fid;
+0097 <span class="keyword">else</span>
+0098     info=filename;
+0099     fid=info(1);
+0100 <span class="keyword">end</span>
+0101 
+0102 <span class="keyword">if</span> ~info(3)
+0103     fseek(fid,0,-1);                        <span class="comment">% read file header</span>
+0104     header=fread(fid,4,<span class="string">'uchar'</span>);
+0105     <span class="keyword">if</span> header' ~= <span class="string">'FORM'</span> fclose(fid); error(sprintf(<span class="string">'File %s does not begin with a FORM group ID'</span>,filename)); <span class="keyword">end</span>
+0106     filen=fread(fid,1,<span class="string">'ulong'</span>)-4;
+0107     header=fread(fid,4,<span class="string">'uchar'</span>);
+0108     <span class="keyword">if</span> header' ~= <span class="string">'AIFF'</span> fclose(fid); error(sprintf(<span class="string">'File %s does not begin with a AIFF type ID'</span>,filename)); <span class="keyword">end</span>
+0109     
+0110     
+0111     fmt=0;
+0112     data=0;
+0113     <span class="keyword">while</span> filen&gt;=8                        <span class="comment">% loop to read all chunks</span>
+0114         header=fread(fid,4,<span class="string">'char'</span>);
+0115         len=fread(fid,1,<span class="string">'ulong'</span>);
+0116         lenx=len+rem(len,2);    <span class="comment">% round up to an even number</span>
+0117         filen=filen-lenx-8;
+0118         <span class="comment">%fprintf(1,'%s chunk, %d bytes, %d bytes remaining\n',char(header'),len,filen);</span>
+0119         <span class="keyword">if</span> header' == <span class="string">'COMM'</span>                    <span class="comment">% ******* found COMM chunk *********</span>
+0120             fmt=1;
+0121             info(5)=fread(fid,1,<span class="string">'ushort'</span>);            <span class="comment">%number of channels</span>
+0122             info(4)=fread(fid,1,<span class="string">'ulong'</span>);            <span class="comment">%number of samples</span>
+0123             info(7)=fread(fid,1,<span class="string">'ushort'</span>);                <span class="comment">% bits per sample</span>
+0124             info(6)=ceil(info(7)/8);            <span class="comment">% bytes per sample</span>
+0125             info(8)=1;
+0126             ieeex=fread(fid,5,<span class="string">'ushort'</span>);               <span class="comment">% read a 10-byte extended ieee format number</span>
+0127             fsign=ieeex(1)&gt;32767;
+0128             ieeex(1)=ieeex(1)-32768*fsign;
+0129             <span class="keyword">if</span> ~ieeex info(9)=0;
+0130             <span class="keyword">elseif</span> ieeex(1)==32767 info(9)=nan;
+0131             <span class="keyword">else</span>
+0132                 info(9)=(1-2*fsign)*sum(pow2(ieeex(2:5)',ieeex(1)-(16398:16:16446)));
+0133             <span class="keyword">end</span>
+0134             fseek(fid,lenx-18,0);                <span class="comment">% skip to end of header</span>
+0135         <span class="keyword">elseif</span> header' == <span class="string">'SSND'</span>                <span class="comment">% ******* found DATA chunk *********</span>
+0136             info(10)=fread(fid,1,<span class="string">'ulong'</span>);            <span class="comment">%number of channels</span>
+0137             info(11)=fread(fid,1,<span class="string">'ulong'</span>);            <span class="comment">%number of channels</span>
+0138             info(3)=ftell(fid);
+0139             data=1;
+0140             fseek(fid,lenx-8,0);                <span class="comment">% skip to end of chunk</span>
+0141         <span class="keyword">else</span>                            <span class="comment">% ******* found unwanted chunk *********</span>
+0142             fseek(fid,lenx,0);
+0143         <span class="keyword">end</span>
+0144     <span class="keyword">end</span>
+0145     <span class="keyword">if</span> filen~=0
+0146         fprintf(2,<span class="string">'READAIF warning: Inconsistent file length - %d extra bytes\n'</span>,filen);
+0147     <span class="keyword">end</span>
+0148 <span class="keyword">end</span>
+0149 fs=info(9);
+0150 <span class="keyword">if</span> ~fmt | ~data fclose(fid); error(sprintf(<span class="string">'File %s does not contain COMM and SSND chunks'</span>,filename)); <span class="keyword">end</span>
+0151 
+0152 
+0153 <span class="keyword">if</span> nargin&lt;4 nskip=info(2);
+0154 <span class="keyword">elseif</span> nskip&lt;0 nskip=info(2);
+0155 <span class="keyword">end</span>
+0156 
+0157 ksamples=info(4)-nskip;
+0158 <span class="keyword">if</span> nargin&gt;2
+0159     <span class="keyword">if</span> nmax&gt;=0
+0160         ksamples=min(nmax,ksamples);
+0161     <span class="keyword">end</span>
+0162 <span class="keyword">elseif</span> ~nargout
+0163     ksamples=min(5,ksamples);
+0164 <span class="keyword">end</span>
+0165 <span class="keyword">if</span> ksamples&gt;0
+0166     info(2)=nskip+ksamples;
+0167     pk=pow2(0.5,8*info(6))*(1+(mno/2-all(mode~=<span class="string">'n'</span>))/pow2(0.5,info(7)));  <span class="comment">% use modes o and n to determine effective peak</span>
+0168     fseek(fid,info(3)+info(6)*info(5)*nskip,-1);
+0169     nsamples=info(5)*ksamples;
+0170     <span class="keyword">if</span> info(6)&lt;3
+0171         <span class="keyword">if</span> info(6)&lt;2
+0172             y=fread(fid,nsamples,<span class="string">'schar'</span>);
+0173         <span class="keyword">else</span>
+0174             y=fread(fid,nsamples,<span class="string">'short'</span>);
+0175         <span class="keyword">end</span>
+0176     <span class="keyword">else</span>
+0177         <span class="keyword">if</span> info(6)&lt;4
+0178             y=fread(fid,3*nsamples,<span class="string">'uchar'</span>);
+0179             y=reshape(y,3,nsamples);
+0180             y=[1 256 65536]*y-pow2(fix(pow2(y(3,:),-7)),24);
+0181         <span class="keyword">else</span>
+0182             y=fread(fid,nsamples,<span class="string">'long'</span>);
+0183         <span class="keyword">end</span>
+0184     <span class="keyword">end</span>
+0185     <span class="keyword">if</span> sc ~= <span class="string">'r'</span>
+0186         <span class="keyword">if</span> sc==<span class="string">'s'</span> sf=1/max(max(abs(y)),1);
+0187         <span class="keyword">elseif</span> sc==<span class="string">'p'</span> sf=1/pk;
+0188         <span class="keyword">else</span>   sf=2.03033976/pk;
+0189         <span class="keyword">end</span>
+0190         y=sf*y;
+0191     <span class="keyword">else</span>
+0192         y=y*pow2(1,info(7)-8*info(6)); <span class="comment">% shift to get the data into the LSB end</span>
+0193     <span class="keyword">end</span>
+0194     
+0195     <span class="keyword">if</span> info(5)&gt;1 y = reshape(y,info(5),ksamples).'; <span class="keyword">end</span>
+0196 <span class="keyword">else</span>
+0197     y=[];
+0198 <span class="keyword">end</span>
+0199 
+0200 <span class="keyword">if</span> all(mode~=<span class="string">'f'</span>) fclose(fid); <span class="keyword">end</span>
+0201 
+0202 <span class="keyword">if</span> nargout&gt;2
+0203     <span class="keyword">if</span> ~mno wmode=[wmode <span class="string">'o'</span>]; <span class="keyword">end</span>
+0204     <span class="keyword">if</span> any(mode==<span class="string">'n'</span>) wmode=[wmode <span class="string">'n'</span>]; <span class="keyword">end</span>
+0205     wmode=[sc num2str(info(7))];
+0206     fidx=info;
+0207 <span class="keyword">elseif</span> ~nargout
+0208     fprintf(1,<span class="string">'\n%d Hz sample rate\n%d channel x %d samples x %d bit = %.3g seconds\n'</span>,info([9 5 4]), info(7),info(4)/info(9));
+0209 <span class="keyword">end</span>
+0210 
+0211 
+0212</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

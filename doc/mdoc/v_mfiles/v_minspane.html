@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_minspane</title>
+  <meta name="keywords" content="v_minspane">
+  <meta name="description" content="MINSPANE calculate minimum spanning tree using euclidean distance [p,s]=X">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_minspane.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_minspane
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MINSPANE calculate minimum spanning tree using euclidean distance [p,s]=X</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [p,s]=v_minspane(x) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MINSPANE calculate minimum spanning tree using euclidean distance [p,s]=X
+
+ Inputs:  x(n,d)    d-dimensional data points, one per row
+
+ Outputs: p(n-1,1)  indices of the parent of each node within the tree
+                      (data point n is the root)
+          s(n-1,1)  list of the edges in ascending order of euclidean
+                      distance. Thus the shortest edge goes from node
+                      s(1) to node p(s(1))
+
+ The minimum spanning tree (or shortest spanning tree ) defines a set of
+ n-1 links that interconnect n points (or nodes) with the minimum total
+ length. We represent these links in the form of a tree with node n as
+ the root. Each node (except node n) has a unique parent node that is
+ given in the output vector p; it is possible for several nodes to share
+ the same parent.
+ It can be useful to know which of the links are the longest, so the output
+ argument lists them in ascending order. s could be calculated directly by
+ calculaing the length, l, of each link as follows:
+       l=sqrt(sum((x(1:n-1,:) - x(p,:)).^2),2);
+       [v,s]=sort(l);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_choosenk.html" class="code" title="function x=v_choosenk(n,k)">v_choosenk</a>	CHOOSENK All choices of K elements taken from 1:N [X]=(N,K)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [p,s]=v_minspane(x)</a>
+0002 <span class="comment">%MINSPANE calculate minimum spanning tree using euclidean distance [p,s]=X</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:  x(n,d)    d-dimensional data points, one per row</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Outputs: p(n-1,1)  indices of the parent of each node within the tree</span>
+0007 <span class="comment">%                      (data point n is the root)</span>
+0008 <span class="comment">%          s(n-1,1)  list of the edges in ascending order of euclidean</span>
+0009 <span class="comment">%                      distance. Thus the shortest edge goes from node</span>
+0010 <span class="comment">%                      s(1) to node p(s(1))</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% The minimum spanning tree (or shortest spanning tree ) defines a set of</span>
+0013 <span class="comment">% n-1 links that interconnect n points (or nodes) with the minimum total</span>
+0014 <span class="comment">% length. We represent these links in the form of a tree with node n as</span>
+0015 <span class="comment">% the root. Each node (except node n) has a unique parent node that is</span>
+0016 <span class="comment">% given in the output vector p; it is possible for several nodes to share</span>
+0017 <span class="comment">% the same parent.</span>
+0018 <span class="comment">% It can be useful to know which of the links are the longest, so the output</span>
+0019 <span class="comment">% argument lists them in ascending order. s could be calculated directly by</span>
+0020 <span class="comment">% calculaing the length, l, of each link as follows:</span>
+0021 <span class="comment">%       l=sqrt(sum((x(1:n-1,:) - x(p,:)).^2),2);</span>
+0022 <span class="comment">%       [v,s]=sort(l);</span>
+0023 
+0024 <span class="comment">%      Copyright (C) Mike Brookes 2000-2009</span>
+0025 <span class="comment">%      Version: $Id: v_minspane.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0028 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0031 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0032 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0033 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0034 <span class="comment">%   (at your option) any later version.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0037 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0038 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0039 <span class="comment">%   GNU General Public License for more details.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0042 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0043 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0044 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0045 
+0046 [np,nd]=size(x);
+0047 
+0048 <span class="comment">% first do delauny tessalation to find feasible edges</span>
+0049 
+0050 t=delaunayn(x); <span class="comment">% nd+1 vertices per polytope</span>
+0051 nt=size(t,1);
+0052 cn=<a href="v_choosenk.html" class="code" title="function x=v_choosenk(n,k)">v_choosenk</a>(nd+1,2);
+0053 nf=size(cn,1);
+0054 ee=zeros(nt,nf,2);     <span class="comment">% space for all the edges</span>
+0055 ee(:,:,1)=t(:,cn(:,1));
+0056 ee(:,:,2)=t(:,cn(:,2));
+0057 ee=reshape(ee,[],2);
+0058 mk=ee(:,1)&gt;ee(:,2);
+0059 ee(mk,:)=ee(mk,2:-1:1); <span class="comment">% make all edges in ascending order</span>
+0060 <span class="comment">% ees=sparse(ee(:,1),ee(:,2),1);      % remove duplicates</span>
+0061 [er,ec]=find(sparse(ee(:,1),ee(:,2),1));      <span class="comment">% remove duplicates</span>
+0062 ee=[er,ec];
+0063 ne=size(ee,1);
+0064 
+0065 <span class="comment">% now apply Kruskal shortest spanning tree algorithm</span>
+0066 
+0067 sz=sum((x(ee(:,1),:)-x(ee(:,2),:)).^2,2);     <span class="comment">% length^2 of each edge</span>
+0068 [vz,mz]=sort(sz);
+0069 ee=ee(mz,:);        <span class="comment">% sort edges into ascenging length order</span>
+0070 ts=ones(ne,1);      <span class="comment">% size of each component</span>
+0071 tp=zeros(np,1);     <span class="comment">% root node links</span>
+0072 ei=zeros(np-1,1);     <span class="comment">% index of shortest spanning tree edges</span>
+0073 k=0;
+0074 <span class="keyword">for</span> i=1:ne
+0075     i1=ee(i,1);
+0076     j=tp(i1);
+0077     <span class="keyword">while</span> j         <span class="comment">% find root node for ee(i,1)</span>
+0078         i1=j;
+0079         j=tp(i1);
+0080     <span class="keyword">end</span>
+0081     i2=ee(i,2);
+0082     j=tp(i2);
+0083     <span class="keyword">while</span> j         <span class="comment">% find root node for ee(i,2)</span>
+0084         i2=j;
+0085         j=tp(i2);
+0086     <span class="keyword">end</span>
+0087     <span class="keyword">if</span> i1~=i2       <span class="comment">% if they are different, merge them</span>
+0088         k=k+1;
+0089         ei(k)=i;    <span class="comment">% add to the shortest spanning tree</span>
+0090         <span class="keyword">if</span> ts(i1)&gt;ts(i2)
+0091             tp(i2)=i1;          <span class="comment">% make i2 a sub tree of i1</span>
+0092             ts(i1)=ts(i1)+ts(i2);
+0093         <span class="keyword">else</span>
+0094             tp(i1)=i2;          <span class="comment">% make i1 a sub tree of i2</span>
+0095             ts(i2)=ts(i1)+ts(i2);
+0096         <span class="keyword">end</span>
+0097     <span class="keyword">end</span>
+0098 <span class="keyword">end</span>
+0099 ee=ee(ei,:);        <span class="comment">% refine the edges to include only those in the minimum spanning tree</span>
+0100 
+0101 <span class="comment">% now arrange as a tree with point np as the head</span>
+0102 
+0103 eet=sparse(ee(:,1),ee(:,2),1:np-1,np,np);
+0104 p=zeros(np-1,1);              <span class="comment">% points to parent node</span>
+0105 s=zeros(np-1,1);              <span class="comment">% sorted index</span>
+0106 chn=np;                                 <span class="comment">% start with the root node of the tree</span>
+0107 [rf,cf]=find(eet(:,chn));               <span class="comment">% find any nodes that connect to it</span>
+0108 [rg,cg]=find(eet(chn,:));
+0109 <span class="keyword">while</span> ~isempty(rf) || ~isempty(rg)
+0110     p(rf)=chn(cf);                      <span class="comment">% set the parents</span>
+0111     rcf=rf(:)+np*(chn(cf(:))-1);
+0112     s(eet(rcf))=rf(:);
+0113     eet(rcf)=0;                         <span class="comment">% delete the edges linking them to their parents</span>
+0114     p(cg)=chn(rg);
+0115     rcg=chn(rg(:))+np*(cg(:)-1);
+0116     s(eet(rcg))=cg(:);
+0117     eet(rcg)=0;
+0118     chn=[rf(:); cg(:)];                 <span class="comment">% now search for their children</span>
+0119     [rf,cf]=find(eet(:,chn));
+0120     [rg,cg]=find(eet(chn,:));
+0121 <span class="keyword">end</span>
+0122</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

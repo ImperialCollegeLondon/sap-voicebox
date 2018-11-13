@@ -1,0 +1,355 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_sapisynth</title>
+  <meta name="keywords" content="v_sapisynth">
+  <meta name="description" content="SAPISYNTH  text-to-speech synthesize of text string or matrix [X,FS,TXT]=(T,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_sapisynth.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_sapisynth
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SAPISYNTH  text-to-speech synthesize of text string or matrix [X,FS,TXT]=(T,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,fs,txt] = v_sapisynth(t,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SAPISYNTH  text-to-speech synthesize of text string or matrix [X,FS,TXT]=(T,M)
+
+  Usage:         v_sapisynth('Hello world');          % Speak text
+                 v_sapisynth([1 2+3i; -1i 4],'j');    % speak a matrix using 'j' for sqrt(-1)
+          [x,fs]=v_sapisynth('Hello world','k11');    % save waveform at 11kHz
+                 v_sapisynth('Hello world','fc');     % use a female child voice if available
+
+  Inputs: t  is either a text string or a matrix
+          m  is a mode string containing one or more of the
+             following options (# denotes an integer):
+
+             'l'   x=a cell array containing a list of talkers
+             'l#'  specify talker # (in the range 1:nvoices)
+             'r#'  speaking rate -10(slow) to +10(fast) [0]
+             'k#'  target sample rate in kHz [22]
+             'o'   audio output [default if no output arguments]
+             'O'   unblocked audio output (may result in simultaneous overlapping sounds)
+             'j'   use 'j' rather than 'i' for complex numbers
+             'm','f' 'c','t','a','s' = Male Female Child, Teen, Adult, Senior
+                       specify any combination in order of priority
+             'v'   autoscale volumne to a peak value of +-1
+             'v#'  set volume (0 to 100) [100]
+             'p#'  set pitch -10 to +10 [0]
+             'n#'  number of digits precision for numeric values [3]
+
+ Outputs: x    is the output waveform unless the 'l' option is chosen in
+               which case x is a cell array with one row per available
+               voice containing {'Name' 'Gender' 'Age'} where
+               Gender={Male,Female} and Age={Unknown,Child,Teen,Adult,Senior}
+          fs   is the actual sample frequency
+         txt   gives the actual text sring sent to the synthesiser
+
+ The input text string can contain embedded command which are described
+ in full at http://msdn.microsoft.com/en-us/library/ms717077(v=vs.85).aspx
+ and summarised here:
+
+ '... &lt;bookmark mark=&quot;xyz&quot;/&gt; ...'               insert a bookmark
+ '... &lt;context id=&quot;date_mdy&quot;&gt; 03/04/01 &lt;/context&gt; ...' specify order of dates
+ '... &lt;emph&gt; ... &lt;/emph&gt; ...'                   emphasise
+ '... &lt;volume level=&quot;50&quot;&gt; ... &lt;/volume&gt; ...'    change volume level to 50% of full
+ '... &lt;partofsp part=&quot;noun&quot;&gt; XXX &lt;/partofsp&gt; ...'      specify part of speech of XXX: unkown, noun, verb modifier, function, interjection
+ '... &lt;pitch absmiddle=&quot;-5&quot;&gt; ... &lt;/pitch&gt; ...'  change pitch to -5 [0 is default pitch]
+ '... &lt;pitch middle=&quot;5&quot;&gt; ... &lt;/pitch&gt; ...'      add 5 onto the pitch
+ '... &lt;pron sym=&quot;h eh 1 l ow &quot;/&gt; ...'           insert phoneme string
+ '... &lt;rate absspeed=&quot;-5&quot;&gt; ... &lt;/rate&gt; ...'     change rate to -5 [0 is default rate]
+ '... &lt;rate speed=&quot;5&quot;&gt; ... &lt;/rate&gt; ...'         add 5 onto the rate
+ '... &lt;silence msec=&quot;500&quot;/&gt; ...'                insert 500 ms of silence
+ '... &lt;spell&gt; ... &lt;/spell&gt; ...'                 spell out the words
+ '... &lt;voice required=&quot;Gender=Female;Age!=Child&quot;&gt; ...' specify target voice attributes to be Female non-child
+                                                         Age={Child, Teen, Adult, Senior}, Gender={Male, Female}
+
+ Acknowledgement: This function was originally based on tts.m written by Siyi Deng</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,fs,txt] = v_sapisynth(t,m)</a>
+0002 <span class="comment">%SAPISYNTH  text-to-speech synthesize of text string or matrix [X,FS,TXT]=(T,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Usage:         v_sapisynth('Hello world');          % Speak text</span>
+0005 <span class="comment">%                 v_sapisynth([1 2+3i; -1i 4],'j');    % speak a matrix using 'j' for sqrt(-1)</span>
+0006 <span class="comment">%          [x,fs]=v_sapisynth('Hello world','k11');    % save waveform at 11kHz</span>
+0007 <span class="comment">%                 v_sapisynth('Hello world','fc');     % use a female child voice if available</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs: t  is either a text string or a matrix</span>
+0010 <span class="comment">%          m  is a mode string containing one or more of the</span>
+0011 <span class="comment">%             following options (# denotes an integer):</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%             'l'   x=a cell array containing a list of talkers</span>
+0014 <span class="comment">%             'l#'  specify talker # (in the range 1:nvoices)</span>
+0015 <span class="comment">%             'r#'  speaking rate -10(slow) to +10(fast) [0]</span>
+0016 <span class="comment">%             'k#'  target sample rate in kHz [22]</span>
+0017 <span class="comment">%             'o'   audio output [default if no output arguments]</span>
+0018 <span class="comment">%             'O'   unblocked audio output (may result in simultaneous overlapping sounds)</span>
+0019 <span class="comment">%             'j'   use 'j' rather than 'i' for complex numbers</span>
+0020 <span class="comment">%             'm','f' 'c','t','a','s' = Male Female Child, Teen, Adult, Senior</span>
+0021 <span class="comment">%                       specify any combination in order of priority</span>
+0022 <span class="comment">%             'v'   autoscale volumne to a peak value of +-1</span>
+0023 <span class="comment">%             'v#'  set volume (0 to 100) [100]</span>
+0024 <span class="comment">%             'p#'  set pitch -10 to +10 [0]</span>
+0025 <span class="comment">%             'n#'  number of digits precision for numeric values [3]</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Outputs: x    is the output waveform unless the 'l' option is chosen in</span>
+0028 <span class="comment">%               which case x is a cell array with one row per available</span>
+0029 <span class="comment">%               voice containing {'Name' 'Gender' 'Age'} where</span>
+0030 <span class="comment">%               Gender={Male,Female} and Age={Unknown,Child,Teen,Adult,Senior}</span>
+0031 <span class="comment">%          fs   is the actual sample frequency</span>
+0032 <span class="comment">%         txt   gives the actual text sring sent to the synthesiser</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% The input text string can contain embedded command which are described</span>
+0035 <span class="comment">% in full at http://msdn.microsoft.com/en-us/library/ms717077(v=vs.85).aspx</span>
+0036 <span class="comment">% and summarised here:</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% '... &lt;bookmark mark=&quot;xyz&quot;/&gt; ...'               insert a bookmark</span>
+0039 <span class="comment">% '... &lt;context id=&quot;date_mdy&quot;&gt; 03/04/01 &lt;/context&gt; ...' specify order of dates</span>
+0040 <span class="comment">% '... &lt;emph&gt; ... &lt;/emph&gt; ...'                   emphasise</span>
+0041 <span class="comment">% '... &lt;volume level=&quot;50&quot;&gt; ... &lt;/volume&gt; ...'    change volume level to 50% of full</span>
+0042 <span class="comment">% '... &lt;partofsp part=&quot;noun&quot;&gt; XXX &lt;/partofsp&gt; ...'      specify part of speech of XXX: unkown, noun, verb modifier, function, interjection</span>
+0043 <span class="comment">% '... &lt;pitch absmiddle=&quot;-5&quot;&gt; ... &lt;/pitch&gt; ...'  change pitch to -5 [0 is default pitch]</span>
+0044 <span class="comment">% '... &lt;pitch middle=&quot;5&quot;&gt; ... &lt;/pitch&gt; ...'      add 5 onto the pitch</span>
+0045 <span class="comment">% '... &lt;pron sym=&quot;h eh 1 l ow &quot;/&gt; ...'           insert phoneme string</span>
+0046 <span class="comment">% '... &lt;rate absspeed=&quot;-5&quot;&gt; ... &lt;/rate&gt; ...'     change rate to -5 [0 is default rate]</span>
+0047 <span class="comment">% '... &lt;rate speed=&quot;5&quot;&gt; ... &lt;/rate&gt; ...'         add 5 onto the rate</span>
+0048 <span class="comment">% '... &lt;silence msec=&quot;500&quot;/&gt; ...'                insert 500 ms of silence</span>
+0049 <span class="comment">% '... &lt;spell&gt; ... &lt;/spell&gt; ...'                 spell out the words</span>
+0050 <span class="comment">% '... &lt;voice required=&quot;Gender=Female;Age!=Child&quot;&gt; ...' specify target voice attributes to be Female non-child</span>
+0051 <span class="comment">%                                                         Age={Child, Teen, Adult, Senior}, Gender={Male, Female}</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">% Acknowledgement: This function was originally based on tts.m written by Siyi Deng</span>
+0054 
+0055 <span class="comment">% Bugs/Suggestions:</span>
+0056 <span class="comment">%  (1) Allow the speaking of structures and cells</span>
+0057 <span class="comment">%  (2) Allow a blocking call to sound output and/or a callback procedure and/or a status call</span>
+0058 <span class="comment">%  (3) Have pitch and/or volume change to emphasise the first entry in a matrix row.</span>
+0059 <span class="comment">%  (4) extract true frequency from output stream</span>
+0060 
+0061 <span class="comment">%      Copyright (C) Mike Brookes 2011</span>
+0062 <span class="comment">%      Version: $Id: v_sapisynth.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0065 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0068 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0069 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0070 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0071 <span class="comment">%   (at your option) any later version.</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0074 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0075 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0076 <span class="comment">%   GNU General Public License for more details.</span>
+0077 <span class="comment">%</span>
+0078 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0079 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0080 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0081 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0082 <span class="keyword">persistent</span> vv vvi vvj tsou lsou
+0083 
+0084 <span class="comment">% Check that we are on a PC</span>
+0085 
+0086 <span class="keyword">if</span> ~ispc, error(<span class="string">'only works on a PC'</span>); <span class="keyword">end</span>
+0087 
+0088 <span class="comment">% decode the options</span>
+0089 
+0090 <span class="keyword">if</span> nargin&lt;2
+0091     m=<span class="string">''</span>;
+0092 <span class="keyword">end</span>
+0093 opts=zeros(52,3); <span class="comment">% [exists+number specified, value]</span>
+0094 lmode=length(m);
+0095 i=1;
+0096 <span class="keyword">while</span> i&lt;=lmode
+0097     <span class="keyword">if</span> i&lt;lmode  <span class="comment">% read a following integer if it exists</span>
+0098         [v,nv,e,ni]=sscanf(m(i+1:end),<span class="string">'%d'</span>,1);
+0099     <span class="keyword">else</span>
+0100         nv=0;
+0101         ni=1;
+0102     <span class="keyword">end</span>
+0103     k=1+double(lower(m(i)))-<span class="string">'a'</span>+26*(m(i)&lt;<span class="string">'a'</span>);
+0104     <span class="keyword">if</span> k&gt;=1 &amp;&amp; k&lt;=52
+0105         opts(k,1)=1+nv;
+0106         <span class="keyword">if</span> nv
+0107             opts(k,2)=v;
+0108         <span class="keyword">end</span>
+0109         opts(k,3)=i;  <span class="comment">% save position in mode string</span>
+0110     <span class="keyword">end</span>
+0111     i=i+ni;
+0112 <span class="keyword">end</span>
+0113 
+0114 S=actxserver(<span class="string">'SAPI.SpVoice'</span>);
+0115 V=invoke(S,<span class="string">'GetVoices'</span>);  <span class="comment">% get a list of voices from the registry</span>
+0116 nv=V.Count;
+0117 <span class="keyword">if</span> isempty(vv) || size(vvi,1)~=nv
+0118     vv=cell(nv,3);
+0119     vvi=zeros(nv,6);
+0120     ages={<span class="string">'Senior'</span> <span class="string">'Adult'</span> <span class="string">'Teen'</span> <span class="string">'Child'</span>};
+0121     <span class="keyword">for</span> i=1:nv
+0122         VI=V.Item(i-1);
+0123         vv{i,1}=VI.GetDescription;
+0124         vv{i,2}=VI.GetAttribute(<span class="string">'Gender'</span>);
+0125         vvi(i,1)=MatchesAttributes(VI,<span class="string">'Gender=Male'</span>);
+0126         vvi(i,2)=MatchesAttributes(VI,<span class="string">'Gender=Female'</span>);
+0127         vv{i,3}=<span class="string">'Unknown'</span>;
+0128         <span class="keyword">for</span> j=1:length(ages)
+0129             <span class="keyword">if</span> MatchesAttributes(VI,[<span class="string">'Age='</span> ages{j}])
+0130                 vv{i,3}=ages{j};
+0131                 vvi(i,2+j)=1;
+0132                 <span class="keyword">break</span>
+0133             <span class="keyword">end</span>
+0134         <span class="keyword">end</span>
+0135     <span class="keyword">end</span>
+0136     vvj=vvi;
+0137     <span class="comment">% in the matrix below, the rows and columns are in the order Senior,Adult,Teen,Child.</span>
+0138     <span class="comment">% Thus the first row gives the cost of selecting a voice with the wrong age when 'Senior'</span>
+0139     <span class="comment">% was requested by the user. A voice of unkown age always scores 0 so entries with negative</span>
+0140     <span class="comment">% values are preferred over 'unknown' while those with positive values are not.</span>
+0141     <span class="comment">% Diagonal elements of the matrix are ignored (hence set to 0) since correct matches are</span>
+0142     <span class="comment">% handled earlier with higher priority.</span>
+0143     vvj(:,3:6)=vvj(:,3:6)*[0 0 1 2; 1 0 2 3; 1 0 0 -1; 1 0 -1 0]'; <span class="comment">% fuzzy voice attribute matching</span>
+0144 <span class="keyword">end</span>
+0145 
+0146 <span class="comment">% deal with the voice selection options</span>
+0147 
+0148 optv=opts([13 6 19 1 20 3],[3 1 2]);
+0149 <span class="keyword">if</span> opts(12)   <span class="comment">% if 'l' option specified - we need to get the voices</span>
+0150     <span class="keyword">if</span> opts(12)&gt;1
+0151         S.Voice = V.Item(mod(opts(12,2)-1,nv));
+0152     <span class="keyword">else</span>
+0153         x=vv;
+0154         <span class="keyword">return</span>
+0155     <span class="keyword">end</span>
+0156 <span class="keyword">elseif</span> any(optv(:,2))
+0157     optv(:,3)=(1:6)';
+0158     optv=sortrows(optv(optv(:,2)&gt;0,:));  <span class="comment">% sort in order of occurrence in mode string</span>
+0159     no=size(optv,1);
+0160     optp=zeros(nv,2*no+1);
+0161     optp(:,end)=(1:nv)'; <span class="comment">% lowest priority condition is original rank</span>
+0162     optp(:,1:no)=-vvi(:,optv(:,3));
+0163     optp(:,no+1:2*no)=vvj(:,optv(:,3));
+0164     optp=sortrows(optp);
+0165     S.Voice = V.Item(optp(1,end)-1);
+0166 <span class="keyword">end</span>
+0167 
+0168 <span class="comment">% deal with the 'r' option</span>
+0169 
+0170 <span class="keyword">if</span> opts(18)&gt;1  <span class="comment">% 'r' option is specified with a number</span>
+0171     S.Rate=min(max(opts(18,2),-10),10);
+0172 <span class="keyword">end</span>
+0173 
+0174 <span class="comment">% deal with the 'v' option</span>
+0175 
+0176 <span class="keyword">if</span> opts(22)&gt;1  <span class="comment">% 'r' option is specified with a number</span>
+0177     S.Volume=min(max(opts(22,2),0),100);
+0178 <span class="keyword">end</span>
+0179 
+0180 <span class="comment">% deal with the 'k' option</span>
+0181 
+0182 ff=[11025 12000 16000 22050 24000 32000 44100 48000]; <span class="comment">% valid frequencies</span>
+0183 <span class="keyword">if</span> opts(11)&gt;1  <span class="comment">% 'k' option is specified with a number</span>
+0184     [v,jf]=min(abs(ff/1000-opts(11,2)));
+0185 <span class="keyword">else</span>
+0186     jf=4;  <span class="comment">% default is 16kHz</span>
+0187 <span class="keyword">end</span>
+0188 fs=ff(jf);
+0189 
+0190 <span class="comment">% deal with the 'n' option</span>
+0191 
+0192 <span class="keyword">if</span> opts(14)&gt;1  <span class="comment">% 'r' option is specified with a number</span>
+0193     prec=opts(14,2);
+0194 <span class="keyword">else</span>
+0195     prec=3;
+0196 <span class="keyword">end</span>
+0197 
+0198 M=actxserver(<span class="string">'SAPI.SpMemoryStream'</span>);
+0199 M.Format.Type = sprintf(<span class="string">'SAFT%dkHz16BitMono'</span>,fix(fs/1000));
+0200 S.AudioOutputStream = M;
+0201 <span class="keyword">if</span> ischar(t)
+0202     txt=t;
+0203 <span class="keyword">else</span>
+0204     txt=<span class="string">''</span>;
+0205     <span class="keyword">if</span> numel(t)
+0206         sgns={<span class="string">' minus '</span>, <span class="string">''</span>, <span class="string">' plus '</span>};
+0207         sz=size(t);
+0208         w=permute(t,[2 1 3:numel(sz)]);
+0209         sz(1:2)=sz(1)+sz(2)-sz(1:2); <span class="comment">% Permute the first two dimensions for reading</span>
+0210         szp=cumprod(sz);
+0211         imch=<span class="string">'i'</span>+(opts(10)&gt;0);
+0212         vsep=<span class="string">''</span>;
+0213         <span class="keyword">for</span> i=1:numel(w)
+0214             wr=real(w(i));
+0215             wi=imag(w(i));
+0216             <span class="keyword">switch</span>((wr~=0)+2*(wi~=0))+4*(abs(wi)==1)
+0217                 <span class="keyword">case</span> {0,1}
+0218                     txt=[txt sprintf(<span class="string">'%s%.*g'</span>,vsep,prec,wr)];
+0219                 <span class="keyword">case</span> 2
+0220                     txt=[txt sprintf(<span class="string">'%s%.*g%c,'</span>,vsep,prec,wi,imch)];
+0221                 <span class="keyword">case</span> 3
+0222                     txt=[txt sprintf(<span class="string">'%s%.*g%s%.*g%c,'</span>,vsep,prec,wr,sgns{2+sign(wi)},prec,abs(wi),imch)];
+0223                 <span class="keyword">case</span> 6
+0224                     <span class="keyword">if</span> wi&gt;0
+0225                         txt=[txt vsep imch <span class="string">','</span>];
+0226                     <span class="keyword">else</span>
+0227                         txt=[txt vsep <span class="string">'minus '</span> imch <span class="string">','</span>];
+0228                     <span class="keyword">end</span>
+0229                 <span class="keyword">case</span> 7
+0230                     txt=[txt sprintf(<span class="string">'%s%.*g%s%c,'</span>,vsep,prec,wr,sgns{2+sign(wi)},imch)];
+0231             <span class="keyword">end</span>
+0232             <span class="comment">% could use a &lt;silence msec=&quot;???&quot;/&gt; command here</span>
+0233             vsep=[repmat(<span class="string">'; '</span>,1,find([0 mod(i,szp)]==0,1,<span class="string">'last'</span>)-1) <span class="string">' '</span>];
+0234         <span class="keyword">end</span>
+0235     <span class="keyword">end</span>
+0236 <span class="keyword">end</span>
+0237 
+0238 <span class="comment">% deal with the 'p' option</span>
+0239 
+0240 <span class="keyword">if</span> opts(16)&gt;1  <span class="comment">% 'r' option is specified with a number</span>
+0241     txt=[sprintf(<span class="string">'&lt;pitch absmiddle=&quot;%d&quot;&gt; '</span>,min(max(opts(16,2),-10),10)) txt];
+0242 <span class="keyword">end</span>
+0243 
+0244 invoke(S,<span class="string">'Speak'</span>,txt);
+0245 x = mod(32768+reshape(double(invoke(M,<span class="string">'GetData'</span>)),2,[])'*[1; 256],65536)/32768-1;
+0246 delete(M);      <span class="comment">% delete output stream</span>
+0247 delete(S);      <span class="comment">% delete all interfaces</span>
+0248 
+0249 <span class="keyword">if</span> opts(22)==1 <span class="comment">% 'v' option with no argument</span>
+0250     x=x*(1/max(abs(x))); <span class="comment">% autoscale</span>
+0251 <span class="keyword">end</span>
+0252 <span class="keyword">if</span> opts(15)&gt;0 || opts(41)&gt;0 || ~nargout <span class="comment">% 'o' option for audio output</span>
+0253     <span class="keyword">while</span> opts(41)==0 &amp;&amp; ~isempty(tsou) &amp;&amp; toc(tsou)&lt;lsou
+0254     <span class="keyword">end</span>
+0255     sound(x,fs);
+0256     tsou=tic;   <span class="comment">% save time</span>
+0257     lsou=length(x)/fs;
+0258 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

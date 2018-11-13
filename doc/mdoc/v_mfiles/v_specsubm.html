@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_specsubm</title>
+  <meta name="keywords" content="v_specsubm">
+  <meta name="description" content="SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_specsubm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_specsubm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ss,po]=v_specsubm(s,fs,p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead
+
+ implementation of spectral subtraction algorithm by R Martin (rather slow)
+ algorithm parameters: t* in seconds, f* in Hz, k* dimensionless
+ 1: tg = smoothing time constant for signal power estimate (0.04): high=reverberant, low=musical
+ 2: ta = smoothing time constant for signal power estimate
+        used in noise estimation (0.1)
+ 3: tw = fft window length (will be rounded up to 2^nw samples)
+ 4: tm = length of minimum filter (1.5): high=slow response to noise increase, low=distortion
+ 5: to = time constant for oversubtraction factor (0.08)
+ 6: fo = oversubtraction corner frequency (800): high=distortion, low=musical
+ 7: km = number of minimisation buffers to use (4): high=waste memory, low=noise modulation
+ 8: ks = oversampling constant (4)
+ 9: kn = noise estimate compensation (1.5)
+ 10:kf = subtraction floor (0.02): high=noisy, low=musical
+ 11:ko = oversubtraction scale factor (4): high=distortion, low=musical
+
+ Refs:
+    (a) R. Martin. Spectral subtraction based on minimum statistics. In Proc EUSIPCO, pages 1182-1185, Edinburgh, Sept 1994.
+    (b) R. Martin. Noise power spectral density estimation based on optimal smoothing and minimum statistics.
+        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ss,po]=v_specsubm(s,fs,p)</a>
+0002 <span class="comment">%SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% implementation of spectral subtraction algorithm by R Martin (rather slow)</span>
+0005 <span class="comment">% algorithm parameters: t* in seconds, f* in Hz, k* dimensionless</span>
+0006 <span class="comment">% 1: tg = smoothing time constant for signal power estimate (0.04): high=reverberant, low=musical</span>
+0007 <span class="comment">% 2: ta = smoothing time constant for signal power estimate</span>
+0008 <span class="comment">%        used in noise estimation (0.1)</span>
+0009 <span class="comment">% 3: tw = fft window length (will be rounded up to 2^nw samples)</span>
+0010 <span class="comment">% 4: tm = length of minimum filter (1.5): high=slow response to noise increase, low=distortion</span>
+0011 <span class="comment">% 5: to = time constant for oversubtraction factor (0.08)</span>
+0012 <span class="comment">% 6: fo = oversubtraction corner frequency (800): high=distortion, low=musical</span>
+0013 <span class="comment">% 7: km = number of minimisation buffers to use (4): high=waste memory, low=noise modulation</span>
+0014 <span class="comment">% 8: ks = oversampling constant (4)</span>
+0015 <span class="comment">% 9: kn = noise estimate compensation (1.5)</span>
+0016 <span class="comment">% 10:kf = subtraction floor (0.02): high=noisy, low=musical</span>
+0017 <span class="comment">% 11:ko = oversubtraction scale factor (4): high=distortion, low=musical</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Refs:</span>
+0020 <span class="comment">%    (a) R. Martin. Spectral subtraction based on minimum statistics. In Proc EUSIPCO, pages 1182-1185, Edinburgh, Sept 1994.</span>
+0021 <span class="comment">%    (b) R. Martin. Noise power spectral density estimation based on optimal smoothing and minimum statistics.</span>
+0022 <span class="comment">%        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.</span>
+0023 
+0024 
+0025 <span class="comment">%      Copyright (C) Mike Brookes 2004</span>
+0026 <span class="comment">%      Version: $Id: v_specsubm.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0029 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0032 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0033 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0034 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0035 <span class="comment">%   (at your option) any later version.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0038 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0039 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0040 <span class="comment">%   GNU General Public License for more details.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0043 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0044 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 
+0047 <span class="keyword">if</span> nargin&lt;3 po=[0.04 0.1 0.032 1.5 0.08 400 4 4 1.5 0.02 4].'; <span class="keyword">else</span> po=p; <span class="keyword">end</span>
+0048 ns=length(s);
+0049 ts=1/fs;
+0050 ss=zeros(ns,1);
+0051 
+0052 ni=pow2(nextpow2(fs*po(3)/po(8)));
+0053 ti=ni/fs;
+0054 nw=ni*po(8);
+0055 nf=1+floor((ns-nw)/ni);
+0056 nm=ceil(fs*po(4)/(ni*po(7)));
+0057 
+0058 win=0.5*hamming(nw+1)/1.08;win(end)=[];
+0059 zg=exp(-ti/po(1));
+0060 za=exp(-ti/po(2));
+0061 zo=exp(-ti/po(5));
+0062 
+0063 px=zeros(1+nw/2,1);
+0064 pxn=px;
+0065 os=px;
+0066 mb=ones(1+nw/2,po(7))*nw/2;
+0067 im=0;
+0068 osf=po(11)*(1+(0:nw/2).'*fs/(nw*po(6))).^(-1);
+0069 
+0070 imidx=[13 21]';
+0071 x2im=zeros(length(imidx),nf);
+0072 osim=x2im;
+0073 pnim=x2im;
+0074 pxnim=x2im;
+0075 qim=x2im;
+0076 
+0077 <span class="keyword">for</span> is=1:nf
+0078    idx=(1:nw)+(is-1)*ni;
+0079    x=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(s(idx).*win);
+0080    x2=x.*conj(x);
+0081    
+0082    pxn=za*pxn+(1-za)*x2;
+0083    im=rem(im+1,nm);
+0084    <span class="keyword">if</span> im
+0085       mb(:,1)=min(mb(:,1),pxn);
+0086    <span class="keyword">else</span>
+0087       mb=[pxn,mb(:,1:po(7)-1)];
+0088    <span class="keyword">end</span>
+0089    pn=po(9)*min(mb,[],2);
+0090    <span class="comment">%os= oversubtraction factor</span>
+0091    os=zo*os+(1-zo)*(1+osf.*pn./(pn+pxn));
+0092    
+0093    px=zg*px+(1-zg)*x2;
+0094    q=max(po(10)*sqrt(pn./x2),1-sqrt(os.*pn./px)); 
+0095    ss(idx)=ss(idx)+<a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>(x.*q);
+0096    
+0097 <span class="keyword">end</span>
+0098 <span class="keyword">if</span> nargout==0
+0099    soundsc([s; ss],fs);
+0100 <span class="keyword">end</span>
+0101 
+0102 
+0103 
+0104</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

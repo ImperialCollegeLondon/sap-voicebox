@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_fig2pdf</title>
+  <meta name="keywords" content="v_fig2pdf">
+  <meta name="description" content="FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_fig2pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_fig2pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function v_fig2pdf(h,s,p,f) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)
+ [needs MikTeX installed]
+ Usage:  (1) v_fig2pdf                       % save current figure to pdf in current folder
+         (2) v_fig2pdf([],[],'e');           % save current figure to eps in current folder
+         (3) emf=1;                        % set emf=1 to print
+             figsize=[500 300];            % default size
+             figdir='../figs/&lt;m&gt;-&lt;n&gt;';     % default destination
+             ...
+             plot (...);
+             v_figbolden(figsize);
+             if emf, v_fig2pdf(figdir), end
+
+ Inputs: h   optional figure handle [use [] or omit for the current figure]
+         s   file name which can include &lt;m&gt; for the top level
+                 mfile name and &lt;n&gt; for figure number [use '[]' for '&lt;m&gt;_&lt;n&gt;']
+                 '.' suppresses the save, if s ends in '/' or '\', then '&lt;m&gt;_&lt;n&gt;' is appended
+         p   call v_figbolden(p) before printing the figure (use p=0 for v_figbolden default)
+         f   output format; a combination of the following: [default 'p']
+               'p'  pdf
+               's'  ps
+               'e'  eps
+
+ Bugs:
+    (1) MATLAB does not print the figure correctly when running under
+        remote desktop; it seems to pick up the screen resolution incorrectly.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_figbolden.html" class="code" title="function v_figbolden(pos,pv,m)">v_figbolden</a>	FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function v_fig2pdf(h,s,p,f)</a>
+0002 <span class="comment">%FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)</span>
+0003 <span class="comment">% [needs MikTeX installed]</span>
+0004 <span class="comment">% Usage:  (1) v_fig2pdf                       % save current figure to pdf in current folder</span>
+0005 <span class="comment">%         (2) v_fig2pdf([],[],'e');           % save current figure to eps in current folder</span>
+0006 <span class="comment">%         (3) emf=1;                        % set emf=1 to print</span>
+0007 <span class="comment">%             figsize=[500 300];            % default size</span>
+0008 <span class="comment">%             figdir='../figs/&lt;m&gt;-&lt;n&gt;';     % default destination</span>
+0009 <span class="comment">%             ...</span>
+0010 <span class="comment">%             plot (...);</span>
+0011 <span class="comment">%             v_figbolden(figsize);</span>
+0012 <span class="comment">%             if emf, v_fig2pdf(figdir), end</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Inputs: h   optional figure handle [use [] or omit for the current figure]</span>
+0015 <span class="comment">%         s   file name which can include &lt;m&gt; for the top level</span>
+0016 <span class="comment">%                 mfile name and &lt;n&gt; for figure number [use '[]' for '&lt;m&gt;_&lt;n&gt;']</span>
+0017 <span class="comment">%                 '.' suppresses the save, if s ends in '/' or '\', then '&lt;m&gt;_&lt;n&gt;' is appended</span>
+0018 <span class="comment">%         p   call v_figbolden(p) before printing the figure (use p=0 for v_figbolden default)</span>
+0019 <span class="comment">%         f   output format; a combination of the following: [default 'p']</span>
+0020 <span class="comment">%               'p'  pdf</span>
+0021 <span class="comment">%               's'  ps</span>
+0022 <span class="comment">%               'e'  eps</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% Bugs:</span>
+0025 <span class="comment">%    (1) MATLAB does not print the figure correctly when running under</span>
+0026 <span class="comment">%        remote desktop; it seems to pick up the screen resolution incorrectly.</span>
+0027 
+0028 <span class="comment">%      Copyright (C) Mike Brookes 2018</span>
+0029 <span class="comment">%      Version: $Id: v_fig2pdf.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0032 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0036 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0037 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0038 <span class="comment">%   (at your option) any later version.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0041 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0042 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0043 <span class="comment">%   GNU General Public License for more details.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0046 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0047 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0048 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0049 <span class="keyword">switch</span> nargin
+0050     <span class="keyword">case</span> 0
+0051         h=[];
+0052         s=<span class="string">''</span>;
+0053         p=[];
+0054         f=<span class="string">'p'</span>;
+0055     <span class="keyword">case</span> 1
+0056         <span class="keyword">if</span> ischar(h) || ~numel(h)   <span class="comment">% v_fig2pdf(s)</span>
+0057             s=h;
+0058             h=[];
+0059         <span class="keyword">else</span>                        <span class="comment">% v_fig2pdf(h)</span>
+0060             s=<span class="string">''</span>;
+0061         <span class="keyword">end</span>
+0062         p=[];
+0063         f=<span class="string">'p'</span>;
+0064     <span class="keyword">case</span> 2
+0065         <span class="keyword">if</span> ischar(h) || ~numel(h)   <span class="comment">% v_fig2pdf(s,p)</span>
+0066             p=s;
+0067             s=h;
+0068             h=[];
+0069         <span class="keyword">else</span>                        <span class="comment">% v_fig2pdf(h,s)</span>
+0070             p=[];
+0071         <span class="keyword">end</span>
+0072         f=<span class="string">'p'</span>;
+0073     <span class="keyword">case</span> 3
+0074         <span class="keyword">if</span> ischar(h) || ~numel(h)   <span class="comment">% v_fig2pdf(s,p,f)</span>
+0075             f=p;
+0076             p=s;
+0077             s=h;
+0078             h=[];
+0079         <span class="keyword">else</span>                        <span class="comment">% v_fig2pdf(h,s,p)</span>
+0080             f=<span class="string">'p'</span>;
+0081         <span class="keyword">end</span>
+0082 <span class="keyword">end</span>
+0083 <span class="keyword">if</span> ~numel(h)
+0084     h=gcf;
+0085 <span class="keyword">else</span>
+0086     figure(h);
+0087 <span class="keyword">end</span>
+0088 <span class="keyword">if</span> ~numel(s)
+0089     s=<span class="string">'&lt;m&gt;_&lt;n&gt;'</span>;
+0090 <span class="keyword">elseif</span> s(end)==<span class="string">'/'</span> || s(end)==<span class="string">'\'</span>
+0091     s=[s <span class="string">'&lt;m&gt;_&lt;n&gt;'</span>];
+0092 <span class="keyword">end</span>
+0093 [st,sti]=dbstack;
+0094 <span class="keyword">if</span> numel(st)&gt;1
+0095     mfn=st(end).name;  <span class="comment">% ancestor mfile name</span>
+0096 <span class="keyword">else</span>
+0097     mfn=<span class="string">'Figure'</span>;
+0098 <span class="keyword">end</span>
+0099 <span class="keyword">if</span> isreal(h)
+0100     fn=num2str(round(h)); <span class="comment">% get figure number</span>
+0101 <span class="keyword">else</span>
+0102     fn=num2str(get(h,<span class="string">'number'</span>));  <span class="comment">% in new versions of matlab use this method</span>
+0103 <span class="keyword">end</span>
+0104 ix=strfind(s,<span class="string">'&lt;m&gt;'</span>);
+0105 <span class="keyword">while</span> numel(ix)&gt;0
+0106     s=[s(1:ix-1) mfn s(ix+3:end)];
+0107     ix=strfind(s,<span class="string">'&lt;m&gt;'</span>);
+0108 <span class="keyword">end</span>
+0109 ix=strfind(s,<span class="string">'&lt;n&gt;'</span>);
+0110 <span class="keyword">while</span> numel(ix)&gt;0
+0111     s=[s(1:ix-1) fn s(ix+3:end)];
+0112     ix=strfind(s,<span class="string">'&lt;n&gt;'</span>);
+0113 <span class="keyword">end</span>
+0114 <span class="keyword">if</span> numel(p)&gt;0
+0115     <span class="keyword">if</span> numel(p)==1 &amp;&amp; p==0
+0116         <a href="v_figbolden.html" class="code" title="function v_figbolden(pos,pv,m)">v_figbolden</a>;
+0117     <span class="keyword">else</span>
+0118         <a href="v_figbolden.html" class="code" title="function v_figbolden(pos,pv,m)">v_figbolden</a>(p)
+0119     <span class="keyword">end</span>
+0120 <span class="keyword">end</span>
+0121 set(gcf,<span class="string">'paperpositionmode'</span>,<span class="string">'auto'</span>);    <span class="comment">% preserve screen shape</span>
+0122 <span class="keyword">if</span> ~strcmp(s,<span class="string">'.'</span>)
+0123     <span class="keyword">if</span> isempty(f)
+0124         f=<span class="string">'p'</span>; <span class="comment">% default is pdf</span>
+0125     <span class="keyword">end</span>
+0126     sp=[s  <span class="string">'.pdf'</span>];
+0127     print(<span class="string">'-dpdf'</span>,sp);
+0128     <span class="comment">%     set(gcf,'PaperPosition',[0.6350 6.3500 20.3200 12]);</span>
+0129     system([<span class="string">'pdfcrop '</span> sp <span class="string">' '</span> sp]); <span class="comment">% needs MikTeX installed</span>
+0130     <span class="keyword">if</span> any(f==<span class="string">'s'</span>)
+0131         system([<span class="string">'pdf2ps '</span> sp <span class="string">' '</span> s <span class="string">'.ps'</span>]);
+0132     <span class="keyword">end</span>
+0133     <span class="keyword">if</span> any(f==<span class="string">'e'</span>)
+0134         system([<span class="string">'pdf2ps '</span> sp <span class="string">' '</span> s <span class="string">'.eps'</span>]);
+0135     <span class="keyword">end</span>
+0136     <span class="keyword">if</span> ~any(f==<span class="string">'p'</span>)
+0137         system([<span class="string">'del '</span> sp]);
+0138     <span class="keyword">end</span>
+0139 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

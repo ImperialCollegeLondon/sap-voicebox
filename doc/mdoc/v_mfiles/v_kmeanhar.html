@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_kmeanhar</title>
+  <meta name="keywords" content="v_kmeanhar">
+  <meta name="description" content="KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_kmeanhar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_kmeanhar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)
+
+  Inputs:
+
+    D(N,P)  contains N data vectors of dimension P
+    K       is number of centres required
+    L       integer portion is max loop count, fractional portion
+            gives stopping threshold as fractional reduction in performance criterion
+    E       is exponent in the cost function. Significantly faster if this is an even integer. [default 4]
+    X0(K,P) are the initial centres (optional)
+            Alternatively, X0 can be a character determining the initialization method:
+                'f'    Initialize with K randomly selected data points [default]
+                'p'    Initialize with centroids and variances of random partitions
+
+  Outputs:
+
+    X(K,P)  is output row vectors
+    G       is the final performance criterion value (normalized by N)
+    XN      nearest centre for each input point
+    GG(L+1) value of performance criterion before each iteration and at end
+
+ The k-harmonic means algorithm selects K cluster centres to minimize 
+                           sum_n(K/sum_k((d_n-x_k)^-e))
+ where sum_n is over the N inputs points d_n and sum_k is over the K cluster centres x_k.
+
+ It is often a good idea to scale the input data so that it has equal variance in each
+ dimension before calling KMEANHAR so that approximately equal weight is given
+ to each dimension in the distance calculation.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>	RNSUBSET choose k distinct random integers from 1:n M=(K,N)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>	GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)</a>
+0002 <span class="comment">%KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    D(N,P)  contains N data vectors of dimension P</span>
+0007 <span class="comment">%    K       is number of centres required</span>
+0008 <span class="comment">%    L       integer portion is max loop count, fractional portion</span>
+0009 <span class="comment">%            gives stopping threshold as fractional reduction in performance criterion</span>
+0010 <span class="comment">%    E       is exponent in the cost function. Significantly faster if this is an even integer. [default 4]</span>
+0011 <span class="comment">%    X0(K,P) are the initial centres (optional)</span>
+0012 <span class="comment">%            Alternatively, X0 can be a character determining the initialization method:</span>
+0013 <span class="comment">%                'f'    Initialize with K randomly selected data points [default]</span>
+0014 <span class="comment">%                'p'    Initialize with centroids and variances of random partitions</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%  Outputs:</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%    X(K,P)  is output row vectors</span>
+0019 <span class="comment">%    G       is the final performance criterion value (normalized by N)</span>
+0020 <span class="comment">%    XN      nearest centre for each input point</span>
+0021 <span class="comment">%    GG(L+1) value of performance criterion before each iteration and at end</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% The k-harmonic means algorithm selects K cluster centres to minimize</span>
+0024 <span class="comment">%                           sum_n(K/sum_k((d_n-x_k)^-e))</span>
+0025 <span class="comment">% where sum_n is over the N inputs points d_n and sum_k is over the K cluster centres x_k.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% It is often a good idea to scale the input data so that it has equal variance in each</span>
+0028 <span class="comment">% dimension before calling KMEANHAR so that approximately equal weight is given</span>
+0029 <span class="comment">% to each dimension in the distance calculation.</span>
+0030 
+0031 <span class="comment">%  [1] Bin Zhang, &quot;Generalized K-Harmonic Means - Boosting in Unsupervised Learning&quot;,</span>
+0032 <span class="comment">%      Hewlett-Packartd Labs, Technical Report HPL-2000-137, 2000 [Zhang2000]</span>
+0033 <span class="comment">%      http://www.hpl.hp.com/techreports/2000/HPL-2000-137.pdf</span>
+0034 
+0035 <span class="comment">%  Bugs:</span>
+0036 <span class="comment">%      (1) Could use nested blocking to allow very large data arrays</span>
+0037 <span class="comment">%      (2) Could then allow incremental calling with partial data arrays (but messy)</span>
+0038 
+0039 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
+0040 <span class="comment">%      Version: $Id: v_kmeanhar.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0043 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0047 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0048 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0049 <span class="comment">%   (at your option) any later version.</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0052 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0053 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0054 <span class="comment">%   GNU General Public License for more details.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0057 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0058 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0059 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0060 
+0061 <span class="comment">% sort out the input arguments</span>
+0062 
+0063 <span class="keyword">if</span> nargin&lt;5
+0064     x0=<span class="string">'f'</span>;
+0065     <span class="keyword">if</span> nargin&lt;4
+0066         e=[];
+0067         <span class="keyword">if</span> nargin&lt;3
+0068             l=[];
+0069         <span class="keyword">end</span>
+0070     <span class="keyword">end</span>
+0071 <span class="keyword">end</span>
+0072 <span class="keyword">if</span> isempty(e)
+0073     e=4;  <span class="comment">% default value</span>
+0074 <span class="keyword">end</span>
+0075 <span class="keyword">if</span> isempty(l)
+0076     l=50+1e-3; <span class="comment">% default value</span>
+0077 <span class="keyword">end</span>
+0078 sd=5;       <span class="comment">% number of times we must be below threshold</span>
+0079 
+0080 
+0081 <span class="comment">% split into chunks if there are lots of data points</span>
+0082 
+0083 memsize=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'memsize'</span>);
+0084 [n,p] = size(d);
+0085 nb=min(n,max(1,floor(memsize/(8*p*k))));    <span class="comment">% block size for testing data points</span>
+0086 nl=ceil(n/nb);                  <span class="comment">% number of blocks</span>
+0087 
+0088 <span class="comment">% initialize if X0 argument is not supplied</span>
+0089 
+0090 <span class="keyword">if</span> ischar(x0)
+0091     <span class="keyword">if</span> k&lt;n
+0092         <span class="keyword">if</span> any(x0==<span class="string">'p'</span>)                  <span class="comment">% Initialize using a random partition</span>
+0093             ix=ceil(rand(1,n)*k);       <span class="comment">% allocate to random clusters</span>
+0094             ix(<a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>(k,n))=1:k;      <span class="comment">% but force at least one point per cluster</span>
+0095             x=zeros(k,p);
+0096             <span class="keyword">for</span> i=1:k
+0097                 x(i,:)=mean(d(ix==i,:),1);
+0098             <span class="keyword">end</span>
+0099         <span class="keyword">else</span>                                <span class="comment">% Forgy initialization: choose k random points [default]</span>
+0100             x=d(<a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>(k,n),:);         <span class="comment">% sample k centres without replacement</span>
+0101         <span class="keyword">end</span>
+0102     <span class="keyword">else</span>
+0103         x=d(mod((1:k)-1,n)+1,:);    <span class="comment">% just include all points several times</span>
+0104     <span class="keyword">end</span>
+0105 <span class="keyword">else</span>
+0106     x=x0;
+0107 <span class="keyword">end</span>
+0108 eh=e/2;
+0109 th=l-floor(l);
+0110 l=floor(l)+(nargout&gt;1);   <span class="comment">% extra loop needed to calculate final performance value</span>
+0111 <span class="keyword">if</span> l&lt;=0
+0112     l=100;      <span class="comment">% max number of iterations ever</span>
+0113 <span class="keyword">end</span>
+0114 <span class="keyword">if</span> th==0
+0115     th=-1;      <span class="comment">% prevent any stopping if l has no fractional part</span>
+0116 <span class="keyword">end</span>
+0117 gg=zeros(l+1,1);
+0118 im=repmat(1:k,1,nb); im=im(:);
+0119 
+0120 <span class="comment">% index arrays for replication</span>
+0121 
+0122 wk=ones(k,1);
+0123 wp=ones(1,p);
+0124 <span class="comment">% wn=ones(1,n);</span>
+0125 <span class="comment">%</span>
+0126 <span class="comment">% % Main calculation loop</span>
+0127 <span class="comment">%</span>
+0128 <span class="comment">% We have the following relationships to [1] where i and k index</span>
+0129 <span class="comment">% the data values and cluster centres respectively:</span>
+0130 <span class="comment">%</span>
+0131 <span class="comment">%   This program     [Zhang2000]                            Equation</span>
+0132 <span class="comment">%</span>
+0133 <span class="comment">%     d(i,:)            x_i                                 input data</span>
+0134 <span class="comment">%     x(k,:)            m_k                                 cluster centres</span>
+0135 <span class="comment">%     py(k,i)           (d_ik)^2</span>
+0136 <span class="comment">%     dm(i)'            d_i,min^2</span>
+0137 <span class="comment">%     pr(k,i)           (d_i,min/d_ik)^2</span>
+0138 <span class="comment">%     pe(k,i)           (d_i,min/d_ik)^p                    (7.6)</span>
+0139 <span class="comment">%     qik(k,i)          q_ik                                (7.2)</span>
+0140 <span class="comment">%     qk(k)             q_k                                 (7.3)</span>
+0141 <span class="comment">%     qik(k,i)./qk(k)   p_ik                                (7.4)</span>
+0142 <span class="comment">%     se(i)'            d_i,min^p * sumk(d_ik^-p)</span>
+0143 <span class="comment">%     xf(i)'            d_i,min^-2 / sumk(d_ik^-p)</span>
+0144 <span class="comment">%     xg(i)'            d_i,min^-(p+2) / sumk(d_ik^-p)^2</span>
+0145 
+0146 
+0147 ss=sd+1;        <span class="comment">% one extra loop at the start</span>
+0148 g=0;                <span class="comment">% dummy initial value of g</span>
+0149 xn=zeros(n,1);
+0150 <span class="keyword">for</span> j=1:l
+0151 
+0152     g1=g;                           <span class="comment">% save old performance</span>
+0153     x1=x;                           <span class="comment">% save old centres</span>
+0154     <span class="comment">% first do partial chunk</span>
+0155 
+0156     jx=n-(nl-1)*nb;
+0157     ii=1:jx;
+0158     kx=repmat(ii,k,1);
+0159     km=repmat(1:k,1,jx);
+0160     py=reshape(sum((d(kx(:),:)-x(km(:),:)).^2,2),k,jx);
+0161     [dm,xn(ii)]=min(py,[],1);                 <span class="comment">% min value in each column gives nearest centre</span>
+0162     dmk=dm(wk,:);                   <span class="comment">% expand into a matrix</span>
+0163     dq=py&gt;dmk;                      <span class="comment">% update only these values</span>
+0164     pr=ones(k,jx);                   <span class="comment">% leaving others at 1</span>
+0165     pr(dq)=dmk(dq)./py(dq);            <span class="comment">% ratio of min(py)./py</span>
+0166     pe=pr.^eh;
+0167     se=sum(pe,1);
+0168     xf=dm.^(eh-1)./se;
+0169     g=xf*dm.';                     <span class="comment">% performance criterion (divided by k)</span>
+0170     xg=xf./se;
+0171     qik=xg(wk,:).*pe.*pr;           <span class="comment">% qik(k,i) is equal to q_ik in [Zhang2000]</span>
+0172     qk=sum(qik,2);
+0173     xs=qik*d(ii,:);
+0174     ix=jx+1;
+0175     <span class="keyword">for</span> il=2:nl
+0176         jx=jx+nb;        <span class="comment">% increment upper limit</span>
+0177         ii=ix:jx;
+0178         kx=ii(wk,:);
+0179         py=reshape(sum((d(kx(:),:)-x(im,:)).^2,2),k,nb);
+0180         [dm,xn(ii)]=min(py,[],1);                 <span class="comment">% min value in each column gives nearest centre</span>
+0181         dmk=dm(wk,:);                   <span class="comment">% expand into a matrix</span>
+0182         dq=py&gt;dmk;                      <span class="comment">% update only these values</span>
+0183         pr=ones(k,nb);                   <span class="comment">% leaving others at 1</span>
+0184         pr(dq)=dmk(dq)./py(dq);            <span class="comment">% ratio of min(py)./py</span>
+0185         pe=pr.^eh;
+0186         se=sum(pe,1);
+0187         xf=dm.^(eh-1)./se;
+0188         g=g+xf*dm.';                     <span class="comment">% performance criterion (divided by k)</span>
+0189         xg=xf./se;
+0190         qik=xg(wk,:).*pe.*pr;           <span class="comment">% qik(k,i) is equal to q_ik in [Zhang2000]</span>
+0191         qk=qk+sum(qik,2);
+0192         xs=xs+qik*d(ii,:);
+0193         ix=jx+1;
+0194     <span class="keyword">end</span>
+0195     gg(j)=g;
+0196     x=xs./qk(:,wp);
+0197     <span class="keyword">if</span> g1-g&lt;=th*g1
+0198         ss=ss-1;
+0199         <span class="keyword">if</span> ~ss <span class="keyword">break</span>; <span class="keyword">end</span>  <span class="comment">%  stop if improvement &lt; threshold for sd consecutive iterations</span>
+0200     <span class="keyword">else</span>
+0201         ss=sd;
+0202     <span class="keyword">end</span>
+0203 <span class="keyword">end</span>
+0204 gg=gg(1:j)*k/n;                       <span class="comment">% scale and trim the performance criterion vector</span>
+0205 g=g(end);
+0206 <span class="comment">% gg' % *** DEBUIG ***</span>
+0207 <span class="keyword">if</span> nargout&gt;1
+0208     x=x1;                               <span class="comment">% go back to the previous x values if G and/or XN value is output</span>
+0209 <span class="keyword">end</span>
+0210</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

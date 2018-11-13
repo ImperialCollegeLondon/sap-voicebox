@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_melcepst</title>
+  <meta name="keywords" content="v_melcepst">
+  <meta name="description" content="MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_melcepst.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_melcepst
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)
+
+
+ Simple use: (1) c=v_melcepst(s,fs)          % calculate mel cepstrum with 12 coefs, 256 sample frames
+              (2) c=v_melcepst(s,fs,'E0dD')   % include log energy, 0th cepstral coef, delta and delta-delta coefs
+
+ Inputs:
+     s      speech signal
+     fs  sample rate in Hz (default 11025)
+     w   mode string (see below)
+     nc  number of cepstral coefficients excluding 0'th coefficient [default 12]
+     p   number of filters in v_filterbank [default: floor(3*log(fs)) =  approx 2.1 per ocatave]
+     n   length of frame in samples [default power of 2 &lt; (0.03*fs)]
+     inc frame increment [default n/2]
+     fl  low end of the lowest filter as a fraction of fs [default = 0]
+     fh  high end of highest filter as a fraction of fs [default = 0.5]
+
+        w   any sensible combination of the following:
+
+               'R'  rectangular window in time domain
+                'N'     Hanning window in time domain
+                'M'     Hamming window in time domain (default)
+
+               't'  triangular shaped filters in mel domain (default)
+               'n'  hanning shaped filters in mel domain
+               'm'  hamming shaped filters in mel domain
+
+                'p'     filters act in the power domain
+                'a'     filters act in the absolute magnitude domain (default)
+
+               '0'  include 0'th order cepstral coefficient
+                'E'  include log energy
+                'd'     include delta coefficients (dc/dt)
+                'D'     include delta-delta coefficients (d^2c/dt^2)
+
+               'z'  highest and lowest filters taper down to zero (default)
+               'y'  lowest filter remains at 1 down to 0 frequency and
+                        highest filter remains at 1 up to nyquist freqency
+
+               If 'ty' or 'ny' is specified, the total power in the fft is preserved.
+
+ Outputs:    c     mel cepstrum output: one frame per row. Log energy, if requested, is the
+                 first element of each row followed by the delta and then the delta-delta
+                 coefficients.
+           tc    fractional time in samples at the centre of each frame
+                 with the first sample being 1.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)</a>
+0002 <span class="comment">%MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Simple use: (1) c=v_melcepst(s,fs)          % calculate mel cepstrum with 12 coefs, 256 sample frames</span>
+0006 <span class="comment">%              (2) c=v_melcepst(s,fs,'E0dD')   % include log energy, 0th cepstral coef, delta and delta-delta coefs</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Inputs:</span>
+0009 <span class="comment">%     s      speech signal</span>
+0010 <span class="comment">%     fs  sample rate in Hz (default 11025)</span>
+0011 <span class="comment">%     w   mode string (see below)</span>
+0012 <span class="comment">%     nc  number of cepstral coefficients excluding 0'th coefficient [default 12]</span>
+0013 <span class="comment">%     p   number of filters in v_filterbank [default: floor(3*log(fs)) =  approx 2.1 per ocatave]</span>
+0014 <span class="comment">%     n   length of frame in samples [default power of 2 &lt; (0.03*fs)]</span>
+0015 <span class="comment">%     inc frame increment [default n/2]</span>
+0016 <span class="comment">%     fl  low end of the lowest filter as a fraction of fs [default = 0]</span>
+0017 <span class="comment">%     fh  high end of highest filter as a fraction of fs [default = 0.5]</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%        w   any sensible combination of the following:</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%               'R'  rectangular window in time domain</span>
+0022 <span class="comment">%                'N'     Hanning window in time domain</span>
+0023 <span class="comment">%                'M'     Hamming window in time domain (default)</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%               't'  triangular shaped filters in mel domain (default)</span>
+0026 <span class="comment">%               'n'  hanning shaped filters in mel domain</span>
+0027 <span class="comment">%               'm'  hamming shaped filters in mel domain</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%                'p'     filters act in the power domain</span>
+0030 <span class="comment">%                'a'     filters act in the absolute magnitude domain (default)</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%               '0'  include 0'th order cepstral coefficient</span>
+0033 <span class="comment">%                'E'  include log energy</span>
+0034 <span class="comment">%                'd'     include delta coefficients (dc/dt)</span>
+0035 <span class="comment">%                'D'     include delta-delta coefficients (d^2c/dt^2)</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%               'z'  highest and lowest filters taper down to zero (default)</span>
+0038 <span class="comment">%               'y'  lowest filter remains at 1 down to 0 frequency and</span>
+0039 <span class="comment">%                        highest filter remains at 1 up to nyquist freqency</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%               If 'ty' or 'ny' is specified, the total power in the fft is preserved.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">% Outputs:    c     mel cepstrum output: one frame per row. Log energy, if requested, is the</span>
+0044 <span class="comment">%                 first element of each row followed by the delta and then the delta-delta</span>
+0045 <span class="comment">%                 coefficients.</span>
+0046 <span class="comment">%           tc    fractional time in samples at the centre of each frame</span>
+0047 <span class="comment">%                 with the first sample being 1.</span>
+0048 <span class="comment">%</span>
+0049 
+0050 <span class="comment">% BUGS: (1) should have power limit as 1e-16 rather than 1e-6 (or possibly a better way of choosing this)</span>
+0051 <span class="comment">%           and put into VOICEBOX</span>
+0052 <span class="comment">%       (2) get v_rdct to change the data length (properly) instead of doing it explicitly (wrongly)</span>
+0053 
+0054 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0055 <span class="comment">%      Version: $Id: v_melcepst.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0058 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0061 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0062 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0063 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0064 <span class="comment">%   (at your option) any later version.</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0067 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0068 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0069 <span class="comment">%   GNU General Public License for more details.</span>
+0070 <span class="comment">%</span>
+0071 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0072 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0073 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0074 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0075 
+0076 <span class="keyword">if</span> nargin&lt;2 fs=11025; <span class="keyword">end</span>
+0077 <span class="keyword">if</span> nargin&lt;3 w=<span class="string">'M'</span>; <span class="keyword">end</span>
+0078 <span class="keyword">if</span> nargin&lt;4 nc=12; <span class="keyword">end</span>
+0079 <span class="keyword">if</span> nargin&lt;5 p=floor(3*log(fs)); <span class="keyword">end</span>
+0080 <span class="keyword">if</span> nargin&lt;6 n=pow2(floor(log2(0.03*fs))); <span class="keyword">end</span>
+0081 <span class="keyword">if</span> nargin&lt;9
+0082    fh=0.5;   
+0083    <span class="keyword">if</span> nargin&lt;8
+0084      fl=0;
+0085      <span class="keyword">if</span> nargin&lt;7
+0086         inc=floor(n/2);
+0087      <span class="keyword">end</span>
+0088   <span class="keyword">end</span>
+0089 <span class="keyword">end</span>
+0090 
+0091 <span class="keyword">if</span> isempty(w)
+0092    w=<span class="string">'M'</span>;
+0093 <span class="keyword">end</span>
+0094 <span class="keyword">if</span> any(w==<span class="string">'R'</span>)
+0095    [z,tc]=<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s,n,inc);
+0096 <span class="keyword">elseif</span> any (w==<span class="string">'N'</span>)
+0097 <span class="comment">%    [z,tc]=v_enframe(s,hanning(n),inc);</span>
+0098    [z,tc]=enframe(s,0.5-0.5*cos(2*pi*(1:n)'/(n+1)),inc); <span class="comment">% Hanning window</span>
+0099 <span class="keyword">else</span>
+0100 <span class="comment">%    [z,tc]=v_enframe(s,hamming(n),inc);</span>
+0101    [z,tc]=enframe(s,0.54-0.46*cos(2*pi*(0:n-1)'/(n-1)),inc); <span class="comment">% Hamming window</span>
+0102 <span class="keyword">end</span>
+0103 f=rfft(z.');
+0104 [m,a,b]=<a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>(p,n,fs,fl,fh,w);
+0105 pw=f(a:b,:).*conj(f(a:b,:));
+0106 pth=max(pw(:))*1E-20;
+0107 <span class="keyword">if</span> any(w==<span class="string">'p'</span>)
+0108    y=log(max(m*pw,pth));
+0109 <span class="keyword">else</span>
+0110    ath=sqrt(pth);
+0111    y=log(max(m*abs(f(a:b,:)),ath));
+0112 <span class="keyword">end</span>
+0113 c=rdct(y).';
+0114 nf=size(c,1);
+0115 nc=nc+1;
+0116 <span class="keyword">if</span> p&gt;nc
+0117    c(:,nc+1:end)=[];
+0118 <span class="keyword">elseif</span> p&lt;nc
+0119    c=[c zeros(nf,nc-p)];
+0120 <span class="keyword">end</span>
+0121 <span class="keyword">if</span> ~any(w==<span class="string">'0'</span>)
+0122    c(:,1)=[];
+0123    nc=nc-1;
+0124 <span class="keyword">end</span>
+0125 <span class="keyword">if</span> any(w==<span class="string">'E'</span>)
+0126    c=[log(max(sum(pw),pth)).' c];
+0127    nc=nc+1;
+0128 <span class="keyword">end</span>
+0129 
+0130 <span class="comment">% calculate derivative</span>
+0131 
+0132 <span class="keyword">if</span> any(w==<span class="string">'D'</span>)
+0133   vf=(4:-1:-4)/60;
+0134   af=(1:-1:-1)/2;
+0135   ww=ones(5,1);
+0136   cx=[c(ww,:); c; c(nf*ww,:)];
+0137   vx=reshape(filter(vf,1,cx(:)),nf+10,nc);
+0138   vx(1:8,:)=[];
+0139   ax=reshape(filter(af,1,vx(:)),nf+2,nc);
+0140   ax(1:2,:)=[];
+0141   vx([1 nf+2],:)=[];
+0142   <span class="keyword">if</span> any(w==<span class="string">'d'</span>)
+0143      c=[c vx ax];
+0144   <span class="keyword">else</span>
+0145      c=[c ax];
+0146   <span class="keyword">end</span>
+0147 <span class="keyword">elseif</span> any(w==<span class="string">'d'</span>)
+0148   vf=(4:-1:-4)/60;
+0149   ww=ones(4,1);
+0150   cx=[c(ww,:); c; c(nf*ww,:)];
+0151   vx=reshape(filter(vf,1,cx(:)),nf+8,nc);
+0152   vx(1:8,:)=[];
+0153   c=[c vx];
+0154 <span class="keyword">end</span>
+0155  
+0156 <span class="keyword">if</span> nargout&lt;1
+0157    [nf,nc]=size(c);
+0158 <span class="comment">%    t=((0:nf-1)*inc+(n-1)/2)/fs;</span>
+0159    ci=(1:nc)-any(w==<span class="string">'0'</span>)-any(w==<span class="string">'E'</span>);
+0160    imh = imagesc(tc/fs,ci,c.');
+0161    axis(<span class="string">'xy'</span>);
+0162    xlabel(<span class="string">'Time (s)'</span>);
+0163    ylabel(<span class="string">'Mel-cepstrum coefficient'</span>);
+0164     map = (0:63)'/63;
+0165     colormap([map map map]);
+0166     colorbar;
+0167 <span class="keyword">end</span>
+0168</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

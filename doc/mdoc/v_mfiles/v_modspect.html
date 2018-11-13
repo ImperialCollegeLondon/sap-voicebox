@@ -1,0 +1,780 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_modspect</title>
+  <meta name="keywords" content="v_modspect">
+  <meta name="description" content="MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_modspect.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_modspect
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)
+
+
+ Simple use:
+
+ Inputs:
+     s      speech signal
+     fs  sample rate in Hz (default 11025)
+     m   mode string containing any sensible combination of the following letters; these
+         options override any specified in argument p.
+
+             g     apply AGC to the input speech
+
+           r/n/m   time domain windows: rectangular/hanning/hamming [def: hamming]
+           T/N/M   mel/mod-mel domain windows: triangular/hanning/hamming [def: triangular]
+
+            a/c    mel filters act in the amplitude or complex domain [def: power]
+            p/l    mel outputs are in power or log power [def: amplitude]
+             A     mod-mel filters act in the power domain [def: power]
+            P/L    mod-mel outputs are in amplitude or log power [def: amplitude]
+             k     include DC component of modulation spectrum [not implemented]
+
+             F     Take a DCT in the mel direction
+             Z     include 0'th order mel-cepstral coef
+
+             f     Take a DCT in the mod-mel direction
+             z     include 0'th order mod-mel cepstral coef
+
+             D     include d/df coefficients in * per mel (not valid with 'F')
+             d     include d/dt coefficients in * per second
+
+             u     give frequency axes in mels and mod-mels rather than in Hz
+
+             s     plot the result
+             S     plot intermediate results also
+
+     nf  four-element vector giving:
+           nf(1) = number of mel bins (or increment in k-mel) [0.1]
+           nf(2) = min v_filterbank frequency [40 Hz]
+           nf(3) = max v_filterbank frequency [10kHz]
+           nf(4) = number of DCT coefficientss excl 0'th [25].
+         Omitted values use defaults.
+     nq  four-element vector giving
+           nq(1) = number of mel-mod bins (or increment in 10 mod-mel units)
+           nq(2) = min v_filterbank frequency [50 Hz]
+           nq(3) = max v_filterbank frequency [400 Hz]
+           nq(4) = number of DCT coefficients excl 0'th [15]
+         Omitted values use defaults. Note that the mel-mod frequency scale
+         is like the mel scale  but reduced by a factor of 100.
+         I.e. mod-mel(f)=mel(100 f)/100; thus 10Hz corresponds to 10 mod-mels.
+     p   parameter structure containing some or all of the parameters listed
+         at the start of the program code below. p may be given as the
+         last input parameter even if some or all of the inputs m, nf and nq
+         have been omitted.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_rdct.html" class="code" title="function y=v_rdct(x,n,a,b)">v_rdct</a>	RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p)</a>
+0002 <span class="comment">%MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Simple use:</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Inputs:</span>
+0008 <span class="comment">%     s      speech signal</span>
+0009 <span class="comment">%     fs  sample rate in Hz (default 11025)</span>
+0010 <span class="comment">%     m   mode string containing any sensible combination of the following letters; these</span>
+0011 <span class="comment">%         options override any specified in argument p.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%             g     apply AGC to the input speech</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%           r/n/m   time domain windows: rectangular/hanning/hamming [def: hamming]</span>
+0016 <span class="comment">%           T/N/M   mel/mod-mel domain windows: triangular/hanning/hamming [def: triangular]</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%            a/c    mel filters act in the amplitude or complex domain [def: power]</span>
+0019 <span class="comment">%            p/l    mel outputs are in power or log power [def: amplitude]</span>
+0020 <span class="comment">%             A     mod-mel filters act in the power domain [def: power]</span>
+0021 <span class="comment">%            P/L    mod-mel outputs are in amplitude or log power [def: amplitude]</span>
+0022 <span class="comment">%             k     include DC component of modulation spectrum [not implemented]</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%             F     Take a DCT in the mel direction</span>
+0025 <span class="comment">%             Z     include 0'th order mel-cepstral coef</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%             f     Take a DCT in the mod-mel direction</span>
+0028 <span class="comment">%             z     include 0'th order mod-mel cepstral coef</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%             D     include d/df coefficients in * per mel (not valid with 'F')</span>
+0031 <span class="comment">%             d     include d/dt coefficients in * per second</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%             u     give frequency axes in mels and mod-mels rather than in Hz</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%             s     plot the result</span>
+0036 <span class="comment">%             S     plot intermediate results also</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%     nf  four-element vector giving:</span>
+0039 <span class="comment">%           nf(1) = number of mel bins (or increment in k-mel) [0.1]</span>
+0040 <span class="comment">%           nf(2) = min v_filterbank frequency [40 Hz]</span>
+0041 <span class="comment">%           nf(3) = max v_filterbank frequency [10kHz]</span>
+0042 <span class="comment">%           nf(4) = number of DCT coefficientss excl 0'th [25].</span>
+0043 <span class="comment">%         Omitted values use defaults.</span>
+0044 <span class="comment">%     nq  four-element vector giving</span>
+0045 <span class="comment">%           nq(1) = number of mel-mod bins (or increment in 10 mod-mel units)</span>
+0046 <span class="comment">%           nq(2) = min v_filterbank frequency [50 Hz]</span>
+0047 <span class="comment">%           nq(3) = max v_filterbank frequency [400 Hz]</span>
+0048 <span class="comment">%           nq(4) = number of DCT coefficients excl 0'th [15]</span>
+0049 <span class="comment">%         Omitted values use defaults. Note that the mel-mod frequency scale</span>
+0050 <span class="comment">%         is like the mel scale  but reduced by a factor of 100.</span>
+0051 <span class="comment">%         I.e. mod-mel(f)=mel(100 f)/100; thus 10Hz corresponds to 10 mod-mels.</span>
+0052 <span class="comment">%     p   parameter structure containing some or all of the parameters listed</span>
+0053 <span class="comment">%         at the start of the program code below. p may be given as the</span>
+0054 <span class="comment">%         last input parameter even if some or all of the inputs m, nf and nq</span>
+0055 <span class="comment">%         have been omitted.</span>
+0056 <span class="comment">%</span>
+0057 
+0058 <span class="comment">%</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">% Outputs:</span>
+0061 <span class="comment">%           c[*,nf,nt]  modulation spectrum where nt the number of time frames and</span>
+0062 <span class="comment">%                       nf is the normally number of mel frequency bins (but reduced by 1 if</span>
+0063 <span class="comment">%                       'F' is specified without 'Z').</span>
+0064 <span class="comment">%                       The middle index is for the output coefficients</span>
+0065 <span class="comment">%                       which are concatenated in the order [base, delta-p, delta-t].</span>
+0066 <span class="comment">%                       The number of base coefficients is normally the</span>
+0067 <span class="comment">%                       number of mon-mel filters but will be reduced by 1</span>
+0068 <span class="comment">%                       if 'f' is specified but 'z' is not.</span>
+0069 <span class="comment">%           qq          centre frequencies of modulation bins before any DCT (Hz or mel if 'u' set)</span>
+0070 <span class="comment">%           ff          centre frequencies of freqiency bins before any DCT (Hz or mel if 'u' set)</span>
+0071 <span class="comment">%           tt          time axis (sample s(i) is at time i/fs)</span>
+0072 <span class="comment">%           po          a copy of the parameter structure that was actually used.</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">% Algorithm Outline [parameters are in brackets]:</span>
+0075 <span class="comment">%</span>
+0076 <span class="comment">%   (1) Apply AGC to the speech to preserve a constant RMS level [tagc,tagt;'g']</span>
+0077 <span class="comment">%   (2) Divide into overlapping frames [tinc,tovl], window [twin;'rnm'], zero-pad [tpad,trnd] and FFT</span>
+0078 <span class="comment">%   (3) Apply mel filters in power or amplitude domain [fmin,fmax,fbin,fwin,fpow;'TNMac'=nf]</span>
+0079 <span class="comment">%   (4) Regarding each v_filterbank output as a time-varying signal power or amplitude [ppow;'pl'],</span>
+0080 <span class="comment">%       divide into overlapping frames [pinc,povl], window [pwin;'rnm'], zero-pad [ppad,prnd] and FFT</span>
+0081 <span class="comment">%   (5) Apply mod-mel filters in power or amplitude domain [mmin,mmax,mbin,mwin,mpow;'TNMA'=nq]</span>
+0082 <span class="comment">%   (6) Take optional log [qpow;'PL']</span>
+0083 <span class="comment">%   (7) Optionally apply a DCT in the mel [qdcp;'F'] and/or mod-mel [qdcq;'f'] directions preserving</span>
+0084 <span class="comment">%       the only some low quefrency coefficients [ dncp, dzcp;'Z'=nf, dncq, dzcq;'z'=nq]</span>
+0085 <span class="comment">%   (8) Calculate derivatives over mel-frequency [ddep,ddnp;'D'] and/or over time [ddet,ddnt;'d']</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">% Notes: All logs are limitied in dynamic range [logr], output units can be Hz or mel [unit;'u']</span>
+0088 <span class="comment">%        and optional plots can be generated [dplt;'pP'].</span>
+0089 <span class="comment">%</span>
+0090 
+0091 <span class="comment">%</span>
+0092 <span class="comment">% [1] S. D. Ewert and T. Dau. Characterizing frequency slectivity for envelope fluctuations.</span>
+0093 <span class="comment">%     J. Acoust Soc Amer, 108 (3): 1181–1196, Sept. 2000.</span>
+0094 <span class="comment">% [2] M. L. Jepsen, S. D. Ewert, and T. Dau. A computational model of human auditory signal processing and perception.</span>
+0095 <span class="comment">%     J. Acoust Soc Amer, 124 (1): 422–438, July 2008.</span>
+0096 <span class="comment">% [3] G. Kim, Y. Lu, Y. Hu, and P. C. Loizou. An algorithm that improves speech intelligibility</span>
+0097 <span class="comment">%     in noise for normal-hearing listeners.</span>
+0098 <span class="comment">%     J. Acoust Soc Amer, 126 (3): 1486–1494, Sept. 2009. doi: 10.1121/1.3184603.</span>
+0099 <span class="comment">% [4] J. Tchorz and B. Kollmeier. Estimation of the signal-to-noise ratio with amplitude</span>
+0100 <span class="comment">%     modulation spectrograms. Speech Commun., 38: 1–17, 2002.</span>
+0101 <span class="comment">% [5] J. Tchorz and B. Kollmeier. SNR estimation based on amplitude modulation analysis with</span>
+0102 <span class="comment">%     applications to noise suppression.</span>
+0103 <span class="comment">%     IEEE Trans Speech Audio Processing, 11 (3): 184–192, May 2003. doi: 10.1109/TSA.2003.811542.</span>
+0104 
+0105 <span class="comment">% bugs:</span>
+0106 <span class="comment">%  (3) should scale the derivatives so they get the correct units (e.g. power per second or per mel)</span>
+0107 <span class="comment">%  (5) should take care of the scaling so that FFT size does not affect</span>
+0108 <span class="comment">%  results</span>
+0109 <span class="comment">%  (4) sort out quefrency scale for graphs</span>
+0110 <span class="comment">%  (5) could add an option to draw an algorithm flow diagram</span>
+0111 
+0112 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0113 <span class="comment">%      Version: $Id: v_modspect.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0114 <span class="comment">%</span>
+0115 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0116 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0117 <span class="comment">%</span>
+0118 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0119 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0120 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0121 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0122 <span class="comment">%   (at your option) any later version.</span>
+0123 <span class="comment">%</span>
+0124 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0125 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0126 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0127 <span class="comment">%   GNU General Public License for more details.</span>
+0128 <span class="comment">%</span>
+0129 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0130 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0131 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0132 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0133 <span class="keyword">persistent</span> PP
+0134 <span class="keyword">if</span> isempty(PP)
+0135 
+0136     <span class="comment">% Algorithm constants: the first letter indicates the signal domain as follows:</span>
+0137     <span class="comment">%     t=time, f=frequency, p=mel freq, m=modulation, q=mel-modulation, d=mod-cepstral</span>
+0138 
+0139     PP.logr=120;                                <span class="comment">% maximum dynamic range before taking log  (dB)</span>
+0140     PP.tagc=0;                                  <span class="comment">% 1 = do agc</span>
+0141     PP.tagt=2;                                  <span class="comment">% agc time constant</span>
+0142     PP.tinc=0.25e-3;                            <span class="comment">% time domain frame increment</span>
+0143     PP.tovl=16;                                 <span class="comment">% time domain overlap factor</span>
+0144     PP.tpad=30e-3;                              <span class="comment">% time domain minimum FFT length (s). must be &gt; 1/min spacing</span>
+0145     <span class="comment">% of mel filters in Hz</span>
+0146     PP.trnd=1;                                  <span class="comment">% 1 to round up time domain FFT to the next power of 2</span>
+0147     PP.twin=<span class="string">'m'</span>;                                <span class="comment">% time domain window shape: m=hamming, n=hann</span>
+0148     PP.fpow=<span class="string">'p'</span>;                                <span class="comment">% mel filters act on a=amplitude or p=power or c=complex FFT coefs</span>
+0149     PP.fmin=40;                                 <span class="comment">% minimum mel v_filterbank frequency</span>
+0150     PP.fmax=10000;                              <span class="comment">% maximum mel v_filterbank frequency (0 for Nyquist)</span>
+0151     PP.fwin=<span class="string">'t'</span>;                                <span class="comment">% mel v_filterbank filter shape: t=triangle, m=hamming, n=hann</span>
+0152     PP.fbin=0.1;                                 <span class="comment">% number of mel filters or target spacing in k-mel</span>
+0153     PP.ppow=<span class="string">'a'</span>;                                <span class="comment">% modulation signal is a=amplitude or p=power or l=log-power</span>
+0154     PP.pinc=16e-3;                              <span class="comment">% modulation frame increment</span>
+0155     PP.povl=2;                                  <span class="comment">% modulation frame overlap factor</span>
+0156     PP.pwin=<span class="string">'m'</span>;                                <span class="comment">% mel domain time-window shape</span>
+0157     PP.ppad=200e-3;                              <span class="comment">% mel domain minimum FFT length (s). must be &gt; 1/min spacing</span>
+0158     <span class="comment">% of mod-mel filters in Hz</span>
+0159     PP.prnd=1;                                  <span class="comment">% 1 to round up mel domain FFT to the next power of 2</span>
+0160     PP.mpow=<span class="string">'p'</span>;                                <span class="comment">% transform mel domain a=amplitude or p=power</span>
+0161     PP.mwin=<span class="string">'t'</span>;                                <span class="comment">% mel-mod v_filterbank filter shape: t=triangle, m=hamming, n=hann</span>
+0162     PP.mbin=15;                                 <span class="comment">% Number of mel-mod filters</span>
+0163     PP.mmin=50;                                 <span class="comment">% minimum modulation frequency</span>
+0164     PP.mmax=400;                                <span class="comment">% maximum modulation frequency (0 for Nyquist)</span>
+0165     PP.qpow=<span class="string">'a'</span>;                                <span class="comment">% Use mel-modulation domain a=amplitude or p=power or l=log-power</span>
+0166     PP.qdcq=0;                                  <span class="comment">% 1 = Take DCT in modulation direction</span>
+0167     PP.qdcp=0;                                  <span class="comment">% 1 = Take DCT in frequency direction</span>
+0168     PP.dzcq=0;                                  <span class="comment">% 1 = include 0'th coefficient in modulation direction (always included in derivatives)</span>
+0169     PP.dzcp=0;                                  <span class="comment">% 1 = include 0'th coefficient in frequency direction</span>
+0170     PP.dncp=30;                                 <span class="comment">% number of frequency coefficient (excl 0'th)</span>
+0171     PP.dncq=15;                                 <span class="comment">% number of mel-mod coefficient (excl 0'th)</span>
+0172     PP.ddet=0;                                  <span class="comment">% 1 = include delta-time coefficients</span>
+0173     PP.ddnt=2;                                  <span class="comment">% (length of time filter - 1)/2</span>
+0174     PP.ddep=0;                                  <span class="comment">% 1 = include delta-freq coefficient</span>
+0175     PP.ddnp=1;                                  <span class="comment">% (length of freq filter - 1)/2</span>
+0176     PP.unit=0;                                  <span class="comment">% 1 = give frequency axes in mels and mod-mels</span>
+0177     PP.dplt=0;                                  <span class="comment">% plotting bitfield: 1=new fig,2=link axes, 4=base coefs, 8=d/dp, 16=d/dt,</span>
+0178     <span class="comment">% 32=waveform, 64=spectrogram, 128=mel-spectrogram, 256=mod-spectrogram, 512 frequency chart</span>
+0179     PP.cent=0.2;                                <span class="comment">% centile to check for log plotting</span>
+0180     PP.cchk=0.2;                                <span class="comment">% fraction to require above the centile to allow linear plot</span>
+0181 <span class="keyword">end</span>
+0182 po=PP;              <span class="comment">% initialize the parameter structure to the default values</span>
+0183 <span class="keyword">switch</span> nargin
+0184     <span class="keyword">case</span> 0
+0185         <span class="comment">% list all fields</span>
+0186         nn=sort(fieldnames(PP));
+0187         cnn=char(nn);
+0188         fprintf(<span class="string">'%d Voicebox parameters:\n'</span>,length(nn));
+0189 
+0190         <span class="keyword">for</span> i=1:length(nn);
+0191             <span class="keyword">if</span> ischar(PP.(nn{i}))
+0192                 fmt=<span class="string">'  %s = %s\n'</span>;
+0193             <span class="keyword">else</span>
+0194                 fmt=<span class="string">'  %s = %g\n'</span>;
+0195             <span class="keyword">end</span>
+0196             fprintf(fmt,cnn(i,:),PP.(nn{i}));
+0197         <span class="keyword">end</span>
+0198         <span class="keyword">return</span>
+0199     <span class="keyword">case</span> 1
+0200         error(<span class="string">'no sample frequency specified'</span>);
+0201     <span class="keyword">case</span> 2
+0202         p=[];
+0203     <span class="keyword">case</span> 3
+0204         <span class="keyword">if</span> isstruct(m)
+0205             p=m;
+0206             m=<span class="string">''</span>;
+0207         <span class="keyword">else</span>
+0208             p=[];
+0209         <span class="keyword">end</span>
+0210         nf=[];
+0211         nq=[];
+0212     <span class="keyword">case</span> 4
+0213         <span class="keyword">if</span> isstruct(nf)
+0214             p=nf;
+0215             nf=[];
+0216         <span class="keyword">else</span>
+0217             p=[];
+0218         <span class="keyword">end</span>
+0219         nq=[];
+0220     <span class="keyword">case</span> 5
+0221         <span class="keyword">if</span> isstruct(nq)
+0222             p=nq;
+0223             nq=[];
+0224         <span class="keyword">else</span>
+0225             p=[];
+0226         <span class="keyword">end</span>
+0227 <span class="keyword">end</span>
+0228 <span class="keyword">if</span> isstruct(p)      <span class="comment">% copy specified fields into po structure</span>
+0229     nn=fieldnames(p);
+0230     <span class="keyword">for</span> i=1:length(nn)
+0231         <span class="keyword">if</span> isfield(po,nn{i})
+0232             po.(nn{i})=p.(nn{i});
+0233         <span class="keyword">end</span>
+0234     <span class="keyword">end</span>
+0235 <span class="keyword">end</span>
+0236 
+0237 <span class="comment">% now sort out the mode flags</span>
+0238 
+0239 <span class="keyword">for</span> i=1:length(m)
+0240     <span class="keyword">switch</span> m(i)
+0241         <span class="keyword">case</span> <span class="string">'g'</span>
+0242             po.tagc=1;
+0243         <span class="keyword">case</span> {<span class="string">'r'</span>,<span class="string">'n'</span>,<span class="string">'m'</span>}
+0244             po.twin=m(i);
+0245             po.pwin=m(i);
+0246         <span class="keyword">case</span> {<span class="string">'T'</span>,<span class="string">'N'</span>,<span class="string">'M'</span>}
+0247             po.fwin=lower(m(i));
+0248             po.mwin=po.fwin;
+0249         <span class="keyword">case</span> {<span class="string">'a'</span>,<span class="string">'c'</span>}
+0250             po.fpow=m(i);
+0251         <span class="keyword">case</span> {<span class="string">'p'</span>,<span class="string">'l'</span>}
+0252             po.ppow=m(i);
+0253         <span class="keyword">case</span> <span class="string">'A'</span>
+0254             po.mpow=lower(m(i));
+0255         <span class="keyword">case</span> {<span class="string">'P'</span>,<span class="string">'L'</span>}
+0256             po.qpow=lower(m(i));
+0257         <span class="keyword">case</span> <span class="string">'f'</span>
+0258             po.qdcq=1;
+0259         <span class="keyword">case</span> <span class="string">'F'</span>
+0260             po.qdcp=1;
+0261         <span class="keyword">case</span> <span class="string">'z'</span>
+0262             po.dzcq=1;
+0263         <span class="keyword">case</span> <span class="string">'Z'</span>
+0264             po.dzcp=1;
+0265         <span class="keyword">case</span> <span class="string">'d'</span>
+0266             po.ddet=1;
+0267         <span class="keyword">case</span> <span class="string">'D'</span>
+0268             po.ddep=1;
+0269         <span class="keyword">case</span> <span class="string">'u'</span>
+0270             po.unit=1;
+0271         <span class="keyword">case</span> <span class="string">'s'</span>
+0272             po.dplt=bitor(po.dplt,31+512);
+0273         <span class="keyword">case</span> <span class="string">'S'</span>
+0274             po.dplt=bitor(po.dplt,1023);
+0275     <span class="keyword">end</span>
+0276 <span class="keyword">end</span>
+0277 
+0278 <span class="keyword">if</span> ~nargout
+0279     po.dplt=bitor(po.dplt,4);   <span class="comment">% just plot base coefficients</span>
+0280 <span class="keyword">end</span>
+0281 <span class="keyword">if</span> ~isempty(nf)
+0282     po.dncp=nf;
+0283 <span class="keyword">end</span>
+0284 <span class="keyword">if</span> ~isempty(nq)
+0285     po.dncq=nq;
+0286 <span class="keyword">end</span>
+0287 
+0288 lnf=length(nf);
+0289 <span class="keyword">if</span> lnf&gt;=1
+0290     po.fbin=nf(1);
+0291     <span class="keyword">if</span> lnf&gt;=2
+0292         po.fmin=nf(2);
+0293         <span class="keyword">if</span> lnf&gt;=3
+0294             po.fmax=nf(3);
+0295             <span class="keyword">if</span> lnf&gt;=4
+0296                 po.dncp=nf(4);
+0297             <span class="keyword">end</span>
+0298         <span class="keyword">end</span>
+0299     <span class="keyword">end</span>
+0300 <span class="keyword">end</span>
+0301 lnq=length(nq);
+0302 <span class="keyword">if</span> lnq&gt;=1
+0303     po.mbin=nq(1);
+0304     <span class="keyword">if</span> lnq&gt;=2
+0305         po.mmin=nq(2);
+0306         <span class="keyword">if</span> lnq&gt;=3
+0307             po.mmax=nq(3);
+0308             <span class="keyword">if</span> lnq&gt;=4
+0309                 po.dncq=nq(4);
+0310             <span class="keyword">end</span>
+0311         <span class="keyword">end</span>
+0312     <span class="keyword">end</span>
+0313 <span class="keyword">end</span>
+0314 
+0315 <span class="comment">% finally eliminate potential incomaptibilities</span>
+0316 
+0317 po.ddep=po.ddep &amp; (po.qdcp==0);         <span class="comment">% never differentiate along DCT axis</span>
+0318 po.dzcq=po.dzcq | (po.qdcq==0);         <span class="comment">% include all coefficients if no DCT</span>
+0319 po.dzcp=po.dzcp | (po.qdcp==0);         <span class="comment">% include all coefficients if no DCT</span>
+0320 
+0321 logth=10^(-po.logr/10);
+0322 ns=length(s);
+0323 axhandle=[];
+0324 <span class="comment">%</span>
+0325 <span class="comment">% first apply AGC</span>
+0326 <span class="comment">%</span>
+0327 <span class="keyword">if</span> po.tagc
+0328     tau=po.tagt*fs;      <span class="comment">% time constant for power filtering</span>
+0329     ax2=[1 -exp(-1/tau)];
+0330     bx2=sum(ax2);
+0331     sm=mean(s(1:min(ns,round(tau))).^2);            <span class="comment">% initialize filter using average of 1 tau</span>
+0332     <span class="keyword">if</span> sm&gt;0
+0333         s=s./sqrt(filter(bx2,ax2,s.^2,-ax2(2)*sm));    <span class="comment">% normalize to RMS=1</span>
+0334     <span class="keyword">end</span>
+0335 <span class="keyword">end</span>
+0336 <span class="keyword">if</span> bitand(po.dplt,32)
+0337     <span class="keyword">if</span> bitand(po.dplt,1)
+0338         figure;
+0339     <span class="keyword">end</span>
+0340     plot((1:ns)/fs,s);
+0341     axhandle(end+1)=gca;
+0342     title(<span class="string">'Input after AGC'</span>);
+0343     xlabel(<span class="string">'Time (s)'</span>);
+0344 <span class="keyword">end</span>
+0345 <span class="comment">%</span>
+0346 <span class="comment">% % calculate power spectra</span>
+0347 <span class="comment">%</span>
+0348 ni=ceil(po.tinc*fs);    <span class="comment">% frame increment in samples</span>
+0349 nw=ni*po.tovl;           <span class="comment">% window length</span>
+0350 nf=ceil(max(nw,po.tpad*fs));          <span class="comment">% FFT length: pad with zeros</span>
+0351 <span class="keyword">if</span> po.trnd
+0352     nf=2^nextpow2(nf);  <span class="comment">% round up FFT length to next power of 2</span>
+0353 <span class="keyword">else</span>
+0354     nf=round(nf);
+0355 <span class="keyword">end</span>
+0356 <span class="keyword">switch</span> po.twin
+0357     <span class="keyword">case</span> <span class="string">'m'</span>
+0358 <span class="comment">%         w=hamming(nw+1)'; w(end)=[];        % Hamming window ([2] uses Hanning)</span>
+0359         w=0.54-0.46*cos(2*pi*(0:nw-1)/nw); <span class="comment">% Hamming window ([2] uses Hanning)</span>
+0360     <span class="keyword">case</span> <span class="string">'n'</span>
+0361 <span class="comment">%         w=hanning(nw-1)';           % Hanning window: underlying period is nw</span>
+0362         w=0.5-0.5*cos(2*pi*(1:nw-1)/nw);  <span class="comment">% Hanning window: underlying period is nw</span>
+0363     <span class="keyword">case</span> <span class="string">'r'</span>
+0364         w=ones(nw,1);                 <span class="comment">% rctangular window</span>
+0365 <span class="keyword">end</span>
+0366 fx=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s,w,ni),nf,2);
+0367 [nft,nff]=size(fx);                 <span class="comment">% number of frames and frequency bins</span>
+0368 <span class="keyword">if</span> bitand(po.dplt,64)
+0369     <span class="keyword">if</span> bitand(po.dplt,1)
+0370         figure;
+0371     <span class="keyword">end</span>
+0372     fp=fx.*conj(fx);
+0373     imagesc(((0:nft-1)*ni+(nw+1)/2)/fs,(0:nff-1)*fs*0.001/nf,10*log10(max(fp,max(fp(:))*1e-6))');
+0374     axhandle(end+1)=gca;
+0375     hanc= colorbar;
+0376     set(get(hanc,<span class="string">'ylabel'</span>),<span class="string">'String'</span>,<span class="string">'dB'</span>);
+0377     axis(<span class="string">'xy'</span>);
+0378     title(<span class="string">'Input Spectrogram'</span>);
+0379     xlabel(<span class="string">'Time (s)'</span>);
+0380     ylabel(<span class="string">'Frequency (kHz)'</span>);
+0381 <span class="keyword">end</span>
+0382 [mbk,ffm]=<a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>(po.fbin,nf,fs,po.fmin/fs,min(po.fmax/fs+(po.fmax==0),0.5),po.fwin);
+0383 <span class="keyword">switch</span> [po.fpow po.ppow]
+0384     <span class="keyword">case</span> <span class="string">'aa'</span>
+0385         px=abs(fx)*mbk';         <span class="comment">% amplitude domain filtering</span>
+0386     <span class="keyword">case</span> {<span class="string">'ap'</span>,<span class="string">'al'</span>}
+0387         px=(abs(fx)*mbk').^2;         <span class="comment">% amplitude domain filtering</span>
+0388     <span class="keyword">case</span> <span class="string">'pa'</span>
+0389         px=sqrt((fx.*conj(fx))*mbk');         <span class="comment">% power domain filtering</span>
+0390     <span class="keyword">case</span> {<span class="string">'pp'</span>,<span class="string">'pl'</span>}
+0391         px=(fx.*conj(fx))*mbk';         <span class="comment">% power domain filtering</span>
+0392     <span class="keyword">case</span> <span class="string">'ca'</span>
+0393         px=abs(fx*mbk');         <span class="comment">% complex domain filtering</span>
+0394     <span class="keyword">case</span> {<span class="string">'cp'</span>,<span class="string">'cl'</span>}
+0395         px=fx*mbk';         <span class="comment">% complex domain filtering</span>
+0396         px=px.*conj(px);   <span class="comment">% convert to power</span>
+0397 <span class="keyword">end</span>
+0398 <span class="keyword">if</span> po.ppow==<span class="string">'l'</span>
+0399     px=log(max((px),max(px(:))*logth)); <span class="comment">% clip before log</span>
+0400 <span class="keyword">end</span>
+0401 <span class="keyword">if</span> bitand(po.dplt,128)
+0402     <span class="keyword">if</span> bitand(po.dplt,1)
+0403         figure;
+0404     <span class="keyword">end</span>
+0405     <span class="keyword">switch</span> po.ppow
+0406         <span class="keyword">case</span> <span class="string">'a'</span>
+0407             imagesc(((0:nft-1)*ni+(nw+1)/2)/fs,ffm/1000,20*log10(max(px,max(px(:))*1e-3))');
+0408         <span class="keyword">case</span> <span class="string">'p'</span>
+0409             imagesc(((0:nft-1)*ni+(nw+1)/2)/fs,ffm/1000,10*log10(max(px,max(px(:))*1e-6))');
+0410         <span class="keyword">case</span> <span class="string">'l'</span>
+0411             imagesc(((0:nft-1)*ni+(nw+1)/2)/fs,ffm/1000,max(px*10/log(10),max(px(:))*10/log(10)-60)');
+0412     <span class="keyword">end</span>
+0413     axhandle(end+1)=gca;
+0414     hanc= colorbar;
+0415     set(get(hanc,<span class="string">'ylabel'</span>),<span class="string">'String'</span>,<span class="string">'dB'</span>);
+0416     axis(<span class="string">'xy'</span>);
+0417     title(<span class="string">'Mel Spectrogram'</span>);
+0418     xlabel(<span class="string">'Time (s)'</span>);
+0419     ylabel(<span class="string">'Frequency (k-mel)'</span>);
+0420 <span class="keyword">end</span>
+0421 npf=length(ffm);     <span class="comment">% number of mel filters</span>
+0422 mni=ceil(po.pinc*fs/ni);    <span class="comment">% frame increment in spectral frames</span>
+0423 mnw=mni*po.povl;        <span class="comment">% window length</span>
+0424 mnf=ceil(max(mnw,po.ppad*fs/ni));          <span class="comment">% FFT length: pad with zeros</span>
+0425 <span class="keyword">if</span> po.prnd
+0426     mnf=2^nextpow2(mnf);  <span class="comment">% round up FFT length to next power of 2</span>
+0427 <span class="keyword">else</span>
+0428     mnf=round(mnf);
+0429 <span class="keyword">end</span>
+0430 nmt=fix((nft-mnw+mni)/mni); <span class="comment">% number of modulation spectrum frames</span>
+0431 ix=repmat((1:mnw)',1,nmt)+repmat((0:nmt-1)*mni,mnw,1);  <span class="comment">% time index for all modumation spectrum frames</span>
+0432 mx=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(reshape(px(ix(:),:),mnw,nmt*npf),mnf,1);          <span class="comment">% find modulation spectrum</span>
+0433 <span class="comment">% nmm=size(mx,1);             % number of modulation spectrum bins [not needed]</span>
+0434 [qbk,qqm]=<a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>(po.mbin,mnf,100*fs/ni,po.mmin*ni/fs,min(po.mmax*ni/fs+(po.mmax==0),0.5),po.mwin);    <span class="comment">% multiply frq by 100 to make it alsmost log</span>
+0435 nqq=length(qqm);
+0436 <span class="keyword">switch</span> po.mpow
+0437     <span class="keyword">case</span> <span class="string">'a'</span>
+0438         qx=reshape(qbk*abs(mx),nqq,nmt,npf);
+0439     <span class="keyword">case</span> <span class="string">'p'</span>
+0440         qx=reshape(qbk*(mx.*conj(mx)),nqq,nmt,npf);
+0441 <span class="keyword">end</span>
+0442 <span class="keyword">switch</span> [po.mpow po.qpow]
+0443     <span class="keyword">case</span> <span class="string">'aa'</span>
+0444         qx=reshape(qbk*abs(mx),nqq,nmt,npf);         <span class="comment">% amplitude domain filtering</span>
+0445     <span class="keyword">case</span> {<span class="string">'ap'</span>,<span class="string">'al'</span>}
+0446         qx=reshape(qbk*abs(mx),nqq,nmt,npf).^2;         <span class="comment">% amplitude domain filtering + power out</span>
+0447     <span class="keyword">case</span> <span class="string">'pa'</span>
+0448         qx=sqrt(reshape(qbk*(mx.*conj(mx)),nqq,nmt,npf));         <span class="comment">% power domain filtering + amp out</span>
+0449     <span class="keyword">case</span> {<span class="string">'pp'</span>,<span class="string">'pl'</span>}
+0450         qx=reshape(qbk*(mx.*conj(mx)),nqq,nmt,npf);         <span class="comment">% power domain filtering</span>
+0451 <span class="keyword">end</span>
+0452 <span class="keyword">if</span> po.qpow==<span class="string">'l'</span>
+0453     qx=log(max((qx),max(qx(:))*logth)); <span class="comment">% clip before log</span>
+0454 <span class="keyword">end</span>
+0455 tt=((1+mnw*ni+nw-ni)/2+(0:nmt-1)*mni*ni)/fs; <span class="comment">% time axis of output frames</span>
+0456 
+0457 <span class="keyword">if</span> bitand(po.dplt,256) &amp;&amp; (~bitand(po.dplt,4) || po.qdcq&gt;0 || po.qdcp&gt;0)
+0458     <span class="keyword">if</span> bitand(po.dplt,1)
+0459         figure;
+0460     <span class="keyword">end</span>
+0461     <span class="keyword">switch</span> po.qpow
+0462         <span class="keyword">case</span> <span class="string">'a'</span>
+0463             dqx=20*log10(max(qx,max(qx(:))*1e-3));
+0464         <span class="keyword">case</span> <span class="string">'p'</span>
+0465             dqx=10*log10(max(qx,max(qx(:))*1e-6));
+0466         <span class="keyword">case</span> <span class="string">'l'</span>
+0467             dqx=max(qx*10/log(10),max(qx(:))*10/log(10)-60);
+0468     <span class="keyword">end</span>
+0469     dqx(end+1,:,:)=max(dqx(:));  <span class="comment">% insert a border</span>
+0470     dqx=reshape(permute(dqx,[2,1,3]),nmt,(nqq+1)*npf);
+0471     ffq=ffm(1)+((0:(nqq+1)*npf)-(nqq-1)/2)*(ffm(2)-ffm(1))/(nqq+1); <span class="comment">% mel frequencies</span>
+0472     imagesc(tt,ffq/1000,dqx');
+0473     axhandle(end+1)=gca;
+0474     hanc= colorbar;
+0475     set(get(hanc,<span class="string">'ylabel'</span>),<span class="string">'String'</span>,<span class="string">'dB'</span>);
+0476     axis(<span class="string">'xy'</span>);
+0477     title(<span class="string">'Modulation Spectrogram'</span>);
+0478     xlabel(<span class="string">'Time (s)'</span>);
+0479     ylabel(<span class="string">'Frequency (k-mel)'</span>);
+0480 <span class="keyword">end</span>
+0481 ndq=nqq;    <span class="comment">% number of coefficients to use in the q direction</span>
+0482 <span class="keyword">if</span> po.qdcq
+0483     dx=reshape(<a href="v_rdct.html" class="code" title="function y=v_rdct(x,n,a,b)">v_rdct</a>(reshape(qx,nqq,nmt*npf)),nqq,nmt,npf);    <span class="comment">% take dct in q direction</span>
+0484     ndq=min(ndq,po.dncq+1);     <span class="comment">% &quot;+1&quot; to include the 0'th coefficient</span>
+0485 <span class="keyword">else</span>
+0486     dx=qx;
+0487 <span class="keyword">end</span>
+0488 ndf=npf;    <span class="comment">% number of coefficients to use in the p direction</span>
+0489 <span class="keyword">if</span> po.qdcp
+0490     dx=permute(reshape(<a href="v_rdct.html" class="code" title="function y=v_rdct(x,n,a,b)">v_rdct</a>(reshape(permute(qx,[3,1,2]),npf,nqq*nmt)),npf,nqq,nmt),[2 3 1]);    <span class="comment">% take dct in p direction</span>
+0491     ndf=min(ndf,po.dncp+1);   <span class="comment">% &quot;+1&quot; to include the 0'th coefficient</span>
+0492 <span class="keyword">elseif</span> po.ddep                  <span class="comment">% calculate the frequency derivative</span>
+0493     nv=po.ddnp;
+0494     vv=(-nv:nv)*-3/(nv*(nv+1)*(2*nv+1)*(ffm(2)-ffm(1)));
+0495     dxdp=filter(vv,1,dx,[],3);
+0496     dxdp=dxdp(:,:,[repmat(2*nv+1,1,nv) 2*nv+1:npf repmat(npf,1,nv)]);   <span class="comment">% replicate filter outputs at ends</span>
+0497 <span class="keyword">end</span>
+0498 <span class="keyword">if</span> po.ddet                      <span class="comment">% calculate the time derivative</span>
+0499     nv=po.ddnt;
+0500     vv=(-nv:nv)*-3/(nv*(nv+1)*(2*nv+1)*(tt(2)-tt(1)));
+0501     dxdt=filter(vv,1,dx,[],2);
+0502     dxdt=dxdt(:,[repmat(2*nv+1,1,nv) 2*nv+1:nmt repmat(nmt,1,nv)],:);   <span class="comment">% replicate filter outputs at ends</span>
+0503 <span class="keyword">end</span>
+0504 nqj=ndq-(po.dzcq==0);
+0505 nqk=nqj+ndq*(po.ddep+po.ddet);
+0506 npk=ndf-(po.dzcp==0);
+0507 c=zeros(nqk,npk,nmt);
+0508 c(1:nqj,:,:)=permute(dx(1+ndq-nqj:ndq,:,1+ndf-npk:ndf),[1,3,2]);        <span class="comment">% base coefficients</span>
+0509 <span class="keyword">if</span> bitand(po.dplt,512)
+0510     <span class="keyword">if</span> bitand(po.dplt,1)
+0511         figure;
+0512     <span class="keyword">end</span>
+0513     ffx=repmat(<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(ffm(:)),1,nqq)/1000;
+0514     qqx=repmat(mel2frq(qqm(:)')/100,npf,1);
+0515     plot(qqx,ffx,<span class="string">'xb'</span>);
+0516     axis([[qqx(1) qqx(end)]*[1.1 -0.1; -0.1 1.1] [ffx(1) ffx(end)]*[1.1 -0.1; -0.1 1.1]]);
+0517     title(<span class="string">'Frequency bin centres'</span>);
+0518     xlabel(sprintf(<span class="string">'%.1f : %.1f : %.1f mod-mel = Modulation Frequency (Hz)'</span>,qqm(1)/100,(qqm(2)-qqm(1))/100,qqm(end)/100));
+0519     ylabel(sprintf(<span class="string">'%.0f : %.0f : %.0f mel = Frequency (kHz)'</span>,ffm(1),ffm(2)-ffm(1),ffm(end)));
+0520 <span class="keyword">end</span>
+0521 <span class="keyword">if</span> bitand(po.dplt,4)
+0522     <span class="keyword">if</span> bitand(po.dplt,1)
+0523         figure;
+0524     <span class="keyword">end</span>
+0525     dqx=dx(1+ndq-nqj:ndq,:,1+ndf-npk:ndf);
+0526     dqxmx=max(abs(dqx(:)));
+0527     dqxge=dqx&gt;=0;
+0528     dbfact=2-(po.qpow==<span class="string">'p'</span>);        <span class="comment">% 2=amplitude, 1=power</span>
+0529     dqxa=max(abs(dqx),dqxmx*10^(-6/dbfact));  <span class="comment">% clip at -60 dB</span>
+0530     dqxmn=min(dqxa(:));
+0531     dblab=<span class="string">''</span>;
+0532     <span class="keyword">if</span>(mean(dqxa(:)&gt;dqxmn+po.cent*(dqxmx-dqxmn)))&lt;po.cchk
+0533         dboff=abs(round(dbfact*10*log10(dqxmn)));
+0534         dblab=<span class="string">'{\pm}dB'</span>;
+0535         <span class="keyword">if</span> ~all(dqxge(:))       <span class="comment">% not all positive</span>
+0536             dqxa=dqxa/dqxmn;    <span class="comment">% force log to be always positive</span>
+0537             <span class="keyword">if</span> dqxmn&gt;1 &amp;&amp; dboff~=0
+0538                 dblab=sprintf(<span class="string">'{\\pm}dB - %d'</span>,dboff);
+0539             <span class="keyword">else</span>
+0540                 dblab=sprintf(<span class="string">'{\\pm}dB + %d'</span>,dboff);
+0541             <span class="keyword">end</span>
+0542         <span class="keyword">else</span>
+0543             dblab=<span class="string">'dB'</span>;
+0544         <span class="keyword">end</span>
+0545         dqx=dbfact*10*log10(dqxa).*(2*dqxge-1);
+0546     <span class="keyword">end</span>
+0547     dqx(end+1,:,:)=max(dqx(:));  <span class="comment">% insert a border</span>
+0548     dqx=reshape(permute(dqx,[2,1,3]),nmt,(nqj+1)*npk);
+0549     ffq=ffm(1)+((0:(nqj+1)*npf)-(nqj-1)/2)*(ffm(2)-ffm(1))/(nqj+1); <span class="comment">% mel frequencies</span>
+0550     imagesc(tt,ffq/1000,dqx');
+0551     axhandle(end+1)=gca;
+0552     hanc= colorbar;
+0553     set(get(hanc,<span class="string">'ylabel'</span>),<span class="string">'String'</span>,dblab);
+0554     axis(<span class="string">'xy'</span>);
+0555     <span class="keyword">if</span> po.qdcq
+0556         title(<span class="string">'Modulation spectrum DCT'</span>);
+0557     <span class="keyword">else</span>
+0558         title(<span class="string">'Modulation spectrum'</span>);
+0559     <span class="keyword">end</span>
+0560     xlabel(<span class="string">'Time (s)'</span>);
+0561     <span class="keyword">if</span> po.qdcp
+0562         ylabel(<span class="string">'Quefrency (k-mel^{-1})'</span>);
+0563     <span class="keyword">else</span>
+0564         ylabel(<span class="string">'Frequency (k-mel)'</span>);
+0565     <span class="keyword">end</span>
+0566 <span class="keyword">end</span>
+0567 
+0568 <span class="keyword">if</span> po.ddep
+0569     c(nqj+1:nqj+ndq,:,:)=permute(dxdp(1:ndq,:,1+ndf-npk:ndf),[1,3,2]);  <span class="comment">% add on p delta</span>
+0570     <span class="keyword">if</span> bitand(po.dplt,8)
+0571         <span class="keyword">if</span> bitand(po.dplt,1)
+0572             figure;
+0573         <span class="keyword">end</span>
+0574         dqx=dxdp(1:ndq,:,1+ndf-npk:ndf);
+0575         dqxmx=max(abs(dqx(:)));
+0576         dqxge=dqx&gt;=0;
+0577         dbfact=2-(po.qpow==<span class="string">'p'</span>);        <span class="comment">% 2=amplitude, 1=power</span>
+0578         dqxa=max(abs(dqx),dqxmx*10^(-6/dbfact));  <span class="comment">% clip at -60 dB</span>
+0579         dqxmn=min(dqxa(:));
+0580         dblab=<span class="string">''</span>;
+0581         <span class="keyword">if</span>(mean(dqxa(:)&gt;dqxmn+po.cent*(dqxmx-dqxmn)))&lt;po.cchk
+0582             dboff=abs(round(dbfact*10*log10(dqxmn)));
+0583             dblab=<span class="string">'{\pm}dB'</span>;
+0584             <span class="keyword">if</span> ~all(dqxge(:))       <span class="comment">% not all positive</span>
+0585                 dqxa=dqxa/dqxmn;    <span class="comment">% force log to be always positive</span>
+0586                 <span class="keyword">if</span> dqxmn&gt;1 &amp;&amp; dboff~=0
+0587                     dblab=sprintf(<span class="string">'{\\pm}dB - %d'</span>,dboff);
+0588                 <span class="keyword">else</span>
+0589                     dblab=sprintf(<span class="string">'{\\pm}dB + %d'</span>,dboff);
+0590                 <span class="keyword">end</span>
+0591             <span class="keyword">else</span>
+0592                 dblab=<span class="string">'dB'</span>;
+0593             <span class="keyword">end</span>
+0594             dqx=dbfact*10*log10(dqxa).*(2*dqxge-1);
+0595         <span class="keyword">end</span>
+0596         dqx(end+1,:,:)=max(dqx(:));  <span class="comment">% insert a border</span>
+0597         dqx=reshape(permute(dqx,[2,1,3]),nmt,(ndq+1)*npk);
+0598         ffq=ffm(1)+((0:(ndq+1)*npf)-(ndq-1)/2)*(ffm(2)-ffm(1))/(ndq+1); <span class="comment">% mel frequencies</span>
+0599         imagesc(tt,ffq/1000,dqx');
+0600         axhandle(end+1)=gca;
+0601         hanc= colorbar;
+0602         set(get(hanc,<span class="string">'ylabel'</span>),<span class="string">'String'</span>,dblab);
+0603         axis(<span class="string">'xy'</span>);
+0604         <span class="keyword">if</span> po.qdcq
+0605             title(<span class="string">'Modulation spectrum DCT = freq derivative'</span>);
+0606         <span class="keyword">else</span>
+0607             title(<span class="string">'Modulation spectrum = freq derivative'</span>);
+0608         <span class="keyword">end</span>
+0609         xlabel(<span class="string">'Time (s)'</span>);
+0610         <span class="keyword">if</span> po.qdcp
+0611             ylabel(<span class="string">'Quefrency (k-mel^{-1})'</span>);
+0612         <span class="keyword">else</span>
+0613             ylabel(<span class="string">'Frequency (k-mel)'</span>);
+0614         <span class="keyword">end</span>
+0615     <span class="keyword">end</span>
+0616 <span class="keyword">end</span>
+0617 <span class="keyword">if</span> po.ddet
+0618     c(nqk-ndq+1:nqk,:,:)=permute(dxdt(1:ndq,:,1+ndf-npk:ndf),[1,3,2]);  <span class="comment">% add on t delta</span>
+0619     <span class="keyword">if</span> bitand(po.dplt,16)
+0620         <span class="keyword">if</span> bitand(po.dplt,1)
+0621             figure;
+0622         <span class="keyword">end</span>
+0623         dqx=dxdt(1:ndq,:,1+ndf-npk:ndf);
+0624         dqxmx=max(abs(dqx(:)));
+0625         dqxge=dqx&gt;=0;
+0626         dbfact=2-(po.qpow==<span class="string">'p'</span>);        <span class="comment">% 2=amplitude, 1=power</span>
+0627         dqxa=max(abs(dqx),dqxmx*10^(-6/dbfact));  <span class="comment">% clip at -60 dB</span>
+0628         dqxmn=min(dqxa(:));
+0629         dblab=<span class="string">''</span>;
+0630         <span class="keyword">if</span>(mean(dqxa(:)&gt;dqxmn+po.cent*(dqxmx-dqxmn)))&lt;po.cchk
+0631             dboff=abs(round(dbfact*10*log10(dqxmn)));
+0632             dblab=<span class="string">'{\pm}dB'</span>;
+0633             <span class="keyword">if</span> ~all(dqxge(:))       <span class="comment">% not all positive</span>
+0634                 dqxa=dqxa/dqxmn;    <span class="comment">% force log to be always positive</span>
+0635                 <span class="keyword">if</span> dqxmn&gt;1 &amp;&amp; dboff~=0
+0636                     dblab=sprintf(<span class="string">'{\\pm}dB - %d'</span>,dboff);
+0637                 <span class="keyword">else</span>
+0638                     dblab=sprintf(<span class="string">'{\\pm}dB + %d'</span>,dboff);
+0639                 <span class="keyword">end</span>
+0640             <span class="keyword">else</span>
+0641                 dblab=<span class="string">'dB'</span>;
+0642             <span class="keyword">end</span>
+0643             dqx=dbfact*10*log10(dqxa).*(2*dqxge-1);
+0644         <span class="keyword">end</span>
+0645         dqx(end+1,:,:)=max(dqx(:));  <span class="comment">% insert a border</span>
+0646         dqx=reshape(permute(dqx,[2,1,3]),nmt,(ndq+1)*npk);
+0647         ffq=ffm(1)+((0:(nqj+1)*npf)-(nqj-1)/2)*(ffm(2)-ffm(1))/(nqj+1); <span class="comment">% mel frequencies</span>
+0648         imagesc(tt,ffq/1000,dqx');
+0649         axhandle(end+1)=gca;
+0650         hanc= colorbar;
+0651         set(get(hanc,<span class="string">'ylabel'</span>),<span class="string">'String'</span>,dblab);
+0652         axis(<span class="string">'xy'</span>);
+0653         <span class="keyword">if</span> po.qdcq
+0654             title(<span class="string">'Modulation spectrum DCT = time derivative'</span>);
+0655         <span class="keyword">else</span>
+0656             title(<span class="string">'Modulation spectrum = time derivative'</span>);
+0657         <span class="keyword">end</span>
+0658         xlabel(<span class="string">'Time (s)'</span>);
+0659         <span class="keyword">if</span> po.qdcp
+0660             ylabel(<span class="string">'Quefrency (k-mel^{-1})'</span>);
+0661         <span class="keyword">else</span>
+0662             ylabel(<span class="string">'Frequency (k-mel)'</span>);
+0663         <span class="keyword">end</span>
+0664     <span class="keyword">end</span>
+0665 <span class="keyword">end</span>
+0666 <span class="keyword">if</span> po.unit                      <span class="comment">% frequency units are in mels</span>
+0667     ff=ffm;
+0668     qq=qqm/100;
+0669 <span class="keyword">else</span>
+0670     ff=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(ffm);
+0671     qq=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(qqm)/100;
+0672 <span class="keyword">end</span>
+0673 <span class="keyword">if</span> length(axhandle)&gt;1
+0674     <span class="keyword">if</span> ~bitand(po.dplt,32+64)
+0675         linkaxes(axhandle)
+0676     <span class="keyword">else</span>
+0677         linkaxes(axhandle,<span class="string">'x'</span>)
+0678     <span class="keyword">end</span>
+0679 <span class="keyword">end</span>
+0680 
+0681</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

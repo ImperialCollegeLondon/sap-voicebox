@@ -1,0 +1,529 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readsfs</title>
+  <meta name="keywords" content="v_readsfs">
+  <meta name="description" content="READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readsfs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readsfs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)
+
+ Usage:  [s,fs]=v_readsfs(filename,1); % read the last speech item in a file
+
+ Input Parameters:
+
+  FF gives the name of the file or alternatively
+                 can be the ffx output from a previous call to v_readsfs
+  TY gives the type of data item required e.g.:
+              0 Main header, 1 Speech data, 2 Laryngograph, 5 Annotation
+  SUB specifies the instance of type TY in the file: 0 for first (default), -1 for last or else
+      it can specify the start of the processing history field as a string (e.g. 'hqtx')
+  MODE        specifies the following (*=default):
+
+           File I/O:    'f'    Do not close file on exit
+                        'd'    Look in data directory: v_voicebox('dir_data')
+           Int Format:  'i'  Force integer data to be at least 16 bits
+                              (some sfs files have a header error which falsely indicates 8-bit data)
+           Create item: 'c' Create item if necessary
+           Errors:      'x' Ignore errors
+
+  NMAX     maximum number of samples to read (or -1 for unlimited [default])
+  NSKIP    number of samples or frames to skip from start of file
+               (or -1 to continue from previous read when FFX is given instead of a filename [default])
+  XPATH    (used with 'c' option) gives the full name of the program needed to generate the data or
+           the directory containing it.
+
+ Output Parameters:
+
+  Y        data matrix or cell matrix whose format depends on TY:
+        TY=0: empty
+            TY=5: cell array {nf,3} = {position length annotation}
+        TY=1,2: column vector containing data
+        TY=11: data array with one row per frame
+  FS       sample frequency in Hz
+  HD     cell matrix whose format depends on TY:
+        TY=0: cell{14,1}
+              {1} row vector
+                {1}(1) = serial_date (see DATENUM() for format)
+                {1}(2) = file_number
+                {1}(3) = machine_type
+              {2} = File type (= 'UC2')
+              {3} = username of creator
+              {4} = site of creator
+              {5} = source
+              {6} = database
+              {7} = speaker name
+              {8} = session code
+              {9} = session date (as a string)
+             {10} = name of token
+             {11} = token repetition code
+             {12} = recording conditions
+             {13} = archiving details
+             {14} = general comments
+        TY&gt;0: cell{4,1}
+              {1} = (1,14) array:
+                 {1}(1)  = processdate (see DATENUM() for format)
+                 {1}(2)  = datatype: 1=speech, 2=lx, 3=tx cycle lengths, 4=fx freq
+                                     5=annotations, 6=phonetic, 7=synthesiser, 8=words
+                                     9=grey-level, 10=voicing, 11=energy, 12=formants
+                                     13=energy, 14=lpc, 15=markov, 16=acoustic, 17=?,
+                                     18=geometry, 19=aerodynamics, 20=articulatory
+                                     21=source, 22=physiological, 23=rational filter
+                                     24=poles/zeros, 25=glottal flow, 26=excitation model
+                                     27=nose, 28=calibration, 29=area
+                 {1}(3)  = subtype
+                 {1}(4)  = floating: 1=float, 0=int, -1=structure+
+                 {1}(5)  = datasize in bytes
+                 {1}(6)  = framesize in units of datasize
+                 {1}(7)  = numframes
+                 {1}(8)  = length in bytes of data
+                 {1}(9)  = frameduration=1/sample_rate
+                 {1}(10) = datapresent: 0=deleted, 1=present, 2=link
+                 {1}(11) = time offset
+                 {1}(12) = windowsize
+                 {1}(13) = overlap
+                 {1}(14) = lxsync
+              {2} = processing history
+              {3} = parameter field
+              {4} = comment
+
+  FFX     cell array containing:
+              {1} = filename
+              {2} = (1,4) = [fid byte_order item_row values_read]
+              {3} = (nitem,5) = one row per item [type subtype length position byteorder]
+                                with deleted items having a negative type and zero length
+              {4} = {nitem,3} = cell: one row per item {processing parameters comment} text strings
+
+
+ The SFS (Speech Filing System) is a package mostly written by Mark Huckvale
+ and is available for UNIX and PC systems from
+ http://www.phon.ucl.ac.uk/resource/sfs/</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>	SPRINTSI Print X with SI multiplier S=(X,D,W)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_zerotrim.html" class="code" title="function z=v_zerotrim(x)">v_zerotrim</a>	ZEROTRIM Remove zero trailing rows and columns Z=(X)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)</a>
+0002 <span class="comment">%READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:  [s,fs]=v_readsfs(filename,1); % read the last speech item in a file</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Input Parameters:</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%  FF gives the name of the file or alternatively</span>
+0009 <span class="comment">%                 can be the ffx output from a previous call to v_readsfs</span>
+0010 <span class="comment">%  TY gives the type of data item required e.g.:</span>
+0011 <span class="comment">%              0 Main header, 1 Speech data, 2 Laryngograph, 5 Annotation</span>
+0012 <span class="comment">%  SUB specifies the instance of type TY in the file: 0 for first (default), -1 for last or else</span>
+0013 <span class="comment">%      it can specify the start of the processing history field as a string (e.g. 'hqtx')</span>
+0014 <span class="comment">%  MODE        specifies the following (*=default):</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%           File I/O:    'f'    Do not close file on exit</span>
+0017 <span class="comment">%                        'd'    Look in data directory: v_voicebox('dir_data')</span>
+0018 <span class="comment">%           Int Format:  'i'  Force integer data to be at least 16 bits</span>
+0019 <span class="comment">%                              (some sfs files have a header error which falsely indicates 8-bit data)</span>
+0020 <span class="comment">%           Create item: 'c' Create item if necessary</span>
+0021 <span class="comment">%           Errors:      'x' Ignore errors</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%  NMAX     maximum number of samples to read (or -1 for unlimited [default])</span>
+0024 <span class="comment">%  NSKIP    number of samples or frames to skip from start of file</span>
+0025 <span class="comment">%               (or -1 to continue from previous read when FFX is given instead of a filename [default])</span>
+0026 <span class="comment">%  XPATH    (used with 'c' option) gives the full name of the program needed to generate the data or</span>
+0027 <span class="comment">%           the directory containing it.</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% Output Parameters:</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%  Y        data matrix or cell matrix whose format depends on TY:</span>
+0032 <span class="comment">%        TY=0: empty</span>
+0033 <span class="comment">%            TY=5: cell array {nf,3} = {position length annotation}</span>
+0034 <span class="comment">%        TY=1,2: column vector containing data</span>
+0035 <span class="comment">%        TY=11: data array with one row per frame</span>
+0036 <span class="comment">%  FS       sample frequency in Hz</span>
+0037 <span class="comment">%  HD     cell matrix whose format depends on TY:</span>
+0038 <span class="comment">%        TY=0: cell{14,1}</span>
+0039 <span class="comment">%              {1} row vector</span>
+0040 <span class="comment">%                {1}(1) = serial_date (see DATENUM() for format)</span>
+0041 <span class="comment">%                {1}(2) = file_number</span>
+0042 <span class="comment">%                {1}(3) = machine_type</span>
+0043 <span class="comment">%              {2} = File type (= 'UC2')</span>
+0044 <span class="comment">%              {3} = username of creator</span>
+0045 <span class="comment">%              {4} = site of creator</span>
+0046 <span class="comment">%              {5} = source</span>
+0047 <span class="comment">%              {6} = database</span>
+0048 <span class="comment">%              {7} = speaker name</span>
+0049 <span class="comment">%              {8} = session code</span>
+0050 <span class="comment">%              {9} = session date (as a string)</span>
+0051 <span class="comment">%             {10} = name of token</span>
+0052 <span class="comment">%             {11} = token repetition code</span>
+0053 <span class="comment">%             {12} = recording conditions</span>
+0054 <span class="comment">%             {13} = archiving details</span>
+0055 <span class="comment">%             {14} = general comments</span>
+0056 <span class="comment">%        TY&gt;0: cell{4,1}</span>
+0057 <span class="comment">%              {1} = (1,14) array:</span>
+0058 <span class="comment">%                 {1}(1)  = processdate (see DATENUM() for format)</span>
+0059 <span class="comment">%                 {1}(2)  = datatype: 1=speech, 2=lx, 3=tx cycle lengths, 4=fx freq</span>
+0060 <span class="comment">%                                     5=annotations, 6=phonetic, 7=synthesiser, 8=words</span>
+0061 <span class="comment">%                                     9=grey-level, 10=voicing, 11=energy, 12=formants</span>
+0062 <span class="comment">%                                     13=energy, 14=lpc, 15=markov, 16=acoustic, 17=?,</span>
+0063 <span class="comment">%                                     18=geometry, 19=aerodynamics, 20=articulatory</span>
+0064 <span class="comment">%                                     21=source, 22=physiological, 23=rational filter</span>
+0065 <span class="comment">%                                     24=poles/zeros, 25=glottal flow, 26=excitation model</span>
+0066 <span class="comment">%                                     27=nose, 28=calibration, 29=area</span>
+0067 <span class="comment">%                 {1}(3)  = subtype</span>
+0068 <span class="comment">%                 {1}(4)  = floating: 1=float, 0=int, -1=structure+</span>
+0069 <span class="comment">%                 {1}(5)  = datasize in bytes</span>
+0070 <span class="comment">%                 {1}(6)  = framesize in units of datasize</span>
+0071 <span class="comment">%                 {1}(7)  = numframes</span>
+0072 <span class="comment">%                 {1}(8)  = length in bytes of data</span>
+0073 <span class="comment">%                 {1}(9)  = frameduration=1/sample_rate</span>
+0074 <span class="comment">%                 {1}(10) = datapresent: 0=deleted, 1=present, 2=link</span>
+0075 <span class="comment">%                 {1}(11) = time offset</span>
+0076 <span class="comment">%                 {1}(12) = windowsize</span>
+0077 <span class="comment">%                 {1}(13) = overlap</span>
+0078 <span class="comment">%                 {1}(14) = lxsync</span>
+0079 <span class="comment">%              {2} = processing history</span>
+0080 <span class="comment">%              {3} = parameter field</span>
+0081 <span class="comment">%              {4} = comment</span>
+0082 <span class="comment">%</span>
+0083 <span class="comment">%  FFX     cell array containing:</span>
+0084 <span class="comment">%              {1} = filename</span>
+0085 <span class="comment">%              {2} = (1,4) = [fid byte_order item_row values_read]</span>
+0086 <span class="comment">%              {3} = (nitem,5) = one row per item [type subtype length position byteorder]</span>
+0087 <span class="comment">%                                with deleted items having a negative type and zero length</span>
+0088 <span class="comment">%              {4} = {nitem,3} = cell: one row per item {processing parameters comment} text strings</span>
+0089 <span class="comment">%</span>
+0090 <span class="comment">%</span>
+0091 <span class="comment">% The SFS (Speech Filing System) is a package mostly written by Mark Huckvale</span>
+0092 <span class="comment">% and is available for UNIX and PC systems from</span>
+0093 <span class="comment">% http://www.phon.ucl.ac.uk/resource/sfs/</span>
+0094 
+0095 <span class="comment">% Features yet to be implemented:</span>
+0096 <span class="comment">%</span>
+0097 <span class="comment">%   (1) If no output parameters are specified, header information will be printed.</span>
+0098 <span class="comment">%   (2) following link items</span>
+0099 <span class="comment">%   (3) MODE options:</span>
+0100 <span class="comment">%                Scaling: 's'    Auto scale to make data peak = +-1</span>
+0101 <span class="comment">%                         'r'    Raw unscaled data (integer values)</span>
+0102 <span class="comment">%                         'q'    Scaled to make 0dBm0 be unity mean square</span>
+0103 <span class="comment">%                         'p' *    Scaled to make +-1 equal full scale</span>
+0104 <span class="comment">%                Errors   'r'    Return if file is non-existant</span>
+0105 
+0106 
+0107 <span class="comment">%       Copyright (C) Mike Brookes 1998</span>
+0108 <span class="comment">%      Version: $Id: v_readsfs.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0109 <span class="comment">%</span>
+0110 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0111 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0112 <span class="comment">%</span>
+0113 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0114 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0115 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0116 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0117 <span class="comment">%   (at your option) any later version.</span>
+0118 <span class="comment">%</span>
+0119 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0120 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0121 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0122 <span class="comment">%   GNU General Public License for more details.</span>
+0123 <span class="comment">%</span>
+0124 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0125 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0126 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0127 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0128 
+0129 <span class="keyword">if</span> nargin&lt;7
+0130     xpath=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'sfsbin'</span>);       <span class="comment">% path for sfs programs</span>
+0131 <span class="keyword">end</span>
+0132 EXESUF=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'sfssuffix'</span>);                                              <span class="comment">% suffix for executable O/S dependent</span>
+0133 <span class="keyword">if</span> nargin&lt;4 || ~numel(mode)
+0134     mode=<span class="string">'p'</span>;
+0135 <span class="keyword">else</span>
+0136     mode = [mode(:).' <span class="string">'p'</span>];
+0137 <span class="keyword">end</span>
+0138 <span class="keyword">if</span> nargout==0
+0139     <span class="keyword">if</span> nargin&lt;2 || ~numel(ty) || ty&lt;=0
+0140         [yy,fs,hd,ffx]=<a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>(ff,0,0,mode);
+0141         fprintf(1,<span class="string">'File: %s\n'</span>,ffx{1});
+0142         fprintf(1,<span class="string">'Database: %s, Speaker: %s, Date: %s, Token: %s\n'</span>,hd{6},hd{7},hd{9},hd{10});
+0143         lst=ffx{3};
+0144         <span class="keyword">for</span> it=2:size(lst,1);
+0145             [yy,fs,hd,ffx]=<a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>(ffx,lst(it,1),lst(it,2),mode,0);
+0146             nf=hd{1}(7);
+0147             fd=hd{1}(9);
+0148             fprintf(1,<span class="string">'%3d.%02d %ss @ %sHz (%d frames): %s\n'</span>,lst(it,1),lst(it,2),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(nf*fd),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(1/fd),nf,ffx{4}{it,1});
+0149         <span class="keyword">end</span>
+0150     <span class="keyword">end</span>
+0151 <span class="keyword">else</span>
+0152     it=[];
+0153     xfid=[];                  <span class="comment">% xfid will be non-empty second time around</span>
+0154     <span class="keyword">while</span> (isempty(it))                 <span class="comment">% may go round this loop twice</span>
+0155         <span class="keyword">if</span> ischar(ff)           <span class="comment">% If ff is a string we must read file</span>
+0156             <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0157                 ff=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),ff);
+0158             <span class="keyword">end</span>
+0159             fid=fopen(ff,<span class="string">'rb'</span>,<span class="string">'b'</span>);
+0160             <span class="keyword">if</span> fid == -1 error(<span class="string">'Can''t open %s for input'</span>,ff); <span class="keyword">end</span>
+0161             
+0162             t=fread(fid,512,<span class="string">'uchar'</span>).';
+0163             <span class="keyword">if</span> (t(1:3)~=<span class="string">'UC2'</span>)
+0164                 error(sprintf(<span class="string">'%s is not an SFS file type UC2'</span>,ff))
+0165             <span class="keyword">end</span>
+0166             itemlist = [0 1 0 0 t(512)];
+0167             proglist={};
+0168             <span class="keyword">for</span> i=2:200
+0169                 pos = ftell(fid);
+0170                 [t,n]=fread(fid,512,<span class="string">'uchar'</span>);
+0171                 <span class="keyword">if</span> (n &lt; 512) <span class="keyword">break</span>; <span class="keyword">end</span>
+0172                 mm=pow2(1,8*([0 1 2 3]+(t(512)==0)*[3 1 -1 -3]));
+0173                 itemlist(i,:)=[mm*[t(389:392) t(393:396) t(413:416)] pos t(512)];
+0174                 <span class="keyword">if</span> itemlist(i,1)&gt;=2^31
+0175                     itemlist(i,1)=itemlist(i,1)-2^32;
+0176                 <span class="keyword">end</span>
+0177                 <span class="keyword">if</span> abs(itemlist(i,1))&gt;29
+0178                     <span class="keyword">if</span> any(mode==<span class="string">'x'</span>)
+0179                         itemlist(i,:)=[];
+0180                         <span class="keyword">break</span>;
+0181                     <span class="keyword">else</span>
+0182                         error(<span class="string">'%s: %d is not a valid SFS item type'</span>,ff,itemlist(i,1));
+0183                     <span class="keyword">end</span>
+0184                 <span class="keyword">end</span>
+0185                 proglist{i,1}=char(zerotrim(t(1:256)'));
+0186                 proglist{i,2}=char(zerotrim(t(257:384)'));
+0187                 proglist{i,3}=char(zerotrim(t(437:456)'));
+0188                 seekstat=fseek(fid,itemlist(i,3),<span class="string">'cof'</span>);
+0189                 <span class="keyword">if</span> seekstat
+0190                     <span class="keyword">if</span> any(mode==<span class="string">'x'</span>)
+0191                         itemlist(i,:)=[];
+0192                         <span class="keyword">break</span>;
+0193                     <span class="keyword">else</span>
+0194                         error(<span class="string">'%s: Unexpected end of file'</span>,ff);
+0195                     <span class="keyword">end</span>
+0196                 <span class="keyword">end</span>
+0197             <span class="keyword">end</span>
+0198             ffx={ff; [fid 0 0 0]; itemlist; proglist};
+0199         <span class="keyword">else</span>
+0200             ffx=ff;
+0201             ff=ffx{1};
+0202             fid=ffx{2}(1);
+0203             <span class="keyword">if</span> fid&lt;0
+0204                 fid=fopen(ffx{1},<span class="string">'rb'</span>,char(<span class="string">'b'</span>+(ffx{2}(2)~=0)*(<span class="string">'l'</span>-<span class="string">'b'</span>)));
+0205             <span class="keyword">end</span>
+0206         <span class="keyword">end</span>
+0207         
+0208         <span class="comment">% now try to find the requested item</span>
+0209         
+0210         list=ffx{3};
+0211         <span class="keyword">if</span> nargin&lt;2 ty=0; <span class="keyword">end</span>
+0212         <span class="keyword">if</span> nargin&lt;3 sub=0; <span class="keyword">end</span>
+0213         <span class="keyword">if</span> ty&lt;0 ty=list(1,1); <span class="keyword">end</span>
+0214         <span class="keyword">if</span> ischar(sub)
+0215             lsub=length(sub);
+0216             proglist=ffx{4};
+0217             
+0218             <span class="keyword">for</span> itt=size(proglist,1):-1:2
+0219                 <span class="keyword">if</span> list(itt,1)==ty &amp; length(proglist{itt,1})&gt;=lsub
+0220                     <span class="keyword">if</span> strcmpi(sub,proglist{itt,1}(1:lsub))
+0221                         it=itt;
+0222                     <span class="keyword">end</span>
+0223                 <span class="keyword">end</span>
+0224             <span class="keyword">end</span>
+0225             <span class="keyword">if</span> (isempty(it))
+0226                 <span class="keyword">if</span> any(mode==<span class="string">'c'</span>) &amp; isempty(xfid)      <span class="comment">% try to create item if we haven't tried before</span>
+0227                     xfid=-1;
+0228                     <span class="keyword">if</span> nargin&gt;=7
+0229                         xname=xpath;
+0230                         xfid=fopen(xname);
+0231                     <span class="keyword">end</span>
+0232                     <span class="keyword">if</span> xfid&lt;0
+0233                         <span class="keyword">if</span> any(<span class="string">'/\'</span>==xpath(end))        <span class="comment">% would be better to use fullfile()</span>
+0234                             xname=[xpath sub EXESUF];
+0235                         <span class="keyword">else</span>
+0236                             xname=[xpath <span class="string">'/'</span> sub EXESUF];
+0237                         <span class="keyword">end</span>
+0238                         xfid=fopen(xname);
+0239                     <span class="keyword">end</span>
+0240                     <span class="keyword">if</span> xfid&lt;0
+0241                         error(sprintf(<span class="string">'Cannot find executable program %s'</span>,sub));
+0242                     <span class="keyword">else</span>
+0243                         fclose(xfid);
+0244                         fclose(fid); <span class="comment">% close this file</span>
+0245                         doscom=[<span class="string">'cmd /c &quot;'</span> xname <span class="string">'&quot; '</span> ffx{1}];
+0246                         <span class="comment">%fprintf(1,'Executing: %s\n',doscom);</span>
+0247                         <span class="keyword">if</span> dos(doscom) <span class="comment">% run the program</span>
+0248                             error(sprintf(<span class="string">'Error running DOS command: %s'</span>,doscom));
+0249                         <span class="keyword">end</span>
+0250                         ff=ffx{1};          <span class="comment">% force reread of header information</span>
+0251                     <span class="keyword">end</span>
+0252                 <span class="keyword">else</span>
+0253                     error(sprintf(<span class="string">'Cannot find item %d.%s in file: %s'</span>,ty,sub,ff));
+0254                 <span class="keyword">end</span>
+0255             <span class="keyword">end</span>
+0256         <span class="keyword">else</span> <span class="comment">% numeric subitem specification</span>
+0257             <span class="keyword">if</span> sub&gt;0
+0258                 it = find(list(:,1)==ty &amp; list(:,2)==sub);
+0259             <span class="keyword">elseif</span> sub==0
+0260                 it = min(find(list(:,1)==ty));
+0261             <span class="keyword">else</span>
+0262                 it = max(find(list(:,1)==ty));
+0263             <span class="keyword">end</span>
+0264             <span class="keyword">if</span> (isempty(it))
+0265                 error(sprintf(<span class="string">'Cannot find item %d.%d in file: %s'</span>,ty,sub,ff));
+0266             <span class="keyword">end</span>
+0267         <span class="keyword">end</span>
+0268     <span class="keyword">end</span> <span class="comment">% loop up to two times while (isempty(it))</span>
+0269     lit=list(it,:);
+0270     <span class="keyword">if</span> ffx{2}(3)~=it
+0271         ffx{2}(3)=it;
+0272         ffx{2}(4)=0;
+0273     <span class="keyword">end</span>
+0274     
+0275     <span class="comment">% read the selected item with the correct byte order</span>
+0276     
+0277     <span class="keyword">if</span> lit(5)~=ffx{2}(2)
+0278         fclose(fid);
+0279         fid=fopen(ffx{1},<span class="string">'rb'</span>,char(<span class="string">'b'</span>+(lit(5)~=0)*(<span class="string">'l'</span>-<span class="string">'b'</span>)));
+0280         ffx{2}(1:2)=[fid lit(5)];
+0281         <span class="keyword">if</span> fid == -1 error(sprintf(<span class="string">'Can''t open %s for input'</span>,ff)); <span class="keyword">end</span>
+0282     <span class="keyword">end</span>
+0283     fseek(fid,lit(4),<span class="string">'bof'</span>);
+0284     
+0285     
+0286     y=[];
+0287     fs=0;
+0288     <span class="keyword">if</span> ~lit(1)                              <span class="comment">% read main header</span>
+0289         mb=fread(fid,512,<span class="string">'uchar'</span>).';
+0290         <span class="keyword">if</span> nargout&gt;2
+0291             mc=[1 4; 9 28; 29 32; 37 56; 57 76; 77 96; 97 116; 117 136; 137 296; 297 304; 305 312; 313 332; 333 412];
+0292             hd=cell(14,1);
+0293             hd{1}=[pow2(1,8*([2 3 0 1]+(mb(512)==0)*[1 -1 1 -1]))*[mb(5:8); mb(33:36)].' mb(512)];
+0294             hd{1}(1)=hd{1}(1)/86400+719529;  <span class="comment">% convert date format</span>
+0295             <span class="keyword">for</span> i=1:13
+0296                 hd{i+1}=char(<a href="v_zerotrim.html" class="code" title="function z=v_zerotrim(x)">v_zerotrim</a>(mb(mc(i,1):mc(i,2))));
+0297             <span class="keyword">end</span>
+0298         <span class="keyword">end</span>
+0299     <span class="keyword">else</span>
+0300         
+0301         <span class="comment">% read the item header</span>
+0302         
+0303         hd=cell(4,1);
+0304         hdr=zeros(1,14);
+0305         
+0306         [str,n]=fread(fid,256,<span class="string">'uchar'</span>);
+0307         <span class="keyword">if</span> (n&lt;256) error(sprintf(<span class="string">'Error reading item %d.%d in file: %s'</span>,ty,sub,file)); <span class="keyword">end</span>
+0308         hd{2}=char(zerotrim(str'));
+0309         
+0310         [str,n]=fread(fid,128,<span class="string">'uchar'</span>);
+0311         <span class="keyword">if</span> (n&lt;128) error(sprintf(<span class="string">'Error reading item %d.%d in file: %s'</span>,ty,sub,file)); <span class="keyword">end</span>
+0312         hd{3}=char(zerotrim(str'));
+0313         
+0314         hdr(1:8)=fread(fid,8,<span class="string">'long'</span>);
+0315         hdr(9)=fread(fid,1,<span class="string">'double'</span>);
+0316         <span class="keyword">if</span> hdr(9) fs=1/hdr(9); <span class="keyword">end</span>
+0317         hdr(10)=fread(fid,1,<span class="string">'long'</span>);
+0318         hdr(11)=fread(fid,1,<span class="string">'double'</span>);
+0319         
+0320         [str,n]=fread(fid,20,<span class="string">'uchar'</span>);
+0321         <span class="keyword">if</span> (n&lt;20) error(sprintf(<span class="string">'Error reading item %d.%d in file: %s'</span>,ty,sub,file)); <span class="keyword">end</span>
+0322         hd{4}=char(zerotrim(str'));
+0323         
+0324         [hdr(12:14),n]=fread(fid,3,<span class="string">'long'</span>);
+0325         <span class="keyword">if</span> (n&lt;3) error(sprintf(<span class="string">'Error reading item %d.%d in file: %s'</span>,ty,sub,file)); <span class="keyword">end</span>
+0326         fseek(fid,44,<span class="string">'cof'</span>);
+0327         hd{1}=hdr;
+0328         hd{1}(1)=hd{1}(1)/86400+719529;  <span class="comment">% convert date format</span>
+0329         
+0330         <span class="comment">% now read the actual data</span>
+0331         
+0332         <span class="keyword">if</span> nargin&lt;6 nskip=ffx{2}(4);
+0333         <span class="keyword">elseif</span> nskip&lt;0 nskip=ffx{2}(4);
+0334         <span class="keyword">end</span>
+0335         
+0336         ksamples=hdr(7)-nskip;
+0337         <span class="keyword">if</span> nargin&gt;4
+0338             <span class="keyword">if</span> nmax&gt;=0
+0339                 ksamples=min(nmax,ksamples);
+0340             <span class="keyword">end</span>
+0341         <span class="keyword">end</span>
+0342         
+0343         <span class="keyword">if</span> ksamples&gt;0
+0344             ffx{2}(4)=nskip+ksamples;
+0345             fsz=hdr(6);
+0346             <span class="keyword">if</span>(hdr(10)==1)        <span class="comment">% data present</span>
+0347                 <span class="keyword">if</span>(hdr(4)&gt;=0)        <span class="comment">% non-structured</span>
+0348                     ds=hdr(5);
+0349                     <span class="keyword">if</span>(hdr(4)&gt;0)
+0350                         <span class="keyword">if</span>(ds==4) fmt=<span class="string">'float'</span>;
+0351                         <span class="keyword">elseif</span> (ds==8) fmt=<span class="string">'double'</span>;
+0352                         <span class="keyword">else</span> error(<span class="string">'error in sfs file'</span>); <span class="keyword">end</span>
+0353                     <span class="keyword">else</span>
+0354                         <span class="keyword">if</span>(ds==1 &amp; all(mode~=<span class="string">'i'</span>)) fmt=<span class="string">'uchar'</span>;
+0355                         <span class="keyword">elseif</span>(ds&lt;=2) fmt=<span class="string">'short'</span>; fsz=ceil(fsz*ds/2);
+0356                         <span class="keyword">elseif</span>(ds==4) fmt=<span class="string">'long'</span>;
+0357                         <span class="keyword">else</span> error(<span class="string">'error in sfs file'</span>); <span class="keyword">end</span>
+0358                     <span class="keyword">end</span>
+0359                     fseek(fid,lit(4)+512+nskip*fsz*ds,<span class="string">'bof'</span>);
+0360                     nd=fsz*ksamples;
+0361                     [y,n]=fread(fid,nd,fmt);
+0362                     <span class="keyword">if</span> (n&lt;nd) error(sprintf(<span class="string">'Error reading item %d.%d in file: %s'</span>,ty,sub,file)); <span class="keyword">end</span>
+0363                     y = reshape(y,fsz,ksamples)';
+0364                 <span class="keyword">else</span>
+0365                     <span class="keyword">if</span> (hdr(2)==5)
+0366                         y = cell(ksamples,3);
+0367                         <span class="keyword">for</span> ifr=1:nskip
+0368                             lf=fread(fid,1,<span class="string">'uchar'</span>);
+0369                             fseek(fid,lf,<span class="string">'cof'</span>);
+0370                         <span class="keyword">end</span>
+0371                         
+0372                         <span class="keyword">for</span> ifr=1:ksamples
+0373                             lf=fread(fid,1,<span class="string">'uchar'</span>);
+0374                             tdat=fread(fid,2,<span class="string">'long'</span>);
+0375                             y(ifr,:)={tdat(1) tdat(2) char(fread(fid,lf-9,<span class="string">'uchar'</span>).')};
+0376                             lf=fread(fid,1,<span class="string">'uchar'</span>);
+0377                         <span class="keyword">end</span>
+0378                     <span class="keyword">else</span>
+0379                         error(sprintf(<span class="string">'Cannot convert item %d.%d in file: %s'</span>,ty,sub,file));
+0380                     <span class="keyword">end</span>
+0381                 <span class="keyword">end</span>
+0382             <span class="keyword">end</span>
+0383         <span class="keyword">end</span>
+0384     <span class="keyword">end</span>
+0385     <span class="keyword">if</span> all(mode~=<span class="string">'f'</span>) fclose(fid); ffx{2}(1)=-1; <span class="keyword">end</span>
+0386 <span class="keyword">end</span>
+0387 
+0388 
+0389 
+0390 
+0391 
+0392</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_lpcconv</title>
+  <meta name="keywords" content="v_lpcconv">
+  <meta name="description" content="LPCCONV(from,to,x,y)->s convert between LPC parameter sets">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_lpcconv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_lpcconv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LPCCONV(from,to,x,y)->s convert between LPC parameter sets</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function s=v_lpcconv(from,to,x,y,np) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LPCCONV(from,to,x,y)-&gt;s convert between LPC parameter sets
+
+ The output is a string that may be passed to eval(s)
+ x and y are optionally the input and output matrices
+ and np the new value of the order p.
+ with one frame stored per row. from and to are taken
+ from the following list which also gives the column dimension:
+
+  1 ar p+1  Autoregressive coevfficients: ar(1)=1 always.
+  2 cc  p   Complex cepstral coefficients
+  3 ls  p   Line spectrum pair frequencies (normalized Hz)
+  4 zz  p   Z-plane roots
+  5 ss  p   S-plane roots (normalized Hz)
+  6 rf  p   Reflection coefficients (= -PARCOR coefs)
+  7 ao  p   Area ratios
+  8 aa p+2  Vocal tract areas: aa(p+2)=1 always
+  9 rr p+1  Autocorrelation coefficients
+ 10 dl  p   DCT of log area function
+ 11 lo  p   Log area ratios
+ 12 la p+1  Log areas: la(1)=0 always
+ 13 ra p+1  Autocorrelation coefs of inverse filter
+ 14 ff p+2  Fourier transform of forward filter (all-pole)
+ 15 pf p+2  Power spectrum of forward filter (all-pole)
+ 16 gc  p   Gain and cos(w) of each formant
+ 17 im p+1  Impulse response of forward filter</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_lpcconv(from,to,x,y,np)</a>
+0002 <span class="comment">%LPCCONV(from,to,x,y)-&gt;s convert between LPC parameter sets</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% The output is a string that may be passed to eval(s)</span>
+0005 <span class="comment">% x and y are optionally the input and output matrices</span>
+0006 <span class="comment">% and np the new value of the order p.</span>
+0007 <span class="comment">% with one frame stored per row. from and to are taken</span>
+0008 <span class="comment">% from the following list which also gives the column dimension:</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%  1 ar p+1  Autoregressive coevfficients: ar(1)=1 always.</span>
+0011 <span class="comment">%  2 cc  p   Complex cepstral coefficients</span>
+0012 <span class="comment">%  3 ls  p   Line spectrum pair frequencies (normalized Hz)</span>
+0013 <span class="comment">%  4 zz  p   Z-plane roots</span>
+0014 <span class="comment">%  5 ss  p   S-plane roots (normalized Hz)</span>
+0015 <span class="comment">%  6 rf  p   Reflection coefficients (= -PARCOR coefs)</span>
+0016 <span class="comment">%  7 ao  p   Area ratios</span>
+0017 <span class="comment">%  8 aa p+2  Vocal tract areas: aa(p+2)=1 always</span>
+0018 <span class="comment">%  9 rr p+1  Autocorrelation coefficients</span>
+0019 <span class="comment">% 10 dl  p   DCT of log area function</span>
+0020 <span class="comment">% 11 lo  p   Log area ratios</span>
+0021 <span class="comment">% 12 la p+1  Log areas: la(1)=0 always</span>
+0022 <span class="comment">% 13 ra p+1  Autocorrelation coefs of inverse filter</span>
+0023 <span class="comment">% 14 ff p+2  Fourier transform of forward filter (all-pole)</span>
+0024 <span class="comment">% 15 pf p+2  Power spectrum of forward filter (all-pole)</span>
+0025 <span class="comment">% 16 gc  p   Gain and cos(w) of each formant</span>
+0026 <span class="comment">% 17 im p+1  Impulse response of forward filter</span>
+0027 
+0028 <span class="comment">%       Copyright (C) Mike Brookes 1998</span>
+0029 <span class="comment">%      Version: $Id: v_lpcconv.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0032 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0036 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0037 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0038 <span class="comment">%   (at your option) any later version.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0041 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0042 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0043 <span class="comment">%   GNU General Public License for more details.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0046 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0047 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0048 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0049 
+0050 nm=[<span class="string">'aa'</span>;<span class="string">'am'</span>;<span class="string">'ao'</span>;<span class="string">'ar'</span>;<span class="string">'cc'</span>;<span class="string">'db'</span>;<span class="string">'dl'</span>;<span class="string">'ff'</span>;<span class="string">'fq'</span>;<span class="string">'im'</span>;<span class="string">'is'</span>;<span class="string">'la'</span>;<span class="string">'lo'</span>;<span class="string">'ls'</span>;<span class="string">'pf'</span>;<span class="string">'ra'</span>;<span class="string">'rf'</span>;<span class="string">'rr'</span>;<span class="string">'ss'</span>;<span class="string">'zz'</span>;];
+0051 nx=[<span class="keyword">...</span>
+0052       0 17  3 17 17 17  7 17  0 17 17 17 17 17 17 17 17 17 17 17;<span class="keyword">...</span>
+0053       0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0;<span class="keyword">...</span>
+0054      17 17  0 17 17 17 17 17  0 17 17 17 17 17 17 17 17 17 17 17;<span class="keyword">...</span>
+0055      17 18 17  0  5  6 17  8  0 10 17 17 17 14 15 16 17 18 20 20;<span class="keyword">...</span>
+0056       4  4  4  4  5  6  4  4  0  4  4  4  4  4 15  4  4  4  4  4;<span class="keyword">...</span>
+0057      15 15 15 15 15  0 15 15  0 15 15 15 15 15 15 15 15 15 15 15;<span class="keyword">...</span>
+0058       1  1  1  1  1  1  0  1  0  1  1  1  1  1  1  1  1  1  1  1;<span class="keyword">...</span>
+0059      15 15 15 15 15 15 15  0  0 15 15 15 15 15 15 15 15 15 15 15;<span class="keyword">...</span>
+0060      20 20 20 20 20 20 20 20  0 20 20 20 20 20 20 20 20 20 20 20;<span class="keyword">...</span>
+0061       4  4  4  4  4  4  4  4  0  0  4  4  4  4  4  4  4  4  4  4;<span class="keyword">...</span>
+0062      17 17 17 17 17 17 17 17  0 17  0 17 17 17 17 17 17 17 17 17;<span class="keyword">...</span>
+0063      17 17 17 17 17 17 17 17  0 17 17  0 17 17 17 17 17 17 17 17;<span class="keyword">...</span>
+0064      17 17 17 17 17 17 17 17  0 17 17 17  0 17 17 17 17 17 17 17;<span class="keyword">...</span>
+0065       4  4  4  4  4  4  4  4  0  4  4  4  4  0  4  4  4  4  4  4;<span class="keyword">...</span>
+0066       5 18  5  5  5  5  5  5  0  5  5  5  5  5  0  5  5 18  5  5;<span class="keyword">...</span>
+0067      15 15 15 15 15 15 15 15  0 15 15 15 15 15 15  0 15 15 15 15;<span class="keyword">...</span>
+0068       1 18  3  4  4  4  1  4  0  4 11 12 13  4  4  4  0 18  4  4;<span class="keyword">...</span>
+0069       4  2  4  4  4  4  4  4  0  4  4  4  4  4  4  4  4  0  4  4;<span class="keyword">...</span>
+0070      20 20 20 20 20 20 20 20  0 20 20 20 20 20 20 20 20 20  0 20;<span class="keyword">...</span>
+0071       4  4  4  4  5  4  4  4  0  4  4  4  4  4  4  4  4  4 19  0;<span class="keyword">...</span>
+0072 ];
+0073 na=size(nm,1);
+0074 b=256*nm(:,1)+nm(:,2);
+0075 jf=find(b==256*from(1)+from(2));
+0076 jt=find(b==256*to(1)+to(2));
+0077 <span class="keyword">if</span> length([jf jt])~=2
+0078    [x,idx]=sort(b);
+0079   error(sprintf(<span class="string">'lpcxx2yy types are: %s'</span>,[nm(idx,:)';<span class="string">' '</span>*ones(1,na)]));
+0080 <span class="keyword">end</span>
+0081 <span class="keyword">if</span> nargin&lt;3 s=nm(jf,:); <span class="keyword">else</span> s=x; <span class="keyword">end</span>
+0082 <span class="keyword">while</span> jf ~= jt
+0083   jn=nx(jf,jt);
+0084   <span class="keyword">if</span> jn==0
+0085      error(sprintf(<span class="string">'cannot convert between %s and %s'</span>,nm(jf,:),nm(jt,:)));
+0086  <span class="keyword">end</span>
+0087   s=sprintf(<span class="string">'lpc%s2%s(%s)'</span>,nm(jf,:),nm(jn,:),s);
+0088   jf=jn;
+0089   <span class="keyword">end</span>
+0090 <span class="keyword">if</span> nargin&lt;4 sn=nm(jt,:); <span class="keyword">else</span> sn=y; <span class="keyword">end</span>
+0091 s=sprintf(<span class="string">'%s=%s;'</span>,sn,s);
+0092     
+0093 
+0094</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

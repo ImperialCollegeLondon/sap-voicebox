@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_texthvc</title>
+  <meta name="keywords" content="v_texthvc">
+  <meta name="description" content="TEXTHVC - write text on graph with specified alignment and colour">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_texthvc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_texthvc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>TEXTHVC - write text on graph with specified alignment and colour</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function h=v_texthvc(x,y,t,p,q,r) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">TEXTHVC - write text on graph with specified alignment and colour
+
+Usage: (1) v_texthvc(x,y,'Hello','mlr')          % align centre-baseline colour=red
+       (2) v_texthvc(x,y,'\alpha','ml',[1 0 0])  % align centre-baseline colour=red
+       (3) v_texthvc(x,y,'Hello','Mlr')          % x position is normalized to (0,1)
+       (4) v_texthvc([x k],y,'Hello','mlr')      % add k*axis-width onto the x position
+
+ Inputs:  x  x-position of text in graph coordinates (or normalized see below)
+             alternatively x=[x0 k] positions at x0 + k*axis-width
+          y  y-position of text in graph coordinates (or normalized see below)
+             alternatively y=[y0 k] positions at y0 + k*axis-height
+          t  text string to write on graph. Use \alpha for greek or x_1 for subscript
+          p  3-character text string, 'hvc' specifying:
+               horizontal reference point, h: l=left, c or m=middle, r=right
+               vertical reference point,   v: t=top, p=cap, c or m=middle, l=baseline, b=bottom
+               colour,                     c: rgbcmykw
+          q  alterntive colour specification as [r g b] each in range 0 to 1
+
+ If the horizontal or vertical reference point is given as a capital
+ letter, the corresponding position is normalized to the axis range
+ and should be in the range 0 to 1.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_glotlf.html" class="code" title="function [u,q]=v_glotlf(d,t,p)">v_glotlf</a>	GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	Estimate multiple psychometric functions</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function h=v_texthvc(x,y,t,p,q,r)</a>
+0002 <span class="comment">%TEXTHVC - write text on graph with specified alignment and colour</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%Usage: (1) v_texthvc(x,y,'Hello','mlr')          % align centre-baseline colour=red</span>
+0005 <span class="comment">%       (2) v_texthvc(x,y,'\alpha','ml',[1 0 0])  % align centre-baseline colour=red</span>
+0006 <span class="comment">%       (3) v_texthvc(x,y,'Hello','Mlr')          % x position is normalized to (0,1)</span>
+0007 <span class="comment">%       (4) v_texthvc([x k],y,'Hello','mlr')      % add k*axis-width onto the x position</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs:  x  x-position of text in graph coordinates (or normalized see below)</span>
+0010 <span class="comment">%             alternatively x=[x0 k] positions at x0 + k*axis-width</span>
+0011 <span class="comment">%          y  y-position of text in graph coordinates (or normalized see below)</span>
+0012 <span class="comment">%             alternatively y=[y0 k] positions at y0 + k*axis-height</span>
+0013 <span class="comment">%          t  text string to write on graph. Use \alpha for greek or x_1 for subscript</span>
+0014 <span class="comment">%          p  3-character text string, 'hvc' specifying:</span>
+0015 <span class="comment">%               horizontal reference point, h: l=left, c or m=middle, r=right</span>
+0016 <span class="comment">%               vertical reference point,   v: t=top, p=cap, c or m=middle, l=baseline, b=bottom</span>
+0017 <span class="comment">%               colour,                     c: rgbcmykw</span>
+0018 <span class="comment">%          q  alterntive colour specification as [r g b] each in range 0 to 1</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% If the horizontal or vertical reference point is given as a capital</span>
+0021 <span class="comment">% letter, the corresponding position is normalized to the axis range</span>
+0022 <span class="comment">% and should be in the range 0 to 1.</span>
+0023 
+0024 <span class="comment">%      Copyright (C) Mike Brookes 2014</span>
+0025 <span class="comment">%      Version: $Id: v_texthvc.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0028 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0031 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0032 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0033 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0034 <span class="comment">%   (at your option) any later version.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0037 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0038 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0039 <span class="comment">%   GNU General Public License for more details.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0042 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0043 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0044 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0045 
+0046 <span class="keyword">if</span> nargin&lt;3
+0047     error(<span class="string">'&lt;3 arguments'</span>);
+0048 <span class="keyword">elseif</span> nargin&gt;6
+0049     error(<span class="string">'&gt;6 arguments'</span>);
+0050 <span class="keyword">end</span>
+0051 
+0052 <span class="keyword">switch</span> nargin
+0053     <span class="keyword">case</span> 3
+0054         h=text(x,y,char(t));
+0055     <span class="keyword">case</span> 6
+0056         <span class="comment">% for compatibility with old version</span>
+0057         h=text(x,y,char(t),<span class="string">'HorizontalAlignment'</span>,p,<span class="string">'VerticalAlignment'</span>,q,<span class="string">'Color'</span>,r);
+0058     <span class="keyword">otherwise</span>
+0059         <span class="keyword">if</span> nargin==5
+0060             r=q; <span class="comment">% color specification</span>
+0061         <span class="keyword">elseif</span> nargin==4
+0062             r=p(3:end);  <span class="comment">% colour is at end of spec string</span>
+0063         <span class="keyword">end</span>
+0064         ix=find(lower(p(1))==<span class="string">'lcmr'</span>,1);
+0065         <span class="keyword">if</span> isempty(ix)
+0066             error(<span class="string">'invalid horizontal spec'</span>);
+0067         <span class="keyword">end</span>
+0068         iy=find(lower(p(2))==<span class="string">'tpcmlb'</span>,1);
+0069         <span class="keyword">if</span> isempty(iy)
+0070             error(<span class="string">'invalid vertical spec'</span>);
+0071         <span class="keyword">end</span>
+0072         vx={<span class="string">'left'</span>, <span class="string">'center'</span>, <span class="string">'center'</span>, <span class="string">'right'</span>};
+0073         vy={<span class="string">'top'</span>, <span class="string">'cap'</span>, <span class="string">'middle'</span>, <span class="string">'middle'</span>, <span class="string">'baseline'</span>, <span class="string">'bottom'</span>};
+0074         <span class="keyword">if</span> numel(x)&gt;1
+0075             <span class="keyword">if</span> strcmpi(get(gca,<span class="string">'xscale'</span>),<span class="string">'log'</span>)
+0076                 x=exp(log(x(1))+log(get(gca,<span class="string">'xlim'</span>))*[-1; 1]*x(2));
+0077             <span class="keyword">else</span>
+0078                 x=x(1)+get(gca,<span class="string">'xlim'</span>)*[-1; 1]*x(2);
+0079             <span class="keyword">end</span>
+0080         <span class="keyword">else</span>
+0081             <span class="keyword">if</span> p(1)==upper(p(1))
+0082                 <span class="keyword">if</span> strcmpi(get(gca,<span class="string">'xscale'</span>),<span class="string">'log'</span>)
+0083                     x=exp(log(get(gca,<span class="string">'xlim'</span>))*[1-x; x]);
+0084                 <span class="keyword">else</span>
+0085                     x=get(gca,<span class="string">'xlim'</span>)*[1-x; x];
+0086                 <span class="keyword">end</span>
+0087             <span class="keyword">end</span>
+0088         <span class="keyword">end</span>
+0089         <span class="keyword">if</span> numel(y)&gt;1
+0090             <span class="keyword">if</span> strcmpi(get(gca,<span class="string">'yscale'</span>),<span class="string">'log'</span>)
+0091                 y=exp(log(y(1))+log(get(gca,<span class="string">'ylim'</span>))*[-1; 1]*y(2));
+0092             <span class="keyword">else</span>
+0093                 y=y(1)+get(gca,<span class="string">'ylim'</span>)*[-1; 1]*y(2);
+0094             <span class="keyword">end</span>
+0095         <span class="keyword">else</span>
+0096             <span class="keyword">if</span> p(2)==upper(p(2))
+0097                 <span class="keyword">if</span> strcmpi(get(gca,<span class="string">'yscale'</span>),<span class="string">'log'</span>)
+0098                     y=exp(log(get(gca,<span class="string">'ylim'</span>))*[1-y; y])
+0099                 <span class="keyword">else</span>
+0100                     y=get(gca,<span class="string">'ylim'</span>)*[1-y; y];
+0101                 <span class="keyword">end</span>
+0102             <span class="keyword">end</span>
+0103         <span class="keyword">end</span>
+0104         h=text(x,y,char(t),<span class="string">'HorizontalAlignment'</span>,vx{ix},<span class="string">'VerticalAlignment'</span>,vy{iy},<span class="string">'Color'</span>,r);
+0105 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

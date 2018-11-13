@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_lpccovar</title>
+  <meta name="keywords" content="v_lpccovar">
+  <meta name="description" content="LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_lpccovar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_lpccovar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ar,e,dc]=v_lpccovar(s,p,t,w) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)
+
+  Inputs:  S(NS)    is the input signal
+           P        is the order (default: 12)
+           T(NF,:)  specifies the frames size details: each row specifies one frame
+                    T can be a cell array if rows have unequal numbers of values
+                       T(:,1) gives the start of the analysis interval: must be &gt;P
+                       T(:,2) gives the end of the anaylsis interval [default: t(:+1,1)-1]
+                       subsequent pairs can be used to specify multiple disjoint segments
+                    If T is omitted, T(1,1)=P+1, T(1,2)=NS;
+                    The elements of t need not be integers.
+           W(NS)    The error at each sample is weighted by W^2 (default: 1)
+
+ Outputs:  AR(NF,P+1)  are the AR coefficients with AR(:,1) = 1
+           E(NF,4)     each row is [Er Es Pr Ps] and gives the energy (&quot;E&quot;) and power (&quot;P&quot;)
+                       in the input signal window (&quot;s&quot;) and in the LPC residual &quot;r&quot;.
+                       The 'gain' of the LPC filter is g=sqrt(Pr); x=filter(g,ar,randn(:,1)) will
+                       generate noise with approximately the same power spectrum as the input s.
+           DC          is the DC component of the signal S. If this output is included,
+                       the LPC equations are modified to include a DC offset.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_lpcar2ff.html" class="code" title="function [ff,f]=v_lpcar2ff(ar,np)">v_lpcar2ff</a>	LPCAR2FF LPC: Convert AR coefs to complex spectrum FF=(AR,NP)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ar,e,dc]=v_lpccovar(s,p,t,w)</a>
+0002 <span class="comment">%LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  S(NS)    is the input signal</span>
+0005 <span class="comment">%           P        is the order (default: 12)</span>
+0006 <span class="comment">%           T(NF,:)  specifies the frames size details: each row specifies one frame</span>
+0007 <span class="comment">%                    T can be a cell array if rows have unequal numbers of values</span>
+0008 <span class="comment">%                       T(:,1) gives the start of the analysis interval: must be &gt;P</span>
+0009 <span class="comment">%                       T(:,2) gives the end of the anaylsis interval [default: t(:+1,1)-1]</span>
+0010 <span class="comment">%                       subsequent pairs can be used to specify multiple disjoint segments</span>
+0011 <span class="comment">%                    If T is omitted, T(1,1)=P+1, T(1,2)=NS;</span>
+0012 <span class="comment">%                    The elements of t need not be integers.</span>
+0013 <span class="comment">%           W(NS)    The error at each sample is weighted by W^2 (default: 1)</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Outputs:  AR(NF,P+1)  are the AR coefficients with AR(:,1) = 1</span>
+0016 <span class="comment">%           E(NF,4)     each row is [Er Es Pr Ps] and gives the energy (&quot;E&quot;) and power (&quot;P&quot;)</span>
+0017 <span class="comment">%                       in the input signal window (&quot;s&quot;) and in the LPC residual &quot;r&quot;.</span>
+0018 <span class="comment">%                       The 'gain' of the LPC filter is g=sqrt(Pr); x=filter(g,ar,randn(:,1)) will</span>
+0019 <span class="comment">%                       generate noise with approximately the same power spectrum as the input s.</span>
+0020 <span class="comment">%           DC          is the DC component of the signal S. If this output is included,</span>
+0021 <span class="comment">%                       the LPC equations are modified to include a DC offset.</span>
+0022 
+0023 <span class="comment">% Notes:</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% (1a) If no DC output is specified AR(j,:)*S(n-(0:P)) ~ 0 or, equivalently,</span>
+0026 <span class="comment">%      S(n) ~ -AR(j,2:P)*S(n-(1:P)) where T(j,1) &lt;= n &lt;= T(j,2).</span>
+0027 <span class="comment">% (1b) If a DC output is specified AR(j,:)*(S(n-(0:P))-DC) ~ 0 or, equivalently,</span>
+0028 <span class="comment">%      S(n) ~ DC - AR(j,2:P)*(S(n-(1:P))-DC) = DC*sum(AR,j,:)) - AR(j,2:P)*S(n-(1:P))</span>
+0029 <span class="comment">%      where T(j,1) &lt;= n &lt;= T(j,2).</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% (2) For speech processing P should be at least 2*F*L/C where F is the sampling</span>
+0032 <span class="comment">%     frequency, L the vocal tract length and C the speed of sound. For a typical</span>
+0033 <span class="comment">%     male (l=17 cm) this gives f/1000.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% (3) Each analysis frame should contain at least 2P samples. If note (1) is followed</span>
+0036 <span class="comment">%     this implies at least 2 ms of speech signal per frame.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% (4) It can be advantageous to restrict the analysis regions to time intervals</span>
+0039 <span class="comment">%     when the glottis is closed (closed-phase analysis). This can be achieved by</span>
+0040 <span class="comment">%     setting the T input parameter appropriately. If the closed-phase is shorter than</span>
+0041 <span class="comment">%     2 ms then two or more successive closed-phases should be used by defining 4 or more</span>
+0042 <span class="comment">%     elements in the corresponding row of T.</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% (5) A previous version of this routine allowed T() to have a single row which would</span>
+0045 <span class="comment">%     be replicated for the entire file length. This has been removed because it gave rise</span>
+0046 <span class="comment">%     to an ambiguity.</span>
+0047 
+0048 <span class="comment">%  Bugs: should really detect a singular matrix and reduce the order accordingly</span>
+0049 
+0050 <span class="comment">%       Copyright (C) Mike Brookes 1995</span>
+0051 <span class="comment">%      Version: $Id: v_lpccovar.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0054 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0057 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0058 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0059 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0060 <span class="comment">%   (at your option) any later version.</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0063 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0064 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0065 <span class="comment">%   GNU General Public License for more details.</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0068 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0069 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0070 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0071 s = s(:); <span class="comment">% make it a column vector</span>
+0072 <span class="keyword">if</span> nargin &lt; 2 p=12; <span class="keyword">end</span>;
+0073 <span class="keyword">if</span> nargin &lt; 3 t=[p+1 length(s)]; <span class="keyword">end</span>;
+0074 wq = nargin&gt;3;
+0075 [nf,ng]=size(t);
+0076 <span class="keyword">if</span> iscell(t)
+0077     t{nf+1}=length(s)+1;
+0078 <span class="keyword">else</span>
+0079     <span class="keyword">if</span> rem(ng,2)
+0080         t(:,end+1)=[t(2:nf,1)-1; length(s)];
+0081     <span class="keyword">end</span>
+0082 <span class="keyword">end</span>
+0083 ar=zeros(nf,p+1);
+0084 ar(:,1)=1;
+0085 e=zeros(nf,4);
+0086 dc=zeros(nf,1);
+0087 d0=nargout &gt;2;
+0088 rs=(1:p);
+0089 <span class="keyword">for</span> jf=1:nf
+0090     <span class="keyword">if</span> iscell(t)
+0091         tj=t{jf};
+0092         <span class="keyword">if</span> rem(length(tj),2)
+0093             tj(end+1)=t{jf+1}(1)-1;
+0094         <span class="keyword">end</span>
+0095     <span class="keyword">else</span>
+0096         tj=t(jf,:);
+0097     <span class="keyword">end</span>
+0098 
+0099     ta = ceil(tj(1));
+0100     tb = floor(tj(2));
+0101     cs = (ta:tb).';
+0102     <span class="keyword">for</span> js=3:2:length(tj)
+0103         ta = ceil(tj(js));
+0104         tb = floor(tj(js+1));
+0105         cs = [cs; (ta:tb).'];
+0106     <span class="keyword">end</span>
+0107     <span class="comment">%disp(cs([logical(1); (cs(2:end-1)~=cs(1:end-2)+1)|(cs(2:end-1)~=cs(3:end)-1); logical(1)])');</span>
+0108     nc = length(cs);
+0109     pp=min(p,nc-d0);
+0110     dm=zeros(nc,pp);    <span class="comment">% predefine shape</span>
+0111     dm(:) = s(cs(:,ones(1,pp))-rs(ones(nc,1),1:pp));
+0112     <span class="keyword">if</span> nargout&gt;2
+0113         <span class="keyword">if</span> wq
+0114             dm = [ones(nc,1) dm].*w(cs(:,ones(1,1+pp)));
+0115             sc=(s(cs).*w(cs));
+0116             aa = (dm\sc).';
+0117         <span class="keyword">else</span>
+0118             dm = [ones(nc,1) dm];
+0119             sc=s(cs);
+0120             aa = (dm\sc).';
+0121         <span class="keyword">end</span>
+0122         ar(jf,2:pp+1) = -aa(2:pp+1);
+0123         e(jf,1)=sc.'*(sc - dm*aa.');
+0124         e(jf,2)=sc.'*sc;
+0125         e(jf,3:4)=e(jf,1:2)/nc;
+0126         dc(jf)=aa(1)/sum(ar(jf,:));
+0127     <span class="keyword">else</span>
+0128         <span class="keyword">if</span> wq
+0129             dm = dm.*w(cs(:,ones(1,pp)));
+0130             sc=(s(cs).*w(cs));
+0131             aa = (dm\sc).';
+0132         <span class="keyword">else</span>
+0133             sc=s(cs);
+0134             aa = (dm\sc).';
+0135         <span class="keyword">end</span>;
+0136         ar(jf,2:pp+1) = -aa;
+0137         <span class="keyword">if</span> nargout~=1
+0138             e(jf,1)=real(sc'*(sc - dm*aa.'));
+0139             e(jf,2)=real(sc'*sc);
+0140             e(jf,3:4)=e(jf,1:2)/nc;
+0141         <span class="keyword">end</span>
+0142     <span class="keyword">end</span>
+0143 <span class="keyword">end</span>
+0144 <span class="keyword">if</span> ~nargout
+0145     <a href="v_lpcar2ff.html" class="code" title="function [ff,f]=v_lpcar2ff(ar,np)">v_lpcar2ff</a>(repmat(sqrt(e(:,3).^(-1)),1,p+1).*ar,255);
+0146     ylabel(<span class="string">'Power (dB)'</span>);
+0147 <span class="keyword">end</span>
+0148</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

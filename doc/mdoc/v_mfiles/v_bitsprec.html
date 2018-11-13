@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_bitsprec</title>
+  <meta name="keywords" content="v_bitsprec">
+  <meta name="description" content="BITSPREC round values to a specified fixed or floating precision (X,N,MODE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_bitsprec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_bitsprec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>BITSPREC round values to a specified fixed or floating precision (X,N,MODE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y=v_bitsprec(x,n,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">BITSPREC round values to a specified fixed or floating precision (X,N,MODE)
+
+ mode is of the form 'uvw' where:
+     u: s - n significant bits (default) 
+        f - fixed point: n bits after binary point
+     v: n - round to nearest (default)
+        p - round towards +infinity
+        m - round towards -infinity
+        z - round towards zero
+ w is only needed if v=n in which case it dictates what to
+        do if x is min-way between two rounded values:
+     w: p,m - as above
+        e - round to nearest even number (default)
+        o - round to nearest odd number
+        a - round away from zero
+ mode='*ne' and '*no' are convergent rounding and introduce
+ no DC offset into the result so long as even and odd integer parts are
+ equally common.
+
+ Examples of y=v_bitsprec(x,0,'***'):
+
+      x    fp-  fm-  fz-  fne  fno  fnp  fnm  fna 
+   
+     2.5    3    2    2    2    3    3    2    3
+     1.5    2    1    1    2    1    2    1    2
+     1.1    2    1    1    1    1    1    1    1
+     1.0    1    1    1    1    1    1    1    1
+     0.9    1    0    0    1    1    1    1    1
+     0.5    1    0    0    0    1    1    0    1
+     0.1    1    0    0    0    0    0    0    0
+    -0.1    0   -1    0    0    0    0    0    0
+    -0.5    0   -1    0    0   -1    0   -1   -1
+    -0.9    0   -1    0   -1   -1   -1   -1   -1
+    -1.5   -1   -2   -1   -2   -1   -1   -2   -2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_bitsprec(x,n,mode)</a>
+0002 <span class="comment">%BITSPREC round values to a specified fixed or floating precision (X,N,MODE)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% mode is of the form 'uvw' where:</span>
+0005 <span class="comment">%     u: s - n significant bits (default)</span>
+0006 <span class="comment">%        f - fixed point: n bits after binary point</span>
+0007 <span class="comment">%     v: n - round to nearest (default)</span>
+0008 <span class="comment">%        p - round towards +infinity</span>
+0009 <span class="comment">%        m - round towards -infinity</span>
+0010 <span class="comment">%        z - round towards zero</span>
+0011 <span class="comment">% w is only needed if v=n in which case it dictates what to</span>
+0012 <span class="comment">%        do if x is min-way between two rounded values:</span>
+0013 <span class="comment">%     w: p,m - as above</span>
+0014 <span class="comment">%        e - round to nearest even number (default)</span>
+0015 <span class="comment">%        o - round to nearest odd number</span>
+0016 <span class="comment">%        a - round away from zero</span>
+0017 <span class="comment">% mode='*ne' and '*no' are convergent rounding and introduce</span>
+0018 <span class="comment">% no DC offset into the result so long as even and odd integer parts are</span>
+0019 <span class="comment">% equally common.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Examples of y=v_bitsprec(x,0,'***'):</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%      x    fp-  fm-  fz-  fne  fno  fnp  fnm  fna</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%     2.5    3    2    2    2    3    3    2    3</span>
+0026 <span class="comment">%     1.5    2    1    1    2    1    2    1    2</span>
+0027 <span class="comment">%     1.1    2    1    1    1    1    1    1    1</span>
+0028 <span class="comment">%     1.0    1    1    1    1    1    1    1    1</span>
+0029 <span class="comment">%     0.9    1    0    0    1    1    1    1    1</span>
+0030 <span class="comment">%     0.5    1    0    0    0    1    1    0    1</span>
+0031 <span class="comment">%     0.1    1    0    0    0    0    0    0    0</span>
+0032 <span class="comment">%    -0.1    0   -1    0    0    0    0    0    0</span>
+0033 <span class="comment">%    -0.5    0   -1    0    0   -1    0   -1   -1</span>
+0034 <span class="comment">%    -0.9    0   -1    0   -1   -1   -1   -1   -1</span>
+0035 <span class="comment">%    -1.5   -1   -2   -1   -2   -1   -1   -2   -2</span>
+0036 
+0037 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0038 <span class="comment">%      Version: $Id: v_bitsprec.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0041 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0045 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0046 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0047 <span class="comment">%   (at your option) any later version.</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0050 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0051 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0052 <span class="comment">%   GNU General Public License for more details.</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0055 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0056 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0057 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0058 
+0059 <span class="keyword">if</span> nargin&lt;3
+0060    mode=<span class="string">'sne'</span>;
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span> mode(1)==<span class="string">'f'</span>
+0063    e=0;
+0064 <span class="keyword">else</span>
+0065    [x,e]=log2(x);
+0066 <span class="keyword">end</span>
+0067 <span class="keyword">switch</span> mode(2)
+0068 <span class="keyword">case</span> <span class="string">'p'</span>
+0069    y=pow2(ceil(pow2(x,n)),e-n);
+0070 <span class="keyword">case</span> <span class="string">'m'</span>
+0071    y=pow2(floor(pow2(x,n)),e-n);
+0072 <span class="keyword">case</span> <span class="string">'z'</span>
+0073    y=pow2(fix(pow2(x,n)),e-n);
+0074 <span class="keyword">otherwise</span>
+0075    <span class="keyword">switch</span> mode(3)
+0076    <span class="keyword">case</span> <span class="string">'a'</span>
+0077       y=pow2(round(pow2(x,n)),e-n);
+0078    <span class="keyword">case</span> <span class="string">'p'</span>
+0079       y=pow2(floor(pow2(x,n)+0.5),e-n);
+0080    <span class="keyword">case</span> <span class="string">'m'</span>
+0081       y=pow2(ceil(pow2(x,n)-0.5),e-n);
+0082    <span class="keyword">otherwise</span>
+0083       z=pow2(x,n-1);
+0084       <span class="keyword">switch</span> mode(3)
+0085       <span class="keyword">case</span> <span class="string">'e'</span>
+0086          y=pow2(floor(pow2(x,n)+0.5)-floor(z+0.75)+ceil(z-0.25),e-n);
+0087       <span class="keyword">case</span> <span class="string">'o'</span>
+0088          y=pow2(ceil(pow2(x,n)-0.5)+floor(z+0.75)-ceil(z-0.25),e-n);
+0089       <span class="keyword">end</span>      
+0090    <span class="keyword">end</span>
+0091 <span class="keyword">end</span>
+0092</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

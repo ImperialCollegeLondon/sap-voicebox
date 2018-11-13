@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_winenvar</title>
+  <meta name="keywords" content="v_winenvar">
+  <meta name="description" content="WINENVAR get windows environment variable [D]=(N)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_winenvar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_winenvar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>WINENVAR get windows environment variable [D]=(N)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function d=v_winenvar(n) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">WINENVAR get windows environment variable [D]=(N)
+
+ Inputs: N  name of environment variable (e.g. 'temp')
+
+ Outputs: D  value of variable or [] is non-existant
+
+ Notes: (1) This is WINDOWS specific and needs to be fixed to work on UNIX
+        (2) The search is case insensitive (like most of WINDOWS).
+
+ Examples: (1) Open a temporary text file:
+               d=winenar('temp'); fid=fopen(fullfile(d,'temp.txt'),'wt');</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function d=v_winenvar(n)</a>
+0002 <span class="comment">%WINENVAR get windows environment variable [D]=(N)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: N  name of environment variable (e.g. 'temp')</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Outputs: D  value of variable or [] is non-existant</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Notes: (1) This is WINDOWS specific and needs to be fixed to work on UNIX</span>
+0009 <span class="comment">%        (2) The search is case insensitive (like most of WINDOWS).</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Examples: (1) Open a temporary text file:</span>
+0012 <span class="comment">%               d=winenar('temp'); fid=fopen(fullfile(d,'temp.txt'),'wt');</span>
+0013 
+0014 <span class="comment">%   Copyright (c) 2005 Mike Brookes,  mike.brookes@ic.ac.uk</span>
+0015 <span class="comment">%      Version: $Id: v_winenvar.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0018 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0021 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0022 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0023 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0024 <span class="comment">%   (at your option) any later version.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0027 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0028 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0029 <span class="comment">%   GNU General Public License for more details.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0032 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0033 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 p=[<span class="string">'%'</span>,n,<span class="string">'%'</span>];
+0036 [s,d]=system([<span class="string">'echo '</span>,p]);
+0037 <span class="keyword">while</span> d(end)&lt;=<span class="string">' '</span>;
+0038     d(end)=[];
+0039 <span class="keyword">end</span>
+0040 <span class="keyword">if</span> strcmp(d,p)
+0041     d=[];
+0042 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

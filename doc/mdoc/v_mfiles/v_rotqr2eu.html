@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_rotqr2eu</title>
+  <meta name="keywords" content="v_rotqr2eu">
+  <meta name="description" content="ROTQR2EQ converts a real unit quaternion into the corresponding euler angles">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_rotqr2eu.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_rotqr2eu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ROTQR2EQ converts a real unit quaternion into the corresponding euler angles</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function e=v_rotqr2eu(m,q) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">ROTQR2EQ converts a real unit quaternion into the corresponding euler angles
+ Inputs: 
+
+     M(1,3)   a string of 3 characters from the set {'x','y','z'}
+              or, equivalently, a vector whose elements are all 1, 2 or 3
+     Q(3,3)   3x3 v_rotation matrix
+
+ Outputs:
+
+     E(3,1)   3 euler angles
+
+ The string M specifies the axes about which the rotations are performed.
+ You cannot have the same axis in adjacent positions and so there are 12
+ possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>	ATAN2SC    sin and cosine of atan(y/x) [S,C,R,T]=(Y,X)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function e=v_rotqr2eu(m,q)</a>
+0002 <span class="comment">%ROTQR2EQ converts a real unit quaternion into the corresponding euler angles</span>
+0003 <span class="comment">% Inputs:</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%     M(1,3)   a string of 3 characters from the set {'x','y','z'}</span>
+0006 <span class="comment">%              or, equivalently, a vector whose elements are all 1, 2 or 3</span>
+0007 <span class="comment">%     Q(3,3)   3x3 v_rotation matrix</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs:</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%     E(3,1)   3 euler angles</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% The string M specifies the axes about which the rotations are performed.</span>
+0014 <span class="comment">% You cannot have the same axis in adjacent positions and so there are 12</span>
+0015 <span class="comment">% possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;.</span>
+0016 
+0017 <span class="comment">% Suggestions:</span>
+0018 <span class="comment">%   (1) Might be quicker to convert to a matrix and do it in that domain</span>
+0019 
+0020 <span class="comment">%</span>
+0021 <span class="comment">%      Copyright (C) Mike Brookes 2007</span>
+0022 <span class="comment">%      Version: $Id: v_rotqr2eu.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0025 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0028 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0029 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0030 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0031 <span class="comment">%   (at your option) any later version.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0034 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0035 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0036 <span class="comment">%   GNU General Public License for more details.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0039 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0040 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0042 
+0043 <span class="comment">% test: ea=2*pi*(rand(3,1)-0.5);m='yxy';q=v_roteu2qr(m,ea); e=v_rotqr2eu(m,q);[[ea*180/pi; 0] [e*180/pi; 0] q v_roteu2qr(m,e)]</span>
+0044 <span class="comment">% redundancy: If m(1)==m(3) then q= [a b c] and [a+-pi -b c+-pi] are equivalent. The output always has b&gt;=0</span>
+0045 <span class="comment">%             If m(1) ~=m(3) then q=[a b c] and [a+-pi pi-b c+-pi] are equivalent. The output always has |b|&lt;=pi/2</span>
+0046 <span class="comment">% all angles are in the range +-pi</span>
+0047 e=zeros(3,1);
+0048 y=[2 4 1 3 1 3 2 4; 3 2 1 4 1 4 3 2; 3 4 2 1 1 2 4 3];
+0049 <span class="keyword">if</span> ischar(m)
+0050     m=lower(m)-<span class="string">'w'</span>;
+0051 <span class="keyword">end</span>
+0052 <span class="keyword">if</span> any(abs(m-2)&gt;1), error(<span class="string">'Euler axis must be x,y or z'</span>); <span class="keyword">end</span>
+0053 u=m(1)+1;
+0054 v=m(2)+1;
+0055 w=m(3)+1;
+0056 <span class="comment">% first we rotate around w to null element (v,u) with respect to element (!vw,u) of v_rotation matrix</span>
+0057 g=2*mod(u-v,3)-3;
+0058 ss=(2*mod(v-w,3)-3)*(q(v)*q(u)+g*q(9-u-v)*q(1));
+0059 <span class="keyword">if</span> u==w                 <span class="comment">% if u==w then (!vw,u) is off-diagonal</span>
+0060     cc=q(9-v-w)*q(u)-g*q(v+w-u)*q(1);
+0061 <span class="keyword">else</span>               <span class="comment">% if u~=w then (!vw,u)=(u,u) is on diagonal</span>
+0062     cc=q(1)^2+q(u)^2-0.5;
+0063 <span class="keyword">end</span>
+0064 [ss,cc,rr,t]=<a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>(ss,cc);
+0065 <span class="keyword">if</span> cc&gt;0
+0066     c=sqrt(0.5*(1+cc));
+0067     s=0.5*ss/c;
+0068 <span class="keyword">else</span>
+0069     s=sqrt(0.5*(1-cc));
+0070     c=0.5*ss/s;
+0071 <span class="keyword">end</span>
+0072 <span class="comment">% s=sin(t/2);</span>
+0073 <span class="comment">% c=cos(t/2);</span>
+0074 x=y(w-1,:);
+0075 r=zeros(4,1);
+0076 r(x(1:2))=q(x(3:4));
+0077 r(x(5:6))=-q(x(7:8));
+0078 q2=c*q-s*r;
+0079 <span class="comment">% next we rotate around v to null element (!uv,u) with repect to element (u,u) of v_rotation matrix</span>
+0080 ss2=-g*q2(9-u-v)*q2(u)+q2(v)*q2(1);     <span class="comment">% always off-diagonal</span>
+0081 cc2=q2(1)^2+q2(u)^2-0.5;     <span class="comment">% always on-diagonal</span>
+0082 [s2,c2,rr,t2]=<a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>(ss2,cc2);
+0083 x2=y(v-1,:);
+0084 r2=zeros(4,1);
+0085 r2(x2(1:2))=q2(x2(3:4));
+0086 r2(x2(5:6))=-q2(x2(7:8));
+0087 q3=c2*q2-s2*r2;
+0088 <span class="keyword">if</span> q3(1)&lt;0, q3=-q3; <span class="keyword">end</span>
+0089 t3=2*atan2(q3(u),q3(1));
+0090 e(1)=t3;
+0091 e(2)=t2;
+0092 e(3)=t;
+0093 <span class="keyword">if</span> (u==w &amp;&amp; t2&lt;0) || (u~=w &amp;&amp; abs(t2)&gt;pi/2)  <span class="comment">% remove redundancy</span>
+0094     mk=u~=w;
+0095     e(2)=(2*mk-1)*t2;
+0096     e=e-((2*(e&gt;0)-1) .* [1; mk; 1])*pi;
+0097 <span class="keyword">end</span>
+0098</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

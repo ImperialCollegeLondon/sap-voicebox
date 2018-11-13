@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_soundspeed</title>
+  <meta name="keywords" content="v_soundspeed">
+  <meta name="description" content="SOUNDSPEED gives the speed of sound, density of air and acoustic impedance as a function of temp & pressure [V,D,Z]=(T,P,M,G)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_soundspeed.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_soundspeed
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SOUNDSPEED gives the speed of sound, density of air and acoustic impedance as a function of temp & pressure [V,D,Z]=(T,P,M,G)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [v,d,z]=v_soundspeed(t,p,m,g) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SOUNDSPEED gives the speed of sound, density of air and acoustic impedance as a function of temp &amp; pressure [V,D,Z]=(T,P,M,G)
+
+  Inputs:  T        air temperature in Celsius  [20 deg C]
+           P        air pressure [1 atm]
+           M        average molecular weight of air [0.0289644 kg/mol]
+           G        adiabatic constant for air [1.4]
+
+ Outputs:  V        is the speed of sound in m/s
+           D        density of air in kg/m^3
+           Z        characteristic impedance of air Pa.s/m</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [v,d,z]=v_soundspeed(t,p,m,g)</a>
+0002 <span class="comment">%SOUNDSPEED gives the speed of sound, density of air and acoustic impedance as a function of temp &amp; pressure [V,D,Z]=(T,P,M,G)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs:  T        air temperature in Celsius  [20 deg C]</span>
+0005 <span class="comment">%           P        air pressure [1 atm]</span>
+0006 <span class="comment">%           M        average molecular weight of air [0.0289644 kg/mol]</span>
+0007 <span class="comment">%           G        adiabatic constant for air [1.4]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs:  V        is the speed of sound in m/s</span>
+0010 <span class="comment">%           D        density of air in kg/m^3</span>
+0011 <span class="comment">%           Z        characteristic impedance of air Pa.s/m</span>
+0012 
+0013 <span class="comment">% Notes: (1) Sound pressure is often measured in dB (SPL) relative to 20uPa [20*log10(p/p0)]</span>
+0014 <span class="comment">%            Sound pressure is inversely proportional to distance.</span>
+0015 <span class="comment">%        (2) Sound intensity is often measured indB relative to pW/m^2,[10*log10(J*10^12)]</span>
+0016 <span class="comment">%            Intensity is inversely proportional to distance squared.</span>
+0017 <span class="comment">%        (3) Intensity * impedance = pressure^2, so with the default values, 1 pW/m^2 = sqrt(Z) = 20.33 uPa</span>
+0018 <span class="comment">%            So: X dB (SPL) = X-93.98 dB (Pa) = X-0.14 dB (pW/m^2) =  X-120.14 dB (W/m^2)</span>
+0019 <span class="comment">%            where 93.98=20*log10(50000), 0.14=10*log10(Z/400), 120.14=10*log10(1e12*z/400)</span>
+0020 <span class="comment">%        (4) The default air pressure (which does not affect sound speed) in various units is:</span>
+0021 <span class="comment">%            1 atm = 101325 Pa = 1.01325 bar = 1.0332 at = 760 torr = 14.696 psi</span>
+0022 
+0023 <span class="comment">%       Copyright (C) Mike Brookes 2006</span>
+0024 <span class="comment">%      Version: $Id: v_soundspeed.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0027 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0030 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0031 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0032 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0033 <span class="comment">%   (at your option) any later version.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0036 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0037 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0038 <span class="comment">%   GNU General Public License for more details.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0041 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0042 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 
+0045 <span class="keyword">if</span> nargin&lt;4
+0046     g=1.4;
+0047     <span class="keyword">if</span> nargin&lt;3
+0048         m=0.0289644;      <span class="comment">% gm/mol</span>
+0049         <span class="keyword">if</span> nargin&lt;2
+0050             p=1;
+0051             <span class="keyword">if</span> nargin&lt;1
+0052                 t=20;
+0053             <span class="keyword">end</span>
+0054         <span class="keyword">end</span>
+0055     <span class="keyword">end</span>
+0056 <span class="keyword">end</span>
+0057 p=p*101325; <span class="comment">% convert pressure: atm to pascal</span>
+0058 k=t+273.15;  <span class="comment">% absolute temperature</span>
+0059 r=8.3144;  <span class="comment">% J/(mol K) universal gas constant</span>
+0060 d=p*m/(r*k);
+0061 v=sqrt(g*r*k/m);
+0062 z=v*d;</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

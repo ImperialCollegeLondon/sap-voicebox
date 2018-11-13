@@ -1,0 +1,391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_psychofunc</title>
+  <meta name="keywords" content="v_psychofunc">
+  <meta name="description" content="Calculate psychometric functions: trial success probability versus SNR">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_psychofunc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_psychofunc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calculate psychometric functions: trial success probability versus SNR</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function p=v_psychofunc(m,q,x,r) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculate psychometric functions: trial success probability versus SNR
+
+ Usage: p=v_psychofunc('',q,x)       % calculate probabilities
+        b=v_psychofunc('r',q,x)       % generate boolean variables with success prob p
+        p=v_psychofunc(m,q,x,r)     % Calculate likelihoods for observations r
+        x=v_psychofunc([m 'i'],q,p) % Calculate inverse
+
+ Inputs:
+          m        mode string [may be omitted if not required]
+                      'n'   do not normalize likelihoods
+                      'f'   do not squeeze output arrays to remove singleton dimensions
+                      'i'   calculate inverse function
+                      'r'   calculate binary random variables with probability p
+                      ['s'   calculate sweet points for threshold and slope]
+                      ['d'   calculate partial derivatives with respect to q(1:5)]
+                      'g'   plot graph
+                      'G'   plot image
+                      'c'   include colourbar
+          q        model parameters. Either a column vector with a single model,
+                   a matrix with one model per column or a cell array with multiple values for
+                   some or all of the parameters
+                      1  probability at threshold [0.5]
+                      2  threshhold [0 dB]
+                      3  slope at threshold [0.1 prob/dB ]
+                      4  miss or lapse probability [0]
+                      5  guess probability   [0]
+                      6  psychometric function type [1]
+                          1 = logistic
+                          2 = cumulative Gaussian
+                          3 = Weibull
+                          [4 = reversed Weibull]
+                          [5 = Gumbell]
+                          [6 = reversed Gumbell]
+          x        vector of SNR values
+          r        test results (0 or 1) corresponding to x
+          p        vector of probabilities
+
+ Outputs:
+          p        array of probabilities or random variates ('r' option).
+                   p is a squeezed 7-dimensional array
+                   whose dimensions correspond to x followed by the 6 model parameter entries.
+                   if q is a cell array, singleton dimensions are removed unless the 'f' option is given.
+          x        Inverse function gives SNR, x, as a function of p
+          b        array of boolean variables</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function p=v_psychofunc(m,q,x,r)</a>
+0002 <span class="comment">% Calculate psychometric functions: trial success probability versus SNR</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: p=v_psychofunc('',q,x)       % calculate probabilities</span>
+0005 <span class="comment">%        b=v_psychofunc('r',q,x)       % generate boolean variables with success prob p</span>
+0006 <span class="comment">%        p=v_psychofunc(m,q,x,r)     % Calculate likelihoods for observations r</span>
+0007 <span class="comment">%        x=v_psychofunc([m 'i'],q,p) % Calculate inverse</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs:</span>
+0010 <span class="comment">%          m        mode string [may be omitted if not required]</span>
+0011 <span class="comment">%                      'n'   do not normalize likelihoods</span>
+0012 <span class="comment">%                      'f'   do not squeeze output arrays to remove singleton dimensions</span>
+0013 <span class="comment">%                      'i'   calculate inverse function</span>
+0014 <span class="comment">%                      'r'   calculate binary random variables with probability p</span>
+0015 <span class="comment">%                      ['s'   calculate sweet points for threshold and slope]</span>
+0016 <span class="comment">%                      ['d'   calculate partial derivatives with respect to q(1:5)]</span>
+0017 <span class="comment">%                      'g'   plot graph</span>
+0018 <span class="comment">%                      'G'   plot image</span>
+0019 <span class="comment">%                      'c'   include colourbar</span>
+0020 <span class="comment">%          q        model parameters. Either a column vector with a single model,</span>
+0021 <span class="comment">%                   a matrix with one model per column or a cell array with multiple values for</span>
+0022 <span class="comment">%                   some or all of the parameters</span>
+0023 <span class="comment">%                      1  probability at threshold [0.5]</span>
+0024 <span class="comment">%                      2  threshhold [0 dB]</span>
+0025 <span class="comment">%                      3  slope at threshold [0.1 prob/dB ]</span>
+0026 <span class="comment">%                      4  miss or lapse probability [0]</span>
+0027 <span class="comment">%                      5  guess probability   [0]</span>
+0028 <span class="comment">%                      6  psychometric function type [1]</span>
+0029 <span class="comment">%                          1 = logistic</span>
+0030 <span class="comment">%                          2 = cumulative Gaussian</span>
+0031 <span class="comment">%                          3 = Weibull</span>
+0032 <span class="comment">%                          [4 = reversed Weibull]</span>
+0033 <span class="comment">%                          [5 = Gumbell]</span>
+0034 <span class="comment">%                          [6 = reversed Gumbell]</span>
+0035 <span class="comment">%          x        vector of SNR values</span>
+0036 <span class="comment">%          r        test results (0 or 1) corresponding to x</span>
+0037 <span class="comment">%          p        vector of probabilities</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% Outputs:</span>
+0040 <span class="comment">%          p        array of probabilities or random variates ('r' option).</span>
+0041 <span class="comment">%                   p is a squeezed 7-dimensional array</span>
+0042 <span class="comment">%                   whose dimensions correspond to x followed by the 6 model parameter entries.</span>
+0043 <span class="comment">%                   if q is a cell array, singleton dimensions are removed unless the 'f' option is given.</span>
+0044 <span class="comment">%          x        Inverse function gives SNR, x, as a function of p</span>
+0045 <span class="comment">%          b        array of boolean variables</span>
+0046 
+0047 <span class="comment">%      Copyright (C) Mike Brookes 2009-2010</span>
+0048 <span class="comment">%      Version: $Id: v_psychofunc.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0051 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0054 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0055 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0056 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0057 <span class="comment">%   (at your option) any later version.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0060 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0061 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0062 <span class="comment">%   GNU General Public License for more details.</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0065 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0066 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0067 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0068 
+0069 <span class="comment">% first sort out input arguments</span>
+0070 minp=0.01;          <span class="comment">% minimum probability to use for inverse function by default</span>
+0071 qq=[0.5 0 0.1 0 0 1]';  <span class="comment">% default values for q</span>
+0072 <span class="keyword">if</span> nargin&lt;4
+0073     r=[];
+0074     <span class="keyword">if</span> nargin&lt;3
+0075         x=[];
+0076         <span class="keyword">if</span> nargin&lt;2
+0077             q=[];
+0078             <span class="keyword">if</span> ~nargin
+0079                 m=<span class="string">''</span>;
+0080             <span class="keyword">end</span>
+0081         <span class="keyword">end</span>
+0082     <span class="keyword">end</span>
+0083 <span class="keyword">end</span>
+0084 <span class="keyword">if</span> ~ischar(m);      <span class="comment">% mode argument is optional</span>
+0085     r=x;
+0086     x=q;
+0087     q=m;
+0088     m=<span class="string">''</span>;
+0089 <span class="keyword">end</span>
+0090 sq=size(q);
+0091 ckmod=0;
+0092 <span class="keyword">if</span> iscell(q)
+0093     nq=ones(1,6);
+0094     qax=num2cell([0; qq]);  <span class="comment">% used for plotting</span>
+0095     <span class="keyword">for</span> i=1:min(numel(q),6)
+0096         nq(i)=numel(q{i});
+0097         <span class="keyword">if</span> nq(i)&gt;=1
+0098             nr=size(qq,2);
+0099             qax{i+1}=q{i};
+0100             <span class="keyword">if</span> i&lt;=5             <span class="comment">% do not replicate for multiple models</span>
+0101                 qq=repmat(qq,1,nq(i));
+0102                 qq(i,:)=reshape(repmat(q{i}(:)',nr,1),1,nr*nq(i));
+0103             <span class="keyword">else</span>
+0104                 qq(i,:)=repmat(q{i}(1),1,nr);
+0105             <span class="keyword">end</span>
+0106         <span class="keyword">end</span>
+0107     <span class="keyword">end</span>
+0108     nq=max(nq,1);
+0109     nmod=nq(6);
+0110     <span class="keyword">if</span> nmod&gt;1      <span class="comment">% list of models to use</span>
+0111         modlist=q{6};
+0112     <span class="keyword">else</span>
+0113         modlist=qq(6,1);  <span class="comment">% default model</span>
+0114     <span class="keyword">end</span>
+0115 <span class="keyword">else</span>
+0116     nq=sq(2);
+0117     <span class="keyword">if</span> nq
+0118         ql=repmat(qq,1,nq);
+0119         ql(1:sq(1),:)=q;
+0120     <span class="keyword">else</span>
+0121         ql=qq;
+0122         nq=1;
+0123     <span class="keyword">end</span>
+0124     modlist=unique(ql(6,:));
+0125     nmod=length(modlist);
+0126     ckmod=nmod&gt;1;   <span class="comment">% need to check model list</span>
+0127     qq=ql;
+0128 <span class="keyword">end</span>
+0129 <span class="comment">% now perform the calculation</span>
+0130 nx=numel(x);
+0131 npt=50;       <span class="comment">% number of points</span>
+0132 <span class="keyword">if</span> any(m==<span class="string">'i'</span>) <span class="comment">% doing inverse</span>
+0133     <span class="keyword">if</span> ~nx
+0134         nx=npt;
+0135         xlim=[max(qq(5,:)),1-max(qq(4,:))]*[1-minp minp; minp 1-minp];
+0136         x=linspace(xlim(1),xlim(2),nx)';
+0137     <span class="keyword">end</span>
+0138     p=zeros([nx nq]);  <span class="comment">% space for SNRs</span>
+0139     ia=0;
+0140     <span class="keyword">for</span> i=1:nmod <span class="comment">% loop for each model type</span>
+0141         mod=modlist(i);
+0142         <span class="keyword">if</span> ckmod
+0143             qq=ql(:,ql(6,:)==mod);
+0144         <span class="keyword">end</span>
+0145         pscale=1-qq(4,:)-qq(5,:);
+0146         pstd=(qq(1,:)-qq(5,:))./pscale; <span class="comment">% prob target compensating for miss and lapse probs</span>
+0147         sstd=qq(3,:)./pscale; <span class="comment">% slope compensating for miss and lapse probs</span>
+0148         px=x(:)*pscale.^(-1)-repmat(qq(5,:)./pscale,nx,1);  <span class="comment">% adjust for miss and lapse probs</span>
+0149         <span class="keyword">switch</span> mod
+0150             <span class="keyword">case</span> 1
+0151                 beta=sstd./(pstd.*(1-pstd));
+0152 <span class="comment">%                 alpha=qq(2,:)+log((1-pstd)./pstd)./beta;</span>
+0153                 px=repmat(qq(2,:)+log((1-pstd)./pstd)./beta,nx,1)-log(px.^(-1)-1).*repmat(beta.^(-1),nx,1);
+0154             <span class="keyword">case</span> 2   <span class="comment">% cumulative Gaussian function</span>
+0155                 xtstd=norminv(pstd); <span class="comment">% x position of target in std measure</span>
+0156                 sig=normpdf(xtstd)./sstd;
+0157                 px= repmat(qq(2,:)-sig.*xtstd,nx,1) + repmat(sig,nx,1).*norminv(px);
+0158             <span class="keyword">case</span> 3
+0159                 wlog=log(1-pstd);
+0160                 kbeta=sstd./((pstd-1).*wlog);
+0161                 alpha=qq(2,:)-log(-wlog)./kbeta;
+0162                 px=repmat(alpha,nx,1)+log(-log(1-px)).*repmat(kbeta.^(-1),nx,1);
+0163             <span class="keyword">otherwise</span>
+0164                 error(<span class="string">'Invalid psychometric model index'</span>);
+0165         <span class="keyword">end</span>
+0166         <span class="keyword">if</span> ckmod
+0167             p(:,ql(6,:)==i)=px;
+0168         <span class="keyword">else</span>
+0169             ib=ia+numel(p)/nmod;
+0170             p(ia+1:ib)=px(:);
+0171             ia=ib;
+0172         <span class="keyword">end</span>
+0173     <span class="keyword">end</span>
+0174 <span class="keyword">else</span> <span class="comment">% doing forward mapping</span>
+0175     <span class="keyword">if</span> ~nx
+0176         ef=2;         <span class="comment">% expansion factor</span>
+0177         nx=npt;
+0178         x=linspace(min(qq(2,:)-ef*(qq(1,:)-qq(5,:))./qq(3,:)), <span class="keyword">...</span>
+0179             max(qq(2,:)+ef*(1-qq(1,:)-qq(4,:))./qq(3,:)),nx)';
+0180     <span class="keyword">end</span>
+0181     p=zeros([nx nq]);  <span class="comment">% space for probabilities</span>
+0182     ia=0;
+0183     <span class="keyword">for</span> i=1:nmod <span class="comment">% loop for each model type</span>
+0184         mod=modlist(i);
+0185         <span class="keyword">if</span> ckmod
+0186             qq=ql(:,ql(6,:)==mod);
+0187         <span class="keyword">end</span>
+0188         pscale=1-qq(4,:)-qq(5,:);  <span class="comment">% prob range excluding miss and lapse probs</span>
+0189         pstd=(qq(1,:)-qq(5,:))./pscale; <span class="comment">% prob target compensating for miss and lapse probs</span>
+0190         sstd=qq(3,:)./pscale; <span class="comment">% slope compensating for miss and lapse probs</span>
+0191         <span class="keyword">switch</span> mod
+0192             <span class="keyword">case</span> 1   <span class="comment">% logistic function</span>
+0193                 beta=sstd./(pstd.*(1-pstd));
+0194 <span class="comment">%                 alpha=qq(2,:)+log((1-pstd)./pstd)./beta;</span>
+0195                 px=(1+exp(repmat(beta.*qq(2,:)+log((1-pstd)./pstd),nx,1)-x(:)*beta)).^(-1);
+0196             <span class="keyword">case</span> 2   <span class="comment">% cumulative Gaussian function</span>
+0197                 xtstd=norminv(pstd); <span class="comment">% x position of target in std measure</span>
+0198                 sigi=sstd./normpdf(xtstd);
+0199                 px=normcdf(x(:)*sigi-repmat(qq(2,:).*sigi-xtstd,nx,1));
+0200             <span class="keyword">case</span> 3
+0201                 wlog=log(1-pstd);
+0202                 kbeta=sstd./((pstd-1).*wlog);
+0203                 alpha=qq(2,:)-log(-wlog)./kbeta;
+0204                 px=1-exp(-exp(x(:)*kbeta-repmat(alpha.*kbeta,nx,1)));
+0205             <span class="keyword">otherwise</span>
+0206                 error(<span class="string">'Invalid psychometric model index'</span>);
+0207         <span class="keyword">end</span>
+0208         px=repmat(qq(5,:),nx,1)+repmat(pscale,nx,1).*px;  <span class="comment">% adjust for miss and lapse probs</span>
+0209         <span class="keyword">if</span> ckmod
+0210             p(:,ql(6,:)==i)=px;
+0211         <span class="keyword">else</span>
+0212             ib=ia+numel(p)/nmod;
+0213             p(ia+1:ib)=px(:);
+0214             ia=ib;
+0215         <span class="keyword">end</span>
+0216     <span class="keyword">end</span>
+0217     <span class="keyword">if</span> numel(r)                 <span class="comment">% we are calculating likelihoods</span>
+0218         mk=r(:)==0;
+0219         p(mk,:)=1-p(mk,:);      <span class="comment">% invert probability for results that are zero</span>
+0220         <span class="keyword">if</span> nx&gt;1
+0221             <span class="keyword">if</span> any(m==<span class="string">'n'</span>)
+0222                 p=prod(p,1);
+0223             <span class="keyword">else</span>
+0224                 p=sum(log(p),1);
+0225                 p=exp(p-max(p(:)));
+0226                 p=p/sum(p(:));     <span class="comment">% normalize to equal 1</span>
+0227             <span class="keyword">end</span>
+0228             nx=1;
+0229         <span class="keyword">end</span>
+0230     <span class="keyword">end</span>
+0231 
+0232 <span class="keyword">end</span>
+0233 pg=p;       <span class="comment">% save unsqueezed p for plotting</span>
+0234 <span class="keyword">if</span> ~any(m==<span class="string">'f'</span>) &amp;&amp; iscell(q) <span class="comment">% remove all singleton dimensions</span>
+0235     szp=size(p);
+0236     szq=szp(szp&gt;1);
+0237     szq=[szq ones(1,max(0,2-numel(szq)))];
+0238     p=reshape(p,szq);
+0239 <span class="keyword">end</span>
+0240 <span class="keyword">if</span> any(m==<span class="string">'r'</span>) &amp;&amp; ~any(m==<span class="string">'i'</span>);
+0241     p=rand(size(p))&lt;p;
+0242 <span class="keyword">end</span>
+0243 
+0244 <span class="keyword">if</span> ~nargout || any(lower(m)==<span class="string">'g'</span>)
+0245     clf;
+0246     szp=[nx nq];
+0247     czp=sum(szp&gt;1);
+0248     <span class="keyword">if</span> czp&gt;0  <span class="comment">% check if there is anything to plot</span>
+0249         <span class="keyword">if</span> iscell(q)
+0250             axlab={<span class="string">'Input SNR'</span>,<span class="string">'Threshold prob'</span>,<span class="string">'Threshold SNR'</span>,<span class="string">'Threshold slope'</span>,<span class="string">'Lapse prob'</span>,<span class="string">'Guess prob'</span>,<span class="string">'Sigmoid type'</span>};
+0251             [szs,izs]=sort(szp,<span class="string">'descend'</span>);
+0252             pg=permute(pg,izs);
+0253             qax{1}=x;
+0254             <span class="keyword">if</span> any(m==<span class="string">'G'</span>) || czp&gt;2 <span class="comment">% image</span>
+0255                 ngr=prod(szs(3:end));
+0256                 ncol=ceil(sqrt(ngr));
+0257                 nrow=ceil(ngr/ncol);
+0258                 npix=szs(1)*szs(2);
+0259                 ia=0;
+0260                 <span class="keyword">for</span> i=1:ngr
+0261                     subplot(nrow,ncol,i);
+0262                     ib=ia+npix;
+0263                     imagesc(qax{izs(1)},qax{izs(2)},reshape(pg(ia+1:ib),szs(1:2))');
+0264                     axis <span class="string">'xy'</span>
+0265                     <span class="keyword">if</span> any(m==<span class="string">'c'</span>)
+0266                         colorbar;
+0267                     <span class="keyword">end</span>
+0268                     <span class="keyword">if</span> nrow*ncol-i&lt;ncol
+0269                         xlabel(axlab(izs(1)));
+0270                     <span class="keyword">end</span>
+0271                     <span class="keyword">if</span> rem(i-1,ncol)==0
+0272                         ylabel(axlab(izs(2)));
+0273                     <span class="keyword">end</span>
+0274                     ia=ib;
+0275                 <span class="keyword">end</span>
+0276             <span class="keyword">else</span>                    <span class="comment">% graph</span>
+0277                 plot(qax{izs(1)},reshape(permute(pg,izs),szs(1:2)),<span class="string">'-'</span>);
+0278                 xlabel(axlab{izs(1)});
+0279             <span class="keyword">end</span>
+0280         <span class="keyword">else</span>
+0281             <span class="keyword">if</span> any(m==<span class="string">'G'</span>)  <span class="comment">% image</span>
+0282                 imagesc(pg');
+0283                 axis <span class="string">'xy'</span>
+0284                 <span class="keyword">if</span> any(m==<span class="string">'c'</span>)
+0285                     colorbar;
+0286                 <span class="keyword">end</span>
+0287                 xlabel(<span class="string">'Input SNR (dB)'</span>);
+0288                 ylabel(<span class="string">'Model Index'</span>);
+0289             <span class="keyword">else</span>            <span class="comment">% graph</span>
+0290                 <span class="keyword">if</span> nx&gt;=nq
+0291                     plot(x,pg,<span class="string">'-'</span>);
+0292                     xlabel(<span class="string">'Input SNR (dB)'</span>);
+0293                 <span class="keyword">else</span>
+0294                     plot(1:nq,pg',<span class="string">'-'</span>);
+0295                     xlabel(<span class="string">'Model Index'</span>);
+0296                 <span class="keyword">end</span>
+0297             <span class="keyword">end</span>
+0298         <span class="keyword">end</span>
+0299     <span class="keyword">end</span>
+0300 <span class="keyword">end</span>
+0301 
+0302</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

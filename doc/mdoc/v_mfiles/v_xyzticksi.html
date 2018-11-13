@@ -1,0 +1,407 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_xyzticksi</title>
+  <meta name="keywords" content="v_xyzticksi">
+  <meta name="description" content="XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_xyzticksi.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_xyzticksi
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function s=v_xyzticksi(ax,ah) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)
+
+ This routine is not intended to be called directly. See XTICKSI and YTICKSI.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_xyzticksi(ax,ah)</a>
+0002 <span class="comment">%XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% This routine is not intended to be called directly. See XTICKSI and YTICKSI.</span>
+0005 
+0006 <span class="comment">%       Copyright (C) Mike Brookes 2009</span>
+0007 <span class="comment">%      Version: $Id: v_xyzticksi.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0010 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0013 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0014 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0015 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0016 <span class="comment">%   (at your option) any later version.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0019 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0020 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0021 <span class="comment">%   GNU General Public License for more details.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0024 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0025 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 
+0028 <span class="comment">% Note that &quot;mu&quot; = char(181) assumes Western European encoding</span>
+0029 <span class="comment">% Bugs:</span>
+0030 <span class="comment">%   (1) ipan=3 or 4 is not really debugged yet:</span>
+0031 <span class="comment">%   (2) axis lengths incorrect for 3D graphs</span>
+0032 <span class="comment">%   (3) should take account of axis shortening due to long labels at the ends</span>
+0033 <span class="comment">%   (4) should calculate axis orentation from CameraPosition, CameraTarget and CameraUpVector</span>
+0034 <span class="keyword">if</span> nargin&lt;2
+0035     ah=gca;
+0036     <span class="keyword">if</span> nargin&lt;1
+0037         ax=1;
+0038     <span class="keyword">end</span>
+0039 <span class="keyword">end</span>
+0040 axfield={<span class="string">'XLim'</span> <span class="string">'YLim'</span> <span class="string">'ZLim'</span>; <span class="string">'XTick'</span> <span class="string">'YTick'</span> <span class="string">'ZTick'</span>; <span class="string">'XMinorTick'</span> <span class="string">'YMinorTick'</span> <span class="string">'ZMinorTick'</span>; <span class="string">'XTickLabel'</span> <span class="string">'YTickLabel'</span> <span class="string">'ZTickLabel'</span>; <span class="string">'XScale'</span> <span class="string">'YScale'</span> <span class="string">'ZScale'</span>};
+0041 tryglobal=nargout&gt;0;
+0042 digith=1;    <span class="comment">% height of a digit in font units</span>
+0043 digitw=0.5;    <span class="comment">% width of a digit in font units</span>
+0044 
+0045 prefix={<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'a'</span>,<span class="string">'f'</span>,<span class="string">'p'</span>,<span class="string">'n'</span>,<span class="string">'µ'</span>,<span class="string">'m'</span>,<span class="string">''</span>,<span class="string">'k'</span>,<span class="string">'M'</span>,<span class="string">'G'</span>,<span class="string">'T'</span>,<span class="string">'P'</span>,<span class="string">'E'</span>,<span class="string">'Z'</span>,<span class="string">'Y'</span>};
+0046 marg=[2 0.5 0.25 0.25];     <span class="comment">% gap between labels in font units</span>
+0047 ntreq=[3 2 2 1];        <span class="comment">% minimum number of labelled ticks required as a function of IPAN</span>
+0048 <span class="comment">% grid template: each pair is [#steps final-value]. Start=10, end=100</span>
+0049 lgridtem={1; [1 20 1 50 1]; [1 20 4]; 9; [2 20 8]; [5 20 2 30 7]; [10 20 5 30 4 50 5]};
+0050 ngrid=length(lgridtem);
+0051 lgrid=cell(ngrid,1);
+0052 agrid=zeros(ngrid,1);       <span class="comment">% min and max ratio in decades</span>
+0053 <span class="comment">% build the actual grid layouts</span>
+0054 <span class="keyword">for</span> i=1:ngrid
+0055     igridtem=[lgridtem{i} 100];
+0056     igrid=zeros(1,sum(igridtem(1:2:end)));
+0057     ntem=length(igridtem)/2;
+0058     k=0;
+0059     tick0=10;
+0060     <span class="keyword">for</span> j=1:ntem
+0061         nstep=igridtem(2*j-1);
+0062         igrid(k+1:k+nstep)=tick0+(0:nstep-1)*(igridtem(2*j)-tick0)/igridtem(2*j-1);
+0063         k=k+nstep;
+0064         tick0=igridtem(2*j);
+0065     <span class="keyword">end</span>
+0066     agrid(i)=sum(log10([igrid(2:end) 100]./igrid).^2); <span class="comment">% average log interval</span>
+0067     lgrid{i}=igrid';                 <span class="comment">% grid positions</span>
+0068 <span class="keyword">end</span>
+0069 minsubsp=1;        <span class="comment">% minimum subtick spacing (in font units)</span>
+0070 delcheck=[log10(2) log10(5) 2];     <span class="comment">% check linear spacing</span>
+0071 delval=[1 2 5];
+0072 dosubtick=0;         <span class="comment">% default is not to allow subticks</span>
+0073 
+0074 ngrid=length(lgrid);
+0075 loggrid=cell(ngrid,1);
+0076 <span class="keyword">for</span> i=1:ngrid
+0077     loggrid{i}=log10(lgrid{i})-1;
+0078 <span class="keyword">end</span>
+0079 
+0080 getgca=get(ah);
+0081 set(ah,<span class="string">'Units'</span>,<span class="string">'points'</span>,<span class="string">'FontUnits'</span>,<span class="string">'points'</span>);
+0082 getgcac=get(ah);
+0083 set(ah,<span class="string">'Units'</span>,getgca.Units,<span class="string">'FontUnits'</span>,getgca.FontUnits); <span class="comment">% return to original values</span>
+0084 <span class="keyword">if</span> ax==1
+0085     widthc=getgcac.Position(3)/getgcac.FontSize;     <span class="comment">% x axis length in font units</span>
+0086     axdir=[1 0];        <span class="comment">% unit vector in axis direction</span>
+0087 <span class="keyword">else</span>
+0088     widthc=2*getgcac.Position(4)/getgcac.FontSize;     <span class="comment">% y axis length in font units</span>
+0089         axdir=[0 1];        <span class="comment">% unit vector in axis direction</span>
+0090 <span class="keyword">end</span>
+0091 axdir=max(abs(axdir),1e-10);        <span class="comment">% avoid infinity problems</span>
+0092 a=getgca.(axfield{1,ax})(1);
+0093 b=getgca.(axfield{1,ax})(2);
+0094 
+0095 ntick=0;
+0096 tickint=[];                 <span class="comment">% integer label</span>
+0097 tickdp=[];                  <span class="comment">% tick decimal point position</span>
+0098 ticksi=[];                  <span class="comment">% tick SI multiplier (always a multiple of 3)</span>
+0099 subtick=[];                 <span class="comment">% sub tick positions</span>
+0100 <span class="keyword">if</span> strcmp(getgca.(axfield{5,ax}),<span class="string">'log'</span>)   <span class="comment">% log axis</span>
+0101     width10=widthc/log10(b/a); <span class="comment">% fount units per decade</span>
+0102     ai3=3*ceil(log10(a)/3);             <span class="comment">% lowest SI multiplier</span>
+0103     bi3=3*floor(log10(b)/3);            <span class="comment">% highest SI multiplier</span>
+0104     <span class="keyword">if</span> ai3&gt;=-24 &amp;&amp; bi3&lt;=24              <span class="comment">% do nothing if outside the SI multiplier range</span>
+0105         <span class="comment">% first sort out if we can use a global SI multiplier</span>
+0106         <span class="keyword">if</span> tryglobal &amp;&amp; a&gt;=10^(bi3-1)
+0107             gi=bi3;
+0108             s=prefix{9+gi/3};
+0109             globalsi=1;                <span class="comment">% global multiplier</span>
+0110         <span class="keyword">else</span>
+0111             gi=0;
+0112             globalsi=0;                <span class="comment">% disable global multiplier</span>
+0113             s=<span class="string">''</span>;
+0114 
+0115         <span class="keyword">end</span>
+0116         g=10^gi;
+0117         ag=a/g;
+0118         bg=b/g;
+0119         al=log10(ag);
+0120         bl=log10(bg);
+0121         ai=ceil(al);
+0122         bi=floor(bl);
+0123         ai3=3*ceil(ai/3);
+0124         bi3=3*floor(bi/3);
+0125         <span class="keyword">for</span> ipan=1:4                    <span class="comment">% panic level: 1=spacious, 2=cramped, 3=any two labels, 4=any label</span>
+0126             <span class="comment">% first try labelling only exact SI multiples</span>
+0127             margin=marg(ipan);
+0128             incsi=3*ceil(min((2*digitw+margin)/axdir(1),(digith+margin)/axdir(2))/(3*width10));   <span class="comment">% SI increment</span>
+0129             <span class="keyword">switch</span> ipan
+0130                 <span class="keyword">case</span> {1,2}
+0131                     ticksi=incsi*ceil(ai/incsi):incsi:incsi*floor(bi/incsi);
+0132                 <span class="keyword">case</span> {3,4}
+0133                     ticksi=ai3:incsi:bi3;
+0134             <span class="keyword">end</span>
+0135             ntick=length(ticksi);
+0136             tickint=ones(1,ntick);
+0137             tickdp=zeros(1,ntick);
+0138             <span class="keyword">if</span> width10&gt;0.25
+0139                 ticki=ai:bi;
+0140                 subtick=10.^(ticki(ticki~=3*fix(ticki/3)));      <span class="comment">% put subticks at all powers of 10;</span>
+0141             <span class="keyword">end</span>
+0142             <span class="keyword">if</span> incsi==3         <span class="comment">% no point in trying anything else if incsi&gt;3</span>
+0143                 ci=floor(al);   <span class="comment">% start of first decade that includes the start of the axis</span>
+0144                 cibi=ci:bi;     <span class="comment">% ennumerate the decades that cover the entire axis</span>
+0145                 ndec=bi-ci+1;   <span class="comment">% number of decades</span>
+0146                 <span class="keyword">if</span> globalsi
+0147                     siq0=zeros(1,ndec); <span class="comment">% no SI multipliers within the labels if using a global multiplier</span>
+0148                 <span class="keyword">else</span>
+0149                     siq0=3*floor((cibi)/3); <span class="comment">% determine the SI multiplier for each of the decades</span>
+0150                 <span class="keyword">end</span>
+0151                 siw0=siq0~=0;                <span class="comment">% width of SI multiplier</span>
+0152                 dpq0=max(siq0-cibi+1,1);    <span class="comment">% number of decimal places</span>
+0153                 <span class="keyword">for</span> jgrid=1:ngrid
+0154                     igrid=jgrid-(ipan&lt;=2)*(2*jgrid-ngrid-1);
+0155                     lgridi=lgrid{igrid};
+0156                     ngridi=length(lgridi);
+0157                     intq=reshape(repmat(lgridi,1,ndec).*repmat(10.^(cibi+dpq0-siq0-1),ngridi,1),1,[]);
+0158                     dpq=reshape(repmat(dpq0,ngridi,1),1,[]);
+0159                     msk=dpq&gt;0 &amp; rem(intq,10)==0;
+0160                     intq(msk)=intq(msk)/10;
+0161                     dpq(msk)=dpq(msk)-1;
+0162                     widq=1+floor(log10(intq));
+0163                     widq=digitw*(widq+(dpq&gt;0).*max(1,dpq+2-widq)+reshape(repmat(siw0,ngridi,1),1,[]));
+0164                     logvq=reshape(repmat(loggrid{igrid},1,ndec)+repmat(ci:ndec+ci-1,ngridi,1),1,[]);
+0165                     <span class="comment">% mask out any ticks outside the axis range</span>
+0166                     msk=logvq&gt;=al &amp; logvq&lt;=bl;
+0167                     widq=widq(msk);
+0168                     logvq=logvq(msk);
+0169                     <span class="comment">% debug1=[intq(msk); -1 min((widq(1:end-1)+widq(2:end)+2*margin)/axdir(1),2*(digith+margin)/axdir(2))&lt;=2*width10*(logvq(2:end)-logvq(1:end-1))];</span>
+0170                     <span class="keyword">if</span> numel(widq)&gt;=ntreq(ipan) &amp;&amp; all(min((widq(1:end-1)+widq(2:end)+2*margin)/axdir(1),2*(digith+margin)/axdir(2))&lt;=2*width10*(logvq(2:end)-logvq(1:end-1)))
+0171                         <span class="comment">% success: we have an acceptable pattern</span>
+0172                         ntick=numel(widq);       <span class="comment">% number of ticks</span>
+0173                         tickint=intq(msk);      <span class="comment">% integer label value (i.e. neglecting decimal point)</span>
+0174                         tickdp=dpq(msk);        <span class="comment">% number of decimal places</span>
+0175                         siq=reshape(repmat(siq0,ngridi,1),1,[]);    <span class="comment">% SI mltiplier power</span>
+0176                         ticksi=siq(msk);        <span class="comment">% SI multiplier power masked</span>
+0177                         subtick=[];             <span class="comment">% recalculate any subticks</span>
+0178                         dosubtick=igrid&gt;1;
+0179                         <span class="keyword">break</span>;                  <span class="comment">% do not try any more grid patterns</span>
+0180                     <span class="keyword">end</span>
+0181                 <span class="keyword">end</span> <span class="comment">% alternative grid patterns</span>
+0182                 <span class="comment">% finally just try a linear increment</span>
+0183                 <span class="keyword">if</span> ntick&lt;5
+0184                     ldeltamin=log10(bg- bg*10^(-min((digitw+margin)/axdir(1),(digith+margin)/axdir(2))/width10));  <span class="comment">% smallest conceivable increment</span>
+0185                     ildelta=floor(ldeltamin);
+0186                     ix=find(ldeltamin-ildelta&lt;=delcheck,1);
+0187                     jx=ildelta*3+ix;
+0188                     <span class="keyword">while</span> 1
+0189                         deltax=floor(jx/3);
+0190                         deltav=delval(jx-3*deltax+1);
+0191                         delta=deltav*10^deltax;
+0192                         multq=ceil(ag/delta):floor(bg/delta);   <span class="comment">% multiples of delta to display</span>
+0193                         ntickq=numel(multq);
+0194                         <span class="keyword">if</span> ntickq&lt;=ntick || ntickq&lt;ntreq(ipan)   <span class="comment">% give up now</span>
+0195                             <span class="keyword">break</span>;
+0196                         <span class="keyword">end</span>
+0197                         intq=deltav*multq;
+0198                         lintq=floor(log10(intq));
+0199                         siq=3*floor((lintq+deltax)/3);      <span class="comment">% SI multiplier</span>
+0200                         dpq=siq-deltax;
+0201                         msk=dpq&lt;0;
+0202                         intq(msk)=intq(msk).*10.^(-dpq(msk));
+0203                         dpq(msk)=0;
+0204                         msk=rem(intq,10)==0 &amp; dpq&gt;0;
+0205                         <span class="keyword">while</span> any(msk)      <span class="comment">% remove unwanted trailing zeros</span>
+0206                             dpq(msk)=dpq(msk)-1;
+0207                             intq(msk)=intq(msk)/10;
+0208                             msk=rem(intq,10)==0 &amp; dpq&gt;0;
+0209                         <span class="keyword">end</span>
+0210                         widq=1+floor(log10(intq));
+0211                         widq=digitw*(widq+(dpq&gt;0).*max(1,dpq+2-widq)+(siq~=0));
+0212                         logvq=log10(multq)+log10(deltav)+deltax;
+0213                         <span class="comment">% debug2=[intq; widq; -1 (widq(1:end-1)+widq(2:end)+2*margin)&lt;=2*width10*(logvq(2:end)-logvq(1:end-1))];</span>
+0214                         <span class="keyword">if</span> all(min((widq(1:end-1)+widq(2:end)+2*margin)/axdir(1),2*(digith+margin)/axdir(2))&lt;=2*width10*(logvq(2:end)-logvq(1:end-1)))
+0215                             ntick=ntickq;
+0216                             tickint=intq;
+0217                             tickdp=dpq;
+0218                             ticksi=siq;
+0219                             dosubtick=1;
+0220                             <span class="keyword">break</span>
+0221                         <span class="keyword">end</span>
+0222                         jx=jx+1;                            <span class="comment">% try next coarser spacing</span>
+0223                     <span class="keyword">end</span>
+0224                 <span class="keyword">end</span>
+0225             <span class="keyword">end</span> <span class="comment">% try grid patterns since at most one exact SI multiple</span>
+0226             <span class="keyword">if</span> ntick&gt;=ntreq(ipan)
+0227                 <span class="keyword">break</span><span class="comment">% quit if we have enough labels</span>
+0228             <span class="keyword">end</span>
+0229         <span class="keyword">end</span><span class="comment">% try next panic level</span>
+0230     <span class="keyword">end</span>    <span class="comment">% check if within SI range</span>
+0231     <span class="keyword">if</span> ntick
+0232         tickexp=gi+ticksi-tickdp;
+0233         tickpos=tickint .* 10.^tickexp;
+0234         ratthresh=10^(minsubsp/width10);   <span class="comment">% min subtick ratio</span>
+0235         <span class="keyword">if</span> dosubtick       <span class="comment">% check for subticks</span>
+0236             subtick=[];
+0237             <span class="keyword">if</span> ntick&gt;1      <span class="comment">% at least two labelled ticks</span>
+0238                 stepexp=min(tickexp(1:end-1),tickexp(2:end))-1;
+0239                 stepint=round((tickpos(2:end)-tickpos(1:end-1)).*10.^(-stepexp));  <span class="comment">% always a multiple of 10</span>
+0240                 stepleft=tickint(1:end-1).*10.^(tickexp(1:end-1)-stepexp); <span class="comment">% leftmost label in units of 10^stepexp</span>
+0241                 subbase=10.^ceil(log10(stepint)-1); <span class="comment">% base sub-tick interval in units of 10^stepexp</span>
+0242                 substep=[-1 -3 5]*((1+[1; 2; 5]*(subbase./stepleft))&gt;ratthresh); <span class="comment">% actual step is 1,2 or 5 times subbase</span>
+0243                 substep(stepint~=10*substep)=max(2-substep(stepint~=10*substep),0); <span class="comment">% but only &gt;1 if stepint==10</span>
+0244                 substep=substep.*subbase; <span class="comment">% subtick step in units of 10^stepexp</span>
+0245                 <span class="keyword">for</span> i=1:ntick-1
+0246                     ss=substep(i);
+0247                     sl=stepleft(i);
+0248                     <span class="keyword">if</span> ss
+0249                         subtick=[subtick (sl+(ss:ss:stepint(i)-ss))*10^stepexp(i)];
+0250                         <span class="keyword">if</span> i==1 &amp;&amp; sl/(sl-ss)&gt;ratthresh
+0251                             subtick=[subtick (sl-(ss:ss:floor((tickpos(1)-a)/(ss*10^stepexp(i)))*ss))*10^stepexp(i)];
+0252                         <span class="keyword">elseif</span> i==ntick-1 &amp;&amp; (1+ss/(sl+stepint(1)))&gt;ratthresh
+0253                             subtick=[subtick (sl+stepint(i)+(ss:ss:floor((b-tickpos(end))/(ss*10^stepexp(i)))*ss))*10^stepexp(i)];
+0254                         <span class="keyword">end</span>
+0255                     <span class="keyword">end</span>
+0256                 <span class="keyword">end</span>
+0257             <span class="keyword">end</span>
+0258         <span class="keyword">end</span> <span class="comment">% if subtick</span>
+0259         [tps,ix]=sort([tickpos subtick]);
+0260         nticks=length(tps);
+0261         ticklab=cell(nticks,1);
+0262         <span class="keyword">for</span> j=1:nticks
+0263             i=ix(j);
+0264             <span class="keyword">if</span> i&gt;ntick
+0265                 ticklab{j}=<span class="string">''</span>;
+0266             <span class="keyword">else</span>
+0267                 ticklab{j}=sprintf(sprintf(<span class="string">'%%.%df%%s'</span>,tickdp(i)),tickint(i)*10^(-tickdp(i)),prefix{ticksi(i)/3+9});
+0268             <span class="keyword">end</span>
+0269         <span class="keyword">end</span>
+0270         <span class="keyword">if</span> width10&lt;2.5
+0271             set(ah,axfield{3,ax},<span class="string">'off'</span>);
+0272         <span class="keyword">end</span>
+0273         set(ah,axfield{2,ax},tps);
+0274         set(ah,axfield{4,ax},ticklab);
+0275     <span class="keyword">end</span>
+0276 
+0277 <span class="keyword">else</span>                    <span class="comment">% linear axis</span>
+0278     <span class="keyword">for</span> ipan=1:4                    <span class="comment">% panic level: 1=spacious, 2=cramped, 3=any two labels, 4=any label</span>
+0279         margin=marg(ipan);
+0280         <span class="comment">% select a global multiplier</span>
+0281         <span class="keyword">if</span> tryglobal
+0282             gi=3*floor(log10(max(abs(a),abs(b)))/3);
+0283             s=prefix{9+gi/3};
+0284 
+0285         <span class="keyword">else</span>
+0286             gi=0;
+0287             s=<span class="string">''</span>;
+0288         <span class="keyword">end</span>
+0289         g=10^gi;
+0290         ag=a/g;
+0291         bg=b/g;
+0292         width1=widthc/(bg-ag);                  <span class="comment">% width of 1 plot unit in font units</span>
+0293         ldeltamin=log10(min((digitw+margin)/axdir(1),(digith+margin)/axdir(2))/width1);        <span class="comment">% log of smallest conceivable increment</span>
+0294         ildelta=floor(ldeltamin);
+0295         ix=find(ldeltamin-ildelta&lt;=delcheck,1);
+0296         jx=ildelta*3+ix;
+0297         <span class="keyword">while</span> 1 <span class="comment">% loop trying increasingly coarse labelling</span>
+0298             deltax=floor(jx/3);         <span class="comment">% exponent of label increment</span>
+0299             deltav=delval(jx-3*deltax+1); <span class="comment">% mantissa of label increment</span>
+0300             delta=deltav*10^deltax;         <span class="comment">% actual label inrement</span>
+0301             multq=ceil(ag/delta):floor(bg/delta);   <span class="comment">% multiples of delta to display</span>
+0302             ntickq=numel(multq);
+0303             <span class="keyword">if</span> ntickq&lt;ntreq(ipan)   <span class="comment">% give up now if too few labels</span>
+0304                 <span class="keyword">break</span>;
+0305             <span class="keyword">end</span>
+0306             intq=deltav*multq;
+0307             lintq=floor(log10(abs(intq)+(intq==0)));
+0308             siq=3*floor((lintq+deltax)/3)*~tryglobal;      <span class="comment">% SI multiplier, but only if no global multiplier</span>
+0309             dpq=siq-deltax;
+0310             msk=dpq&lt;0;
+0311             intq(msk)=intq(msk).*10.^(-dpq(msk));
+0312             dpq(msk)=0;
+0313             msk=rem(intq,10)==0 &amp; dpq&gt;0;
+0314             <span class="keyword">while</span> any(msk)      <span class="comment">% remove unwanted trailing zeros</span>
+0315                 dpq(msk)=dpq(msk)-1;
+0316                 intq(msk)=intq(msk)/10;
+0317                 msk=rem(intq,10)==0 &amp; dpq&gt;0;
+0318             <span class="keyword">end</span>
+0319             widq=1+floor(log10(abs(intq)+(intq==0)));
+0320             widq=digitw*(widq+(dpq&gt;0).*max(1,dpq+2-widq)+(siq~=0).*(intq~=0)+(intq&lt;0)); <span class="comment">% calculate width of each label</span>
+0321             <span class="comment">% debug2=[intq; widq; digith+margin&lt;=axdir(2)*width1*delta (widq(1:end-1)+widq(2:end)+2*margin)&lt;=2*width1*delta];</span>
+0322             <span class="keyword">if</span> all((widq(1:end-1)+widq(2:end)+2*margin)&lt;=2*axdir(1)*width1*delta) || (digith+margin&lt;=axdir(2)*width1*delta);
+0323                 ntick=ntickq;
+0324                 tickint=intq;
+0325                 tickdp=dpq;
+0326                 ticksi=siq;
+0327                 <span class="keyword">if</span> deltav&gt;1 &amp;&amp; width1*delta&gt;0.5*deltav          <span class="comment">% put explicit subticks if delta = 2 or 5</span>
+0328                     mults=ceil(ag*deltav/delta):floor(bg*deltav/delta);
+0329                     subtick=(mults(deltav*fix(mults/deltav)~=mults))*delta/deltav;
+0330                 <span class="keyword">else</span>
+0331                     subtick=[];
+0332                 <span class="keyword">end</span>
+0333                 <span class="keyword">break</span>                       <span class="comment">% do not try any more coarser spacings</span>
+0334             <span class="keyword">end</span>
+0335             jx=jx+1;                            <span class="comment">% try next coarser spacing</span>
+0336         <span class="keyword">end</span>
+0337         <span class="keyword">if</span> ntick&gt;=ntreq(ipan)
+0338             <span class="keyword">break</span><span class="comment">% quit if we have enough labels</span>
+0339         <span class="keyword">end</span>
+0340     <span class="keyword">end</span>
+0341     <span class="keyword">if</span> ntick
+0342         tickexp=gi+ticksi-tickdp;
+0343         tickpos=tickint .* 10.^tickexp;
+0344         [tps,ix]=sort([tickpos subtick*10^gi]);
+0345         nticks=length(tps);
+0346         ticklab=cell(nticks,1);
+0347         <span class="keyword">for</span> j=1:nticks
+0348             i=ix(j);
+0349             <span class="keyword">if</span> i&gt;ntick
+0350                 ticklab{j}=<span class="string">''</span>;
+0351             <span class="keyword">else</span>
+0352                 ticklab{j}=sprintf(sprintf(<span class="string">'%%.%df%%s'</span>,tickdp(i)),tickint(i)*10^(-tickdp(i)),prefix{(ticksi(i)/3)*(tickint(i)~=0)+9});
+0353             <span class="keyword">end</span>
+0354         <span class="keyword">end</span>
+0355         set(ah,axfield{2,ax},tps);
+0356         set(ah,axfield{4,ax},ticklab);
+0357         set(ah,axfield{3,ax},<span class="string">'on'</span>);
+0358     <span class="keyword">end</span>
+0359 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

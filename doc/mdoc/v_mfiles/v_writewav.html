@@ -1,0 +1,481 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_writewav</title>
+  <meta name="keywords" content="v_writewav">
+  <meta name="description" content="WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_writewav.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_writewav
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)
+
+   The input arguments for WRITEWAV are as follows (use [] for null arguments):
+
+       D           The sampled data to save
+       FS          The rate at which the data was sampled
+       FILENAME    A string containing the name of the .WAV file to create or
+                        alternatively the FIDX output from a previous v_writewav call
+       MODE        String containing any reasonable mixture of flags below (*=default):
+       NSKIP       Number of samples to skip before writing or -1[default] to continue from previous write
+                   Only valid if FIDX is specified for FILENAME
+       MASK        specifies the speaker positions included as a bit mask giving the channels present in the following order (0 is LSB):
+                   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR
+                   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top
+       MAD         specifies the input scale for 's' option [default: max(abs(d(:)))]
+
+ MODE flags (*=default):
+  Precision: 'a'    for 8-bit A-law PCM
+             'u'    for 8-bit mu-law PCM
+            '16' *     for 16 bit PCM data
+             '8'    for 8 bit PCM data
+             ...    any number in the range 2 to 32 for PCM
+             'v'    32-bit floating point
+             'V'    64-bit floating point
+             'c'    embed in 16 bits
+             'C'    embed in 24 bits
+             'L'    embed in 32 bits
+      Dither: 'w'    White triangular dither of amplitude +-1 LSB (PCM modes only)
+             'h'    High pass dither (filtered by 1-1/z) (PCM modes only)
+             'l'    Low pass dither (filtered by 1+1/z) (PCM modes only)
+    Scaling: 's' *  Auto scale to make data peak (or MAD input value) = +-1
+             'r'    Raw unscaled data (integer values)
+             'q'    Scaled to make unity mean square correspond to 0dBm according to G.711
+             'p'       Scaled to make +-1 equal full scale
+             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)
+                     (can be combined with n+p,r,s modes)
+             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)
+                     (can be combined with o+p,r,s modes)
+             'g'    Include a gain factor so that &quot;v_readwav&quot; will restore the correct level
+     Offset: 'y' *     Correct for offset in &lt;=8 bit PCM data
+             'z'    Do not apply offset correction
+     Format: 'x'    use WAVEFORMATEX format (default for non PCM)
+             'X'    use WAVEFORMATEXTENSIBLE (default if MASK input is non-zero)
+             'e'    use original WAVEFORMAT (default for PCM)
+             'E'    include a 'fact' chunk (default for non-PCM)
+   File I/O: 'f'    Do not close file on exit
+             'd'    Look in data directory: v_voicebox('dir_data')
+
+
+ Output Parameter:
+
+    FIDX     Information row vector containing the element listed below.
+
+           (1)  file id
+            (2)  current position in file (in samples, 0=start of file)
+           (3)  dataoff    length of file header in bytes
+           (4)  nsamp    number of samples
+           (5)  nchan    number of channels
+           (6)  nbyte    bytes per data value
+           (7)  bits    number of bits of precision
+           (8)  code    Data format: 1=PCM, 2=ADPCM, 6=A-law, 7=Mu-law
+           (9)  fs    sample frequency
+           (10) dither state variable
+           (11) gain in dB (in INST chunk)
+
+   Note: WRITEWAV will create an 16-bit PCM, auto-scaled wave file by default.
+   For stereo data, d(:,1) is the left channel and d(:,2) the right
+
+   See also READWAV</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_ditherq.html" class="code" title="function [y,zf]=v_ditherq(x,m,zi)">v_ditherq</a>	DITHERQ  add dither and quantize [Y,ZF]=(X,M,ZI)</li><li><a href="v_lin2pcma.html" class="code" title="function p=v_lin2pcma(x,m,s)">v_lin2pcma</a>	LIN2PCMA Convert linear PCM to A-law P=(X,M,S)</li><li><a href="v_lin2pcmu.html" class="code" title="function p=v_lin2pcmu(x,s)">v_lin2pcmu</a>	LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="wavwrite.html" class="code" title="function v_wavwrite(y,fs,n,fn)">wavwrite</a>	WAVREAD  Legacy MATLAB function to write .WAV file (Y,Fs,N,FILENAME)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)</a>
+0002 <span class="comment">%WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   The input arguments for WRITEWAV are as follows (use [] for null arguments):</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%       D           The sampled data to save</span>
+0007 <span class="comment">%       FS          The rate at which the data was sampled</span>
+0008 <span class="comment">%       FILENAME    A string containing the name of the .WAV file to create or</span>
+0009 <span class="comment">%                        alternatively the FIDX output from a previous v_writewav call</span>
+0010 <span class="comment">%       MODE        String containing any reasonable mixture of flags below (*=default):</span>
+0011 <span class="comment">%       NSKIP       Number of samples to skip before writing or -1[default] to continue from previous write</span>
+0012 <span class="comment">%                   Only valid if FIDX is specified for FILENAME</span>
+0013 <span class="comment">%       MASK        specifies the speaker positions included as a bit mask giving the channels present in the following order (0 is LSB):</span>
+0014 <span class="comment">%                   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR</span>
+0015 <span class="comment">%                   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top</span>
+0016 <span class="comment">%       MAD         specifies the input scale for 's' option [default: max(abs(d(:)))]</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% MODE flags (*=default):</span>
+0019 <span class="comment">%  Precision: 'a'    for 8-bit A-law PCM</span>
+0020 <span class="comment">%             'u'    for 8-bit mu-law PCM</span>
+0021 <span class="comment">%            '16' *     for 16 bit PCM data</span>
+0022 <span class="comment">%             '8'    for 8 bit PCM data</span>
+0023 <span class="comment">%             ...    any number in the range 2 to 32 for PCM</span>
+0024 <span class="comment">%             'v'    32-bit floating point</span>
+0025 <span class="comment">%             'V'    64-bit floating point</span>
+0026 <span class="comment">%             'c'    embed in 16 bits</span>
+0027 <span class="comment">%             'C'    embed in 24 bits</span>
+0028 <span class="comment">%             'L'    embed in 32 bits</span>
+0029 <span class="comment">%      Dither: 'w'    White triangular dither of amplitude +-1 LSB (PCM modes only)</span>
+0030 <span class="comment">%             'h'    High pass dither (filtered by 1-1/z) (PCM modes only)</span>
+0031 <span class="comment">%             'l'    Low pass dither (filtered by 1+1/z) (PCM modes only)</span>
+0032 <span class="comment">%    Scaling: 's' *  Auto scale to make data peak (or MAD input value) = +-1</span>
+0033 <span class="comment">%             'r'    Raw unscaled data (integer values)</span>
+0034 <span class="comment">%             'q'    Scaled to make unity mean square correspond to 0dBm according to G.711</span>
+0035 <span class="comment">%             'p'       Scaled to make +-1 equal full scale</span>
+0036 <span class="comment">%             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)</span>
+0037 <span class="comment">%                     (can be combined with n+p,r,s modes)</span>
+0038 <span class="comment">%             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)</span>
+0039 <span class="comment">%                     (can be combined with o+p,r,s modes)</span>
+0040 <span class="comment">%             'g'    Include a gain factor so that &quot;v_readwav&quot; will restore the correct level</span>
+0041 <span class="comment">%     Offset: 'y' *     Correct for offset in &lt;=8 bit PCM data</span>
+0042 <span class="comment">%             'z'    Do not apply offset correction</span>
+0043 <span class="comment">%     Format: 'x'    use WAVEFORMATEX format (default for non PCM)</span>
+0044 <span class="comment">%             'X'    use WAVEFORMATEXTENSIBLE (default if MASK input is non-zero)</span>
+0045 <span class="comment">%             'e'    use original WAVEFORMAT (default for PCM)</span>
+0046 <span class="comment">%             'E'    include a 'fact' chunk (default for non-PCM)</span>
+0047 <span class="comment">%   File I/O: 'f'    Do not close file on exit</span>
+0048 <span class="comment">%             'd'    Look in data directory: v_voicebox('dir_data')</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% Output Parameter:</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%    FIDX     Information row vector containing the element listed below.</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%           (1)  file id</span>
+0056 <span class="comment">%            (2)  current position in file (in samples, 0=start of file)</span>
+0057 <span class="comment">%           (3)  dataoff    length of file header in bytes</span>
+0058 <span class="comment">%           (4)  nsamp    number of samples</span>
+0059 <span class="comment">%           (5)  nchan    number of channels</span>
+0060 <span class="comment">%           (6)  nbyte    bytes per data value</span>
+0061 <span class="comment">%           (7)  bits    number of bits of precision</span>
+0062 <span class="comment">%           (8)  code    Data format: 1=PCM, 2=ADPCM, 6=A-law, 7=Mu-law</span>
+0063 <span class="comment">%           (9)  fs    sample frequency</span>
+0064 <span class="comment">%           (10) dither state variable</span>
+0065 <span class="comment">%           (11) gain in dB (in INST chunk)</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">%   Note: WRITEWAV will create an 16-bit PCM, auto-scaled wave file by default.</span>
+0068 <span class="comment">%   For stereo data, d(:,1) is the left channel and d(:,2) the right</span>
+0069 <span class="comment">%</span>
+0070 <span class="comment">%   See also READWAV</span>
+0071 
+0072 <span class="comment">%   *** Note on scaling ***</span>
+0073 <span class="comment">%   If we want to scale signal values in the range +-1 to an integer in the</span>
+0074 <span class="comment">%   range [-128,127] then we have four plausible choices corresponding to</span>
+0075 <span class="comment">%   scale factors of (a) 127, (b) 127.5, (c) 128 or (d) 128.5 but each choice</span>
+0076 <span class="comment">%   has disadvantages.</span>
+0077 <span class="comment">%   For forward scaling: (c) and (d) cause clipping on inputs of +1.</span>
+0078 <span class="comment">%   For reverse scaling: (a) and (b) can generate output values &lt; -1.</span>
+0079 <span class="comment">%   Any of these scalings can be selected via the mode input: (a) 'o', (b) default, (c) 'on', (d) 'n'</span>
+0080 
+0081 <span class="comment">%       Copyright (C) Mike Brookes 1998-2011</span>
+0082 <span class="comment">%      Version: $Id: v_writewav.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0085 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0088 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0089 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0090 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0091 <span class="comment">%   (at your option) any later version.</span>
+0092 <span class="comment">%</span>
+0093 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0094 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0095 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0096 <span class="comment">%   GNU General Public License for more details.</span>
+0097 <span class="comment">%</span>
+0098 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0099 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0100 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0101 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0102 
+0103 <span class="comment">% Acknowledgements</span>
+0104 <span class="comment">%   Thanks to Hugh Barnes for sorting out seek problems with MATLAB 6.5</span>
+0105 
+0106 <span class="comment">% Bugs/suggestions</span>
+0107 <span class="comment">%  Save the following factors in FIDX: (a) scale factor, (b) offset (c) low/high clip limits</span>
+0108 <span class="comment">%       (d) dither position  (e) rounding position</span>
+0109 
+0110 
+0111 <span class="keyword">if</span> nargin&lt;3
+0112     error(<span class="string">'Usage: WRITEWAV(data,fs,filename,mode,nskip)'</span>);
+0113 <span class="keyword">end</span>
+0114 <span class="keyword">if</span> nargin&lt;6
+0115     mask=0;
+0116 <span class="keyword">end</span>
+0117 info=zeros(1,11);
+0118 info(9)=fs;
+0119 <span class="keyword">if</span> nargin&lt;4
+0120     mode=<span class="string">'s'</span>;
+0121 <span class="keyword">else</span>
+0122     mode = [mode(:).' <span class="string">'s'</span>];  <span class="comment">% ensure that there is always a scaling option specified</span>
+0123 <span class="keyword">end</span>
+0124 info(8)=1;     <span class="comment">% default mode is PCM</span>
+0125 mno=all(mode~=<span class="string">'o'</span>);                      <span class="comment">% scale to input limits not output limits</span>
+0126 k=find((mode&gt;=<span class="string">'0'</span>) &amp; (mode&lt;=<span class="string">'9'</span>),1);
+0127 <span class="keyword">if</span> k
+0128     info(7)=sscanf(mode(k:end),<span class="string">'%d'</span>);  <span class="comment">% valid bits per data value</span>
+0129 <span class="keyword">else</span>
+0130     info(7)=16;
+0131 <span class="keyword">end</span>
+0132 <span class="keyword">if</span> any(mode==<span class="string">'c'</span>)
+0133     info(6)=2;       <span class="comment">% bytes per data value = 2</span>
+0134 <span class="keyword">elseif</span> any(mode==<span class="string">'C'</span>)
+0135     info(6)=3;       <span class="comment">% bytes per data value = 3</span>
+0136 <span class="keyword">elseif</span> any(mode==<span class="string">'L'</span>)
+0137     info(6)=4;       <span class="comment">% bytes per data value = 4</span>
+0138 <span class="keyword">else</span>
+0139     info(6)=ceil(info(7)/8);       <span class="comment">% bytes per data value</span>
+0140 <span class="keyword">end</span>
+0141 lo=-pow2(0.5,info(7));
+0142 hi=-1-lo;
+0143 pk=pow2(0.5,8*info(6))*(1-(mno/2-all(mode~=<span class="string">'n'</span>))/lo);  <span class="comment">% use modes o and n to determine effective peak</span>
+0144 <span class="comment">% should perhaps have another variable besides info(7) to control dither position (or set info(7) later)</span>
+0145 <span class="comment">% for A and mu law the dither position is not the same as the number of bits.</span>
+0146 <span class="keyword">if</span> any(mode==<span class="string">'a'</span>)
+0147     info(8)=6;
+0148     pk=4032+mno*64;
+0149     info(7)=8;  <span class="comment">% Some sources say this should be listed as 16 valid bits</span>
+0150     info(6)=1;
+0151 <span class="keyword">elseif</span> any(mode==<span class="string">'u'</span>)
+0152     info(8)=7;
+0153     pk=8031+mno*128;
+0154     info(7)=8;  <span class="comment">% Some sources say this should be listed as 16 valid bits</span>
+0155     info(6)=1;
+0156 <span class="keyword">elseif</span> any(mode==<span class="string">'v'</span>)
+0157     pk=1;
+0158     mode(end)=<span class="string">'r'</span>;  <span class="comment">% default scaling is 'r'</span>
+0159     info(6)=4;  <span class="comment">% bytes</span>
+0160     info(7)=32; <span class="comment">% bits</span>
+0161     info(8)=3;  <span class="comment">% WAVE type</span>
+0162 <span class="keyword">elseif</span> any(mode==<span class="string">'V'</span>)
+0163     pk=1;
+0164     mode(end)=<span class="string">'r'</span>;   <span class="comment">% default scaling is 'r'</span>
+0165     info(6)=8; <span class="comment">% bytes</span>
+0166     info(7)=64; <span class="comment">% bits</span>
+0167     info(8)=3; <span class="comment">% WAVE type</span>
+0168 <span class="keyword">end</span>            <span class="comment">% is this pk value correct ?</span>
+0169 sc=mode(find((mode&gt;=<span class="string">'p'</span>) &amp; (mode&lt;=<span class="string">'s'</span>),1)); <span class="comment">% find the first scaling option (always exists)</span>
+0170 z=128*all(mode~=<span class="string">'z'</span>);
+0171 <span class="keyword">if</span> any(mode==<span class="string">'w'</span>)
+0172     di=<span class="string">'w'</span>;                       <span class="comment">% select dither mode</span>
+0173 <span class="keyword">elseif</span> any(mode==<span class="string">'h'</span>)
+0174     di=<span class="string">'h'</span>;
+0175 <span class="keyword">elseif</span> any(mode==<span class="string">'l'</span>)
+0176     di=<span class="string">'l'</span>;
+0177 <span class="keyword">else</span>
+0178     di=<span class="string">'n'</span>;
+0179 <span class="keyword">end</span>
+0180 
+0181 <span class="comment">% Now sort out which wave format to use</span>
+0182 <span class="keyword">if</span> any(mode==<span class="string">'e'</span>)
+0183     wavtype=1;              <span class="comment">% original WAVEFORMAT format</span>
+0184 <span class="keyword">elseif</span> any(mode==<span class="string">'x'</span>)
+0185     wavtype=2;              <span class="comment">% WAVEFORMATEX format</span>
+0186 <span class="keyword">elseif</span> any(mode==<span class="string">'X'</span>) || (nargin&gt;=6 &amp;&amp; ~isempty(mask) &amp;&amp; mask~=0)
+0187     wavtype=3;              <span class="comment">% WAVEFORMATEXTENSIBLE format</span>
+0188 <span class="keyword">else</span>
+0189     wavtype=2-(info(8)==1);
+0190 <span class="keyword">end</span>
+0191 wavfmt=info(8)*(wavtype&lt;3)+(pow2(16)-2)*(wavtype==3);
+0192 fmtlen=[16 18 40]; <span class="comment">% length of format chunk</span>
+0193 factlen=12*(any(mode==<span class="string">'E'</span>) || info(8)~=1);
+0194 instlen=16*any(mode==<span class="string">'g'</span>);  <span class="comment">% length of INST chunk (force to be even since some readers do not like odd lengths)</span>
+0195 wavlen=[36 38 60]+factlen+instlen; <span class="comment">% length of entire WAVE chunk except for the data (not including 8 byte RIFF header)</span>
+0196 
+0197 
+0198 [n,nc]=size(d);
+0199 <span class="keyword">if</span> n==1
+0200     n=nc;
+0201     nc=1;
+0202 <span class="keyword">else</span>
+0203     d = d.';
+0204 <span class="keyword">end</span>;
+0205 <span class="keyword">if</span> nc&gt;32
+0206     error(<span class="string">'WRITEWAV: attempt to write a sound file with &gt;32 channels'</span>);
+0207 <span class="keyword">end</span>
+0208 nc=max(nc,1);
+0209 ncy=nc*info(6);                     <span class="comment">% bytes per sample time</span>
+0210 nyd=n*ncy;                          <span class="comment">% bytes to write</span>
+0211 <span class="keyword">if</span> ischar(filename)
+0212     <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0213         filename=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),filename);
+0214     <span class="keyword">end</span>
+0215     ny=nyd;
+0216     <span class="keyword">if</span> isempty(findstr(filename,<span class="string">'.'</span>))
+0217         filename=[filename,<span class="string">'.wav'</span>];
+0218     <span class="keyword">end</span>
+0219     fid=fopen(filename,<span class="string">'wb+'</span>,<span class="string">'l'</span>);
+0220     <span class="keyword">if</span> fid == -1
+0221         error(<span class="string">'Can''t open %s for output'</span>,filename);
+0222     <span class="keyword">end</span>
+0223     info(1)=fid;
+0224     fwrite(fid,<span class="string">'RIFF'</span>,<span class="string">'uchar'</span>);  <span class="comment">% main RIFF header</span>
+0225     fwrite(fid,wavlen(wavtype)+2*ceil(ny/2),<span class="string">'ulong'</span>);  <span class="comment">%</span>
+0226     fwrite(fid,<span class="string">'WAVEfmt '</span>,<span class="string">'uchar'</span>);   <span class="comment">% write &quot;WAVE&quot; ID and &quot;fmt&quot; chunk</span>
+0227     fwrite(fid,[fmtlen(wavtype) 0 wavfmt nc],<span class="string">'ushort'</span>); <span class="comment">% chunk size, format code, number of channels</span>
+0228     fwrite(fid,[fs fs*ncy],<span class="string">'ulong'</span>);        <span class="comment">% sample rate, bytes per sec</span>
+0229     <span class="keyword">switch</span> wavtype
+0230         <span class="keyword">case</span> 1
+0231             fwrite(fid,[ncy info(7)],<span class="string">'ushort'</span>);     <span class="comment">% block size, bits-per-sample</span>
+0232         <span class="keyword">case</span> 2
+0233             fwrite(fid,[ncy info(7)],<span class="string">'ushort'</span>);     <span class="comment">% block size, bits-per-sample</span>
+0234             fwrite(fid,0,<span class="string">'ushort'</span>);     <span class="comment">% size of the extension=0</span>
+0235         <span class="keyword">case</span> 3
+0236             fwrite(fid,[ncy 8*info(6)],<span class="string">'ushort'</span>);     <span class="comment">% block size, bits-per-sample (aways a multiple of 8)</span>
+0237             fwrite(fid,[22 info(7)],<span class="string">'ushort'</span>);     <span class="comment">% size of the extension=22, valid bits</span>
+0238             fwrite(fid,[mask info(8)],<span class="string">'ulong'</span>);        <span class="comment">% speaker position mask, encoding format</span>
+0239             fwrite(fid,[0 16 128 43520 14336 29083],<span class="string">'ushort'</span>);                <span class="comment">% GUID</span>
+0240     <span class="keyword">end</span>
+0241     <span class="keyword">if</span> factlen
+0242         fwrite(fid,<span class="string">'fact'</span>,<span class="string">'uchar'</span>);   <span class="comment">% fact chunk header</span>
+0243         fwrite(fid,[4 n],<span class="string">'ulong'</span>);       <span class="comment">% length in bytes + number of samples</span>
+0244     <span class="keyword">end</span>
+0245     <span class="keyword">if</span> instlen
+0246         fwrite(fid,<span class="string">'inst'</span>,<span class="string">'uchar'</span>);   <span class="comment">% fact chunk header</span>
+0247         fwrite(fid,instlen-8,<span class="string">'ulong'</span>);       <span class="comment">% length in bytes</span>
+0248         fwrite(fid,zeros(1,instlen-8),<span class="string">'uchar'</span>);   <span class="comment">% inst data (zero for now)</span>
+0249     <span class="keyword">end</span>
+0250     fwrite(fid,<span class="string">'data'</span>,<span class="string">'uchar'</span>);   <span class="comment">% data header</span>
+0251     fwrite(fid,ny,<span class="string">'ulong'</span>);       <span class="comment">% data length in bytes</span>
+0252     nskip=0;                        <span class="comment">% over-ride any nskip argument</span>
+0253     info(3)=8+wavlen(wavtype);      <span class="comment">% length of all header information</span>
+0254     info(4)=n;                      <span class="comment">% number of samples (per channel)</span>
+0255     info(2)=n;                      <span class="comment">% current file position (in samples)</span>
+0256     info(10)=rand(1);                       <span class="comment">% seed for dither generation</span>
+0257 <span class="keyword">else</span>
+0258     info=filename;
+0259     fid=info(1);
+0260     fseek(fid,0,1); <span class="comment">% go to end of file</span>
+0261     <span class="keyword">if</span> nargin&lt;5 || nskip&lt;0
+0262         nskip=info(2);                      <span class="comment">% use previous high water mark</span>
+0263     <span class="keyword">end</span>
+0264     info(2)=n+nskip;                          <span class="comment">% file position following this write operation (in samples)</span>
+0265     ny=nyd+nskip*ncy;                       <span class="comment">% file position following this write operation (in bytes following header)</span>
+0266     <span class="keyword">if</span> n &amp;&amp; (info(2)&gt;info(4))               <span class="comment">% update high water mark</span>
+0267         <span class="keyword">if</span> ~info(4)                           <span class="comment">% if no data written previously</span>
+0268             fseek(fid,22,-1); fwrite(fid,nc,<span class="string">'ushort'</span>);   <span class="comment">% update number of channels</span>
+0269             fseek(fid,28,-1); fwrite(fid,fs*ncy,<span class="string">'ulong'</span>); <span class="comment">% update bytes/second</span>
+0270             fwrite(fid,ncy,<span class="string">'ushort'</span>); <span class="comment">% update bytes/sample</span>
+0271         <span class="keyword">end</span>
+0272         fseek(fid,4,-1); fwrite(fid,wavlen(wavtype)+2*ceil(ny/2),<span class="string">'ulong'</span>); <span class="comment">% update RIFF length</span>
+0273         <span class="keyword">if</span> factlen
+0274             fseek(fid,wavlen(wavtype)-4-instlen,-1); fwrite(fid,n,<span class="string">'ulong'</span>);  <span class="comment">% update FACT number of samples</span>
+0275         <span class="keyword">end</span>
+0276         fseek(fid,4+wavlen(wavtype),-1); fwrite(fid,ny,<span class="string">'ulong'</span>);  <span class="comment">% update DATA length</span>
+0277         info(4)=info(2);
+0278     <span class="keyword">end</span>
+0279 <span class="keyword">end</span>
+0280 info(5)=nc;
+0281 <span class="keyword">if</span> n                            <span class="comment">% if there are any data values</span>
+0282     <span class="keyword">if</span> sc~=<span class="string">'r'</span>                  <span class="comment">% 'r' = no scaling</span>
+0283         <span class="keyword">if</span> sc==<span class="string">'s'</span>              <span class="comment">% 's' = scale to peak signal</span>
+0284             <span class="keyword">if</span> nargin&gt;=7 &amp;&amp; ~isempty(mad) &amp;&amp; mad&gt;0
+0285                 pd=mad;
+0286             <span class="keyword">else</span>
+0287                 pd=max(abs(d(:)));
+0288                 pd=pd+(pd==0);      <span class="comment">% scale to 1 if data is all zero</span>
+0289             <span class="keyword">end</span>
+0290         <span class="keyword">elseif</span> sc==<span class="string">'p'</span>          <span class="comment">% 'p' = scale to +-1 = full scale</span>
+0291             pd=1;
+0292         <span class="keyword">else</span>                    <span class="comment">% 'q' = scale to 0dBm</span>
+0293             <span class="keyword">if</span> info(8)==7       <span class="comment">% mu-law</span>
+0294                 pd=2.03761563;
+0295             <span class="keyword">else</span>                <span class="comment">% A-law or anything else</span>
+0296                 pd=2.03033976;
+0297             <span class="keyword">end</span>
+0298         <span class="keyword">end</span>
+0299         <span class="keyword">if</span> instlen
+0300             info(11)=min(max(ceil(20*log10(pd)),-128),127);
+0301             d=pk*10^(-0.05*info(11))*d;
+0302             <span class="keyword">if</span> fseek(fid,0,-1)  <span class="comment">% MATLAB V6.5 fails if this is omitted</span>
+0303                 error(<span class="string">'Cannot rewind file'</span>);
+0304             <span class="keyword">end</span>
+0305             <span class="keyword">if</span> fseek(fid,info(3)-instlen+2,-1)
+0306                 error(<span class="string">'Cannot seek to INST chunk gain byte'</span>);
+0307             <span class="keyword">end</span>
+0308             fwrite(fid,info(11),<span class="string">'schar'</span>);   <span class="comment">% write the INST gain in dB</span>
+0309         <span class="keyword">else</span>
+0310             d=pk/pd*d;
+0311         <span class="keyword">end</span>
+0312     <span class="keyword">end</span>
+0313     <span class="keyword">if</span> fseek(fid,0,-1)  <span class="comment">% MATLAB V6.5 fails if this is omitted</span>
+0314         error(<span class="string">'Cannot rewind file'</span>);
+0315     <span class="keyword">end</span>
+0316     <span class="keyword">if</span> fseek(fid,info(3)+nskip*nc*info(6),-1)
+0317         error(<span class="string">'Cannot seek to byte %d in output file'</span>,info(3)+nskip*nc*info(6));
+0318     <span class="keyword">end</span>
+0319     <span class="keyword">if</span> info(8)==3 <span class="comment">% floating point</span>
+0320         <span class="keyword">if</span> info(6)==4
+0321             fwrite(fid,d,<span class="string">'float32'</span>);
+0322         <span class="keyword">else</span>
+0323             fwrite(fid,d,<span class="string">'float64'</span>);
+0324         <span class="keyword">end</span>
+0325     <span class="keyword">else</span>                        <span class="comment">% integer data</span>
+0326         <span class="keyword">if</span> info(8)&lt;6            <span class="comment">% PCM</span>
+0327             <span class="keyword">if</span> di==<span class="string">'n'</span>
+0328                 d=round(d);
+0329             <span class="keyword">else</span>
+0330                 [d,info(10)]=<a href="v_ditherq.html" class="code" title="function [y,zf]=v_ditherq(x,m,zi)">v_ditherq</a>(d,di,info(10));
+0331             <span class="keyword">end</span>
+0332             d=min(max(d,lo),hi)*pow2(1,8*info(6)-info(7));       <span class="comment">% clip data and shift to most significant bits</span>
+0333         <span class="keyword">else</span>                    <span class="comment">% mu or A law</span>
+0334             z=0;
+0335             <span class="keyword">if</span> info(8) &lt; 7
+0336                 d=<a href="v_lin2pcma.html" class="code" title="function p=v_lin2pcma(x,m,s)">v_lin2pcma</a>(d,213,1);
+0337             <span class="keyword">else</span>
+0338                 d=<a href="v_lin2pcmu.html" class="code" title="function p=v_lin2pcmu(x,s)">v_lin2pcmu</a>(d,1);
+0339             <span class="keyword">end</span>
+0340         <span class="keyword">end</span>
+0341         <span class="keyword">if</span> info(6)&lt;3
+0342             <span class="keyword">if</span> info(6)&lt;2
+0343                 fwrite(fid,d+z,<span class="string">'uchar'</span>);
+0344             <span class="keyword">else</span>
+0345                 fwrite(fid,d,<span class="string">'short'</span>);
+0346             <span class="keyword">end</span>
+0347         <span class="keyword">else</span>
+0348             <span class="keyword">if</span> info(6)&lt;4
+0349                 d=d(:)';
+0350                 d2=floor(d/65536);
+0351                 d=d-65536*d2;
+0352                 fwrite(fid,[rem(d,256); floor(d/256); d2+256*(d2&lt;0)],<span class="string">'uchar'</span>);
+0353             <span class="keyword">else</span>
+0354                 fwrite(fid,d,<span class="string">'long'</span>);
+0355             <span class="keyword">end</span>
+0356         <span class="keyword">end</span>
+0357         <span class="keyword">if</span> rem(ny,2) <span class="comment">% pad to an even number of bytes</span>
+0358             fwrite(fid,0,<span class="string">'uchar'</span>);
+0359         <span class="keyword">end</span>
+0360     <span class="keyword">end</span>
+0361 <span class="keyword">end</span>
+0362 <span class="keyword">if</span> all(mode~=<span class="string">'f'</span>)
+0363     fclose(fid);
+0364 <span class="keyword">end</span>
+0365 <span class="keyword">if</span> nargout
+0366     fidx=info;
+0367 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

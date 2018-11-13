@@ -1,0 +1,656 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_dypsa</title>
+  <meta name="keywords" content="v_dypsa">
+  <meta name="description" content="DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_dypsa.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_dypsa
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [gci,goi] = v_dypsa(s,fs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)
+   Note: Needs to be combined with a voiced-voiceless detector to eliminate
+   spurious closures in unvoiced and silent regions.
+
+   Inputs:
+   s     is the speech signal
+   fs    is the sampling frequncy
+
+   Outputs:
+   gci   is a vector of glottal closure sample numbers
+   gco   is a vector of glottal opening sample numbers derived from
+         an assumed constant closed-phase fraction
+
+   References:
+   [1]  P. A. Naylor, A. Kounoudes, J. Gudnason, and M. Brookes, “Estimation of Glottal Closure
+        Instants in Voiced Speech using the DYPSA Algorithm,” IEEE Trans on Speech and Audio
+        Processing, vol. 15, pp. 34–43, Jan. 2007.
+   [2]  M. Brookes, P. A. Naylor, and J. Gudnason, “A Quantitative Assessment of Group Delay Methods
+        for Identifying Glottal Closures in Voiced Speech,” IEEE Trans on Speech &amp; Audio Processing,
+        vol. 14, no. 2, pp. 456–466, Mar. 2006.
+   [3]  A. Kounoudes, P. A. Naylor, and M. Brookes, “The DYPSA algorithm for estimation of glottal
+        closure instants in voiced speech,” in Proc ICASSP 2002, vol. 1, Orlando, 2002, pp. 349–352.
+   [4]  C. Ma, Y. Kamp, and L. F. Willems, “A Frobenius norm approach to glottal closure detection
+        from the speech signal,” IEEE Trans. Speech Audio Processing, vol. 2, pp. 258–265, Apr. 1994.
+   [5]  A. Kounoudes, “Epoch Estimation for Closed-Phase Analysis of Speech,” PhD Thesis,
+        Imperial College, 2001.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>	LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</li><li><a href="v_lpcifilt.html" class="code" title="function u=v_lpcifilt(s,ar,t,dc,fade)">v_lpcifilt</a>	LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</li><li><a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>	MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_zerocros.html" class="code" title="function [t,s]=v_zerocros(y,m,x)">v_zerocros</a>	ZEROCROS finds the zeros crossings in a signal [T,S]=(Y,M,X)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function z = psp(g,fs)</a></li><li><a href="#_sub2" class="code">function i = zcr(x, p)</a></li><li><a href="#_sub3" class="code">function zz = zcrp(xx)</a></li><li><a href="#_sub4" class="code">function [frob]=frobfun(sp,p,m,offset)</a></li><li><a href="#_sub5" class="code">function goi=simplegci2goi(gci,pr)</a></li><li><a href="#_sub6" class="code">function [tew,sew,y,toff]=xewgrdel(u,fs)</a></li><li><a href="#_sub7" class="code">function Cfn=fnrg(gcic,frob,fs)</a></li><li><a href="#_sub8" class="code">function gci=dpgci(gcic, s, Ch, fnwav, fs)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [gci,goi] = v_dypsa(s,fs)</a>
+0002 <span class="comment">%DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</span>
+0003 <span class="comment">%   Note: Needs to be combined with a voiced-voiceless detector to eliminate</span>
+0004 <span class="comment">%   spurious closures in unvoiced and silent regions.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   Inputs:</span>
+0007 <span class="comment">%   s     is the speech signal</span>
+0008 <span class="comment">%   fs    is the sampling frequncy</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%   Outputs:</span>
+0011 <span class="comment">%   gci   is a vector of glottal closure sample numbers</span>
+0012 <span class="comment">%   gco   is a vector of glottal opening sample numbers derived from</span>
+0013 <span class="comment">%         an assumed constant closed-phase fraction</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%   References:</span>
+0016 <span class="comment">%   [1]  P. A. Naylor, A. Kounoudes, J. Gudnason, and M. Brookes, “Estimation of Glottal Closure</span>
+0017 <span class="comment">%        Instants in Voiced Speech using the DYPSA Algorithm,” IEEE Trans on Speech and Audio</span>
+0018 <span class="comment">%        Processing, vol. 15, pp. 34–43, Jan. 2007.</span>
+0019 <span class="comment">%   [2]  M. Brookes, P. A. Naylor, and J. Gudnason, “A Quantitative Assessment of Group Delay Methods</span>
+0020 <span class="comment">%        for Identifying Glottal Closures in Voiced Speech,” IEEE Trans on Speech &amp; Audio Processing,</span>
+0021 <span class="comment">%        vol. 14, no. 2, pp. 456–466, Mar. 2006.</span>
+0022 <span class="comment">%   [3]  A. Kounoudes, P. A. Naylor, and M. Brookes, “The DYPSA algorithm for estimation of glottal</span>
+0023 <span class="comment">%        closure instants in voiced speech,” in Proc ICASSP 2002, vol. 1, Orlando, 2002, pp. 349–352.</span>
+0024 <span class="comment">%   [4]  C. Ma, Y. Kamp, and L. F. Willems, “A Frobenius norm approach to glottal closure detection</span>
+0025 <span class="comment">%        from the speech signal,” IEEE Trans. Speech Audio Processing, vol. 2, pp. 258–265, Apr. 1994.</span>
+0026 <span class="comment">%   [5]  A. Kounoudes, “Epoch Estimation for Closed-Phase Analysis of Speech,” PhD Thesis,</span>
+0027 <span class="comment">%        Imperial College, 2001.</span>
+0028 
+0029 <span class="comment">% Algorithm Parameters</span>
+0030 <span class="comment">%       The following parameters are defined in v_voicebox()</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   dy_cpfrac=0.3;           % presumed closed phase fraction of larynx cycle</span>
+0033 <span class="comment">%   dy_cproj=0.2;            % cost of projected candidate</span>
+0034 <span class="comment">%   dy_cspurt=-0.45;         % cost of a talkspurt</span>
+0035 <span class="comment">%   dy_dopsp=1;              % Use phase slope projection (1) or not (0)?</span>
+0036 <span class="comment">%   dy_ewdly=0.0008;         % window delay for energy cost function term [~ energy peak delay from closure] (sec)</span>
+0037 <span class="comment">%   dy_ewlen=0.003;          % window length for energy cost function term (sec)</span>
+0038 <span class="comment">%   dy_ewtaper=0.001;        % taper length for energy cost function window (sec)</span>
+0039 <span class="comment">%   dy_fwlen=0.00045;        % window length used to smooth group delay (sec)</span>
+0040 <span class="comment">%   dy_fxmax=500;            % max larynx frequency (Hz)</span>
+0041 <span class="comment">%   dy_fxmin=50;             % min larynx frequency (Hz)</span>
+0042 <span class="comment">%   dy_fxminf=60;            % min larynx frequency (Hz) [used for Frobenius norm only]</span>
+0043 <span class="comment">%   dy_gwlen=0.0030;         % group delay evaluation window length (sec)</span>
+0044 <span class="comment">%   dy_lpcdur=0.020;         % lpc analysis frame length (sec)</span>
+0045 <span class="comment">%   dy_lpcn=2;               % lpc additional poles</span>
+0046 <span class="comment">%   dy_lpcnf=0.001;          % lpc poles per Hz (1/Hz)</span>
+0047 <span class="comment">%   dy_lpcstep=0.010;        % lpc analysis step (sec)</span>
+0048 <span class="comment">%   dy_nbest=5;              % Number of NBest paths to keep</span>
+0049 <span class="comment">%   dy_preemph=50;           % pre-emphasis filter frequency (Hz) (to avoid preemphasis, make this very large)</span>
+0050 <span class="comment">%   dy_spitch=0.2;           % scale factor for pitch deviation cost</span>
+0051 <span class="comment">%   dy_wener=0.3;            % DP energy weighting</span>
+0052 <span class="comment">%   dy_wpitch=0.5;           % DP pitch weighting</span>
+0053 <span class="comment">%   dy_wslope=0.1;           % DP group delay slope weighting</span>
+0054 <span class="comment">%   dy_wxcorr=0.8;           % DP cross correlation weighting</span>
+0055 <span class="comment">%   dy_xwlen=0.01;           % cross-correlation length for waveform similarity (sec)</span>
+0056 
+0057 <span class="comment">%   Revision History:</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%   3.0 - 29 Jun 2006  - Rewrote DP function to improve speed</span>
+0060 <span class="comment">%   2.6 - 29 Jun 2006  - Tidied up algorithm parameters</span>
+0061 <span class="comment">%   2.4 - 10 Jun 2006  - Made into a single file aand put into VOICEBOX</span>
+0062 <span class="comment">%   2.3 - 18 Mar 2005  - Removed 4kHz filtering of phase-slope function</span>
+0063 <span class="comment">%   2.2 - 05 Oct 2004  -  dpgci uses the slopes returned from xewgrdel</span>
+0064 <span class="comment">%                      -  gdwav from speech with fs&lt;9000 is not filtered</span>
+0065 <span class="comment">%                      -  Various outputs and inputs of functions have been</span>
+0066 <span class="comment">%                         removed since now there is no plotting</span>
+0067 <span class="comment">%   1.0 - 30 Jan 2001  - Initial version [5]</span>
+0068 
+0069 <span class="comment">%   Bugs:</span>
+0070 <span class="comment">%         1. Allow the projections only to extend to the end of the larynx cycle</span>
+0071 <span class="comment">%         2. Compensate for false pitch period cost at the start of a voicespurt</span>
+0072 <span class="comment">%         3. Should include energy and phase-slope costs for the first closure of a voicespurt</span>
+0073 <span class="comment">%         4. should delete candidates that are too close to the beginning or end of speech for the cost measures</span>
+0074 <span class="comment">%            currently this is 200 samples fixed in the main routine but it should adapt to window lengths of</span>
+0075 <span class="comment">%            cross-correlation, lpc and energy measures.</span>
+0076 <span class="comment">%         5. Should have an integrated voiced/voiceless detector</span>
+0077 <span class="comment">%         6. Allow v_dypsa to be called in chunks for a long speech file</span>
+0078 <span class="comment">%         7. Do forward &amp; backward passes to allow for gradient descent and/or discriminative training</span>
+0079 <span class="comment">%         8. Glottal opening approximation does not really belong in this function</span>
+0080 <span class="comment">%         9. The cross correlation window is asymmetric (and overcomplex) for no very good reason</span>
+0081 <span class="comment">%        10. Incorporate -0.5 factor into dy_wxcorr and abolish erroneous (nx2-1)/(nx2-2) factor</span>
+0082 <span class="comment">%        11. Add in talkspurt cost at the beginning rather than the end of a spurt (more efficient)</span>
+0083 <span class="comment">%        12. Remove qmin&gt;2 condition from voicespurt start detection (DYPSA 2 compatibility) in two places</span>
+0084 <span class="comment">%        13. Include energy and phase-slope costs at the start of a voicespurt</span>
+0085 <span class="comment">%        14. Single-closure voicespurt are only allowed if nbest=1 (should always be forbidden)</span>
+0086 <span class="comment">%        15. Penultimate closure candidate is always acceptd</span>
+0087 <span class="comment">%        16. Final element of gcic, Cfn and Ch is unused</span>
+0088 <span class="comment">%        17. Needs to cope better with irregular voicing (e.g. creaky voice)</span>
+0089 <span class="comment">%        18. Should give non-integer GCI positions for improved accuracy</span>
+0090 <span class="comment">%        19. Remove constraint that first voicespurt cannot begin until qrmax after the first candidate</span>
+0091 
+0092 <span class="comment">%      Copyright (C) Tasos Kounoudes, Jon Gudnason, Patrick Naylor and Mike Brookes 2006</span>
+0093 <span class="comment">%      Version: $Id: v_dypsa.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0094 <span class="comment">%</span>
+0095 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0096 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0097 <span class="comment">%</span>
+0098 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0099 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0100 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0101 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0102 <span class="comment">%   (at your option) any later version.</span>
+0103 <span class="comment">%</span>
+0104 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0105 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0106 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0107 <span class="comment">%   GNU General Public License for more details.</span>
+0108 <span class="comment">%</span>
+0109 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0110 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0111 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0112 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0113 
+0114 <span class="comment">% Extract algorithm constants from VOICEBOX</span>
+0115 
+0116 
+0117 dy_preemph=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_preemph'</span>);
+0118 dy_lpcstep=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_lpcstep'</span>);
+0119 dy_lpcdur=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_lpcdur'</span>);
+0120 dy_dopsp=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_dopsp'</span>);              <span class="comment">% Use phase slope projection (1) or not (0)?</span>
+0121 dy_ewtaper=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_ewtaper'</span>);        <span class="comment">% Prediction order of FrobNorm method  in seconds</span>
+0122 dy_ewlen=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_ewlen'</span>);        <span class="comment">% windowlength of FrobNorm method  in seconds</span>
+0123 dy_ewdly=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_ewdly'</span>);        <span class="comment">% shift for assymetric speech shape at start of voiced cycle</span>
+0124 dy_cpfrac=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_cpfrac'</span>);        <span class="comment">% presumed ratio of larynx cycle that is closed</span>
+0125 dy_lpcnf=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_lpcnf'</span>);          <span class="comment">% lpc poles per Hz (1/Hz)</span>
+0126 dy_lpcn=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_lpcn'</span>);            <span class="comment">% lpc additional poles</span>
+0127 dy_xwlen=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_xwlen'</span>);            <span class="comment">% cross-correlation length for waveform similarity (sec)</span>
+0128 dy_fxminf=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_fxminf'</span>);            <span class="comment">% minimum pitch for Frobenius norm calculation</span>
+0129 
+0130 lpcord=ceil(fs*dy_lpcnf+dy_lpcn);       <span class="comment">% lpc poles</span>
+0131 
+0132 <span class="comment">%PreEmphasise input speech</span>
+0133 s_used=filter([1 -exp(-2*pi*dy_preemph/fs)],1,s);
+0134 
+0135 <span class="comment">% perform LPC analysis, AC method with Hamming windowing</span>
+0136 [ar, e, k] = <a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>(s_used,lpcord,floor([dy_lpcstep dy_lpcdur]*fs));
+0137 
+0138 <span class="keyword">if</span> any(any(isinf(ar)))    <span class="comment">% if the data is bad and gives infinite prediction coefficients we return with a warning</span>
+0139     warning(<span class="string">'No GCIs returned'</span>);
+0140     gci=[];
+0141     <span class="keyword">return</span>;
+0142 <span class="keyword">end</span>;
+0143 
+0144 <span class="comment">% compute the prediction residual</span>
+0145 r = <a href="v_lpcifilt.html" class="code" title="function u=v_lpcifilt(s,ar,t,dc,fade)">v_lpcifilt</a>(s_used,ar,k); 
+0146 
+0147 <span class="comment">% compute the group delay function:  EW method from reference [2] above</span>
+0148 [zcr_cand,sew,gdwav,toff]=<a href="#_sub6" class="code" title="subfunction [tew,sew,y,toff]=xewgrdel(u,fs)">xewgrdel</a>(r,fs); 
+0149 gdwav=-[zeros(toff,1); gdwav(1:end-toff)];
+0150 zcr_cand=[round(zcr_cand), ones(size(zcr_cand))];   <span class="comment">%flag zero crossing candidates with ones</span>
+0151 
+0152 sew=0.5+sew';  <span class="comment">%the phase slope cost of each candidate</span>
+0153 
+0154 pro_cand=[];
+0155 <span class="keyword">if</span> dy_dopsp ~= 0
+0156     pro_cand = <a href="#_sub1" class="code" title="subfunction z = psp(g,fs)">psp</a>(gdwav,fs);
+0157     pro_cand = [pro_cand, zeros(length(pro_cand),1)]; <span class="comment">%flag projected candidates with zeros</span>
+0158     sew =      [sew zeros(1,size(pro_cand,1))];      <span class="comment">%the phase slope cost of a projected candidate is zero</span>
+0159 <span class="keyword">end</span>;
+0160 
+0161 <span class="comment">%Sort the zero crossing and projected candidates together and remove any candidates that</span>
+0162 <span class="comment">%are to close to the start or end of the speech signal because the cost functions</span>
+0163 <span class="comment">%need room either side.</span>
+0164 
+0165 [gcic,sin] = sortrows([zcr_cand; pro_cand],1);  
+0166 sew=sew(sin);
+0167 saf=max([200,dy_xwlen*fs/2+1,fs/dy_fxminf]);
+0168 sin=find(and(saf&lt;gcic,gcic&lt;length(gdwav)-saf));
+0169 gcic=gcic(sin,:);
+0170 sew=sew(sin);
+0171 
+0172 <span class="comment">% compute the frobenious norm function used for a cost in the DP</span>
+0173 fnwav=<a href="#_sub4" class="code" title="subfunction [frob]=frobfun(sp,p,m,offset)">frobfun</a>(s_used,dy_ewtaper*fs,dy_ewlen*fs,dy_ewdly*fs);
+0174 
+0175 <span class="comment">%Dynamic programming, picks the most likely candidates based on the pitch consistency, energy etc.</span>
+0176 [gci] = <a href="#_sub8" class="code" title="subfunction gci=dpgci(gcic, s, Ch, fnwav, fs)">dpgci</a>(gcic, s_used(:), sew, fnwav, fs);
+0177 
+0178 <span class="comment">%Evaluate goi ... determined to be dy_cpfrac percentage of the larynx cylce away from the last gci</span>
+0179 goi=<a href="#_sub5" class="code" title="subfunction goi=simplegci2goi(gci,pr)">simplegci2goi</a>(gci,dy_cpfrac);
+0180 
+0181 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0182 
+0183 <a name="_sub1" href="#_subfunctions" class="code">function z = psp(g,fs)</a>
+0184 <span class="comment">%PSP  Calculates the phase slope projections of the group delay function</span>
+0185 <span class="comment">%   Z = PSP(G) computes the</span>
+0186 
+0187 <span class="comment">%   Revision History:</span>
+0188 <span class="comment">%       V1.0 July 12th 2002:</span>
+0189 <span class="comment">%            Nov. 6th 2002 : if statement added to remove &quot;last&quot; midpoint</span>
+0190 
+0191 g = g(:);
+0192 
+0193 gdot = [diff(g);0];
+0194 gdotdot = [diff(gdot);0];
+0195 
+0196 <span class="comment">% find the turning points  as follows: [tp_number, index_of_tp, min(1) or max(-1), g(index_of_tp)]</span>
+0197 turningPoints = <a href="#_sub2" class="code" title="subfunction i = zcr(x, p)">zcr</a>(gdot);
+0198 turningPoints = [[1:length(turningPoints)]', turningPoints, sign(gdotdot(turningPoints)), g(turningPoints)];
+0199 
+0200 <span class="comment">% useful for debug/plotting</span>
+0201 <span class="comment">%tplot = zeros(length(g),1);</span>
+0202 <span class="comment">%tplot(turningPoints(:,1)) = turningPoints(:,2);</span>
+0203 
+0204 <span class="comment">% find any maxima which are &lt; 0</span>
+0205 negmaxima = turningPoints(find(turningPoints(:,3) == -1 &amp; turningPoints(:,4) &lt; 0 &amp; turningPoints(:,1)~=1),:);  <span class="comment">%Change 01.05.2003 JG: The first row can't be included</span>
+0206 
+0207 <span class="comment">% find the midpoint between the preceding min and the negative max</span>
+0208 nmi = negmaxima(:,1);
+0209 midPointIndex = turningPoints(nmi-1,2) + round(0.5*(turningPoints(nmi,2) - turningPoints(nmi-1,2)));
+0210 midPointValue = g(midPointIndex);
+0211 
+0212 <span class="comment">% project a zero crossing with unit slope</span>
+0213 nz = midPointIndex - round(midPointValue);
+0214 
+0215 <span class="comment">% find any minima which are &gt; 0</span>
+0216 posminima = turningPoints(find(turningPoints(:,3) == 1 &amp; turningPoints(:,4) &gt; 0),:);
+0217 
+0218 <span class="comment">% find the midpoint between the positive min and the following max</span>
+0219 pmi = posminima(:,1); 
+0220 
+0221 <span class="comment">%Remove last midpoint if it is the last sample</span>
+0222 <span class="keyword">if</span> ~isempty(pmi), <span class="keyword">if</span> pmi(end)==size(turningPoints,1), pmi=pmi(1:end-1); <span class="keyword">end</span>; <span class="keyword">end</span>;
+0223 
+0224 midPointIndex = turningPoints(pmi,2) + round(0.5*(turningPoints(pmi+1,2) - turningPoints(pmi,2)));
+0225 midPointValue = g(midPointIndex);
+0226 
+0227 <span class="comment">% project a zero crossing with unit slope</span>
+0228 pz = midPointIndex - round(midPointValue);
+0229 
+0230 z = sort([nz;pz]);
+0231 
+0232 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0233 
+0234 <a name="_sub2" href="#_subfunctions" class="code">function i = zcr(x, p)</a>
+0235 <span class="comment">%ZCR  Finds the indices in a vector to  zero crossings</span>
+0236 <span class="comment">%   I = ZCR(X) finds the indices of vector X which are closest to zero-crossings.</span>
+0237 <span class="comment">%   I = ZCR(X, P) finds indices for positive-going zeros-crossings for P=1 and</span>
+0238 <span class="comment">%   negative-going zero-crossings for P=0.</span>
+0239 
+0240 x = x(:);
+0241 
+0242 <span class="keyword">if</span> (nargin==2)
+0243     <span class="keyword">if</span> (p==0) 
+0244         z1 = <a href="#_sub3" class="code" title="subfunction zz = zcrp(xx)  ">zcrp</a>(x);   <span class="comment">% find positive going zero-crossings</span>
+0245     <span class="keyword">elseif</span> (p==1) 
+0246         z1 = <a href="#_sub3" class="code" title="subfunction zz = zcrp(xx)  ">zcrp</a>(-x);  <span class="comment">% find negative going zero-crossings</span>
+0247     <span class="keyword">else</span>
+0248         error(<span class="string">'ZCR: invalid input parameter 2: must be 0 or 1'</span>);
+0249     <span class="keyword">end</span>
+0250 <span class="keyword">else</span>
+0251     z1 = [<a href="#_sub3" class="code" title="subfunction zz = zcrp(xx)  ">zcrp</a>(x); <a href="#_sub3" class="code" title="subfunction zz = zcrp(xx)  ">zcrp</a>(-x)];
+0252 <span class="keyword">end</span>
+0253 
+0254 <span class="comment">% find crossings when x==0 exactly</span>
+0255 z0 = find( (x(1:length(x))==0) &amp; ([x(2:length(x));0] ~= 0));
+0256 
+0257 <span class="comment">% concatenate and sort the two types of zero-crossings</span>
+0258 i = sort([z0; z1]);
+0259 
+0260 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0261 
+0262 <a name="_sub3" href="#_subfunctions" class="code">function zz = zcrp(xx)  </a><span class="comment">%only used in zcr</span>
+0263 <span class="comment">% find positive-going zero-crossing</span>
+0264 z1 = find(diff(sign(xx)) == -2);
+0265 <span class="comment">% find which out of current sample or next sample is closer to zero</span>
+0266 [m, z2] = min([abs(xx(z1)), abs(xx(z1+1))], [], 2);
+0267 zz =  z1 -1 + z2;
+0268 
+0269 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0270 
+0271 <a name="_sub4" href="#_subfunctions" class="code">function [frob]=frobfun(sp,p,m,offset)</a>
+0272 
+0273 <span class="comment">% [frob]=frobfun(sp,p,m)</span>
+0274 <span class="comment">%</span>
+0275 <span class="comment">% sp is the speech signal assumed to be preemphasised</span>
+0276 <span class="comment">% p  is the prediction order  : recomended to be 1 ms in above paper</span>
+0277 <span class="comment">% m  is the window length     : recomended to be 1 ms in above paper</span>
+0278 <span class="comment">% offset is shift for assymetric speech shape at start of voiced cycle -</span>
+0279 <span class="comment">% default 1.5ms.</span>
+0280 <span class="comment">%</span>
+0281 <span class="comment">% This function implements the frobenius norm based measure C defined in [4] below.</span>
+0282 <span class="comment">% It equals the square of the Frobenius norm of the m by p+1 data matrix divided by p+1</span>
+0283 <span class="comment">%</span>
+0284 <span class="comment">% Reference:</span>
+0285 <span class="comment">%   [4]  C. Ma, Y. Kamp, and L. F. Willems, “A Frobenius norm approach to glottal closure detection</span>
+0286 <span class="comment">%        from the speech signal,” IEEE Trans. Speech Audio Processing, vol. 2, pp. 258–265, Apr. 1994.</span>
+0287 
+0288 
+0289 <span class="comment">%   Revision History:</span>
+0290 <span class="comment">%       V1.0 July 12th 2002:</span>
+0291 <span class="comment">%            Nov. 6th 2002 : if statement added to remove &quot;last&quot; midpoint</span>
+0292 
+0293 <span class="comment">%force p m and offset to be integers</span>
+0294 p=round(p);
+0295 m=round(m);
+0296 offset=round(offset);
+0297 
+0298 w=(p+1)*ones(1,m+p);
+0299 w(1:p)=1:p;
+0300 w(m+1:p+m)=p:-1:1;
+0301 
+0302 w=w./(p+1); 
+0303 frob=filter(w,1,sp.^2);
+0304 frob(1:(round((p+m-1)/2) + offset))=[];
+0305 
+0306 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0307 
+0308 <a name="_sub5" href="#_subfunctions" class="code">function goi=simplegci2goi(gci,pr)</a>
+0309 
+0310 <span class="comment">% Estimate glottal opening instants by assuming a fixed closed-phase fraction</span>
+0311 
+0312 gci=round(gci);
+0313 maxpitch=max(medfilt1(diff(gci),7));
+0314 
+0315 <span class="comment">% calculate opening instants</span>
+0316 <span class="keyword">for</span> kg=1:length(gci)-1
+0317     goi(kg)=gci(kg)+min(pr*(gci(kg+1)-gci(kg)),pr*maxpitch);
+0318 <span class="keyword">end</span>;
+0319 kg=kg+1;
+0320 goi(kg)=round(gci(kg)+pr*(gci(kg)-gci(kg-1)));  <span class="comment">%use the previous pitch period instead</span>
+0321 goi=round(goi);
+0322 
+0323 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0324 
+0325 <a name="_sub6" href="#_subfunctions" class="code">function [tew,sew,y,toff]=xewgrdel(u,fs)</a>
+0326 
+0327 <span class="comment">% implement EW group delay epoch extraction</span>
+0328 
+0329 dy_gwlen=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_gwlen'</span>);          <span class="comment">% group delay evaluation window length</span>
+0330 dy_fwlen=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_fwlen'</span>);          <span class="comment">% window length used to smooth group delay</span>
+0331 
+0332 <span class="comment">% perform group delay calculation</span>
+0333 
+0334 gw=2*floor(dy_gwlen*fs/2)+1;            <span class="comment">% force window length to be odd</span>
+0335 ghw=window(<span class="string">'hamming'</span>,gw,<span class="string">'s'</span>);
+0336 ghw = ghw(:);                           <span class="comment">% force to be a column (dmb thinks window gives a row - and he should know as he wrote it!)</span>
+0337 ghwn=ghw'.*(gw-1:-2:1-gw)/2;            <span class="comment">% weighted window: zero in middle</span>
+0338 
+0339 u2=u.^2;
+0340 yn=filter(ghwn,1,u2);
+0341 yd=filter(ghw,1,u2);
+0342 yd(abs(yd)&lt;eps)=10*eps;                 <span class="comment">% prevent infinities</span>
+0343 y=yn(gw:end)./yd(gw:end);               <span class="comment">% delete filter startup transient</span>
+0344 toff=(gw-1)/2;
+0345 fw=2*floor(dy_fwlen*fs/2)+1;            <span class="comment">% force window length to be odd</span>
+0346 <span class="keyword">if</span> fw&gt;1
+0347     daw=window(<span class="string">'hamming'</span>,fw,<span class="string">'s'</span>);
+0348     y=filter(daw,1,y)/sum(daw);         <span class="comment">% low pass filter</span>
+0349     toff=toff-(fw-1)/2;
+0350 <span class="keyword">end</span>
+0351 [tew,sew]=<a href="v_zerocros.html" class="code" title="function [t,s]=v_zerocros(y,m,x)">v_zerocros</a>(y,<span class="string">'n'</span>);              <span class="comment">% find zero crossings</span>
+0352 
+0353 tew=tew+toff;                           <span class="comment">% compensate for filter delay and frame advance</span>
+0354 
+0355 
+0356 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0357 
+0358 <a name="_sub7" href="#_subfunctions" class="code">function Cfn=fnrg(gcic,frob,fs)</a>
+0359 
+0360 <span class="comment">%Frobenious Energy Cost</span>
+0361 
+0362 dy_fxminf=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_fxminf'</span>);
+0363 frob=frob(:)';
+0364 mm=round(fs/dy_fxminf);
+0365 mfrob=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(frob,1,mm);
+0366 mfrob=[mfrob(floor(mm/2)+1:end) max(frob(end-ceil(mm/2):end))*ones(1,floor(mm/2))];
+0367 rfr=frob./mfrob;
+0368 Cfn=0.5-rfr(round(gcic));
+0369 
+0370 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0371 
+0372 <a name="_sub8" href="#_subfunctions" class="code">function gci=dpgci(gcic, s, Ch, fnwav, fs)</a>
+0373 
+0374 <span class="comment">%DPGCI   Choose the best Glottal Closure Instances with Dynamic Programming</span>
+0375 <span class="comment">%   gci=dpgci(gcic, s(:), Ch, fnwav, fs) returns vectors of sample indices corresponding</span>
+0376 <span class="comment">%   to the instants of glottal closure in the speech signal s at sampling frequency fs Hz.</span>
+0377 <span class="comment">%</span>
+0378 <span class="comment">%   Inputs:</span>
+0379 <span class="comment">%   gcic    is a matrix whos first column are the glottal closure instance candidates and</span>
+0380 <span class="comment">%           the second column is 1 if the corresponding gci is derived from a zero crossing</span>
+0381 <span class="comment">%           but zero if the gci is from a a projected zero crossing</span>
+0382 <span class="comment">%   s       is the speech signal - MUST be a column vector</span>
+0383 <span class="comment">%   Ch      the phase slope cost of every candidate</span>
+0384 <span class="comment">%   fnwav   is the frobenious norm function of s</span>
+0385 <span class="comment">%   fs      is the sampling frequncy</span>
+0386 <span class="comment">%</span>
+0387 <span class="comment">%   Outputs:</span>
+0388 <span class="comment">%   gci     is a vector of glottal closure instances chosen by the DP</span>
+0389 
+0390 
+0391 
+0392 <span class="comment">%   Revision History:</span>
+0393 <span class="comment">%   Bugs:  Constants are hardwired but defined in a structure like pv (defined in grpdelpv)</span>
+0394 <span class="comment">%</span>
+0395 
+0396 <span class="comment">% get algorithm parameters from v_voicebox()</span>
+0397 
+0398 dy_fxmin=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_fxmin'</span>);        <span class="comment">% min larynx frequency (Hz)</span>
+0399 dy_fxmax=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_fxmax'</span>);        <span class="comment">% min larynx frequency (Hz)</span>
+0400 dy_xwlen=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_xwlen'</span>);        <span class="comment">% cross-correlation length for waveform similarity (sec)</span>
+0401 dy_nbest=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_nbest'</span>);        <span class="comment">% Number of NBest paths to keep</span>
+0402 dy_spitch=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_spitch'</span>);              <span class="comment">% scale factor for pitch deviation cost</span>
+0403 wproj=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_cproj'</span>);           <span class="comment">% cost of projected candidate</span>
+0404 dy_cspurt=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_cspurt'</span>);           <span class="comment">% cost of a talkspurt</span>
+0405 dy_wpitch=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_wpitch'</span>);           <span class="comment">% DP pitch weighting</span>
+0406 dy_wener=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_wener'</span>);           <span class="comment">% DP energy weighting</span>
+0407 dy_wslope=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_wslope'</span>);           <span class="comment">% DP group delay slope weighting</span>
+0408 dy_wxcorr=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dy_wxcorr'</span>);           <span class="comment">% DP cross correlation weighting</span>
+0409 
+0410 
+0411 
+0412 <span class="comment">%Constants</span>
+0413 Ncand=length(gcic);
+0414 sv2i=-(2*dy_spitch^2)^(-1);                 <span class="comment">% scale factor for pitch deviation cost</span>
+0415 nxc=ceil(dy_xwlen*fs);                      <span class="comment">% cross correlation window length in samples</span>
+0416 <span class="comment">% === should delete any gci's that are within this of the end.</span>
+0417 <span class="comment">% === and for energy window</span>
+0418 
+0419 <span class="comment">%Limit the search:</span>
+0420 qrmin=ceil(fs/dy_fxmax);
+0421 qrmax=floor(fs/dy_fxmin);
+0422 
+0423 <span class="comment">%Cost and tracking r = current, q = previous, p = preprevious</span>
+0424 cost=zeros(Ncand, dy_nbest); cost(:,:)=inf;    <span class="comment">%Cost matrix, one row for each candidate</span>
+0425 maxcost=zeros(Ncand,1); maxcost(:,:)=inf;   <span class="comment">%Maximum cost in each row</span>
+0426 imaxcost=ones(Ncand,1);                     <span class="comment">%Index of maximum cost</span>
+0427 
+0428 prev = ones(Ncand, dy_nbest);                  <span class="comment">%index of previous, q candidates</span>
+0429 ind = ones(Ncand, dy_nbest);                   <span class="comment">%index of p in row q (from prev)</span>
+0430 qbest = [zeros(Ncand,1), ones(Ncand,2)]; <span class="comment">% the minimum cost in any previous q [cost,q,i]</span>
+0431 
+0432 Cfn=<a href="#_sub7" class="code" title="subfunction Cfn=fnrg(gcic,frob,fs)">fnrg</a>(gcic(:,1),fnwav,fs);  <span class="comment">%Frob.Energy Cost</span>
+0433 
+0434 <span class="comment">%Add start and end state</span>
+0435 <span class="comment">% === should probably delete candidates that are too close to either end of the input</span>
+0436 <span class="comment">% === why do we ever need the additional one at the tail end ?</span>
+0437 gcic=[[gcic(1,1)-qrmax-2 0];gcic;[gcic(<span class="keyword">end</span>,1)+qrmax+2 0]];
+0438 Cfn=[0 Cfn 0];
+0439 Ch = [0 Ch 0];
+0440 
+0441 <span class="comment">% first do parallelized version</span>
+0442 
+0443 
+0444 <span class="comment">% rather complicated window specification is for compatibility with DYPSA 2</span>
+0445 <span class="comment">% === +1 below is for compatibility - probably a bug</span>
+0446 wavix=(-floor(nxc/2):floor(nxc/2)+1)';                 <span class="comment">% indexes for segments [nx2,1]</span>
+0447 nx2=length(wavix);
+0448 sqnx2=sqrt(nx2);
+0449 g_cr=dy_wener*Cfn+dy_wslope*Ch+wproj*(1-gcic(:,2))';  <span class="comment">% fixed costs</span>
+0450 
+0451 g_n=gcic(:,1)';                  <span class="comment">% gci sample number [1,Ncand+2]</span>
+0452 g_pr=gcic(:,2)';                 <span class="comment">% unprojected flag [1,Ncand+2]</span>
+0453 g_sqm=zeros(1,Ncand+1);         <span class="comment">% stores: sqrt(nx2) * mean for speech similarity waveform</span>
+0454 g_sd=zeros(1,Ncand+1);         <span class="comment">% stores: 1/(Std deviation * sqrt(nx2)) for speech similarity waveform</span>
+0455 f_pq=zeros((Ncand+1)*dy_nbest,1);   <span class="comment">% (q-p) period for each node</span>
+0456 f_c=repmat(Inf,(Ncand+1)*dy_nbest,1);    <span class="comment">% cumulative cost for each node - initialise to inf</span>
+0457 f_c(1)=0;                       <span class="comment">% initial cost of zero for starting node</span>
+0458 <span class="comment">% f_costs=zeros(Ncand*dy_nbest,6);   % === debugging only remember costs of candidate</span>
+0459 f_f=ones((Ncand+1)*dy_nbest,1);    <span class="comment">% previous node in path</span>
+0460 f_fb=ones((Ncand+1),1);    <span class="comment">% points back to best end-of-spurt node</span>
+0461 fbestc=0;                       <span class="comment">% cost of best end-of-spurt node</span>
+0462 
+0463 qmin=2;
+0464 <span class="keyword">for</span> r=2:Ncand+1   
+0465 <span class="comment">%     if r==86</span>
+0466 <span class="comment">%         r;</span>
+0467 <span class="comment">%     end</span>
+0468     r_n=g_n(r);             <span class="comment">% sample number of r = current candidate</span>
+0469     rix=dy_nbest*(r-1)+(1:dy_nbest);    <span class="comment">% index range within node variables</span>
+0470     
+0471     <span class="comment">% determine the range of feasible q candidates</span>
+0472     qmin0=qmin;
+0473     qmin=find(g_n(qmin0-1:r-1)&lt;r_n-qrmax);      <span class="comment">% qmin is the nearest candidate that is &gt;qrmax away</span>
+0474     qmin=qmin(end)+qmin0-1;             <span class="comment">% convert to absolute index of first viable candidate</span>
+0475     qmax=find(g_n(qmin-1:r-1)&lt;=r_n-qrmin);      <span class="comment">% qmax is the nearest candidate that is &gt;=qrmin away</span>
+0476     qmax=qmax(end)+qmin-2;
+0477     
+0478     
+0479     <span class="comment">% calculate waveform similarity cost measure statistics</span>
+0480     
+0481     sr=s(r_n+wavix);        <span class="comment">% note s MUST be a column vector so sr is also</span>
+0482     wsum=sum(sr);
+0483     g_sqm(r)=wsum/sqnx2;                <span class="comment">% mean * sqrt(nx2)</span>
+0484     g_sd(r)=1/sqrt(sr.'*sr-wsum^2/nx2);   <span class="comment">% 1/(Std deviation * sqrt(nx2))</span>
+0485     
+0486     <span class="comment">% now process the candidates</span>
+0487     
+0488     <span class="keyword">if</span> qmin&lt;=qmax
+0489         qix=qmin:qmax;      <span class="comment">% q index</span>
+0490         nq=length(qix);
+0491         <span class="comment">% === should integrate the -0.5 into dy_wxcorr</span>
+0492         <span class="comment">% === the factor (nx2-1)/(nx2-2) is to compensate for a bug in swsc()</span>
+0493         q_cas=-0.5*(nx2-1)/(nx2-2)*dy_wxcorr*(sum(s(repmat(g_n(qix),nx2,1)+repmat(wavix,1,nq)).*repmat(sr,1,nq),1)-g_sqm(qix)*g_sqm(r)).*g_sd(qix)*g_sd(r);
+0494         <span class="comment">% compare: i=35; Ca=swsc(g_n(qix(i)),g_n(r),s,fs); [i qix(i) r  g_n(qix(i)) g_n(r) dy_wxcorr*Ca q_cas(i)]</span>
+0495         
+0496         <span class="comment">% now calculate pitch deviation cost</span>
+0497         
+0498         fix = 1+(qmin-1)*dy_nbest:qmax*dy_nbest;    <span class="comment">% node index range</span>
+0499         f_qr=repmat(r_n-g_n(qix),dy_nbest,1);    <span class="comment">% (r-p) period for each node</span>
+0500         f_pr=f_qr(:)+f_pq(fix);
+0501         <span class="comment">% === could absorb the 2 into sv2i</span>
+0502         f_nx=2-2*f_pr./(f_pr+abs(f_qr(:)-f_pq(fix)));
+0503         f_cp=dy_wpitch*(0.5-exp(sv2i*f_nx.^2));
+0504         <span class="comment">% === fudge to match dypsa2.4 - could more efficiently be added</span>
+0505         <span class="comment">% === onto the cost of a talkspurt end</span>
+0506         <span class="comment">% === should be a v_voicebox parameter anyway</span>
+0507         f_cp(f_pq(fix)==0)=dy_cspurt*dy_wpitch;
+0508         
+0509         <span class="comment">% now find the N-best paths</span>
+0510         
+0511         [r_cnb,nbix]=sort(f_c(fix)+f_cp+reshape(repmat(q_cas,dy_nbest,1),nq*dy_nbest,1));
+0512         f_c(rix)=r_cnb(1:dy_nbest)+g_cr(r);     <span class="comment">% costs</span>
+0513         f_f(rix)=nbix(1:dy_nbest)+(qmin-1)*dy_nbest;       <span class="comment">% traceback nodes</span>
+0514         f_pq(rix)=f_qr(nbix(1:dy_nbest));       <span class="comment">% previous period</span>
+0515         <span class="comment">% === f_costs is only for debugging</span>
+0516 <span class="comment">%         r;</span>
+0517 <span class="comment">%         f_costs(rix,1)=f_c(fix(nbix(1:dy_nbest)));</span>
+0518 <span class="comment">%         f_costs(rix,2)=wproj*(1-gcic(r,2));</span>
+0519 <span class="comment">%         f_costs(rix,3)=f_cp(nbix(1:dy_nbest));</span>
+0520 <span class="comment">%         f_costs(rix,4)=dy_wener*Cfn(r);</span>
+0521 <span class="comment">%         f_costs(rix,5)=dy_wslope*Ch(r);</span>
+0522 <span class="comment">%         f_costs(rix,6)=reshape(q_cas(1+floor((nbix(1:dy_nbest)-1)/dy_nbest)),dy_nbest,1);</span>
+0523         
+0524         <span class="comment">% check cost of using this candidate as the start of a new spurt</span>
+0525         <span class="comment">% ==== the qmin&gt;2 condition is for compatibility with v_dypsa 2 and</span>
+0526         <span class="comment">% prevents any spurts starting until at least qrmax past the first</span>
+0527         <span class="comment">% gci. This is probably a bug (see again below)</span>
+0528         iNb=rix(end);        
+0529         <span class="keyword">if</span> (qmin&gt;2) &amp;&amp; (f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2))&lt;f_c(iNb))        <span class="comment">% compare with worst of Nbest paths</span>
+0530             f_f(iNb)=f_fb(qmin-1);
+0531             <span class="comment">% === for now we exclude the energy and phase-slope costs for compatibility with dypsa2</span>
+0532             <span class="comment">% === this is probably a bug</span>
+0533             f_c(iNb)=f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2));     <span class="comment">% replace worst of the costs with start voicespurt cost</span>
+0534             f_pq(iNb)=0;                    <span class="comment">% false pq period</span>
+0535         <span class="keyword">end</span>
+0536         <span class="keyword">if</span> f_c(rix(1))&lt;fbestc
+0537             f_fb(r)=rix(1);                          <span class="comment">% points to the node with lowest end-of-spurt cost</span>
+0538             <span class="comment">% === should compensate for the pitch period cost incurred at the start of the next spurt</span>
+0539             <span class="comment">% === note that a node can never be a one-node voicespurt on its own unless dy_nbest=1</span>
+0540             <span class="comment">% since the start voices[purt option replaced the worst Nbest cost. This is probably good but</span>
+0541             <span class="comment">% is a bit inconsistent.</span>
+0542             fbestc=f_c(rix(1));
+0543         <span class="keyword">else</span>
+0544             f_fb(r)=f_fb(r-1);
+0545         <span class="keyword">end</span>
+0546     <span class="keyword">else</span>            <span class="comment">% no viable candidates - must be the start of a voicespurt if anything</span>
+0547         <span class="comment">% === for now we exclude the energy and phase-slope costs for compatibility with dypsa2</span>
+0548         <span class="comment">% === this is probably a bug</span>
+0549         <span class="comment">% ==== the qmin&gt;2 condition is for compatibility with v_dypsa 2 and</span>
+0550         <span class="comment">% prevents any spurts starting until at least qrmax past the first</span>
+0551         <span class="comment">% gci. This is probably a bug (see again above)</span>
+0552         <span class="keyword">if</span> (qmin&gt;2)
+0553             f_c(rix(1))=f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2));  <span class="comment">% cost of new voicespurt</span>
+0554             f_f(rix)=f_fb(qmin-1);                              <span class="comment">% traceback to previous talkspurt end</span>
+0555             f_pq(rix)=0;                                        <span class="comment">% previous period</span>
+0556         <span class="keyword">end</span>
+0557         f_fb(r)=f_fb(r-1);                                  <span class="comment">% cannot be the end of a voicespurt</span>
+0558     <span class="keyword">end</span>
+0559 <span class="keyword">end</span>
+0560 
+0561 <span class="comment">% now do the traceback</span>
+0562 
+0563 gci = zeros(1,Ncand+1);
+0564 
+0565 <span class="comment">% === for compatibility with dypsa2, we force the penultimate candidate to be accepted</span>
+0566 <span class="comment">% === should be: i=f_fb(Ncand+1) but instead we pick the best of the penultimate candidate</span>
+0567 i=rix(1)-dy_nbest;
+0568 <span class="keyword">if</span> f_c(i-dy_nbest+1)&lt;f_c(i)     <span class="comment">% check if start of a talkspurt</span>
+0569     i=i-dy_nbest+1;
+0570 <span class="keyword">end</span>
+0571 k=1;
+0572 <span class="keyword">while</span> i&gt;1
+0573     j=1+floor((i-1)/dy_nbest);          <span class="comment">% convert node number to candidate number</span>
+0574     gci(k)=g_n(j);
+0575     i=f_f(i);
+0576     k=k+1;
+0577 <span class="keyword">end</span>
+0578 gci=gci(k-1:-1:1);           <span class="comment">% put into ascending order</span>
+0579 
+0580 
+0581 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0582 
+0583</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

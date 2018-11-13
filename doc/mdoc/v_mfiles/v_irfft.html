@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_irfft</title>
+  <meta name="keywords" content="v_irfft">
+  <meta name="description" content="IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_irfft.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_irfft
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function x=v_irfft(y,n,d) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)
+
+ Inputs:  Y(M)   The first half of a complex spectrum
+          N      The number of output points to generate (default: 2M-2)
+          D      The dimension along which to perorm the transform
+                 (default: first non-singleton dimension of Y)
+
+ Outputs: X(N)   Real inverse dft of Y
+
+ This routine calculates the inverse DFT of a conjugate-symmetric to give a real-valued
+ output of dimension N. Only the first half of the spectrum need be supplied: if N is even,
+ this includes the Nyquist term and is of dimension M=N/2 + 1 whereas if N is odd then there is
+ no Nyquist term and the input is of dimension M=(N+1)/2.
+ Note that the default value of N is always even so that N must be given explicitly
+ if it is odd.
+
+ See also the forward transform: RFFT</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_fxrapt.html" class="code" title="function [fx,tt]=v_fxrapt(s,fs,mode,q)">v_fxrapt</a>	FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</li><li><a href="v_lpcpf2rr.html" class="code" title="function rr=v_lpcpf2rr(pf,p)">v_lpcpf2rr</a>	LPCPF2RR convert power spectrum to autocorrelation coefs RR=(PF,P)</li><li><a href="v_sigalign.html" class="code" title="function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)">v_sigalign</a>	SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</li><li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_specsubm.html" class="code" title="function [ss,po]=v_specsubm(s,fs,p)">v_specsubm</a>	SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	SPENDRED          Speech Enhancement and Dereverberation by Doire</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_ssubmmsev.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmsev(si,fsz,pp)">v_ssubmmsev</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,P)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_irfft(y,n,d)</a>
+0002 <span class="comment">%IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:  Y(M)   The first half of a complex spectrum</span>
+0005 <span class="comment">%          N      The number of output points to generate (default: 2M-2)</span>
+0006 <span class="comment">%          D      The dimension along which to perorm the transform</span>
+0007 <span class="comment">%                 (default: first non-singleton dimension of Y)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs: X(N)   Real inverse dft of Y</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% This routine calculates the inverse DFT of a conjugate-symmetric to give a real-valued</span>
+0012 <span class="comment">% output of dimension N. Only the first half of the spectrum need be supplied: if N is even,</span>
+0013 <span class="comment">% this includes the Nyquist term and is of dimension M=N/2 + 1 whereas if N is odd then there is</span>
+0014 <span class="comment">% no Nyquist term and the input is of dimension M=(N+1)/2.</span>
+0015 <span class="comment">% Note that the default value of N is always even so that N must be given explicitly</span>
+0016 <span class="comment">% if it is odd.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% See also the forward transform: RFFT</span>
+0019 
+0020 <span class="comment">%      Copyright (C) Mike Brookes 2009</span>
+0021 <span class="comment">%      Version: $Id: v_irfft.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0024 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0028 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0029 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0030 <span class="comment">%   (at your option) any later version.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0033 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0034 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0035 <span class="comment">%   GNU General Public License for more details.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0038 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0039 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0040 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0041 
+0042 s=size(y);
+0043 ps=prod(s);
+0044 ns=length(s);
+0045 <span class="keyword">if</span> ps==1
+0046     x=y;
+0047 <span class="keyword">else</span>
+0048     <span class="keyword">if</span> nargin &lt;3 || isempty(d)
+0049         d=find(s&gt;1,1);
+0050     <span class="keyword">end</span>
+0051     m=s(d);
+0052     k=ps/m;     <span class="comment">% number of fft's to do</span>
+0053     <span class="keyword">if</span> d==1
+0054         v=reshape(y,m,k);
+0055     <span class="keyword">else</span>
+0056         v=reshape(permute(y,[d:ns 1:d-1]),m,k);
+0057     <span class="keyword">end</span>
+0058     <span class="keyword">if</span> nargin&lt;2 || isempty(n)
+0059         n=2*m-2;        <span class="comment">% default output length</span>
+0060     <span class="keyword">else</span>
+0061         mm=1+fix(n/2);          <span class="comment">% expected input length</span>
+0062         <span class="keyword">if</span> mm&gt;m v=[v; zeros(mm-m,k)];   <span class="comment">% zero pad</span>
+0063         <span class="keyword">elseif</span> mm&lt;m v(mm+1:m,:)=[];     <span class="comment">% or truncate</span>
+0064         <span class="keyword">end</span>
+0065         m=mm;
+0066     <span class="keyword">end</span>
+0067     <span class="keyword">if</span> rem(n,2)        <span class="comment">% odd output length</span>
+0068         x=real(ifft([v;conj(v(m:-1:2,:))],[],1));    <span class="comment">% do it the long way</span>
+0069     <span class="keyword">else</span>            <span class="comment">% even output length</span>
+0070         v(m,:)=real(v(m,:));    <span class="comment">% force nyquist element real</span>
+0071         w=ones(1,k);
+0072         <span class="comment">%  t=[cumprod([-0.5i; exp(2i*pi/n)*ones(m-2,1)]); 0.5i];</span>
+0073         t=-0.5i* exp((2i*pi/n)*(0:m-1)).';
+0074         z=(t(:,w)+0.5).*(conj(flipud(v))-v)+v;
+0075         z(m,:)=[];
+0076         zz=ifft(z,[],1);
+0077         x=zeros(n,k);
+0078         x(1:2:n,:)=real(zz);
+0079         x(2:2:n,:)=imag(zz);
+0080     <span class="keyword">end</span>
+0081     s(d)=n;         <span class="comment">% change output dimension</span>
+0082     <span class="keyword">if</span> d==1
+0083         x=reshape(x,s);
+0084     <span class="keyword">else</span>
+0085         x=permute(reshape(x,s([d:ns 1:d-1])),[ns+2-d:ns 1:ns+1-d]);
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

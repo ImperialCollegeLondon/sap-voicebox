@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_distisar</title>
+  <meta name="keywords" content="v_distisar">
+  <meta name="description" content="DISTISAR calculates the Itakura-Saito distance between AR coefficients D=(AR1,AR2,MODE)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_distisar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_distisar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>DISTISAR calculates the Itakura-Saito distance between AR coefficients D=(AR1,AR2,MODE)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function d=v_distisar(ar1,ar2,mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">DISTISAR calculates the Itakura-Saito distance between AR coefficients D=(AR1,AR2,MODE)
+
+ Inputs: AR1,AR2     AR coefficient sets to be compared. Each row contains a set of coefficients.
+                     AR1 and AR2 must have the same number of columns.
+
+         MODE        Character string selecting the following options:
+                         'x'  Calculate the full distance matrix from every row of AR1 to every row of AR2
+                         'd'  Calculate only the distance between corresponding rows of AR1 and AR2
+                              The default is 'd' if AR1 and AR2 have the same number of rows otherwise 'x'.
+           
+ Output: D           If MODE='d' then D is a column vector with the same number of rows as the shorter of AR1 and AR2.
+                     If MODE='x' then D is a matrix with the same number of rows as AR1 and the same number of columns as AR2'.
+
+ The Itakura-Saito spectral distance is the average over +ve and -ve frequency of 
+
+                      pf1/pf2 - log(pf1/pf2) - 1     =     exp(v) - v - 1         where v=log(pf1/pf2)
+
+ The Itakura-Saito distance is asymmetric: pf1&gt;pf2 contributes more to the distance than pf2&gt;pf1. 
+ A symmetrical version is the COSH distance: v_distchpf(x,y)=(v_distispf(x,y)+v_distispf(y,x))/2
+
+ The I-S distance can be expressed as ar2*toeplitz(lpcar2rr(ar1))*ar2' + log((ar1(1)/ar2(1)).^2) - 1
+ but this is not how we actually calculate it.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_lpcar2ra.html" class="code" title="function ra=v_lpcar2ra(ar)">v_lpcar2ra</a>	LPCAR2RA Convert ar filter to inverse filter autocorrelation coefs. RA=(AR)</li><li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function d=v_distisar(ar1,ar2,mode)</a>
+0002 <span class="comment">%DISTISAR calculates the Itakura-Saito distance between AR coefficients D=(AR1,AR2,MODE)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: AR1,AR2     AR coefficient sets to be compared. Each row contains a set of coefficients.</span>
+0005 <span class="comment">%                     AR1 and AR2 must have the same number of columns.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%         MODE        Character string selecting the following options:</span>
+0008 <span class="comment">%                         'x'  Calculate the full distance matrix from every row of AR1 to every row of AR2</span>
+0009 <span class="comment">%                         'd'  Calculate only the distance between corresponding rows of AR1 and AR2</span>
+0010 <span class="comment">%                              The default is 'd' if AR1 and AR2 have the same number of rows otherwise 'x'.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Output: D           If MODE='d' then D is a column vector with the same number of rows as the shorter of AR1 and AR2.</span>
+0013 <span class="comment">%                     If MODE='x' then D is a matrix with the same number of rows as AR1 and the same number of columns as AR2'.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% The Itakura-Saito spectral distance is the average over +ve and -ve frequency of</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%                      pf1/pf2 - log(pf1/pf2) - 1     =     exp(v) - v - 1         where v=log(pf1/pf2)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% The Itakura-Saito distance is asymmetric: pf1&gt;pf2 contributes more to the distance than pf2&gt;pf1.</span>
+0020 <span class="comment">% A symmetrical version is the COSH distance: v_distchpf(x,y)=(v_distispf(x,y)+v_distispf(y,x))/2</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% The I-S distance can be expressed as ar2*toeplitz(lpcar2rr(ar1))*ar2' + log((ar1(1)/ar2(1)).^2) - 1</span>
+0023 <span class="comment">% but this is not how we actually calculate it.</span>
+0024 
+0025 
+0026 <span class="comment">% Since the power spectrum is the fourier transform of the autocorrelation, we can calculate</span>
+0027 <span class="comment">% the average value of p1/p2 by taking the 0'th order term of the convolution of the autocorrelation</span>
+0028 <span class="comment">% functions associated with p1 and 1/p2. Since 1/p2 corresponds to an FIR filter, this convolution is</span>
+0029 <span class="comment">% a finite sum even though the autocorrelation function of p1 is infinite in extent.</span>
+0030 <span class="comment">% The average value of log(pf1) is equal to log(ar1(1)^-2) where ar1(1) is the 0'th order AR coefficient.</span>
+0031 
+0032 <span class="comment">% The Itakura-Saito distance can also be calculated directly from the power spectra; providing np is large</span>
+0033 <span class="comment">% enough, the values of d0 and d1 in the following will be very similar:</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%         np=255; d0=v_distisar(ar1,ar2); d1=v_distispf(v_lpcar2pf(ar1,np),v_lpcar2pf(ar2,np))</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% Autocorrelation LPC analysis is equivalent to minimizing the Itakura-Saito difference between the</span>
+0038 <span class="comment">% signal spectrum and that of the all-pole LPC filter, i.e. v_distispf(pf,v_lpcar2pf(ar0,np)).</span>
+0039 <span class="comment">% Moreover, if ar0 is the LPC filter and ar is any  other all-pole filter, the I-S distance has the</span>
+0040 <span class="comment">% following additive property:</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%               v_distispf(pf,v_lpcar2pf(ar,np)) = v_distispf(pf,v_lpcar2pf(ar0,np)) + v_distisar(ar0,ar)</span>
+0043 
+0044 <span class="comment">% Ref: A.H.Gray Jr and J.D.Markel, &quot;Distance measures for speech processing&quot;, IEEE ASSP-24(5): 380-391, Oct 1976</span>
+0045 <span class="comment">%      L. Rabiner abd B-H Juang, &quot;Fundamentals of Speech Recognition&quot;, Section 4.5, Prentice-Hall 1993, ISBN 0-13-015157-2</span>
+0046 <span class="comment">%      F.Itakura &amp; S.Saito, &quot;A statistical method for estimation of speech spectral density and formant frequencies&quot;,</span>
+0047 <span class="comment">%                            Electronics &amp; Communications in Japan, 53A: 36-43, 1970.</span>
+0048 
+0049 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
+0050 <span class="comment">%      Version: $Id: v_distisar.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0053 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0056 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0057 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0058 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0059 <span class="comment">%   (at your option) any later version.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0062 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0063 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0064 <span class="comment">%   GNU General Public License for more details.</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0067 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0068 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0069 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0070 
+0071 [nf1,p1]=size(ar1);
+0072 nf2=size(ar2,1);
+0073 m2=<a href="v_lpcar2ra.html" class="code" title="function ra=v_lpcar2ra(ar)">v_lpcar2ra</a>(ar2);
+0074 m2(:,1)=m2(:,1)*0.5;
+0075 <span class="keyword">if</span> nargin&lt;3 | isempty(mode) mode=<span class="string">'0'</span>; <span class="keyword">end</span>
+0076 <span class="keyword">if</span> any(mode==<span class="string">'d'</span>) | (mode~=<span class="string">'x'</span> &amp; nf1==nf2)
+0077    nx=min(nf1,nf2);
+0078    d=2*sum(<a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>(ar1(1:nx,:)).*m2(1:nx,:),2)-log((ar2(1:nx,1)./ar1(1:nx,1)).^2)-1;;
+0079 <span class="keyword">else</span>
+0080    d=2*<a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>(ar1)*m2'-log((ar1(:,1).^(-1)*ar2(:,1)').^2)-1;
+0081 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

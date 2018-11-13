@@ -1,0 +1,525 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_readwav</title>
+  <meta name="keywords" content="v_readwav">
+  <meta name="description" content="READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_readwav.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_readwav
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
+
+ Input Parameters:
+
+    FILENAME gives the name of the file (with optional .WAV extension) or alternatively
+                 can be the FIDX output from a previous call to READWAV
+    MODE        specifies the following (*=default):
+
+    Scaling: 's'    Auto scale to make data peak = +-1
+             'r'    Raw unscaled data (integer values)
+             'q'    Scaled to make 0dBm0 be unity mean square
+             'p' *     Scaled to make +-1 equal full scale
+             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)
+                     (can be combined with n+p,r,s modes)
+             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)
+                     (can be combined with o+p,r,s modes)
+             'g'    Scale by the gain written by the &quot;g&quot; option in &quot;v_writewav&quot; to restore original level
+     Offset: 'y' *     Correct for offset in &lt;=8 bit PCM data
+             'z'    No offset correction
+   File I/O: 'f'    Do not close file on exit
+             'd'    Look in data directory: v_voicebox('dir_data')
+   Display;  'h'    Print header information
+             'w'    Plot waveform
+             'W'    Plot spectrogram
+             'a'    play audio (max 10 seconds)
+             'A'    play all audio even if very long
+
+    NMAX     maximum number of samples to read (or -1 for unlimited [default])
+    NSKIP    number of samples to skip from start of file
+               (or -1 to continue from previous read when FIDX is given instead of FILENAME [default])
+
+ Output Parameters:
+
+    Y        data matrix of dimension (samples,channels)
+    FS       sample frequency in Hz
+    WMODE    mode string needed for WRITEWAV to recreate the data file
+    FIDX     Information row vector containing the element listed below.
+
+           (1)  file id
+            (2)  current position in file
+           (3)  dataoff    byte offset in file to start of data
+           (4)  nsamp    number of samples
+           (5)  nchan    number of channels
+           (6)  nbyte    bytes per data value
+           (7)  bits    number of bits of precision
+           (8)  code    Data format: 1=PCM, 2=ADPCM, 3=floating point, 6=A-law, 7=Mu-law
+           (9)  fs        sample frequency
+           (10) mask   channel mask
+           (11) gain   gain factor in dB
+           (12) riffmt 'e' original wav format, 'x' WAVEFORMATEX format, 'X' WAVEFORMATEXTENSIBLE format
+           (13) factlen length of FACT chunk
+
+   If no output parameters are specified, header information will be printed.
+
+   For stereo data, y(:,1) is the left channel and y(:,2) the right
+   The mask, if specified, is a bit field giving the channels present in the following order:
+   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR
+   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top
+
+   See also WRITEWAV.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>	PCMU2LIN Convert A-law PCM to linear X=(P,M,S)</li><li><a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>	PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="v_readflac.html" class="code" title="function [y,fs]=v_readflac(filename,mode)">v_readflac</a>	READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</li><li><a href="wavread.html" class="code" title="function [y,fs,bits]=v_wavread(fn,n)">wavread</a>	WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)</a>
+0002 <span class="comment">%READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input Parameters:</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    FILENAME gives the name of the file (with optional .WAV extension) or alternatively</span>
+0007 <span class="comment">%                 can be the FIDX output from a previous call to READWAV</span>
+0008 <span class="comment">%    MODE        specifies the following (*=default):</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%    Scaling: 's'    Auto scale to make data peak = +-1</span>
+0011 <span class="comment">%             'r'    Raw unscaled data (integer values)</span>
+0012 <span class="comment">%             'q'    Scaled to make 0dBm0 be unity mean square</span>
+0013 <span class="comment">%             'p' *     Scaled to make +-1 equal full scale</span>
+0014 <span class="comment">%             'o'    Scale to bin centre rather than bin edge (e.g. 127 rather than 127.5 for 8 bit values)</span>
+0015 <span class="comment">%                     (can be combined with n+p,r,s modes)</span>
+0016 <span class="comment">%             'n'    Scale to negative peak rather than positive peak (e.g. 128.5 rather than 127.5 for 8 bit values)</span>
+0017 <span class="comment">%                     (can be combined with o+p,r,s modes)</span>
+0018 <span class="comment">%             'g'    Scale by the gain written by the &quot;g&quot; option in &quot;v_writewav&quot; to restore original level</span>
+0019 <span class="comment">%     Offset: 'y' *     Correct for offset in &lt;=8 bit PCM data</span>
+0020 <span class="comment">%             'z'    No offset correction</span>
+0021 <span class="comment">%   File I/O: 'f'    Do not close file on exit</span>
+0022 <span class="comment">%             'd'    Look in data directory: v_voicebox('dir_data')</span>
+0023 <span class="comment">%   Display;  'h'    Print header information</span>
+0024 <span class="comment">%             'w'    Plot waveform</span>
+0025 <span class="comment">%             'W'    Plot spectrogram</span>
+0026 <span class="comment">%             'a'    play audio (max 10 seconds)</span>
+0027 <span class="comment">%             'A'    play all audio even if very long</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%    NMAX     maximum number of samples to read (or -1 for unlimited [default])</span>
+0030 <span class="comment">%    NSKIP    number of samples to skip from start of file</span>
+0031 <span class="comment">%               (or -1 to continue from previous read when FIDX is given instead of FILENAME [default])</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% Output Parameters:</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%    Y        data matrix of dimension (samples,channels)</span>
+0036 <span class="comment">%    FS       sample frequency in Hz</span>
+0037 <span class="comment">%    WMODE    mode string needed for WRITEWAV to recreate the data file</span>
+0038 <span class="comment">%    FIDX     Information row vector containing the element listed below.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%           (1)  file id</span>
+0041 <span class="comment">%            (2)  current position in file</span>
+0042 <span class="comment">%           (3)  dataoff    byte offset in file to start of data</span>
+0043 <span class="comment">%           (4)  nsamp    number of samples</span>
+0044 <span class="comment">%           (5)  nchan    number of channels</span>
+0045 <span class="comment">%           (6)  nbyte    bytes per data value</span>
+0046 <span class="comment">%           (7)  bits    number of bits of precision</span>
+0047 <span class="comment">%           (8)  code    Data format: 1=PCM, 2=ADPCM, 3=floating point, 6=A-law, 7=Mu-law</span>
+0048 <span class="comment">%           (9)  fs        sample frequency</span>
+0049 <span class="comment">%           (10) mask   channel mask</span>
+0050 <span class="comment">%           (11) gain   gain factor in dB</span>
+0051 <span class="comment">%           (12) riffmt 'e' original wav format, 'x' WAVEFORMATEX format, 'X' WAVEFORMATEXTENSIBLE format</span>
+0052 <span class="comment">%           (13) factlen length of FACT chunk</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%   If no output parameters are specified, header information will be printed.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   For stereo data, y(:,1) is the left channel and y(:,2) the right</span>
+0057 <span class="comment">%   The mask, if specified, is a bit field giving the channels present in the following order:</span>
+0058 <span class="comment">%   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR</span>
+0059 <span class="comment">%   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%   See also WRITEWAV.</span>
+0062 
+0063 <span class="comment">%   *** Note on scaling ***</span>
+0064 <span class="comment">%   If we want to scale signal values in the range +-1 to an integer in the</span>
+0065 <span class="comment">%   range [-128,127] then we have four plausible choices corresponding to</span>
+0066 <span class="comment">%   scale factors of (a) 127, (b) 127.5, (c) 128 or (d) 128.5 but each choice</span>
+0067 <span class="comment">%   has disadvantages.</span>
+0068 <span class="comment">%   For forward scaling: (c) and (d) cause clipping on inputs of +1.</span>
+0069 <span class="comment">%   For reverse scaling: (a) and (b) can generate output values &lt; -1.</span>
+0070 <span class="comment">%   Any of these scalings can be selected via the mode input: (a) 'o', (b) default, (c) 'on', (d) 'n'</span>
+0071 
+0072 <span class="comment">%       Copyright (C) Mike Brookes 1998-2011</span>
+0073 <span class="comment">%      Version: $Id: v_readwav.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0074 <span class="comment">%</span>
+0075 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0076 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0077 <span class="comment">%</span>
+0078 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0079 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0080 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0081 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0082 <span class="comment">%   (at your option) any later version.</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0085 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0086 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0087 <span class="comment">%   GNU General Public License for more details.</span>
+0088 <span class="comment">%</span>
+0089 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0090 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0091 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0092 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0093 
+0094 <span class="comment">% Bugs/suggestions:</span>
+0095 
+0096 
+0097 <span class="keyword">if</span> nargin&lt;1
+0098     error(<span class="string">'Usage: [y,fs,wmode,fidx]=READWAV(filename,mode,nmax,nskip)'</span>); <span class="keyword">end</span>
+0099 <span class="keyword">if</span> nargin&lt;2
+0100     mode=<span class="string">'p'</span>;
+0101 <span class="keyword">else</span>
+0102     mode = [mode(:).' <span class="string">'p'</span>];
+0103 <span class="keyword">end</span>
+0104 k=find((mode&gt;=<span class="string">'p'</span>) &amp; (mode&lt;=<span class="string">'s'</span>));
+0105 mno=all(mode~=<span class="string">'o'</span>);                      <span class="comment">% scale to input limits not output limits</span>
+0106 sc=mode(k(1));
+0107 z=128*all(mode~=<span class="string">'z'</span>); <span class="comment">% data offset value</span>
+0108 info=zeros(1,13);
+0109 <span class="keyword">if</span> ischar(filename)
+0110     <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0111         filename=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),filename);
+0112     <span class="keyword">end</span>
+0113     fid=fopen(filename,<span class="string">'rb'</span>,<span class="string">'l'</span>);
+0114     <span class="keyword">if</span> fid == -1
+0115         fn=[filename,<span class="string">'.wav'</span>];
+0116         fid=fopen(fn,<span class="string">'rb'</span>,<span class="string">'l'</span>);
+0117         <span class="keyword">if</span> fid ~= -1
+0118             filename=fn;
+0119         <span class="keyword">end</span>
+0120     <span class="keyword">end</span>
+0121     <span class="keyword">if</span> fid == -1
+0122         error(<span class="string">'Can''t open %s for input'</span>,filename);
+0123     <span class="keyword">end</span>
+0124     info(1)=fid;
+0125 <span class="keyword">else</span>                                <span class="comment">% first argument is FIDX from previous call</span>
+0126     info=filename;
+0127     fid=info(1);
+0128 <span class="keyword">end</span>
+0129 getdat= nargout&gt;0 || any(lower(mode)==<span class="string">'w'</span>) || any(lower(mode)==<span class="string">'a'</span>);
+0130 mh=any(mode==<span class="string">'h'</span>) || ~getdat;
+0131 <span class="keyword">if</span> ~info(3)
+0132     fseek(fid,8,-1);                        <span class="comment">% read riff chunk</span>
+0133     header=fread(fid,4,<span class="string">'*char'</span>)';
+0134     <span class="keyword">if</span> ~strcmp(header,<span class="string">'WAVE'</span>)
+0135         fclose(fid);
+0136         error(<span class="string">'File does not begin with a WAVE chunck'</span>);
+0137     <span class="keyword">end</span>
+0138     <span class="keyword">if</span> mh
+0139         fprintf(<span class="string">'\nWAVE file: %s\n'</span>,filename);
+0140     <span class="keyword">end</span>
+0141     fmtlen=-1;
+0142     datalen=-1;
+0143     instlen=-1;
+0144     info(13)=-1;
+0145     info(12)=<span class="string">'e'</span>;  <span class="comment">% default is original wave file format</span>
+0146     <span class="keyword">while</span> datalen&lt;0                        <span class="comment">% loop until FMT and DATA chuncks both found</span>
+0147         header=fread(fid,4,<span class="string">'*char'</span>);
+0148         len=fread(fid,1,<span class="string">'ulong'</span>);
+0149         <span class="keyword">if</span> mh
+0150             fprintf(<span class="string">'  %s chunk: %d bytes\n'</span>,header,len);
+0151         <span class="keyword">end</span>
+0152         <span class="keyword">if</span> strcmp(header',<span class="string">'fmt '</span>)                    <span class="comment">% ******* found FMT chunk *********</span>
+0153             fmtlen=len;                             <span class="comment">% remember the length</span>
+0154             <span class="keyword">if</span> len&gt;16
+0155                 info(12)=<span class="string">'x'</span>;  <span class="comment">% might be WAVEFORMATEX format</span>
+0156             <span class="keyword">end</span>
+0157             wavfmt=fread(fid,1,<span class="string">'short'</span>);            <span class="comment">% format: 1=PCM, 6=A-law, 7-Mu-law</span>
+0158             info(8)=wavfmt;
+0159             info(5)=fread(fid,1,<span class="string">'ushort'</span>);            <span class="comment">% number of channels</span>
+0160             fs=fread(fid,1,<span class="string">'ulong'</span>);                <span class="comment">% sample rate in Hz</span>
+0161             info(9)=fs;                             <span class="comment">% sample rate in Hz</span>
+0162             rate=fread(fid,1,<span class="string">'ulong'</span>);                <span class="comment">% average bytes per second (ignore)</span>
+0163             align=fread(fid,1,<span class="string">'ushort'</span>);            <span class="comment">% block alignment in bytes (container size * #channels)</span>
+0164             bps=fread(fid,1,<span class="string">'ushort'</span>);            <span class="comment">% bits per sample</span>
+0165             info(7)=bps;
+0166             <span class="comment">%             info(6)=ceil(info(7)/8);                % round up to a byte count</span>
+0167             info(6)=floor(align/info(5));                       <span class="comment">% assume block size/channels = container size</span>
+0168             <span class="keyword">if</span> info(8)==-2   <span class="comment">% wave format extensible</span>
+0169                 cb=fread(fid,1,<span class="string">'ushort'</span>);            <span class="comment">% extra bytes must be &gt;=22</span>
+0170                 info(12)=<span class="string">'X'</span>;                         <span class="comment">% WAVEFORMATEXTENSIBLE format</span>
+0171                 wfxsamp=fread(fid,1,<span class="string">'ushort'</span>);            <span class="comment">% samples union</span>
+0172                 <span class="keyword">if</span> wfxsamp&gt;0
+0173                     info(7)=wfxsamp;     <span class="comment">% valid bits per sample</span>
+0174                 <span class="keyword">end</span>
+0175                 info(10)=fread(fid,1,<span class="string">'ulong'</span>);                <span class="comment">% channel mask</span>
+0176                 wfxguida=fread(fid,1,<span class="string">'ulong'</span>);                <span class="comment">% GUID</span>
+0177                 wfxguidb=fread(fid,2,<span class="string">'ushort'</span>);                <span class="comment">% GUID</span>
+0178                 wfxguidc=fread(fid,8,<span class="string">'uchar'</span>);                <span class="comment">% GUID</span>
+0179                 <span class="keyword">if</span> wfxguida&lt;65536
+0180                     info(8)=wfxguida; <span class="comment">% turn it into normal wav format</span>
+0181                 <span class="keyword">end</span>
+0182                 fseek(fid,len-40,0);                    <span class="comment">% skip to end of header</span>
+0183             <span class="keyword">else</span>
+0184                 <span class="keyword">if</span> align&gt;0 &amp;&amp; align&lt;(info(6)+4)*info(5)
+0185                     info(6)=ceil(align/info(5));
+0186                 <span class="keyword">end</span>
+0187                 fseek(fid,len-16,0);                    <span class="comment">% skip to end of header</span>
+0188             <span class="keyword">end</span>
+0189             <span class="keyword">if</span> mh
+0190                 fmttypes={<span class="string">'?'</span> <span class="string">'PCM'</span> <span class="string">'ADPCM'</span> <span class="string">'IEEE-float'</span> <span class="string">'?'</span> <span class="string">'?'</span> <span class="string">'A-law'</span> <span class="string">'µ-law'</span> <span class="string">'?'</span>};
+0191                 fprintf(<span class="string">'        Format: %d = %s'</span>,info(8),fmttypes{1+max(min(info(8),8),0)});
+0192                 <span class="keyword">if</span> wavfmt==-2
+0193                     fprintf(<span class="string">' (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x)\n'</span>,wfxguida,wfxguidb,wfxguidc);
+0194                 <span class="keyword">else</span>
+0195                     fprintf(<span class="string">'\n'</span>);
+0196                 <span class="keyword">end</span>
+0197                 fprintf(<span class="string">'        %d channels at %g kHz sample rate (%d kbytes/s)\n'</span>,info(5),fs/1000,rate/1000);
+0198                 fprintf(<span class="string">'        Mask=%x:'</span>,info(10));
+0199                 spkpos={<span class="string">'FL'</span> <span class="string">'FR'</span> <span class="string">'FC'</span> <span class="string">'W'</span> <span class="string">'BL'</span> <span class="string">'BR'</span> <span class="string">'FLC'</span> <span class="string">'FRC'</span> <span class="string">'BC'</span> <span class="string">'SL'</span> <span class="string">'SR'</span> <span class="string">'TC'</span> <span class="string">'TFL'</span> <span class="string">'TFC'</span> <span class="string">'TFR'</span> <span class="string">'TBL'</span> <span class="string">'TBC'</span> <span class="string">'TBR'</span>};
+0200                 <span class="keyword">for</span> i=1:18
+0201                     <span class="keyword">if</span> mod(floor(info(10)*pow2(1-i)),2)
+0202                         fprintf([<span class="string">' '</span> spkpos{i}]);
+0203                     <span class="keyword">end</span>
+0204                 <span class="keyword">end</span>
+0205                 fprintf(<span class="string">'\n        %d valid bits of %d per sample (%d byte block size)\n'</span>,info(7),bps,align);
+0206             <span class="keyword">end</span>
+0207         <span class="keyword">elseif</span> strcmp(header',<span class="string">'fact'</span>)                <span class="comment">% ******* found FACT chunk *********</span>
+0208             info(13)=len;
+0209             <span class="keyword">if</span> len&lt;4
+0210                 error(<span class="string">'FACT chunk too short'</span>);
+0211             <span class="keyword">end</span>
+0212             nsamp=fread(fid,1,<span class="string">'ulong'</span>);                <span class="comment">% number of samples</span>
+0213             fseek(fid,len-4,0);                     <span class="comment">% skip to end of header</span>
+0214             <span class="keyword">if</span> mh
+0215                 fprintf(<span class="string">'        %d samples = %.3g seconds\n'</span>,nsamp,nsamp/fs);
+0216             <span class="keyword">end</span>
+0217         <span class="keyword">elseif</span> strcmp(header',<span class="string">'inst'</span>)                <span class="comment">% ******* found INST chunk *********</span>
+0218             instlen=len;
+0219             <span class="keyword">if</span> len&lt;7
+0220                 error(<span class="string">'INST chunk too short'</span>);
+0221             <span class="keyword">end</span>
+0222             inst=fread(fid,3,<span class="string">'schar'</span>);
+0223             info(11)=double(inst(3));                          <span class="comment">% gain in dB</span>
+0224             <span class="keyword">if</span> mh
+0225                 fprintf(<span class="string">'        Gain = %d dB\n'</span>,info(11));
+0226             <span class="keyword">end</span>
+0227             fseek(fid,len-3,0);                     <span class="comment">% skip to end of header</span>
+0228         <span class="keyword">elseif</span> strcmp(header',<span class="string">'data'</span>)                <span class="comment">% ******* found DATA chunk *********</span>
+0229             <span class="keyword">if</span> fmtlen&lt;0
+0230                 fclose(fid);
+0231                 error(<span class="string">'File %s does not contain a FMT chunck'</span>,filename);
+0232             <span class="keyword">end</span>
+0233             <span class="keyword">if</span> info(13)&gt;3 &amp;&amp; nsamp &gt;0
+0234                 info(4)=nsamp;   <span class="comment">% take data length from FACT chunk</span>
+0235             <span class="keyword">else</span>
+0236                 info(4) = fix(len/(info(6)*info(5)));  <span class="comment">% number of samples</span>
+0237             <span class="keyword">end</span>
+0238             info(3)=ftell(fid);                    <span class="comment">% start of data</span>
+0239             datalen=len;
+0240             <span class="keyword">if</span> mh
+0241                 fprintf(<span class="string">'        %d samples x %d channels x %d bytes/samp'</span>,info(4:6));
+0242                 <span class="keyword">if</span> prod(info(4:6))~=len
+0243                     fprintf(<span class="string">' + %d padding bytes'</span>,len-prod(info(4:6)));
+0244                 <span class="keyword">end</span>
+0245                 fprintf(<span class="string">' = %g sec\n'</span>,info(4)/fs);
+0246             <span class="keyword">end</span>
+0247         <span class="keyword">else</span>                            <span class="comment">% ******* found unwanted chunk *********</span>
+0248             fseek(fid,len,0);
+0249         <span class="keyword">end</span>
+0250     <span class="keyword">end</span>
+0251 <span class="keyword">else</span>
+0252     fs=info(9);
+0253 <span class="keyword">end</span>
+0254 <span class="keyword">if</span> nargin&lt;4 || nskip&lt;0
+0255     nskip=info(2);  <span class="comment">% resume at current file position</span>
+0256 <span class="keyword">end</span>
+0257 
+0258 ksamples=info(4)-nskip; <span class="comment">% number of samples remaining</span>
+0259 <span class="keyword">if</span> nargin&gt;2
+0260     <span class="keyword">if</span> nmax&gt;=0
+0261         ksamples=min(nmax,ksamples); <span class="comment">% number of samples to read</span>
+0262     <span class="keyword">end</span>
+0263 <span class="keyword">elseif</span> ~getdat 
+0264     ksamples=min(5,ksamples); <span class="comment">% just read 5 samples so we can print the first few data values</span>
+0265 <span class="keyword">end</span>
+0266 <span class="keyword">if</span> ksamples&gt;0
+0267     info(2)=nskip+ksamples;
+0268     fseek(fid,info(3)+info(6)*info(5)*nskip,-1);
+0269     nsamples=info(5)*ksamples;
+0270     <span class="keyword">if</span> any(info(8)==3)  <span class="comment">% floating point format</span>
+0271         pk=1;  <span class="comment">% peak is 1</span>
+0272         <span class="keyword">switch</span> info(6)
+0273             <span class="keyword">case</span> 4
+0274                 y=fread(fid,nsamples,<span class="string">'float32'</span>);
+0275             <span class="keyword">case</span> 8
+0276                 y=fread(fid,nsamples,<span class="string">'float64'</span>);
+0277             <span class="keyword">otherwise</span>
+0278                 error(<span class="string">'cannot read %d-byte floating point numbers'</span>,info(6));
+0279         <span class="keyword">end</span>
+0280     <span class="keyword">else</span>
+0281         <span class="keyword">if</span> ~any(info(8)==[1 6 7])
+0282             sc=<span class="string">'r'</span>;  <span class="comment">% read strange formats in raw integer mode</span>
+0283         <span class="keyword">end</span>
+0284         pk=pow2(0.5,8*info(6))*(1+(mno/2-all(mode~=<span class="string">'n'</span>))/pow2(0.5,info(7)));  <span class="comment">% use modes o and n to determine effective peak</span>
+0285         <span class="keyword">switch</span> info(6)
+0286             <span class="keyword">case</span> 1
+0287                 y=fread(fid,nsamples,<span class="string">'uchar'</span>);
+0288                 <span class="keyword">if</span> info(8)==1
+0289                     y=y-z;
+0290                 <span class="keyword">elseif</span> info(8)==6
+0291                     y=<a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>(y,213,1);
+0292                     pk=4032+mno*64;
+0293                 <span class="keyword">elseif</span> info(8)==7
+0294                     y=<a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>(y,1);
+0295                     pk=8031+mno*128;
+0296                 <span class="keyword">end</span>
+0297             <span class="keyword">case</span> 2
+0298                 y=fread(fid,nsamples,<span class="string">'short'</span>);
+0299             <span class="keyword">case</span> 3
+0300                 y=fread(fid,3*nsamples,<span class="string">'uchar'</span>);
+0301                 y=reshape(y,3,nsamples);
+0302                 y=([1 256 65536]*y-pow2(fix(pow2(y(3,:),-7)),24)).';
+0303             <span class="keyword">case</span> 4
+0304                 y=fread(fid,nsamples,<span class="string">'long'</span>);
+0305             <span class="keyword">otherwise</span>
+0306                 error(<span class="string">'cannot read %d-byte integers'</span>,info(6));
+0307         <span class="keyword">end</span>
+0308     <span class="keyword">end</span>
+0309     <span class="keyword">if</span> sc ~= <span class="string">'r'</span>
+0310         <span class="keyword">if</span> sc==<span class="string">'s'</span>
+0311             sf=1/max(abs(y(:)));
+0312         <span class="keyword">elseif</span> sc==<span class="string">'p'</span>
+0313             sf=1/pk;
+0314         <span class="keyword">else</span>
+0315             <span class="keyword">if</span> info(8)==7
+0316                 sf=2.03761563/pk;
+0317             <span class="keyword">else</span>
+0318                 sf=2.03033976/pk;
+0319             <span class="keyword">end</span>
+0320         <span class="keyword">end</span>
+0321         y=sf*y;
+0322     <span class="keyword">else</span>                             <span class="comment">% mode = 'r' - output raw values</span>
+0323         <span class="keyword">if</span> info(8)==1
+0324             y=y*pow2(1,info(7)-8*info(6));  <span class="comment">% shift to get the bits correct</span>
+0325         <span class="keyword">end</span>
+0326     <span class="keyword">end</span>
+0327     <span class="keyword">if</span> any(mode==<span class="string">'g'</span>) &amp;&amp; info(11)~=0
+0328         y=y*10^(info(11)/20);   <span class="comment">% scale by the gain</span>
+0329     <span class="keyword">end</span>
+0330     <span class="keyword">if</span> info(5)&gt;1
+0331         y = reshape(y,info(5),ksamples).';
+0332     <span class="keyword">end</span>
+0333 <span class="keyword">else</span>
+0334     y=[];
+0335 <span class="keyword">end</span>
+0336 <span class="keyword">if</span> all(mode~=<span class="string">'f'</span>)
+0337     fclose(fid);
+0338 <span class="keyword">end</span>
+0339 <span class="keyword">if</span> nargout&gt;2  <span class="comment">% sort out the mode input for writing this format</span>
+0340     wmode=char([info(12) sc <span class="string">'z'</span>-z/128]);
+0341     <span class="keyword">if</span> info(13)&gt;0
+0342         wmode=[wmode <span class="string">'E'</span>];
+0343     <span class="keyword">end</span>
+0344     <span class="keyword">if</span> info(6)&gt;1 &amp;&amp; info(6)&lt;5
+0345         cszc=<span class="string">' cCL'</span>;
+0346         wmode=[wmode cszc(info(6))];
+0347     <span class="keyword">end</span>
+0348     <span class="keyword">switch</span> info(8)
+0349         <span class="keyword">case</span> 1                                    <span class="comment">% PCM modes</span>
+0350             <span class="keyword">if</span> ~mno
+0351                 wmode=[wmode <span class="string">'o'</span>];
+0352             <span class="keyword">end</span>
+0353             <span class="keyword">if</span> any(mode==<span class="string">'n'</span>)
+0354                 wmode=[wmode <span class="string">'n'</span>];
+0355             <span class="keyword">end</span>
+0356             wmode=[wmode num2str(info(7))];
+0357         <span class="keyword">case</span> 3
+0358             <span class="keyword">if</span> info(7)&lt;=32
+0359                 wmode = [wmode <span class="string">'v'</span>];
+0360             <span class="keyword">else</span>
+0361                 wmode = [wmode <span class="string">'V'</span>];
+0362             <span class="keyword">end</span>
+0363         <span class="keyword">case</span> 6
+0364             wmode = [wmode <span class="string">'a'</span>];
+0365         <span class="keyword">case</span> 7
+0366             wmode = [wmode <span class="string">'u'</span>];
+0367     <span class="keyword">end</span>
+0368     fidx=info;
+0369 <span class="keyword">end</span>
+0370 [ns,nchan]=size(y);
+0371 <span class="keyword">if</span> mh &amp;&amp; ns&gt;0
+0372     nsh=min(ns,5);  <span class="comment">% print first few samples</span>
+0373     <span class="keyword">for</span> i=1:nsh
+0374         fprintf(<span class="string">'        %d:'</span>,i);
+0375         fprintf(<span class="string">' %.3g'</span>,y(i,:));
+0376         fprintf(<span class="string">'\n'</span>);
+0377     <span class="keyword">end</span>
+0378 <span class="keyword">end</span>
+0379 
+0380 <span class="keyword">if</span> ns&gt;0.01*fs
+0381     <span class="keyword">if</span> any(lower(mode)==<span class="string">'a'</span>)
+0382         nsh=min(ns,10*fs+ns*any(mode==<span class="string">'A'</span>));
+0383         soundsc(y(1:nsh,1:min(nchan,2)),fs);
+0384     <span class="keyword">end</span>
+0385     <span class="keyword">if</span> any(mode==<span class="string">'W'</span>)
+0386         spm=<span class="string">'pJcbf '</span>;
+0387         <span class="keyword">if</span> any(mode==<span class="string">'w'</span>)
+0388             spm(end)=<span class="string">'w'</span>;
+0389         <span class="keyword">end</span>
+0390         clf;
+0391         <span class="keyword">if</span> nchan&gt;1
+0392             <span class="keyword">for</span> i=nchan:-1:1
+0393                 subplot(nchan,1,i)
+0394                 <a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>(y(:,i),fs,spm);
+0395             <span class="keyword">end</span>
+0396         <span class="keyword">else</span>
+0397             <a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>(y,fs,spm);
+0398         <span class="keyword">end</span>
+0399     <span class="keyword">elseif</span> any(mode==<span class="string">'w'</span>)
+0400         clf;
+0401         <span class="keyword">if</span> nchan&gt;1
+0402             <span class="keyword">for</span> i=nchan:-1:1
+0403                 subplot(nchan,1,i)
+0404                 plot((1:ns)/fs,y(:,i));
+0405                 ylabel([<span class="string">'Chan '</span> num2str(i)]);
+0406                 <span class="keyword">if</span> i==nchan
+0407                     xlabel(<span class="string">'Time (s)'</span>);
+0408                 <span class="keyword">end</span>
+0409             <span class="keyword">end</span>
+0410         <span class="keyword">else</span>
+0411             plot((1:ns)/fs,y);
+0412             xlabel(<span class="string">'Time (s)'</span>);
+0413         <span class="keyword">end</span>
+0414 
+0415     <span class="keyword">end</span>
+0416 <span class="keyword">end</span>
+0417 
+0418 
+0419 
+0420</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

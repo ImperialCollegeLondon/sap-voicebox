@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_filterbank</title>
+  <meta name="keywords" content="v_filterbank">
+  <meta name="description" content="FILTERBANK appply v_filterbank to a signal: [y,zo]=(b,a,x,gd)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_filterbank.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_filterbank
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FILTERBANK appply v_filterbank to a signal: [y,zo]=(b,a,x,gd)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,zo]=v_filterbank(b,a,x,gd) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FILTERBANK appply v_filterbank to a signal: [y,zo]=(b,a,x,gd)
+
+ Inputs:
+    b    numerator coefficients, one row per filter
+    a    denominator coefficients, one row per filter
+    x    input signal
+    gd   group delay of each filter in samples [default=0]. The filter
+         outputs will be advanced to compensate for the group delays.
+         Alternatively, this input can be the zo output from a previous call.
+
+ Outputa:
+    y    output signals, one column per filter
+    zo   output filter state</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	h is the handle of the colorbar, axis or figure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,zo]=v_filterbank(b,a,x,gd)</a>
+0002 <span class="comment">%FILTERBANK appply v_filterbank to a signal: [y,zo]=(b,a,x,gd)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs:</span>
+0005 <span class="comment">%    b    numerator coefficients, one row per filter</span>
+0006 <span class="comment">%    a    denominator coefficients, one row per filter</span>
+0007 <span class="comment">%    x    input signal</span>
+0008 <span class="comment">%    gd   group delay of each filter in samples [default=0]. The filter</span>
+0009 <span class="comment">%         outputs will be advanced to compensate for the group delays.</span>
+0010 <span class="comment">%         Alternatively, this input can be the zo output from a previous call.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Outputa:</span>
+0013 <span class="comment">%    y    output signals, one column per filter</span>
+0014 <span class="comment">%    zo   output filter state</span>
+0015 
+0016 <span class="comment">%      Copyright (C) Mike Brookes 2009-2010</span>
+0017 <span class="comment">%      Version: $Id: v_filterbank.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0020 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0023 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0024 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0025 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0026 <span class="comment">%   (at your option) any later version.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0029 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0030 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0031 <span class="comment">%   GNU General Public License for more details.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0034 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0035 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 nf=size(b,1);           <span class="comment">% number of filters</span>
+0038 nz=max(size(b,2),size(a,2))-1;  <span class="comment">% size of state  needed</span>
+0039 zzo=zeros(nz,nf);
+0040 nx=length(x);           <span class="comment">% number of input samples</span>
+0041 xx=x(:);
+0042 <span class="keyword">if</span> nargin&lt;4 || ~numel(gd)
+0043     gd=zeros(nf,1);
+0044 <span class="keyword">end</span>
+0045 <span class="keyword">if</span> isstruct(gd)
+0046     zi=gd.zzo;          <span class="comment">% get filter state</span>
+0047     qd=gd.qd;
+0048     sd=qd(2)-qd(1);     <span class="comment">% number of output samples we need to save</span>
+0049     qd(3)=qd(3)+nx;
+0050     rd=gd.rd;
+0051     yy=zeros(nx+sd,nf);
+0052     yy(1:sd,:)=gd.sy;
+0053     <span class="keyword">for</span> i=1:nf
+0054         [yy(sd+1:<span class="keyword">end</span>,i),zzo(:,i)]=filter(b(i,:),a(i,:),xx,zi(:,i));
+0055     <span class="keyword">end</span>
+0056 <span class="keyword">else</span>
+0057     qd=zeros(1,3);      <span class="comment">% [min-delay max-delay #samples]</span>
+0058     rd=round(gd);
+0059     qd(1)=min(rd);
+0060     qd(2)=max(rd);      <span class="comment">% find the largest delay</span>
+0061     qd(3)=nx;           <span class="comment">% number of filtered samples</span>
+0062     sd=qd(2)-qd(1);     <span class="comment">% number of output samples we need to save</span>
+0063     yy=zeros(nx+sd,nf);
+0064     <span class="keyword">for</span> i=1:nf
+0065         [yy(sd+1:<span class="keyword">end</span>,i),zzo(:,i)]=filter(b(i,:),a(i,:),xx);
+0066     <span class="keyword">end</span>
+0067 <span class="keyword">end</span>
+0068 ny=max(0,min(nx,qd(3)-qd(2)));    <span class="comment">% numer of output samples</span>
+0069 y=zeros(ny,nf);
+0070 <span class="keyword">if</span> ny&gt;0
+0071     <span class="keyword">for</span> i=1:nf
+0072         off=rd(i)-qd(1);
+0073         y(:,i)=yy(off+1:off+ny,i);
+0074     <span class="keyword">end</span>
+0075 <span class="keyword">end</span>
+0076 <span class="keyword">if</span> nargout&gt;1
+0077     zo.zzo=zzo;  <span class="comment">% filter state</span>
+0078     zo.qd=qd;    <span class="comment">% offsets</span>
+0079     zo.rd=rd; <span class="comment">% rounded group delays</span>
+0080     zo.sy=yy(end-sd+1:<span class="keyword">end</span>,:);  <span class="comment">% save old outputs</span>
+0081 <span class="keyword">end</span>
+0082 <span class="keyword">if</span> ~nargout   <span class="comment">% plot pseudo spectrogram</span>
+0083     ng=300;         <span class="comment">% target number of columns in image</span>
+0084     kd=max(1,floor(ny/ng));     <span class="comment">% decimation factor</span>
+0085     jm=floor(ny/kd);  <span class="comment">% % number f frames</span>
+0086 yd=reshape(sum(reshape(y(1:kd*jm,:).^2,kd,nf*jm),1),jm,nf)/kd;
+0087     ydm=max(yd(:));
+0088     imagesc((1:jm)*kd+qd(3)-ny-(kd-1)/2,1:nf,10*log10(max(yd,ydm/1e4))');
+0089     axis(<span class="string">'xy'</span>);
+0090     colorbar;
+0091     <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'dB'</span>);
+0092     xlabel(<span class="string">'Sample Number'</span>);
+0093     ylabel(<span class="string">'Filter Channel'</span>);
+0094     title(<span class="string">'Filterbank output'</span>);
+0095 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

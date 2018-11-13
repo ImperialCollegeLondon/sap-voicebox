@@ -1,0 +1,429 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_sigma</title>
+  <meta name="keywords" content="v_sigma">
+  <meta name="description" content="Singularity in EGG by Multiscale Analysis (SIGMA) Algorithm">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_sigma.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_sigma
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Singularity in EGG by Multiscale Analysis (SIGMA) Algorithm</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [gci goi] = v_sigma(lx,fs,fmax) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">   Singularity in EGG by Multiscale Analysis (SIGMA) Algorithm
+
+   [gci goi] = v_sigma(lx,fs,fmax)
+
+   Inputs:
+       lx      Nx1 vector LX signal
+       fs      Sampling freq (Hz)
+       fmax    [Optional] max laryngeal freq
+   Outputs:
+       gci      Vector of gcis as sample instants.
+       goi      Vector of gois as sample instants.
+
+   External Functions:
+       Function gaussmix in Voicebox.
+
+   Notes:
+       Due to the initialization of the EM algorithm on a random data
+       point, V_SIGMA does not always produce deterministic behaviour.
+
+   References:
+       M. R. P. Thomas and P. A. Naylor, &quot;The SIGMA Algorithm: A Glottal
+       Activity Detector for Electroglottographic Signals,&quot; IEEE Trans.
+       Audio, Speech, Lang. Process., vol.17, no.8, pp.1557-1566, Nov.
+       2009.
+
+   Revision History:
+       13/09/10: Swallow postfilter threw an error when fewer than 3 GCIs 
+       were detected. Final GOI cycle threw an error when search bounds
+       exceeded length of signal. Similar problem in line 179 fixed.
+
+**************************************************************************
+ Author:           M. R. P. Thomas, 29 May 2007
+**************************************************************************
+      Copyright (C) M. R. P. Thomas, Mike Brookes 2007-2013
+      Version: $Id: v_sigma.m 9702 2017-04-19 10:48:12Z dmb $
+
+   VOICEBOX is a MATLAB toolbox for speech processing.
+   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You can obtain a copy of the GNU General Public License from
+   http://www.gnu.org/copyleft/gpl.html or by writing to
+   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [tew,sew,y,toff]=xewgrdel(u,fs,gwlen,fwlen)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [gci goi] = v_sigma(lx,fs,fmax)</a>
+0002 
+0003 <span class="comment">%   Singularity in EGG by Multiscale Analysis (SIGMA) Algorithm</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%   [gci goi] = v_sigma(lx,fs,fmax)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   Inputs:</span>
+0008 <span class="comment">%       lx      Nx1 vector LX signal</span>
+0009 <span class="comment">%       fs      Sampling freq (Hz)</span>
+0010 <span class="comment">%       fmax    [Optional] max laryngeal freq</span>
+0011 <span class="comment">%   Outputs:</span>
+0012 <span class="comment">%       gci      Vector of gcis as sample instants.</span>
+0013 <span class="comment">%       goi      Vector of gois as sample instants.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%   External Functions:</span>
+0016 <span class="comment">%       Function gaussmix in Voicebox.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   Notes:</span>
+0019 <span class="comment">%       Due to the initialization of the EM algorithm on a random data</span>
+0020 <span class="comment">%       point, V_SIGMA does not always produce deterministic behaviour.</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%   References:</span>
+0023 <span class="comment">%       M. R. P. Thomas and P. A. Naylor, &quot;The SIGMA Algorithm: A Glottal</span>
+0024 <span class="comment">%       Activity Detector for Electroglottographic Signals,&quot; IEEE Trans.</span>
+0025 <span class="comment">%       Audio, Speech, Lang. Process., vol.17, no.8, pp.1557-1566, Nov.</span>
+0026 <span class="comment">%       2009.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   Revision History:</span>
+0029 <span class="comment">%       13/09/10: Swallow postfilter threw an error when fewer than 3 GCIs</span>
+0030 <span class="comment">%       were detected. Final GOI cycle threw an error when search bounds</span>
+0031 <span class="comment">%       exceeded length of signal. Similar problem in line 179 fixed.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%**************************************************************************</span>
+0034 <span class="comment">% Author:           M. R. P. Thomas, 29 May 2007</span>
+0035 <span class="comment">%**************************************************************************</span>
+0036 <span class="comment">%      Copyright (C) M. R. P. Thomas, Mike Brookes 2007-2013</span>
+0037 <span class="comment">%      Version: $Id: v_sigma.m 9702 2017-04-19 10:48:12Z dmb $</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0040 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0043 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0044 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0045 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0046 <span class="comment">%   (at your option) any later version.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0049 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0050 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0051 <span class="comment">%   GNU General Public License for more details.</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0054 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0055 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0056 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0057 
+0058 <span class="keyword">if</span>(nargin&lt;3)
+0059     fmax = 400;
+0060 <span class="keyword">end</span>
+0061 
+0062 <span class="comment">% PARAMETERS - we don't like these</span>
+0063 fmin = 50;      <span class="comment">% GOI post-filtering</span>
+0064 Tmin = 1/fmax;  <span class="comment">% Sets GD window length</span>
+0065 Tmax = 1/fmin;  <span class="comment">% GOI post-filtering</span>
+0066 oqmin = 0.1;    <span class="comment">% GOI post-filtering</span>
+0067 oqmax = 0.9;    <span class="comment">% GOI post-filtering</span>
+0068 
+0069 gwlen = Tmin;   <span class="comment">% group delay evaluation window length (normally 0.0025)</span>
+0070 fwlen=0.000;    <span class="comment">% window length used to smooth group delay (normally 0.000)</span>
+0071 
+0072 <span class="comment">% Normalise (for plotting purposes)</span>
+0073 lx = lx/max(abs(lx));
+0074 
+0075 <span class="comment">% Calculate SWT</span>
+0076 nlev = 3;
+0077 nu = length(lx);
+0078 nU=(2^nlev)*ceil(nu./(2^nlev));
+0079 [Lo_D Hi_D] = wfilters(<span class="string">'bior1.5'</span>,<span class="string">'d'</span>);
+0080 [swa swd] = swt([lx; zeros(nU-nu,1)],nlev,Lo_D,Hi_D);
+0081 swa=swa(:,1:nu); swd=swd(:,1:nu);
+0082 mp = prod(swd)';
+0083 mp = [0;mp];
+0084 
+0085 <span class="comment">% Find third roots</span>
+0086 nmp = mp;
+0087 nmp(find(nmp&gt;0)) = 0;   <span class="comment">% Half-wave rectify on negative half of mp for GCI</span>
+0088 crnmp = nthroot(nmp,3);
+0089 
+0090 pmp = mp;
+0091 pmp(find(pmp&lt;0)) = 0;   <span class="comment">% Half-wave rectify on positive half of mp for GOI</span>
+0092 crpmp = nthroot(pmp,3);
+0093 
+0094 <span class="comment">% Group delay evaluation on mp</span>
+0095 [gcic sew ngrdel ntoff] = <a href="#_sub1" class="code" title="subfunction [tew,sew,y,toff]=xewgrdel(u,fs,gwlen,fwlen)">xewgrdel</a>(nmp,fs,gwlen,fwlen);
+0096 ngrdel=-[zeros(ntoff,1); ngrdel(1:end-ntoff)];
+0097 [goic sew pgrdel ptoff] = <a href="#_sub1" class="code" title="subfunction [tew,sew,y,toff]=xewgrdel(u,fs,gwlen,fwlen)">xewgrdel</a>(pmp,fs,gwlen,fwlen);
+0098 pgrdel=-[zeros(ptoff,1); pgrdel(1:end-ptoff)];
+0099 
+0100 <span class="comment">% Set up other variables</span>
+0101 gci = zeros(1,length(lx));      
+0102 gciall = zeros(1,length(lx));
+0103 gciall(:) = NaN;
+0104 gciall(round(gcic)) = 0.25;
+0105 
+0106 goi = zeros(1,length(lx));      
+0107 goiall = zeros(1,length(lx));
+0108 goiall(:) = NaN;
+0109 goiall(round(goic)) = 0.25;
+0110 
+0111 <span class="comment">% --------- GCI Detection ---------- %</span>
+0112 
+0113 <span class="comment">% Model GD slope</span>
+0114 mngrdel = (-((gwlen*fs)/2-1):(gwlen*fs)/2-1)';
+0115 mngrdellen = length(mngrdel);
+0116 cmngrdel = zeros(length(ngrdel),1);
+0117 
+0118 <span class="keyword">for</span> i=1:length(gcic)
+0119     lbnd = round(gcic(i)-((gwlen*fs)/2-1)); 
+0120     ubnd = lbnd+mngrdellen-1;
+0121     
+0122     <span class="keyword">if</span> ~( (lbnd&lt;1) || (ubnd&gt;length(ngrdel)) )
+0123         nfv(i,1) = sum(crnmp(lbnd:ubnd));                     <span class="comment">% Sum of crnmp over GD window</span>
+0124         nfv(i,2) = min(crnmp(lbnd:ubnd));                     <span class="comment">% Peak value of crnmp</span>
+0125         nfv(i,3) = sqrt( mean( (mngrdel-ngrdel(lbnd:ubnd)).^2 ) ); <span class="comment">% Phase slope deviation</span>
+0126         
+0127         cmngrdel(lbnd:ubnd) = mngrdel;
+0128     <span class="keyword">end</span>
+0129 <span class="keyword">end</span>
+0130 
+0131 nclust = 2;
+0132 snfv = size(nfv);
+0133 
+0134 <span class="comment">% Determine clusters</span>
+0135 [mm,vv,ww]=gaussmix(nfv,var(nfv)/100,[],nclust,<span class="string">'kf'</span>);
+0136 
+0137 <span class="comment">% Find cluster with lowest crnmp sum</span>
+0138 [y I] = min(mm(:,1));
+0139 
+0140 <span class="comment">% Find log likelihoods for each cluster</span>
+0141 <span class="keyword">for</span> i=1:nclust
+0142     [m_,v_,w_,g,f,ll(i,:)]=gaussmix(nfv,[],0,mm(i,:),vv(i,:),ww(i,:));
+0143 <span class="keyword">end</span>
+0144 [m,in]=max(ll); <span class="comment">% Find which cluster each feature vector belongs to</span>
+0145 
+0146 <span class="comment">% close all; % commented out by dmb, 12/11/2013</span>
+0147 naccept = [];
+0148 nreject = [];
+0149 <span class="keyword">for</span> i=1:snfv(1)
+0150     <span class="keyword">if</span> (in(i) == I)
+0151         naccept = [naccept; nfv(i,:)];
+0152     <span class="keyword">else</span>
+0153         nreject = [nreject; nfv(i,:)];
+0154     <span class="keyword">end</span>
+0155 <span class="keyword">end</span>
+0156 
+0157 <span class="comment">% If the candidate belongs to the chosen cluster then keep</span>
+0158 <span class="keyword">for</span> i=1:length(nfv)
+0159     <span class="keyword">if</span> (in(i) == I)
+0160         gci(round(gcic(i))) = 0.5;
+0161     <span class="keyword">end</span>
+0162 <span class="keyword">end</span>
+0163 
+0164 <span class="comment">% -------- Post-filter swallows (GCIs only) -------- %</span>
+0165 <span class="keyword">if</span>(length(gci)&gt;2)
+0166     <span class="comment">% If a gci is separated from all others by more than Tmax, delete.</span>
+0167     fgci = find(gci);
+0168     <span class="comment">% Check first one</span>
+0169     <span class="keyword">if</span> ( (fgci(2)-fgci(1)) &gt; Tmax*fs)
+0170         fgci = fgci(2:end);
+0171     <span class="keyword">end</span>
+0172     <span class="comment">% Check the middle</span>
+0173     i=2;
+0174     <span class="keyword">while</span>(i&lt;length(fgci)-1)
+0175         <span class="keyword">if</span> ( ((fgci(i)-fgci(i-1))&gt;Tmax*fs) &amp;&amp; ((fgci(i+1)-fgci(i))&gt;Tmax*fs) )
+0176             fgci = [fgci(1:i-1) fgci(i+1:end)];
+0177         <span class="keyword">end</span>
+0178         i = i+1;
+0179     <span class="keyword">end</span>
+0180     <span class="comment">% Check last one</span>
+0181     <span class="keyword">if</span> ( (fgci(end)-fgci(end-1)) &gt; Tmax*fs)
+0182         fgci = fgci(1:end-1);
+0183     <span class="keyword">end</span>
+0184     <span class="comment">% Convert back</span>
+0185     gci = zeros(1,max(fgci));
+0186     gci(fgci) = 0.5;
+0187 <span class="keyword">end</span>
+0188 
+0189 <span class="comment">% --------- GOI Detection ---------- %</span>
+0190 <span class="comment">% Model GD slope</span>
+0191 mpgrdel = (-((gwlen*fs)/2-1):(gwlen*fs)/2-1)';
+0192 mpgrdellen = length(mpgrdel);
+0193 cmpgrdel = zeros(length(pgrdel),1);
+0194 
+0195 <span class="keyword">for</span> i=1:length(goic)
+0196     lbnd = round(goic(i)-((gwlen*fs)/2-1)); 
+0197     <span class="comment">%ubnd = round(goic(i)+((gwlen*fs)/2-1));</span>
+0198     ubnd = min(lbnd+mpgrdellen-1,length(crpmp));
+0199     
+0200     <span class="keyword">if</span> ~( (lbnd&lt;1) || (ubnd&gt;length(pgrdel)) )
+0201         pfv(i,1) = sum(crpmp(lbnd:ubnd));                     <span class="comment">% Sum of crnmp over GD window</span>
+0202         pfv(i,2) = max(crpmp(lbnd:ubnd));                     <span class="comment">% Peak value of crpmp</span>
+0203         pfv(i,3) = sqrt( mean( (mpgrdel-pgrdel(lbnd:ubnd)).^2 ) ); <span class="comment">% Phase slope deviation</span>
+0204                 
+0205         cmpgrdel(lbnd:ubnd) = mpgrdel;
+0206     <span class="keyword">end</span>
+0207 <span class="keyword">end</span>
+0208 
+0209 nclust = 2;
+0210 spfv = size(pfv);
+0211 
+0212 <span class="comment">% Determine clusters</span>
+0213 [mm,vv,ww]=gaussmix(pfv,var(pfv)/100,[],nclust,<span class="string">'kf'</span>);
+0214 
+0215 <span class="comment">% Find cluster with highest crpmp sum</span>
+0216 [y I] = max(mm(:,1));
+0217 
+0218 <span class="comment">% Find log likelihoods for each cluster</span>
+0219 ll = [];
+0220 <span class="keyword">for</span> i=1:nclust
+0221     [m_,v_,w_,g,f,ll(i,:)]=gaussmix(pfv,[],0,mm(i,:),vv(i,:),ww(i,:));
+0222 <span class="keyword">end</span>
+0223 [m,in]=max(ll); <span class="comment">% Find which cluster each feature vector belongs to</span>
+0224 
+0225 paccept = [];
+0226 preject = [];
+0227 <span class="keyword">for</span> i=1:spfv(1)
+0228     <span class="keyword">if</span> (in(i) == I)
+0229         paccept = [paccept; pfv(i,:)];
+0230     <span class="keyword">else</span>
+0231         preject = [preject; pfv(i,:)];
+0232     <span class="keyword">end</span>
+0233 <span class="keyword">end</span>
+0234 
+0235 <span class="comment">% If the candidate belongs to the chosen cluster then keep</span>
+0236 <span class="keyword">for</span> i=1:length(pfv)
+0237     <span class="keyword">if</span> (in(i) == I)
+0238         goi(round(goic(i))) = 0.75;
+0239     <span class="keyword">end</span>
+0240 <span class="keyword">end</span>
+0241 
+0242 <span class="comment">% ------- GOI Post-Filtering ------- %</span>
+0243 
+0244 <span class="comment">% For all GCIs, find GOIs which are within OQ limits</span>
+0245 goiprefilt = goi;
+0246 goifilt = zeros(size(goi));
+0247 gciind = find(gci);
+0248 Tprev = Tmax;
+0249 prev = 0;
+0250 nofirst = 0;
+0251 <span class="keyword">for</span> i=2:length(gciind)
+0252     lbnd = gciind(i-1);
+0253     ubnd = gciind(i);
+0254     T = ubnd-lbnd;
+0255     <span class="keyword">if</span>(T&gt;Tmax*fs)   <span class="comment">% If period is too long, use previous.</span>
+0256         T = Tprev;
+0257     <span class="keyword">end</span>
+0258     I = find(goi( round(lbnd+(1-oqmax)*T):round(lbnd+(1-oqmin)*T) ));
+0259     <span class="keyword">if</span>(~isempty(I)) <span class="comment">% If we have a GOI</span>
+0260         prev = round(I(1)+(1-oqmax)*T-1);
+0261         goifilt(round(I(1)+lbnd+(1-oqmax)*T-1)) = 0.5;  <span class="comment">% Taking first - should it be highest energy?</span>
+0262     <span class="keyword">else</span>            <span class="comment">% If not then insert at last OQ.</span>
+0263         <span class="keyword">if</span>(prev&gt;0)
+0264             <span class="keyword">if</span>( (lbnd+prev) &lt; gciind(i) ) <span class="comment">% Protect against GOI occuring after next GCI</span>
+0265                 goifilt(lbnd + prev-1) = 0.5;
+0266             <span class="keyword">else</span>
+0267                 goifilt( gciind(i)-1) = 0.5;
+0268             <span class="keyword">end</span>
+0269         <span class="keyword">end</span>
+0270         <span class="keyword">if</span>(i==2)
+0271             nofirst = 1;
+0272         <span class="keyword">end</span>
+0273     <span class="keyword">end</span>
+0274     <span class="keyword">if</span>(nofirst &amp;&amp; (prev&gt;0)) <span class="comment">% If no GOI occurs after GOI, no previous period exists, so add after a period has been found.</span>
+0275         goifilt(gciind(1)+prev-1) = 0.5;
+0276         nofirst = 0;
+0277     <span class="keyword">end</span>
+0278     Tprev = T;
+0279 <span class="keyword">end</span>
+0280 <span class="comment">% Final period</span>
+0281 lbnd = gciind(end);
+0282 I = find(goi( round(lbnd+(1-oqmax)*T):min(round(lbnd+(1-oqmin)*T),length(goi))));
+0283 <span class="keyword">if</span>(~isempty(I))
+0284     goifilt(round(I(1)+lbnd+(1-oqmax)*T-1)) = 0.5;
+0285 <span class="keyword">else</span>            <span class="comment">% If not then insert at last OQ.</span>
+0286     <span class="keyword">if</span>(prev&gt;0)
+0287         goifilt(lbnd + prev) = 0.5;
+0288     <span class="keyword">end</span>
+0289 <span class="keyword">end</span>
+0290 goi = goifilt;
+0291 
+0292 gci = find(gci&gt;0);
+0293 goi = find(goi&gt;0);
+0294 
+0295 <span class="comment">%% EW group delay epoch extraction</span>
+0296 <a name="_sub1" href="#_subfunctions" class="code">function [tew,sew,y,toff]=xewgrdel(u,fs,gwlen,fwlen)</a>
+0297 
+0298 error(nargchk(2,4,nargin));
+0299 
+0300 <span class="keyword">if</span>(nargin &lt; 4)
+0301     fwlen = voicebox(<span class="string">'dy_fwlen'</span>);          <span class="comment">% window length to smooth group delay</span>
+0302 <span class="keyword">end</span>
+0303 <span class="keyword">if</span> (nargin &lt; 3)
+0304     gwlen = voicebox(<span class="string">'dy_gwlen'</span>);          <span class="comment">% window length of group delay</span>
+0305 <span class="keyword">end</span>
+0306 
+0307 <span class="comment">% perform group delay calculation</span>
+0308 
+0309 gw=2*floor(gwlen*fs/2)+1;            <span class="comment">% force window length to be odd</span>
+0310 ghw=window(<span class="string">'hamming'</span>,gw);
+0311 ghw = ghw(:);                           <span class="comment">% force to be a column (dmb thinks window gives a row - and he should know as he wrote it!)</span>
+0312 ghwn=ghw'.*(gw-1:-2:1-gw)/2;            <span class="comment">% weighted window: zero in middle</span>
+0313 
+0314 u2=u.^2;
+0315 yn=filter(ghwn,1,u2);
+0316 yd=filter(ghw,1,u2);
+0317 yd(abs(yd)&lt;eps)=10*eps;                 <span class="comment">% prevent infinities</span>
+0318 y=yn(gw:end)./yd(gw:end);               <span class="comment">% delete filter startup transient</span>
+0319 toff=(gw-1)/2;
+0320 fw=2*floor(fwlen*fs/2)+1;            <span class="comment">% force window length to be odd</span>
+0321 <span class="keyword">if</span> fw&gt;1
+0322     daw=window(<span class="string">'hamming'</span>,fw);
+0323     y=filter(daw,1,y)/sum(daw);         <span class="comment">% low pass filter</span>
+0324     toff=toff-(fw-1)/2;
+0325 <span class="keyword">end</span>
+0326 [tew,sew]=zerocros(y,<span class="string">'n'</span>);              <span class="comment">% find zero crossings</span>
+0327 
+0328 tew=tew+toff;                           <span class="comment">% compensate for filter del</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

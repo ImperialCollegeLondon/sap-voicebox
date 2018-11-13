@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gausprod</title>
+  <meta name="keywords" content="v_gausprod">
+  <meta name="description" content="GAUSPROD calculates a product of gaussians [G,U,K]=(M,C)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_gausprod.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_gausprod
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GAUSPROD calculates a product of gaussians [G,U,K]=(M,C)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [g,u,k]=v_gausprod(m,c,e) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GAUSPROD calculates a product of gaussians [G,U,K]=(M,C)
+ calculates the product of n d-dimensional multivariate gaussians
+ this product is itself a gaussian
+ Inputs: m(d,n) - each column is the mean of one of the gaussians
+         c(d,d,n) - contains the d#d covariance matrix for each gaussian
+                    Alternatives: (i) c(d,n) if diagonal (ii) c(n) if c*I or (iii) omitted if I
+ not yet implemented: 
+         e(d,d,n) - contains orthogonal eigenvalue matrices and c(d,n) contains eigenvalues.
+                    Covariance matrix is E(:,:,k)*diag(c(:,k))*E(:,:,k)'
+                    c(d,n) can then contain 0 and Inf entries
+
+ Outputs: g log gain (= log(integral) )
+          u(d,1) mean vector
+          k(d,d) or k(d) or k(1) = covariance matrix, diagonal or multiple of I (same form as input)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [g,u,k]=v_gausprod(m,c,e)</a>
+0002 <span class="comment">%GAUSPROD calculates a product of gaussians [G,U,K]=(M,C)</span>
+0003 <span class="comment">% calculates the product of n d-dimensional multivariate gaussians</span>
+0004 <span class="comment">% this product is itself a gaussian</span>
+0005 <span class="comment">% Inputs: m(d,n) - each column is the mean of one of the gaussians</span>
+0006 <span class="comment">%         c(d,d,n) - contains the d#d covariance matrix for each gaussian</span>
+0007 <span class="comment">%                    Alternatives: (i) c(d,n) if diagonal (ii) c(n) if c*I or (iii) omitted if I</span>
+0008 <span class="comment">% not yet implemented:</span>
+0009 <span class="comment">%         e(d,d,n) - contains orthogonal eigenvalue matrices and c(d,n) contains eigenvalues.</span>
+0010 <span class="comment">%                    Covariance matrix is E(:,:,k)*diag(c(:,k))*E(:,:,k)'</span>
+0011 <span class="comment">%                    c(d,n) can then contain 0 and Inf entries</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Outputs: g log gain (= log(integral) )</span>
+0014 <span class="comment">%          u(d,1) mean vector</span>
+0015 <span class="comment">%          k(d,d) or k(d) or k(1) = covariance matrix, diagonal or multiple of I (same form as input)</span>
+0016 <span class="comment">%</span>
+0017 
+0018 <span class="comment">% Bugs: this version works with singular covariance matrices provided that their null spaces are distinct</span>
+0019 <span class="comment">%       we could improve it slightly by doing the pseudo inverses locally and keeping track of null spaces</span>
+0020 
+0021 <span class="comment">%       Copyright (C) Mike Brookes 2004</span>
+0022 <span class="comment">%      Version: $Id: v_gausprod.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0025 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0028 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0029 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0030 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0031 <span class="comment">%   (at your option) any later version.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0034 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0035 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0036 <span class="comment">%   GNU General Public License for more details.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0039 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0040 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0042 
+0043 [d,n]=size(m);
+0044 <span class="keyword">if</span> nargin&gt;2
+0045     error(<span class="string">'third argument not yet implemented in gausprod'</span>);
+0046 <span class="keyword">end</span>
+0047 <span class="keyword">if</span> nargin&lt;2     <span class="comment">% all covariance matrices = I</span>
+0048     c=ones(n,1);
+0049 <span class="keyword">end</span>
+0050 <span class="keyword">if</span> ~nargout     <span class="comment">% save input data for plotting</span>
+0051     m0=m;
+0052     c0=c;
+0053 <span class="keyword">end</span>
+0054 
+0055 sc=size(c);
+0056 <span class="keyword">if</span> length(sc)&lt;3
+0057     <span class="keyword">if</span>(sc(2)==1) &amp; (n&gt;1)    <span class="comment">% covariance matrices are multiples of the identity</span>
+0058         jj=1;
+0059         jj2=2;
+0060         gj=zeros(n,1);
+0061         <span class="keyword">while</span> jj&lt;n
+0062             <span class="keyword">for</span> j=1+jj:jj2:n        <span class="comment">% we combine the gaussians in pairs</span>
+0063                 k=j-jj;
+0064                 cjk=c(k)+c(j);
+0065                 dm=m(:,k)-m(:,j);
+0066                 gj(k)=gj(k)+gj(j)-0.5*(d*log(cjk)+dm'*dm/cjk);
+0067                 m(:,k)=(c(k)*m(:,j)+c(j)*m(:,k))/cjk;
+0068                 c(k)=c(k)*c(j)/cjk;
+0069             <span class="keyword">end</span>
+0070             jj=jj2;
+0071             jj2=2*jj;
+0072         <span class="keyword">end</span>
+0073         g=gj(1);
+0074         k=c(1);
+0075         u=m(:,1);
+0076     <span class="keyword">else</span>                    <span class="comment">% diagonal covariance matrices</span>
+0077         jj=1;
+0078         jj2=2;
+0079         gj=zeros(n,1);
+0080         <span class="keyword">while</span> jj&lt;n
+0081             <span class="keyword">for</span> j=1+jj:jj2:n        <span class="comment">% we combine the gaussians in pairs</span>
+0082                 k=j-jj;
+0083                 cjk=c(:,k)+c(:,j);
+0084                 dm=m(:,k)-m(:,j);
+0085                 ix=cjk&gt;d*max(cjk)*eps;      <span class="comment">% calculate the psedo inverse directly</span>
+0086                 piv=zeros(d,1);
+0087                 piv(ix)=cjk(ix).^(-1);
+0088                 gj(k)=gj(k)+gj(j)-0.5*(log(prod(cjk))+piv'*dm.^2);
+0089                 m(:,k)=piv.*(c(:,k).*m(:,j)+c(:,j).*m(:,k));
+0090                 c(:,k)=c(:,k).*piv.*c(:,j);
+0091             <span class="keyword">end</span>
+0092             jj=jj2;
+0093             jj2=2*jj;
+0094         <span class="keyword">end</span>
+0095         g=gj(1);
+0096         k=c(:,1);
+0097         u=m(:,1);
+0098     <span class="keyword">end</span>
+0099 <span class="keyword">else</span>                        <span class="comment">% full covariance matrices</span>
+0100     jj=1;
+0101     jj2=2;
+0102     gj=zeros(n,1);
+0103     <span class="keyword">while</span> jj&lt;n
+0104         <span class="keyword">for</span> j=1+jj:jj2:n        <span class="comment">% we combine the gaussians in pairs</span>
+0105             k=j-jj;
+0106             cjk=c(:,:,k)+c(:,:,j);
+0107             dm=m(:,k)-m(:,j);
+0108             piv=pinv(cjk);
+0109             gj(k)=gj(k)+gj(j)-0.5*(log(det(cjk))+dm'*piv*dm);
+0110             m(:,k)=c(:,:,k)*piv*m(:,j)+c(:,:,j)*piv*m(:,k);
+0111             c(:,:,k)=c(:,:,k)*piv*c(:,:,j);
+0112             c(:,:,k)=0.5*(c(:,:,k)+c(:,:,k)');  <span class="comment">% ensure exactly symmetric</span>
+0113         <span class="keyword">end</span>
+0114         jj=jj2;
+0115         jj2=2*jj;
+0116     <span class="keyword">end</span>
+0117     g=gj(1);
+0118     k=c(:,:,1);
+0119     u=m(:,1);
+0120 <span class="keyword">end</span>
+0121 g=g-0.5*(n-1)*d*log(2*pi);
+0122 
+0123 <span class="keyword">if</span> ~nargout                 <span class="comment">% plot results if no output arguments</span>
+0124     <span class="keyword">if</span> d==1                 <span class="comment">% one-dimensional vectors</span>
+0125         x0=linspace(-3,3,100)';
+0126         x=zeros(length(x0),n);
+0127         y=x;
+0128         <span class="keyword">for</span> j=1:n
+0129             x(:,j)=x0+m0(1,j);
+0130             cj=c0(j);
+0131             y(:,j)=normpdf(x0,0,sqrt(cj));
+0132         <span class="keyword">end</span>
+0133         plot(x,log10(y),<span class="string">':'</span>,x0+u,log10(normpdf(x0,0,k)*exp(g)),<span class="string">'k-'</span>);
+0134         ylabel(<span class="string">'Log10(pdf)'</span>);
+0135     <span class="keyword">else</span>
+0136         <span class="keyword">if</span> length(sc)&lt;3
+0137             <span class="keyword">if</span>(sc(2)==1) &amp; (n&gt;1)    <span class="comment">% covariance matrices are multiples of the identity</span>
+0138                 sk=k*eye(d);
+0139             <span class="keyword">else</span>                    <span class="comment">% diagonal covariance matrices</span>
+0140                 sk=diag(k);
+0141             <span class="keyword">end</span>
+0142             uk=eye(d);
+0143             vk=uk;
+0144         <span class="keyword">else</span>                        <span class="comment">% full covariance matrices</span>
+0145             [uk,sk,vk]=svd(k);
+0146         <span class="keyword">end</span>
+0147         
+0148         
+0149         u2=uk(:,1:2);
+0150         t0=linspace(0,2*pi,100);
+0151         x=zeros(length(t0),n);
+0152         y=x;
+0153         x0=[cos(t0); sin(t0)];
+0154         <span class="keyword">for</span> j=1:n
+0155             <span class="keyword">if</span> length(sc)&lt;3
+0156                 <span class="keyword">if</span>(sc(2)==1) &amp; (n&gt;1)    <span class="comment">% covariance matrices are multiples of the identity</span>
+0157                     cj=c0(j)*eye(2);
+0158                 <span class="keyword">else</span>                    <span class="comment">% diagonal covariance matrices</span>
+0159                     cj=u2'*diag(c0(:,j))*u2;
+0160                 <span class="keyword">end</span>
+0161             <span class="keyword">else</span>                        <span class="comment">% full covariance matrices</span>
+0162                 cj=u2'*c0(:,:,j)*u2;
+0163             <span class="keyword">end</span>
+0164             mj=u2'*m0(:,j);
+0165             v=sqrt(sum((x0'/cj).*x0',2).^(-1));
+0166             x(:,j)=mj(1)+v.*x0(1,:)';
+0167             y(:,j)=mj(2)+v.*x0(2,:)';
+0168         <span class="keyword">end</span>
+0169         
+0170         <span class="keyword">if</span> length(sc)&lt;3
+0171             <span class="keyword">if</span>(sc(2)==1) &amp; (n&gt;1)    <span class="comment">% covariance matrices are multiples of the identity</span>
+0172                 cj=k*eye(2);
+0173             <span class="keyword">else</span>                    <span class="comment">% diagonal covariance matrices</span>
+0174                 cj=u2'*diag(k)*u2;
+0175             <span class="keyword">end</span>
+0176         <span class="keyword">else</span>                        <span class="comment">% full covariance matrices</span>
+0177             cj=u2'*k*u2;
+0178         <span class="keyword">end</span>
+0179         mj=u2'*u;
+0180         v=sqrt(sum((x0'/cj).*x0',2).^(-1));
+0181         plot(x,y,<span class="string">':'</span>,mj(1)+v.*x0(1,:)',mj(2)+v.*x0(2,:)',<span class="string">'k-'</span>);
+0182         axis equal;
+0183     <span class="keyword">end</span>
+0184 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

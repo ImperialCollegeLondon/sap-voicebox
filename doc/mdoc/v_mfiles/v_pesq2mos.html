@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_pesq2mos</title>
+  <meta name="keywords" content="v_pesq2mos">
+  <meta name="description" content="PESQ2MOS convert PESQ speech quality scores to MOS m=(p)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_pesq2mos.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_pesq2mos
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>PESQ2MOS convert PESQ speech quality scores to MOS m=(p)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function m=v_pesq2mos(p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">PESQ2MOS convert PESQ speech quality scores to MOS m=(p)
+Inputs:    p  is a matrix of PESQ scores
+
+Outputs:   m  is a matrix, the same size as p, of MOS scores
+
+ The PESQ measure is defined in [2]. The mapping function, defined in [3],
+ converts raw PESQ scores (which lie in the range -0.5 to 4.5) onto the
+ MOS-LQO (Mean Opinion Score - Listening Quality Objective [2]) scale in the
+ range 1 to 5. The MOS scale is defined in [1] as
+           5=Excellent, 4=Good, 3=Fair, 2=Poor, 1=Bad.
+
+ Refs: [1]    ITU-T. Methods for subjective determination of transmission quality.
+           Recommendation P.800, Aug. 1996.
+       [2]    ITU-T. Mean opinion score (MOS) terminology.
+           Recommendation P.800.1, July 2006.
+       [2]    ITU-T. Perceptual evaluation of speech quality (PESQ), an objective
+           method for end-to-end speech quality assessment of narrowband telephone
+           networks and speech codecs. Recommendation P.862, Feb. 2001.
+       [3]    ITU-T. Mapping function for transforming P.862 raw result scores to MOS-LQO.
+           Recommendation P.862.1, Nov. 2003.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_pesq2mos.html" class="code" title="function m=v_pesq2mos(p)">v_pesq2mos</a>	PESQ2MOS convert PESQ speech quality scores to MOS m=(p)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_mos2pesq.html" class="code" title="function p=v_mos2pesq(m)">v_mos2pesq</a>	MOS2PESQ convert MOS speech quality scores to PESQ p=(m)</li><li><a href="v_pesq2mos.html" class="code" title="function m=v_pesq2mos(p)">v_pesq2mos</a>	PESQ2MOS convert PESQ speech quality scores to MOS m=(p)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function m=v_pesq2mos(p)</a>
+0002 <span class="comment">%PESQ2MOS convert PESQ speech quality scores to MOS m=(p)</span>
+0003 <span class="comment">%Inputs:    p  is a matrix of PESQ scores</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%Outputs:   m  is a matrix, the same size as p, of MOS scores</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% The PESQ measure is defined in [2]. The mapping function, defined in [3],</span>
+0008 <span class="comment">% converts raw PESQ scores (which lie in the range -0.5 to 4.5) onto the</span>
+0009 <span class="comment">% MOS-LQO (Mean Opinion Score - Listening Quality Objective [2]) scale in the</span>
+0010 <span class="comment">% range 1 to 5. The MOS scale is defined in [1] as</span>
+0011 <span class="comment">%           5=Excellent, 4=Good, 3=Fair, 2=Poor, 1=Bad.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Refs: [1]    ITU-T. Methods for subjective determination of transmission quality.</span>
+0014 <span class="comment">%           Recommendation P.800, Aug. 1996.</span>
+0015 <span class="comment">%       [2]    ITU-T. Mean opinion score (MOS) terminology.</span>
+0016 <span class="comment">%           Recommendation P.800.1, July 2006.</span>
+0017 <span class="comment">%       [2]    ITU-T. Perceptual evaluation of speech quality (PESQ), an objective</span>
+0018 <span class="comment">%           method for end-to-end speech quality assessment of narrowband telephone</span>
+0019 <span class="comment">%           networks and speech codecs. Recommendation P.862, Feb. 2001.</span>
+0020 <span class="comment">%       [3]    ITU-T. Mapping function for transforming P.862 raw result scores to MOS-LQO.</span>
+0021 <span class="comment">%           Recommendation P.862.1, Nov. 2003.</span>
+0022 
+0023 <span class="comment">%      Copyright (C) Mike Brookes 2012-2013</span>
+0024 <span class="comment">%      Version: $Id: v_pesq2mos.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0027 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0030 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0031 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0032 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0033 <span class="comment">%   (at your option) any later version.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0036 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0037 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0038 <span class="comment">%   GNU General Public License for more details.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0041 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0042 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 <span class="keyword">persistent</span> a b c d
+0045 <span class="keyword">if</span> isempty(a)
+0046     a=0.999;
+0047     b=4.999-a;
+0048     c=-1.4945;
+0049     d=4.6607;
+0050 <span class="keyword">end</span>
+0051 <span class="keyword">if</span> nargout&gt;0
+0052     m=a+b./(1+exp(c*p+d));
+0053 <span class="keyword">else</span>
+0054     <span class="keyword">if</span> nargin&lt;1 || isempty(p)
+0055         pp=linspace(-0.5,4.5,100);
+0056     <span class="keyword">else</span>
+0057         pp=p;
+0058     <span class="keyword">end</span>
+0059     plot(pp,<a href="v_pesq2mos.html" class="code" title="function m=v_pesq2mos(p)">v_pesq2mos</a>(pp));
+0060     xlabel(<span class="string">'PESQ (P.862)'</span>);
+0061     ylabel(<span class="string">'Mean Opimion Score (MOS)'</span>);
+0062 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

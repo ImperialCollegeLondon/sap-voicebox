@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_importsii</title>
+  <meta name="keywords" content="v_importsii">
+  <meta name="description" content="IMPORTSII calculates the SII importance function per Hz or per Bark Q=(F,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_importsii.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_importsii
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>IMPORTSII calculates the SII importance function per Hz or per Bark Q=(F,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function q=v_importsii(f,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">IMPORTSII calculates the SII importance function per Hz or per Bark Q=(F,M)
+ Inputs:
+        f(n)   Frequencies to which to calculate importance in Hz
+               or Bark according to 'b' flag.
+        m      Mode string with some of the following flags:
+                'b'  Frequencies given in Bark rather than Hz
+                'c'  Calculate cumulative importance for f&lt;f(i)
+                'd'  Calculate importance of n-1 bands: band i is f(i) to f(i+1)
+                'h'  Calculate importance per Hz or per Bark (accoring to 'b' flag)
+ Outputs:
+        q(n) or q(n-1) gives the importance at each of the f(i) or else,
+               if the 'd' flag is specified, in the band from f(i) to f(i+1).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function q=v_importsii(f,m)</a>
+0002 <span class="comment">%IMPORTSII calculates the SII importance function per Hz or per Bark Q=(F,M)</span>
+0003 <span class="comment">% Inputs:</span>
+0004 <span class="comment">%        f(n)   Frequencies to which to calculate importance in Hz</span>
+0005 <span class="comment">%               or Bark according to 'b' flag.</span>
+0006 <span class="comment">%        m      Mode string with some of the following flags:</span>
+0007 <span class="comment">%                'b'  Frequencies given in Bark rather than Hz</span>
+0008 <span class="comment">%                'c'  Calculate cumulative importance for f&lt;f(i)</span>
+0009 <span class="comment">%                'd'  Calculate importance of n-1 bands: band i is f(i) to f(i+1)</span>
+0010 <span class="comment">%                'h'  Calculate importance per Hz or per Bark (accoring to 'b' flag)</span>
+0011 <span class="comment">% Outputs:</span>
+0012 <span class="comment">%        q(n) or q(n-1) gives the importance at each of the f(i) or else,</span>
+0013 <span class="comment">%               if the 'd' flag is specified, in the band from f(i) to f(i+1).</span>
+0014 
+0015 <span class="comment">% The importance function is based on the piecewise linear function</span>
+0016 <span class="comment">% defined in Fig 3 of [2]. This is integrated to give the cumulative</span>
+0017 <span class="comment">% importance function. It is modified slightly from Fig 3 so that the</span>
+0018 <span class="comment">% constant portion extends from 4 to 18 Bark (critical bands 5 to 18).</span>
+0019 <span class="comment">% we then fit a linear portion at either end to force the correct integral</span>
+0020 <span class="comment">% and ensure continuity of the importance at 4 and 18. The importance</span>
+0021 <span class="comment">% function is zero outside the range [1.286 21.948] bark or [130.1 9361]</span>
+0022 <span class="comment">% Hz.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% References:</span>
+0025 <span class="comment">%  [1]  Methods for the calculation of the speech intelligibility index.</span>
+0026 <span class="comment">%       ANSI Standard S3.5-1997 (R2007), American National Standards Institute, 1997.</span>
+0027 <span class="comment">%  [2]  C. V. Pavlovic. Derivation of primary parameters and procedures for use in</span>
+0028 <span class="comment">%       speech intelligibility predictions. J. Acoust Soc Amer, 82: 413–422, 1987.</span>
+0029 
+0030 <span class="comment">%       Copyright (C) Mike Brookes 2006</span>
+0031 <span class="comment">%      Version: $Id: v_importsii.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0034 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0038 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0039 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0040 <span class="comment">%   (at your option) any later version.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0043 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0044 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0045 <span class="comment">%   GNU General Public License for more details.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0048 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0049 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 <span class="keyword">persistent</span> mi ci ai bi xi0 xi1
+0053 <span class="keyword">if</span> isempty(mi)
+0054     <span class="comment">% cumulative importance function =  mi*b+c+ai*(b&lt;4)*(b-4)^2-bi*(b&gt;18)*(b-18)^2</span>
+0055     <span class="comment">% for x in (xi0,xi1)</span>
+0056     ci4=0.0783;
+0057     ci18=0.8861;
+0058     mi=(ci18-ci4)/14;
+0059     ci=ci4-4*mi;
+0060     ai=mi^2/(4*(4*mi+ci));
+0061     bi=mi^2/(4*(1-18*mi-ci));
+0062     xi0=4-mi/(2*ai);
+0063     xi1=18+mi/(2*bi);
+0064 <span class="keyword">end</span>
+0065 <span class="keyword">if</span> nargin&lt;2
+0066     m=<span class="string">' '</span>;
+0067 <span class="keyword">end</span>
+0068 <span class="keyword">if</span> any(m==<span class="string">'b'</span>)
+0069     b=f;
+0070 <span class="keyword">else</span>
+0071     [b,d]=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(f);
+0072 <span class="keyword">end</span>
+0073 <span class="keyword">if</span> any(m==<span class="string">'c'</span>) || any(m==<span class="string">'d'</span>)
+0074     q=mi*b+ci+ai*(b&lt;4).*(b-4).^2-bi*(b&gt;18).*(b-18).^2;
+0075     q(b&lt;xi0)=0;
+0076     q(b&gt;xi1)=1;
+0077     <span class="keyword">if</span> any(m==<span class="string">'d'</span>)
+0078         q=q(2:end)-q(1:end-1);
+0079     <span class="keyword">end</span>
+0080 <span class="keyword">else</span>
+0081     q=mi+ai*(b&lt;4).*(b-4)-bi*(b&gt;18).*(b-18);
+0082     q(b&lt;xi0)=0;
+0083     q(b&gt;xi1)=0;
+0084     <span class="keyword">if</span> ~any(m==<span class="string">'b'</span>)
+0085         q=q./d;
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">end</span>
+0088 <span class="keyword">if</span> ~nargout
+0089     <span class="keyword">if</span> any(m==<span class="string">'d'</span>)
+0090         ix=(1:2*length(q))/2;
+0091         plot(f(1+floor(ix)),q(ceil(ix)));
+0092     <span class="keyword">else</span>
+0093         plot(f,q);
+0094     <span class="keyword">end</span>
+0095     <span class="keyword">if</span> any(m==<span class="string">'b'</span>)
+0096         xlabel(<span class="string">'Frequency (Bark)'</span>);
+0097     <span class="keyword">else</span>
+0098         xlabel(<span class="string">'Frequency (Hz)'</span>);
+0099     <span class="keyword">end</span>
+0100     ylabel(<span class="string">'Importance'</span>);
+0101     <span class="keyword">if</span> any(m==<span class="string">'c'</span>)
+0102         title(<span class="string">'SII Cumulative Importance'</span>);
+0103     <span class="keyword">elseif</span> any(m==<span class="string">'d'</span>)
+0104         title(<span class="string">'SII Band Importance'</span>);
+0105     <span class="keyword">else</span>
+0106         title(<span class="string">'SII Importance Function'</span>);
+0107     <span class="keyword">end</span>
+0108 <span class="keyword">end</span>
+0109</pre></div>
+<hr><address>Generated on Tue 13-Nov-2018 15:46:34 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
