@@ -1,20 +1,20 @@
 function [a,t]=v_rotqr2ax(q)
-%ROTQR2AX converts a real quaternion to the corresponding v_rotation axis and angle
+%ROTQR2AX converts a real quaternion to the corresponding rotation axis and angle
 % Inputs: 
 %
 %     Q(4,1)   real-valued quaternion (with magnitude = 1)
 %
 % Outputs:
 %
-%     A(3,1)   Unit vector in the direction of the v_rotation axis.
+%     A(3,1)   Unit vector in the direction of the rotation axis.
 %     T        Rotation angle in radians (in range 0 to 2pi)
 %
-% In the quaternion representation of a v_rotation, and q(1) = cos(t/2) 
-% where t is the angle of v_rotation in the range 0 to 2pi
-% and q(2:4)/sin(t/2) is a unit vector lying along the axis of v_rotation
-% a positive v_rotation about [0 0 1] takes the X axis towards the Y axis.
+% In the quaternion representation of a rotation, and q(1) = cos(t/2) 
+% where t is the angle of rotation in the range 0 to 2pi
+% and q(2:4)/sin(t/2) is a unit vector lying along the axis of rotation
+% a positive rotation about [0 0 1] takes the X axis towards the Y axis.
 % 
-%      Copyright (C) Mike Brookes 2007
+%      Copyright (C) Mike Brookes 2007-2018
 %      Version: $Id: v_rotqr2ax.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -42,5 +42,8 @@ if m>0
     a=a/m;
 else
     a=[0 0 1]';
+end
+if ~nargout
+    v_rotqr2ro(q); % plot a rotated cube
 end
     
