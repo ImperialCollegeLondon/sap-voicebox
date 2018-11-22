@@ -1,19 +1,19 @@
 function qc=v_rotmc2qc(mc)
 %ROTMC2QC converts a matrix of complex quaternion matrices to a matrix of complex quaternion vectors
-% Inputs: 
+% Inputs:
 %
-%     MC(2m,2n)   mxn matrix of real quaternion matrices (each 2x2)
+%     MC(2m,2n,...)   mxn matrix of real quaternion matrices (each 2x2)
 %
-% Outputs: 
+% Outputs:
 %
-%     QC(2m,n)   mxn matrix of real quaternion vectors (each 2x1)
+%     QC(2m,n,...)   mxn matrix of real quaternion vectors (each 2x1)
 %
-% In matrix form, quaternions can be multiplied and added using normal matrix 
+% In matrix form, quaternions can be multiplied and added using normal matrix
 % arithmetic. Each element of an mxn matrix of quaternions is itself a 2x2 block
 % so the total dimension of MC is 2m x 2n.
 
-% 
-%      Copyright (C) Mike Brookes 2000-2006
+%
+%      Copyright (C) Mike Brookes 2000-2018
 %      Version: $Id: v_rotmc2qc.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -34,4 +34,10 @@ function qc=v_rotmc2qc(mc)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-qc=mc(:,1:2:end);
+s=size(mc);
+s(2)=s(2)/2; % half the size of dimension 2
+mc=reshape(mc,s(1),[]);
+qc=reshape(mc(:,1:2:end),s);
+if ~nargout
+    v_rotqr2ro([real(qc(1)); real(qc(2)); imag(qc(1)); imag(qc(2))]); % plot a rotated cube
+end
