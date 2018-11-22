@@ -2,18 +2,18 @@ function qr=v_rotmr2qr(mr)
 %ROTMR2QR converts a matrix of real quaternion matrices to quaternion vectors
 % Inputs: 
 %
-%     MR(4m,4n)   mxn matrix of real quaternion matrices (each 4x4)
+%     MR(4m,4n,...)   mxn matrix of real quaternion matrices (each 4x4)
 %
 % Outputs: 
 %
-%     QR(4m,n)   mxn matrix of real quaternion vectors (each 4x1)
+%     QR(4m,n,...)   mxn matrix of real quaternion vectors (each 4x1)
 %
 % In matrix form, quaternions can be multiplied and added using normal matrix 
 % arithmetic. Each element of an mxn matrix of quaternions is itself a 4x4 block
 % so the total dimension of MR is 4m x 4n.
 
 % 
-%      Copyright (C) Mike Brookes 2000-2006
+%      Copyright (C) Mike Brookes 2000-2018
 %      Version: $Id: v_rotmr2qr.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -34,4 +34,11 @@ function qr=v_rotmr2qr(mr)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-qr=mr(:,1:4:end);
+s=size(mr);
+s(2)=s(2)/4;
+mr=reshape(mr,s(1),[]);
+qr=reshape(mr(:,1:4:end),s);
+if ~nargout
+    qr=qr(1:4); % select the first element
+    v_rotqr2ro(qr(:)); % plot a rotated cube
+end
