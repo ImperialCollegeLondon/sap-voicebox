@@ -55,7 +55,7 @@ if nargin<3
 else
     r=eye(n)+(cos(t)-1)*(u*u'+q*q')+sin(t)*(q*u'-u*q');
 end
-if ~nargout
+if ~nargout && n==3
     v_rotqr2ro(v_rotro2qr(r)); % plot a rotated cube
 end
 
