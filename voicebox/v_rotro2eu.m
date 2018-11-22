@@ -1,14 +1,14 @@
 function e=v_rotro2eu(m,ro)
-%ROTRO2EQ converts a 3x3 v_rotation matrix into the corresponding euler angles
+%ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles
 % Inputs: 
 %
 %     M(1,3)   a string of 3 characters from the set {'x','y','z'} e.g. "zxz" or "zyx"
 %              or, equivalently, a vector whose elements are 1, 2 or 3
-%     RO(3,3)  3x3 v_rotation matrix
+%     RO(3,3)  3x3 rotation matrix
 %
 % Outputs:
 %
-%     E(3,1)   3 euler angles in the range +-pi. A positive v_rotation is clockwise
+%     E(3,1)   3 euler angles in the range +-pi. A positive rotation is clockwise
 %               if looking along the axis away from the origin.
 %
 % The string M specifies the axes (fixed in space) about which the rotations of
@@ -24,7 +24,7 @@ function e=v_rotro2eu(m,ro)
 %       The output of this routine will always have |b|<=pi/2
 
 % 
-%      Copyright (C) Mike Brookes 2007
+%      Copyright (C) Mike Brookes 2007-2018
 %      Version: $Id: v_rotro2eu.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -55,14 +55,14 @@ u=m(1);
 v=m(2);
 w=m(3);
 if sum(m==v)>1, error('Consecutive Euler axes must differ'); end
-% first we rotate around w to null element (v,u) with respect to element (!vw,u) of v_rotation matrix
+% first we rotate around w to null element (v,u) with respect to element (!vw,u) of rotation matrix
 g=2*mod(u-v,3)-3;   % +1 if v follows u or -1 if u follows v
 h=2*mod(v-w,3)-3;   % +1 if w follows v or -1 if v follows w
 [s,c,r,e(3)]=v_atan2sc(h*ro(v,u),ro(6-v-w,u));
 r2=ro;
 ix=1+mod(w+(0:1),3);
 r2(ix,:)=[c s; -s c]*ro(ix,:);
-% next we rotate around v to null element (!uv,u) with repect to element (u,u) of v_rotation matrix
+% next we rotate around v to null element (!uv,u) with repect to element (u,u) of rotation matrix
 e(2)=atan2(-g*r2(6-u-v,u),r2(u,u));
 % finally we rotate around u to null element (v,!uv) with respect to element (!uv,!uv) = element (v,v)
 e(1)=atan2(-g*r2(v,6-u-v),r2(v,v));
@@ -70,5 +70,8 @@ if (u==w && e(2)<0) || (u~=w && abs(e(2))>pi/2)  % remove redundancy
     mk=u~=w;
     e(2)=(2*mk-1)*e(2);
     e=e-((2*(e>0)-1) .* [1; mk; 1])*pi;
+end
+if ~nargout
+    v_rotqr2ro(v_rotro2qr(ro));
 end
 
