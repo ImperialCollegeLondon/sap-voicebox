@@ -1,5 +1,5 @@
 function [y,s,v]=v_rotqrmean(q)
-%ROTQRMEAN calculates the mean v_rotation of a quaternion array [y,s]=[q]
+%ROTQRMEAN calculates the mean rotation of a quaternion array [y,s]=[q]
 %
 % Inputs:   q(4,n)    normalized real quaternion array
 %
@@ -7,7 +7,7 @@ function [y,s,v]=v_rotqrmean(q)
 %           s(1,n)    sign vector such that y=q*s', y=y/sqrt(y.'*y)
 %           v         average squared deviation from the mean quaternion
 %
-% Since quaternions represent a v_rotation only to within a sign ambiguity
+% Since quaternions represent a rotation only to within a sign ambiguity
 % we need to select +1 or -1 for each one when calculating the mean.
 % This routine selects the sign for each quaternion to maximize the norm
 % of their sum or, equivalently, to minimize their variance.
