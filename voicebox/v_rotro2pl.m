@@ -1,5 +1,5 @@
 function [u,v,t]=v_rotro2pl(r)
-%ROTRO2PL find the plane and v_rotation angle of a v_rotation matrix [u,v,t]=r
+%ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r
 % Inputs:
 %
 %     R(n,n)   Rotation matrix
@@ -7,11 +7,11 @@ function [u,v,t]=v_rotro2pl(r)
 % Outputs:
 %
 %     U(n,1) and V(n,1) are orthonormal vectors defining a plane in n-dimensional space
-%     T is the v_rotation angle in radians from U towards V with 0<=T<=pi. If T
+%     T is the rotation angle in radians from U towards V with 0<=T<=pi. If T
 %       is omitted it U and V will be separated by T instead of being orthogonal
 
 %
-%      Copyright (C) Mike Brookes 2007
+%      Copyright (C) Mike Brookes 2007-2018
 %      Version: $Id: v_rotro2pl.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -53,7 +53,9 @@ u=uv(:,1);
 if nargout>2
     v=uv(:,2);
     t=atan2(abs(e(i+1,i)),e(i,i));
-else
+elseif nargout
     [s,c]=v_atan2sc(abs(e(i+1,i)),e(i,i));
     v=uv*[c;s];
+elseif n==3 % if a 3D rotation
+    v_rotqr2ro(v_rotro2qr(r)); % plot a rotated cube
 end
