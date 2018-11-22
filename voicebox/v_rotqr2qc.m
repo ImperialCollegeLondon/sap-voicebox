@@ -12,7 +12,7 @@ function qc=v_rotqr2qc(qr)
 % The real-valued quaternion [r a b c]' becomes [r+j*b  a+j*c]'
 
 % 
-%      Copyright (C) Mike Brookes 2000-2012
+%      Copyright (C) Mike Brookes 2000-2018
 %      Version: $Id: v_rotqr2qc.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -42,3 +42,6 @@ s=size(qr);
 qq=reshape(qr,4,[]);
 s(1)=s(1)/2;
 qc=reshape(b*reshape(qq(a,:),2,[]),s);
+if ~nargout
+    v_rotqr2ro(qq(:,1)); % plot a rotated cube
+end
