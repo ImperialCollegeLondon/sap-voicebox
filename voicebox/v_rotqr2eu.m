@@ -4,7 +4,7 @@ function e=v_rotqr2eu(m,q)
 %
 %     M(1,3)   a string of 3 characters from the set {'x','y','z'}
 %              or, equivalently, a vector whose elements are all 1, 2 or 3
-%     Q(3,3)   3x3 v_rotation matrix
+%     Q(4,1)   real quaternion
 %
 % Outputs:
 %
@@ -53,7 +53,7 @@ if any(abs(m-2)>1), error('Euler axis must be x,y or z'); end
 u=m(1)+1;
 v=m(2)+1;
 w=m(3)+1;
-% first we rotate around w to null element (v,u) with respect to element (!vw,u) of v_rotation matrix
+% first we rotate around w to null element (v,u) with respect to element (!vw,u) of rotation matrix
 g=2*mod(u-v,3)-3;
 ss=(2*mod(v-w,3)-3)*(q(v)*q(u)+g*q(9-u-v)*q(1));
 if u==w                 % if u==w then (!vw,u) is off-diagonal
@@ -76,7 +76,7 @@ r=zeros(4,1);
 r(x(1:2))=q(x(3:4));
 r(x(5:6))=-q(x(7:8));
 q2=c*q-s*r;
-% next we rotate around v to null element (!uv,u) with repect to element (u,u) of v_rotation matrix
+% next we rotate around v to null element (!uv,u) with repect to element (u,u) of rotation matrix
 ss2=-g*q2(9-u-v)*q2(u)+q2(v)*q2(1);     % always off-diagonal
 cc2=q2(1)^2+q2(u)^2-0.5;     % always on-diagonal
 [s2,c2,rr,t2]=v_atan2sc(ss2,cc2);
@@ -95,4 +95,6 @@ if (u==w && t2<0) || (u~=w && abs(t2)>pi/2)  % remove redundancy
     e(2)=(2*mk-1)*t2;
     e=e-((2*(e>0)-1) .* [1; mk; 1])*pi;
 end
-
+if ~nargout
+        v_rotqr2ro(q); % plot a rotated cube
+end
