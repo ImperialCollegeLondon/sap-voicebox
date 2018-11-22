@@ -1,20 +1,20 @@
 function r=v_rotqr2ro(q)
-%ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix
+%ROTQR2RO converts a real quaternion to a 3x3 rotation matrix
 % Inputs:
 %
 %     Q(4,1)   real-valued quaternion (possibly unnormalized)
 %
 % Outputs:
 %
-%     R(3,3)   Input v_rotation matrix
+%     R(3,3)   Input rotation matrix
 %              Plots a diagram if no output specified
 %
-% In the quaternion representation of a v_rotation, and q(1) = cos(t/2)
-% where t is the angle of v_rotation in the range 0 to 2pi
-% and q(2:4)/sin(t/2) is a unit vector lying along the axis of v_rotation
-% a positive v_rotation about [0 0 1] takes the X axis towards the Y axis.
+% In the quaternion representation of a rotation, and q(1) = cos(t/2)
+% where t is the angle of rotation in the range 0 to 2pi
+% and q(2:4)/sin(t/2) is a unit vector lying along the axis of rotation
+% a positive rotation about [0 0 1] takes the X axis towards the Y axis.
 %
-%      Copyright (C) Mike Brookes 2007
+%      Copyright (C) Mike Brookes 2007-2018
 %      Version: $Id: v_rotqr2ro.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -54,22 +54,38 @@ r(g)=p(e)+p(f);
 if ~nargout
     % display rotated cube
     clf('reset'); % clear current axis
-    %     vv=[0,0,0;1,0,0;0,1,0;0,0,1]*r';  % pyramid
-    %     ff=[1 2 4; 2 1 3; 3 1 4; 4 2 3];
-    %     cc=[0 1 0; 0 0 1; 1 0 0; 1 1 0];
-    vv=[0,0,0;1,0,0;0,1,0;0,0,1;0 1 1; 1 0 1; 1 1 0; 1 1 1]*r';    % cube
-    ff=[1 2 6 4; 2 7 8 6; 7 3 5 8; 4 5 3 1; 3 7 2 1; 6 8 5 4];
-    %     cc=[0 1 0; 1 0 0; 0 1 0; 1 0 0; 0 0 1; 0 0 1];
-    cc=[1 0 1 0 2 2]';
-    pa=patch('Vertices',vv,'Faces',ff,'FaceVertexCData',cc,'FaceColor','Flat');
-    colormap([1 0 0; 0 1 0; 0 0 1]);
+    v0=[-1 1 1 -1 -1 1 1 -1; -1 -1 1 1 -1 -1 1 1; -1 -1 -1 -1 1 1 1 1]*0.5; % unrotated coordinates
+    v=r*v0; % unrotated for now
+    fv=[4 1 5 8; 2 3 7 6; 1 2 6 5; 3 4 8 7; 2 1 4 3; 5 6 7 8]; % verices for each face
+    fc=[0 1 1; 1 0 0; 1 0 1; 0 1 0; 1 1 0; 0 0 1]; % colours for faces
+    xc={[25 46 46 25; 55 55 49 49]/100,
+        [25 33 33 39 39 46 46 39 39 33 33 25; 55 55 63 63 55 55 49 49 42 42 49 49]/100,
+        [48 56 62 69 76 66 76 69 62 56 48 59; 68 68 58 68 68 53 37 37 47 37 37 53]/100,
+        [48 55 62 69 77 65 65 59 59; 68 68 55 68 68 50 37 37 50]/100,
+        [50 74 74 57 74 74 50 50 67 50; 68 68 62 43 43 37 37 43 62 62]/100};
+    xf=[1 3; 2 3; 1 4; 2 4; 1 5; 2 5]; % characters to plot on each face
+    nf=size(fv,1); % number of faces
+    figure(1);
+    clf;
+    for i=1:6
+        p(i)=patch(v(1,fv(i,:)),v(2,fv(i,:)),v(3,fv(i,:)),fc(i,:));
+        set(p(i),'FaceAlpha',0.7);
+        k=1.0001; % factor to move out labels slightly to get correct depth ordering
+        for j=1:2
+            xij=xc{xf(i,j)}; % relative coordinates of character vertices
+            patch(k*(v(1,fv(i,1))+(v(1,fv(i,2))-v(1,fv(i,1)))*xij(1,:)+(v(1,fv(i,4))-v(1,fv(i,1)))*xij(2,:)), ...
+                k*(v(2,fv(i,1))+(v(2,fv(i,2))-v(2,fv(i,1)))*xij(1,:)+(v(2,fv(i,4))-v(2,fv(i,1)))*xij(2,:)), ...
+                k*(v(3,fv(i,1))+(v(3,fv(i,2))-v(3,fv(i,1)))*xij(1,:)+(v(3,fv(i,4))-v(3,fv(i,1)))*xij(2,:)),1-fc(i,:));
+        end
+    end
     xlabel('x axis');
     ylabel('y axis');
     zlabel('z axis');
-    title(sprintf('qr = [%.2f, %.2f, %.2f, %.2f]''    initial xyz=0 are rgb',q))
-    axis([-1 1 -1 1 -1 1 0 1]*sqrt(3));
+    q=q*((2*(q(find(q~=0,1))>0)-1)/sqrt(q'*q)); % normalize and force leading coefficient to be positive
+    title(sprintf('qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]�',q,round(v_rotro2eu('xyz',r)*180/pi)));
+    axis([-1 1 -1 1 -1 1 0 1]*sqrt(3)/2);
+    axis equal
     grid on
     view(3);
-    axis equal;
 end
 
