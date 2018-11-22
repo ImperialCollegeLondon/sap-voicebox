@@ -17,7 +17,7 @@ function mc=v_rotqc2mc(qc)
 % matrix form has 16 real elements.
 
 % 
-%      Copyright (C) Mike Brookes 2000-2012
+%      Copyright (C) Mike Brookes 2000-2018
 %      Version: $Id: v_rotqc2mc.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -50,3 +50,6 @@ mc(ix,jx)=-conj(qa(ix+1,:));
 mc(ix+1,jx)=conj(qa(ix,:));
 s(2)=2*s(2);
 mc=reshape(mc,s);
+if ~nargout
+    v_rotqr2ro([real(qc(1)); real(qc(2)); imag(qc(1)); imag(qc(2))]); % plot a rotated cube
+end
