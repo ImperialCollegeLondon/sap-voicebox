@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotax2qr</title>
   <meta name="keywords" content="v_rotax2qr">
-  <meta name="description" content="ROTQR2AX converts a v_rotation axis and angle to the corresponding real quaternion">
+  <meta name="description" content="ROTQR2AX converts a rotation axis and angle to the corresponding real quaternion">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,28 +21,28 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ROTQR2AX converts a v_rotation axis and angle to the corresponding real quaternion</strong></div>
+<div class="box"><strong>ROTQR2AX converts a rotation axis and angle to the corresponding real quaternion</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function q=v_rotax2qr(a,t) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ROTQR2AX converts a v_rotation axis and angle to the corresponding real quaternion
+<div class="fragment"><pre class="comment">ROTQR2AX converts a rotation axis and angle to the corresponding real quaternion
  Inputs:
 
-     A(3,1)   Vector in the direction of the v_rotation axis.
+     A(3,1)   Vector in the direction of the rotation axis.
      T        Rotation angle in radians
 
  Output: 
 
      Q(4,1)   normalized real-valued quaternion
 
- In the quaternion representation of a v_rotation, and q(1) = cos(t/2) 
- where t is the angle of v_rotation and q(2:4)/sin(t/2) is a unit vector
- lying along the axis of v_rotation.
- A positive v_rotation about [0 0 1] takes the X axis towards the Y axis.
+ In the quaternion representation of a rotation, and q(1) = cos(t/2) 
+ where t is the angle of rotation and q(2:4)/sin(t/2) is a unit vector
+ lying along the axis of rotation.
+ A positive rotation about [0 0 1] takes the X axis towards the Y axis.
  
-      Copyright (C) Mike Brookes 2007-2012
+      Copyright (C) Mike Brookes 2007-2018
       Version: $Id: v_rotax2qr.m 10865 2018-09-21 17:22:45Z dmb $
 
    VOICEBOX is a MATLAB toolbox for speech processing.
@@ -68,7 +68,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -77,22 +77,22 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function q=v_rotax2qr(a,t)</a>
-0002 <span class="comment">%ROTQR2AX converts a v_rotation axis and angle to the corresponding real quaternion</span>
+0002 <span class="comment">%ROTQR2AX converts a rotation axis and angle to the corresponding real quaternion</span>
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
-0005 <span class="comment">%     A(3,1)   Vector in the direction of the v_rotation axis.</span>
+0005 <span class="comment">%     A(3,1)   Vector in the direction of the rotation axis.</span>
 0006 <span class="comment">%     T        Rotation angle in radians</span>
 0007 <span class="comment">%</span>
 0008 <span class="comment">% Output:</span>
 0009 <span class="comment">%</span>
 0010 <span class="comment">%     Q(4,1)   normalized real-valued quaternion</span>
 0011 <span class="comment">%</span>
-0012 <span class="comment">% In the quaternion representation of a v_rotation, and q(1) = cos(t/2)</span>
-0013 <span class="comment">% where t is the angle of v_rotation and q(2:4)/sin(t/2) is a unit vector</span>
-0014 <span class="comment">% lying along the axis of v_rotation.</span>
-0015 <span class="comment">% A positive v_rotation about [0 0 1] takes the X axis towards the Y axis.</span>
+0012 <span class="comment">% In the quaternion representation of a rotation, and q(1) = cos(t/2)</span>
+0013 <span class="comment">% where t is the angle of rotation and q(2:4)/sin(t/2) is a unit vector</span>
+0014 <span class="comment">% lying along the axis of rotation.</span>
+0015 <span class="comment">% A positive rotation about [0 0 1] takes the X axis towards the Y axis.</span>
 0016 <span class="comment">%</span>
-0017 <span class="comment">%      Copyright (C) Mike Brookes 2007-2012</span>
+0017 <span class="comment">%      Copyright (C) Mike Brookes 2007-2018</span>
 0018 <span class="comment">%      Version: $Id: v_rotax2qr.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0019 <span class="comment">%</span>
 0020 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
@@ -118,7 +118,10 @@ This function is called by:
 0040 <span class="keyword">end</span>
 0041 m=sqrt(a(:)'*a(:));
 0042 q=[cos(0.5*t); sin(0.5*t)*a(:)/m];
-0043</pre></div>
-<hr><address>Generated on Tue 13-Nov-2018 17:03:21 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+0043 <span class="keyword">if</span> ~nargout
+0044     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q); <span class="comment">% plot a rotated cube</span>
+0045 <span class="keyword">end</span>
+0046</pre></div>
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

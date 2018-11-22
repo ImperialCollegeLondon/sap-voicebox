@@ -32,30 +32,30 @@
 
      M(1,n)   a string of n characters from the set {'x','y','z'}
               or, equivalently, a vector whose elements are 1, 2, or 3
-     T(n,1)   n v_rotation angles. A positive v_rotation is clockwise if
+     T(n,1)   n rotation angles. A positive rotation is clockwise if
               looking along the axis away from the origin.
 
  Outputs:
 
-     R(3,3)   Input v_rotation matrix
+     R(3,3)   Input rotation matrix
               Plots a diagram if no output specified
 
  The string M specifies the axes about which the rotations are performed.
  You cannot have the same axis in adjacent positions and so there are 12
- possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;. A positive v_rotation is clockwise
- if looking along the axis away from the origin; thus a v_rotation of +pi/2
+ possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;. A positive rotation is clockwise
+ if looking along the axis away from the origin; thus a rotation of +pi/2
  around Z rotates [1 0 0]' to [0 1 0]'.
- 
+
  Inverse conversion: If m has length 3 with adjacent characters distinct,
                      then v_rotro2eu(m,v_roteu2ro(m,t))=t.
 
- Inverse v_rotation:   v_roteu2ro(m,t)*v_roteu2ro(fliplr(m),-fliplr(t))=eye(3)</pre></div>
+ Inverse rotation:   v_roteu2ro(m,t)*v_roteu2ro(fliplr(m),-fliplr(t))=eye(3)</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,t)">v_roteu2qr</a>	ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 v_rotation matrix</li></ul>
+<li><a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>	ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -69,27 +69,27 @@ This function is called by:
 0004 <span class="comment">%</span>
 0005 <span class="comment">%     M(1,n)   a string of n characters from the set {'x','y','z'}</span>
 0006 <span class="comment">%              or, equivalently, a vector whose elements are 1, 2, or 3</span>
-0007 <span class="comment">%     T(n,1)   n v_rotation angles. A positive v_rotation is clockwise if</span>
+0007 <span class="comment">%     T(n,1)   n rotation angles. A positive rotation is clockwise if</span>
 0008 <span class="comment">%              looking along the axis away from the origin.</span>
 0009 <span class="comment">%</span>
 0010 <span class="comment">% Outputs:</span>
 0011 <span class="comment">%</span>
-0012 <span class="comment">%     R(3,3)   Input v_rotation matrix</span>
+0012 <span class="comment">%     R(3,3)   Input rotation matrix</span>
 0013 <span class="comment">%              Plots a diagram if no output specified</span>
 0014 <span class="comment">%</span>
 0015 <span class="comment">% The string M specifies the axes about which the rotations are performed.</span>
 0016 <span class="comment">% You cannot have the same axis in adjacent positions and so there are 12</span>
-0017 <span class="comment">% possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;. A positive v_rotation is clockwise</span>
-0018 <span class="comment">% if looking along the axis away from the origin; thus a v_rotation of +pi/2</span>
+0017 <span class="comment">% possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;. A positive rotation is clockwise</span>
+0018 <span class="comment">% if looking along the axis away from the origin; thus a rotation of +pi/2</span>
 0019 <span class="comment">% around Z rotates [1 0 0]' to [0 1 0]'.</span>
 0020 <span class="comment">%</span>
 0021 <span class="comment">% Inverse conversion: If m has length 3 with adjacent characters distinct,</span>
 0022 <span class="comment">%                     then v_rotro2eu(m,v_roteu2ro(m,t))=t.</span>
 0023 <span class="comment">%</span>
-0024 <span class="comment">% Inverse v_rotation:   v_roteu2ro(m,t)*v_roteu2ro(fliplr(m),-fliplr(t))=eye(3)</span>
+0024 <span class="comment">% Inverse rotation:   v_roteu2ro(m,t)*v_roteu2ro(fliplr(m),-fliplr(t))=eye(3)</span>
 0025 
 0026 <span class="comment">%</span>
-0027 <span class="comment">%      Copyright (C) Mike Brookes 2007-2012</span>
+0027 <span class="comment">%      Copyright (C) Mike Brookes 2007-2018</span>
 0028 <span class="comment">%      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0029 <span class="comment">%</span>
 0030 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
@@ -110,7 +110,11 @@ This function is called by:
 0045 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
 0046 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
 0047 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0048 r=<a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,t)">v_roteu2qr</a>(m,t));</pre></div>
-<hr><address>Generated on Tue 13-Nov-2018 17:03:21 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+0048 <span class="keyword">if</span> nargout
+0049     r=<a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>(m,t));
+0050 <span class="keyword">else</span>
+0051     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>(m,t)); <span class="comment">% draw a cube</span>
+0052 <span class="keyword">end</span></pre></div>
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

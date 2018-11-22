@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotro2qr</title>
   <meta name="keywords" content="v_rotro2qr">
-  <meta name="description" content="ROTRO2QR converts a 3x3 v_rotation matrix to a real quaternion">
+  <meta name="description" content="ROTRO2QR converts a 3x3 rotation matrix to a real quaternion">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,54 +21,54 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ROTRO2QR converts a 3x3 v_rotation matrix to a real quaternion</strong></div>
+<div class="box"><strong>ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function q=v_rotro2qr(r) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ROTRO2QR converts a 3x3 v_rotation matrix to a real quaternion
+<div class="fragment"><pre class="comment">ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
  Inputs: 
 
-     R(3,3)   Input v_rotation matrix
+     R(3,3)   Input rotation matrix
 
  Outputs: 
 
      Q(4,1)   normalized real-valued quaternion
 
- In the quaternion representation of a v_rotation, and q(1) = cos(t/2) 
- where t is the angle of v_rotation in the range 0 to 2pi
- and q(2:4)/sin(t/2) is a unit vector lying along the axis of v_rotation
- a positive v_rotation about [0 0 1] takes the X axis towards the Y axis.</pre></div>
+ In the quaternion representation of a rotation, and q(1) = cos(t/2) 
+ where t is the angle of rotation in the range 0 to 2pi
+ and q(2:4)/sin(t/2) is a unit vector lying along the axis of rotation
+ a positive rotation about [0 0 1] takes the X axis towards the Y axis.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	RECTIFYHOMOG Apply rectifying homographies to an image set</li></ul>
+<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function q=v_rotro2qr(r)</a>
-0002 <span class="comment">%ROTRO2QR converts a 3x3 v_rotation matrix to a real quaternion</span>
+0002 <span class="comment">%ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</span>
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
-0005 <span class="comment">%     R(3,3)   Input v_rotation matrix</span>
+0005 <span class="comment">%     R(3,3)   Input rotation matrix</span>
 0006 <span class="comment">%</span>
 0007 <span class="comment">% Outputs:</span>
 0008 <span class="comment">%</span>
 0009 <span class="comment">%     Q(4,1)   normalized real-valued quaternion</span>
 0010 <span class="comment">%</span>
-0011 <span class="comment">% In the quaternion representation of a v_rotation, and q(1) = cos(t/2)</span>
-0012 <span class="comment">% where t is the angle of v_rotation in the range 0 to 2pi</span>
-0013 <span class="comment">% and q(2:4)/sin(t/2) is a unit vector lying along the axis of v_rotation</span>
-0014 <span class="comment">% a positive v_rotation about [0 0 1] takes the X axis towards the Y axis.</span>
+0011 <span class="comment">% In the quaternion representation of a rotation, and q(1) = cos(t/2)</span>
+0012 <span class="comment">% where t is the angle of rotation in the range 0 to 2pi</span>
+0013 <span class="comment">% and q(2:4)/sin(t/2) is a unit vector lying along the axis of rotation</span>
+0014 <span class="comment">% a positive rotation about [0 0 1] takes the X axis towards the Y axis.</span>
 0015 
-0016 <span class="comment">%      Copyright (C) Mike Brookes 2007</span>
+0016 <span class="comment">%      Copyright (C) Mike Brookes 2007-2018</span>
 0017 <span class="comment">%      Version: $Id: v_rotro2qr.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0018 <span class="comment">%</span>
 0019 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
@@ -90,10 +90,10 @@ This function is called by:
 0035 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
 0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
 0037 
-0038 <span class="comment">% in the comments below, t is the v_rotation angle, a is the v_rotation axis</span>
+0038 <span class="comment">% in the comments below, t is the rotation angle, a is the rotation axis</span>
 0039 q=zeros(4,1);
 0040 t = 1 + r(1) + r(5) + r(9);     <span class="comment">% 2(1+cos(t)) = 4(cos(t/2))^2 = 4 q(1)^2</span>
-0041 <span class="keyword">if</span> t&gt;1                       <span class="comment">% for v_rotation angles less than 120 degrees</span>
+0041 <span class="keyword">if</span> t&gt;1                       <span class="comment">% for rotation angles less than 120 degrees</span>
 0042     s = sqrt(t) * 2;            <span class="comment">% 4 cos(t/2) = 2 sin(t)/sin(t/2)</span>
 0043     q(2) = ( r(6) - r(8) ) / s;
 0044     q(3) = ( r(7) - r(3) ) / s;
@@ -118,12 +118,14 @@ This function is called by:
 0063     q(4) = 0.25 * s;
 0064     q(1) = (r(2) - r(4) ) / s;
 0065 <span class="keyword">end</span>
-0066 f=find(q~=0);
-0067 <span class="keyword">if</span> (q(f(1))&lt;0), q=-q; <span class="keyword">end</span>           <span class="comment">% force positive</span>
-0068 <span class="keyword">if</span> abs(q'*q-1)&gt;1e-8
-0069     error(<span class="string">'Input to rotro2qr must be a rotation matrix with det(r)=+1'</span>);
-0070 <span class="keyword">end</span>
-0071</pre></div>
-<hr><address>Generated on Tue 13-Nov-2018 17:03:21 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+0066 q=q*(2*(q(find(q~=0,1))&gt;0)-1); <span class="comment">% force leading coefficient to be positive</span>
+0067 <span class="keyword">if</span> abs(q'*q-1)&gt;1e-8
+0068     error(<span class="string">'Input to rotro2qr must be a rotation matrix with det(r)=+1'</span>);
+0069 <span class="keyword">end</span>
+0070 <span class="keyword">if</span> ~nargout
+0071     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q); <span class="comment">% plot a cube</span>
+0072 <span class="keyword">end</span>
+0073</pre></div>
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
