@@ -1,19 +1,19 @@
 function mr=v_rotqr2mr(qr)
 %ROTQR2MR converts a matrix of real quaternion vectors to quaternion matrices
-% Inputs: 
+% Inputs:
 %
-%     QR(4m,n)   mxn matrix of real quaternion vectors (each 4x1)
+%     QR(4m,n,...)   mxn matrix of real quaternion vectors (each 4x1)
 %
-% Outputs: 
+% Outputs:
 %
-%     MR(4m,4n)   mxn matrix of real quaternion matrices (each 4x4)
+%     MR(4m,4n,...)   mxn matrix of real quaternion matrices (each 4x4)
 %
-% In matrix form, quaternions can be multiplied and added using normal matrix 
+% In matrix form, quaternions can be multiplied and added using normal matrix
 % arithmetic. Each element of an mxn matrix of quaternions is itself a 4x4 block
 % so the total dimension of MR is 4m x 4n.
 
-% 
-%      Copyright (C) Mike Brookes 2000-2006
+%
+%      Copyright (C) Mike Brookes 2000-2018
 %      Version: $Id: v_rotqr2mr.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -40,13 +40,20 @@ if isempty(a)
     b=[1 2 3 2 3 1];    % destination col of +ve entries (from 0)
     c=[0 0 0 1 2 3];    % source row of +ve entries (from 0)
 end
-[m,n]=size(qr);
-mr=repmat(qr,4,1);
-mn=m*n;
+s=size(qr);
+m=s(1);
+mr=repmat(reshape(qr,s(1),[]),4,1);
+n=size(mr,2);
+mn=s(1)*n;
 j=repmat(4*m*(0:n-1),m/4,1);
 i=repmat((1:4:m)',n,1)+j(:);
 ni=length(i);
 i6=repmat(i,1,6);
 mr(i6+repmat(a+m*b,ni,1))=mr(i6+repmat(c,ni,1));
 mr(i6+repmat(c+m*b,ni,1))=-mr(i6+repmat(a,ni,1));
-mr=reshape(mr,m,4*n);
+s(2)=4*s(2); % output array size
+mr=reshape(mr,s);
+if ~nargout
+    qr=qr(1:4);
+    v_rotqr2ro(qr(:)); % plot a rotated cube
+end
