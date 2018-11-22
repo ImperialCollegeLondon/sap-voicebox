@@ -3,7 +3,7 @@ function r=v_rotpl2ro(u,v,t)
 % Inputs:
 %
 %     U(n,1) and V(n,1) define a plane in n-dimensional space
-%     T is the v_rotation angle in radians from U towards V. If T
+%     T is the rotation angle in radians from U towards V. If T
 %       is omitted it will default to the angle between U and V
 %
 % Outputs:
@@ -11,7 +11,7 @@ function r=v_rotpl2ro(u,v,t)
 %     R(n,n)   Rotation matrix
 
 %
-%      Copyright (C) Mike Brookes 2007
+%      Copyright (C) Mike Brookes 2007-2018
 %      Version: $Id: v_rotpl2ro.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -54,5 +54,8 @@ if nargin<3
     r=eye(n)+(c-1)*(u*u'+q*q')+s*(q*u'-u*q');
 else
     r=eye(n)+(cos(t)-1)*(u*u'+q*q')+sin(t)*(q*u'-u*q');
+end
+if ~nargout
+    v_rotqr2ro(v_rotro2qr(r)); % plot a rotated cube
 end
 
