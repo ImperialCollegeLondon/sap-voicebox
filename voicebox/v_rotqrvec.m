@@ -1,7 +1,7 @@
 function y=v_rotqrvec(q,x)
-%ROTQRVEC applies a quaternion v_rotation ot a vector array y=[q,x]
+%ROTQRVEC applies a quaternion rotation ot a vector array y=[q,x]
 %
-% Inputs:   q(4,1)    quaternion v_rotation (possibly unnormalized)
+% Inputs:   q(4,1)    quaternion rotation (possibly unnormalized)
 %           x(3n,...) array of 3D column vectors
 %
 % Outputs:  y(3n,...) array of 3D column vectors
