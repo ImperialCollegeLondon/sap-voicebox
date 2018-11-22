@@ -1,10 +1,10 @@
-function q=v_roteu2qr(m,t)
+function q=v_roteu2qr(m,e)
 %ROTEU2QR converts a sequence of Euler angles to a real unit quaternion
 % Inputs:
 %
 %     M(1,n)   a string of n characters from the set {'x','y','z'}
 %              or, equivalently, a vector whose elements are 1, 2, or 3
-%     T(n,1)   n v_rotation angles. A positive v_rotation is clockwise if
+%     E(n,1)   n rotation angles. A positive rotation is clockwise if
 %              looking along the axis away from the origin.
 %
 % Outputs:
@@ -14,17 +14,17 @@ function q=v_roteu2qr(m,t)
 %
 % The string M specifies the axes about which the rotations are performed.
 % You cannot have the same axis in adjacent positions and so there are 12
-% possibilities. Common ones are "ZXZ" and "ZYX". A positive v_rotation is clockwise
-% if looking along the axis away from the origin; thus a v_rotation of +pi/2
+% possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation is clockwise
+% if looking along the axis away from the origin; thus a rotation of +pi/2
 % around Z rotates [1 0 0]' to [0 1 0]'.
 % 
 % Inverse conversion: If m has length 3 with adjacent characters distinct,
-%                     then v_rotqr2eu(m,v_roteu2qr(m,t))=t.
+%                     then v_rotqr2eu(m,v_roteu2qr(m,e))=e.
 %
-% Inverse rotation:   qrmult(roteu2qr(m,t),roteu2qr(fliplr(m),-fliplr(t)))=+-[ 1 0 0 0]'
+% Inverse rotation:   qrmult(roteu2qr(m,e),roteu2qr(fliplr(m),-fliplr(e)))=+-[ 1 0 0 0]'
 
 %
-%      Copyright (C) Mike Brookes 2007-2012
+%      Copyright (C) Mike Brookes 2007-2018
 %      Version: $Id: v_roteu2qr.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -47,7 +47,7 @@ function q=v_roteu2qr(m,t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 y=[2 4 1 3 1 3 2 4; 3 2 1 4 1 4 3 2; 3 4 2 1 1 2 4 3];
 % m consists of a sequence of axes e.g. 'zxy'
-% and t gives the v_rotation angles in radians
+% and e gives the rotation angles in radians
 q=[1 0 0 0]';
 if ischar(m)
     m=lower(m)-'w';
@@ -55,7 +55,7 @@ end
 if any(abs(m-2)>1), error('Euler axis must be x,y or z'); end
 for i=1:length(m)
     x=y(m(i),:);
-    b=0.5*t(i);
+    b=0.5*e(i);
     c=cos(b);
     s=sin(b);
     r=zeros(4,1);
@@ -64,3 +64,6 @@ for i=1:length(m)
     q=c*q+s*r;
 end
 q=q*(2*(q(find(q~=0,1))>0)-1); % force leading coefficient to be positive
+if ~nargout
+    v_rotqr2ro(q);
+end
