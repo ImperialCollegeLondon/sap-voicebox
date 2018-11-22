@@ -160,7 +160,7 @@ This function is called by:
 0082     ylabel(<span class="string">'y axis'</span>);
 0083     zlabel(<span class="string">'z axis'</span>);
 0084     q=q*((2*(q(find(q~=0,1))&gt;0)-1)/sqrt(q'*q)); <span class="comment">% normalize and force leading coefficient to be positive</span>
-0085     title(sprintf(<span class="string">'qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]�'</span>,q,round(<a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>(<span class="string">'xyz'</span>,r)*180/pi)));
+0085     title(sprintf(<span class="string">'qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]^\\circ'</span>,q,round(<a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>(<span class="string">'xyz'</span>,r)*180/pi)));
 0086     axis([-1 1 -1 1 -1 1 0 1]*sqrt(3)/2);
 0087     axis equal
 0088     grid on
