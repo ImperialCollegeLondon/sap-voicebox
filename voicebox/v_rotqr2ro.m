@@ -82,7 +82,7 @@ if ~nargout
     ylabel('y axis');
     zlabel('z axis');
     q=q*((2*(q(find(q~=0,1))>0)-1)/sqrt(q'*q)); % normalize and force leading coefficient to be positive
-    title(sprintf('qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]�',q,round(v_rotro2eu('xyz',r)*180/pi)));
+    title(sprintf('qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]^\\circ',q,round(v_rotro2eu('xyz',r)*180/pi)));
     axis([-1 1 -1 1 -1 1 0 1]*sqrt(3)/2);
     axis equal
     grid on
