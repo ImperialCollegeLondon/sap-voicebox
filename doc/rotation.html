@@ -9,42 +9,63 @@
 <hr>
 <p>Return to <a href="voicebox.html">voicebox home page</a></p>
 <hr>
-<h2>Rotation Representations</h2>
+<h2>Rotation Conventions</h2>
+<p>In 3-dimensions, the <b>x</b>, <b>y</b> and <b>z</b> axes form a right-handed 
+triple. A positive rotation of &pi;/2 radians around one of these axes will rotate
+<b>y</b>-&gt;<b>z</b>, <b>z</b>-&gt;<b>x</b> or <b>x</b>-&gt;<b>y</b> 
+respectively, i.e. it corresponds to a clockwise rotation when looking along the 
+corresponding axis from the origin.</p>
+<h3>Euler Angles</h3>
+<p>Applying a sequence of rotations to an object can have one of four 
+interpretations: (a) they can be viewed as rotating the object or as rotating 
+the axes (or, equivalently, the camera) and (b) the rotation axes can remain fixed in space 
+(&quot;extrinsic&quot;) or can change with each rotation (&quot;intrinsic&quot;). 
+The choice of interpretation affects the order and sign of the rotations. The 
+four examples listed below all result in the same rotation matrix: in each case, multiplying by the rotation matrix converts 
+a 
+column vector containing the coordinates of an object-point&nbsp; to its new value. </p>
+<ol>
+  <li>[extrinsic+object]: <em>m</em>='zx',<em> t</em>=[0.1; 0.2]: keeping the axes fixed in space, rotate the object first around the <b>z</b> 
+  axis and then rotate it around 
+  the original <b>x</b> axis. 
+  This is the point of view from which the routines have been written.</li>
+  <li>[intrinsic+object]: <em>m</em>='xz',<em> t</em>=[0.2; 
+  0.1]: rotate the object&nbsp; first around the <b>z</b> axis and then rotate it 
+  around the line on the object that was originally aligned with the <b>x</b> 
+  axis (i.e. the rotation axes have moved with the object).</li>
+  <li>[extrinsic+axes]: <em>m</em>='xz',<em> t</em>=[-0.2; -0.1]: keeping the object fixed in space, rotate the frame of reference around 
+  the <b>z</b> axis and then rotate it around the original <b>x</b> axis (which 
+	has not moved relative to the object).</li>
+	<li>[intrinsic+axes]: <em>m</em>='zx',<em> t</em>=[-0.1; -0.2]: keeping the object fixed in space, rotate the frame of reference around 
+  the <b>z</b> axis and then rotate it around the new position of the <b>x</b> 
+  	axis.</li>
+</ol>
+<p>To perform an arbitrary rotation, it is necessary to rotate about three axes 
+in sequence. Consecutive rotations must be around different axes but the first 
+and third axes may either be the same (&quot;Proper Euler angles&quot;) or different 
+(&quot;Tait-Bryan angles&quot;). In the aerospace field, the conventional axes orientations 
+relative to an aeroplane are: 
+x=forward, y=right, z=down. Using the intrinsic+object formulation and an axis 
+order zyx, the three rotations are called yaw, pitch and roll.</p>
+<p>There is a redundancy in the Euler angle representation:</p>
+<ol>
+	<li>If the first and third axes are the same, e.g. m='zxz', then&nbsp; t=[<em>a</em>; 
+	<em>b</em>; <em>c</em>] is equivalent to&nbsp; t=[<em>a</em>+&pi;; -<em>b</em>; 
+	<em>c</em>+&pi;]</li>
+	<li>If the first and third axes are different, e.g. m='xyz', then&nbsp; t=[<em>a</em>;
+	<em>b</em>; <em>c</em>] is equivalent to&nbsp; t=[<em>a</em>+&pi;; &pi;-<em>b</em>;
+	<em>c</em>+&pi;]</li>
+</ol>
+<h2>Conversion Routines</h2>
 <p>Rotations can be represented in any of the eight forms listed below; each has 
 a two-letter mnemonic given in the first column. The conversion routine from 
-form <i>xx</i> to form <i>yy</i> is called rot<em>xx</em>2<em>yy</em>. The 
+form <i>xx</i> to form <i>yy</i> is called v_rot<em>xx</em>2<em>yy</em>. The 
 second column lists the parameters required: <b>A</b>,<b>a</b>,<i>a</i>,a denote 
 matrix, vector, scalar and text arguments and the subscripts indicate their 
 dimension. The <i>ro</i> and <i>pl</i> forms can be used in a <i>n</i>-dimensional space; the 
 other forms are restricted to 3-dimensions. To visualize a rotation, call 
-rotqr2ro(q) without any output argument.</p>
-<h2>Rotation conventions</h2>
-<p>In 3-dimensions, the <b>x</b>, <b>y</b> and <b>z</b> axes form a right-handed 
-triple. A positive rotation of pi/2 radians around one of these axes will rotate
-<b>y</b>-&gt;<b>z</b>, <b>z</b>-&gt;<b>x</b> or <b>x</b>-&gt;<b>y</b> respectively, 
-i.e. it corresponds to a clockwise rotation when looking along the corresponding 
-axis from the origin..</p>
-<p>Applying a sequence of rotations to an object can have one of four 
-interpretations. We show below the Euler angle (eu) representation for each case 
-where we do a rotation of 0.1 around <b>z</b> followed by a rotation of 0.2 
-around <b>x</b>; in each case, multiplying by the rotation matrix converts the 
-coordinates of a point on the object to its new value. </p>
-<ol>
-  <li>m='zx', t=[0.1; 0.2]: keeping the axes fixed in space, rotate the object first around the <b>z</b> 
-  axis and then rotate it around 
-  the original <b>x</b> axis. 
-  This is the point of view from which the routines have been written.</li>
-  <li>m='xz', t=[0.2; 
-  0.1]: rotate the object&nbsp; first around the <b>z</b> axis and then rotate it 
-  around the line on the object that was originally aligned with the <b>x</b> 
-  axis (i.e. the rotation axes have moved with the object).</li>
-  <li>m='xz', t=[-0.2; -0.1]: keeping the object fixed in space, rotate the frame of reference around 
-  the <b>z</b> axis and then rotate it around the original <b>x</b> axis (which 
-	has not moved relative to the object).</li>
-	<li>m='zx', t=[-0.1; -0.2]: keeping the object fixed in space, rotate the frame of reference around 
-  the <b>z</b> axis and then rotate it around the new position of the <b>x</b> 
-  	axis.</li>
-</ol>
+any of the routines without any output argument; a rotated cube will be plotted 
+in 3D.</p>
 <table border="0" cellpadding="6" cellspacing="0" width="100%">
 <tr>
 <td valign="top" width="50"><b>Code</b></td>
@@ -100,7 +121,7 @@ v</b>.</td>
 <tr>
 <td valign="top" width="50">qr</td>
 <td valign="top" width="70"><b>q</b><sub>4</sub></td>
-<td valign="top" width="120"><a href="mdoc/v_mfiles/v_roteu2qr.html">eu</a>,
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotax2qr.html">ax</a>, <a href="mdoc/v_mfiles/v_roteu2qr.html">eu</a>,
 <a href="mdoc/v_mfiles/v_rotmr2qr.html">mr</a>,
 <a href="mdoc/v_mfiles/v_rotqc2qr.html">qc</a>, <a href="mdoc/v_mfiles/v_rotro2qr.html">ro</a></td>
 <td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqr2ax.html">ax</a>,
