@@ -1,16 +1,16 @@
-function [y,fs,bits]=v_wavread(fn,n)
+function [y,fs,bits]=wavread(fn,n)
 %WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)
-% v_wavread supports multichannel data, with up to 32 bits per sample, and supports reading 24- and 32-bit .wav files.
+% wavread supports multichannel data, with up to 32 bits per sample, and supports reading 24- and 32-bit .wav files.
 %
 % Usage:
-% y = v_wavread('filename')               loads a WAVE file specified by the string filename, returning
+% y = wavread('filename')               loads a WAVE file specified by the string filename, returning
 %                                       the sampled data in y. The .wav extension is appended if no
 %                                       extension is given. Amplitude values are in the range [-1,+1].
-% [y,Fs,bits] = v_wavread('filename')     returns the sample rate (Fs) in Hertz and the number of bits
+% [y,Fs,bits] = wavread('filename')     returns the sample rate (Fs) in Hertz and the number of bits
 %                                       per sample (bits) used to encode the data in the file.
-% [...] = v_wavread('filename',N)         returns only the first N samples from each channel in the file.
-% [...] = v_wavread('filename',[N1 N2])   returns only samples N1 through N2 from each channel in the file.
-% siz = v_wavread('filename','size')      returns the size of the audio data contained in the file in place
+% [...] = wavread('filename',N)         returns only the first N samples from each channel in the file.
+% [...] = wavread('filename',[N1 N2])   returns only samples N1 through N2 from each channel in the file.
+% siz = wavread('filename','size')      returns the size of the audio data contained in the file in place
 %                                       of the actual audio data, returning the vector siz = [samples channels].
 
 %	   Copyright (C) Mike Brookes 2018

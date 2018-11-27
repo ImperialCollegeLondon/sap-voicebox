@@ -1,17 +1,17 @@
-function v_wavwrite(y,fs,n,fn)
+function wavwrite(y,fs,n,fn)
 %WAVREAD  Legacy MATLAB function to write .WAV file (Y,Fs,N,FILENAME)
-% v_wavwrite writes data to 8-, 16-, 24-, and 32-bit .wav files.
+% wavwrite writes data to 8-, 16-, 24-, and 32-bit .wav files.
 %
 % Usage:
-% v_wavwrite(y,'filename')        writes the data stored in the variable y to a WAVE file called filename.
+% wavwrite(y,'filename')        writes the data stored in the variable y to a WAVE file called filename.
 %                               The data has a sample rate of 8000 Hz and is assumed to be 16-bit.
 %                               Each column of the data represents a separate channel.
 %                               Therefore, stereo data should be specified as a matrix with two columns.
 %                               Amplitude values outside the range [-1,+1] are clipped prior to writing.
-% v_wavwrite(y,Fs,'filename')     writes the data stored in the variable y to a WAVE file called filename.
+% wavwrite(y,Fs,'filename')     writes the data stored in the variable y to a WAVE file called filename.
 %                               The data has a sample rate of Fs Hz and is assumed to be 16-bit.
 %                               Amplitude values outside the range [-1,+1] are clipped prior to writing.
-% v_wavwrite(y,Fs,N,'filename')   writes the data stored in the variable y to a WAVE file called filename.
+% wavwrite(y,Fs,N,'filename')   writes the data stored in the variable y to a WAVE file called filename.
 %                               The data has a sample rate of Fs Hz and is N-bit, where N is 8, 16, 24, or 32.
 %                               For N < 32, amplitude values outside the range [-1,+1] are clipped.
 % Note:    8-, 16-, and 24-bit files are type 1 integer pulse code modulation (PCM). 32-bit files are written as type 3 normalized floating point.
