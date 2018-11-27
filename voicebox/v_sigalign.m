@@ -1,5 +1,5 @@
 function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)
-%SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)
+%V_SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)
 % Inputs:
 %            m  mode
 %                 u = unity gain

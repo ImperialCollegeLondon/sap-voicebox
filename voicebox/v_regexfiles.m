@@ -1,5 +1,5 @@
 function tok=v_regexfiles(regex,root,m)
-%REGEXFILES recursively searches for files matching a pattern tok=(regex,root)
+%V_REGEXFILES recursively searches for files matching a pattern tok=(regex,root)
 %
 % Usage:  (1) v_regexfiles('\.m$')      % find all files *.m in current folder tree
 %

@@ -1,5 +1,5 @@
 function [y,s]=v_gammalns(x)
-% GAMMALNS Log of Gamma(x) for positive or negative real x [y,s]=(x)
+%V_GAMMALNS Log of Gamma(x) for positive or negative real x [y,s]=(x)
 %
 %  Inputs: x      real matrix of input values
 %

@@ -1,5 +1,5 @@
 function s=v_besselratioi(r,v,p)
-%BESSELRATIOI calculate the inverse Bessel function ratio
+%V_BESSELRATIOI calculate the inverse Bessel function ratio
 %  Inputs:
 %      r    value of the Bessel function ratio besseli(v+1,s)./besseli(v,s) (scalar or matrix)
 %      v    denominator Bessel function order [0] [for now v=0 always]

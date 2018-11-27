@@ -1,5 +1,5 @@
 function [c,cr] = v_frq2cent(frq)
-%FRQ2ERB  Convert Hertz to Cents frequency scale [C,CR]=(FRQ)
+%V_FRQ2ERB  Convert Hertz to Cents frequency scale [C,CR]=(FRQ)
 %	[c,cr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)
 %	to the corresponding values on the logarithmic cents scale.
 %   100 cents corresponds to one semitone and 440Hz corresponds to 5700

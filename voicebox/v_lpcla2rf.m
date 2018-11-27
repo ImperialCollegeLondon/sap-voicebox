@@ -1,5 +1,5 @@
 function rf=v_lpcla2rf(la)
-%LPCLA2RF Convert log areas to reflection coefficients RF=(LA)
+%V_LPCLA2RF Convert log areas to reflection coefficients RF=(LA)
 
 
 %      Copyright (C) Mike Brookes 1997

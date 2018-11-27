@@ -1,5 +1,5 @@
 function x=v_pcma2lin(p,m,s)
-%PCMU2LIN Convert A-law PCM to linear X=(P,M,S)
+%V_PCMU2LIN Convert A-law PCM to linear X=(P,M,S)
 %	lin = v_pcma2lin(pcma,m,s) where pcma contains a vector or matrix
 %	of A-law values in the range 0 to 255.
 %	No checking is performed to see that numbers are in this range.

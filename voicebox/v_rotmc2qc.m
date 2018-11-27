@@ -1,5 +1,5 @@
 function qc=v_rotmc2qc(mc)
-%ROTMC2QC converts a matrix of complex quaternion matrices to a matrix of complex quaternion vectors
+%V_ROTMC2QC converts a matrix of complex quaternion matrices to a matrix of complex quaternion vectors
 % Inputs:
 %
 %     MC(2m,2n,...)   mxn matrix of real quaternion matrices (each 2x2)

@@ -1,5 +1,5 @@
 function [u,v,p,r] = v_maxgauss(m,c,d)
-%MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)
+%V_MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)
 %
 % Inputs:
 %       m(N,1) is the mean vector of length N
@@ -21,11 +21,11 @@ function [u,v,p,r] = v_maxgauss(m,c,d)
 %
 %
 % Refs: [1] C. E. Clark. The greatest of a finite set of random variables.
-%           Operations Research, 9(2):145–162, March 1961.
+%           Operations Research, 9(2):145ï¿½162, March 1961.
 %       [2] D. Sinha, H. Zhou, and N. V. Shenoy.
 %           Advances in Computation of the Maximum of a Set of Gaussian Random Variables.
 %           IEEE Trans Computer-Aided Design of Integrated Circuits and Systems,
-%           26(8):1522–1533, Aug. 2007. doi: 10.1109/TCAD.2007.893544.
+%           26(8):1522ï¿½1533, Aug. 2007. doi: 10.1109/TCAD.2007.893544.
 
 %      Copyright (C) Mike Brookes 1997
 %      Version: $Id: v_maxgauss.m 10865 2018-09-21 17:22:45Z dmb $

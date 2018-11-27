@@ -1,5 +1,5 @@
 function rf=v_lpcao2rf(ao)
-%LPCAO2RF LPC: Convert area ratios to reflection coefficients RF=(AO)
+%V_LPCAO2RF LPC: Convert area ratios to reflection coefficients RF=(AO)
 
 
 

@@ -1,5 +1,5 @@
 function [c,r,k]=v_pdfmoments(t,m,b,a)
-%PDFMOMENTS convert between central moments, raw moments and cumulants [C,R,K]=(T,M,B,A)
+%V_PDFMOMENTS convert between central moments, raw moments and cumulants [C,R,K]=(T,M,B,A)
 %  Inputs: t  text string containing:
 %               'm','r','k'  Imput is central moments, raw moments, cumulants [default 'm']
 %               'M','R','K'  Ouptut c is central moments, raw moments, cumulants [default 'M']

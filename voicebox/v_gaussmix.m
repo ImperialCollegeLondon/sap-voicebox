@@ -1,5 +1,5 @@
 function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
-%GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)
+%V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)
 %
 % Usage:
 %    (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances

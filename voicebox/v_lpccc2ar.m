@@ -1,5 +1,5 @@
 function ar=v_lpccc2ar(cc)
-%LPCCC2AR Convert complex cepstrum to ar coefficients AR=(CC)
+%V_LPCCC2AR Convert complex cepstrum to ar coefficients AR=(CC)
 %
 % MATLAB5 version
 

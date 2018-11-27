@@ -1,5 +1,5 @@
 function [b,d]=v_prob2berk(p)
-%PROB2BERK convert probability to Berksons
+%V_PROB2BERK convert probability to Berksons
 %
 %  Inputs:  P(M,N)       matrix containing probability values
 %

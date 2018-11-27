@@ -1,5 +1,5 @@
 function q=v_importsii(f,m)
-%IMPORTSII calculates the SII importance function per Hz or per Bark Q=(F,M)
+%V_IMPORTSII calculates the SII importance function per Hz or per Bark Q=(F,M)
 % Inputs:
 %        f(n)   Frequencies to which to calculate importance in Hz
 %               or Bark according to 'b' flag.
@@ -25,7 +25,7 @@ function q=v_importsii(f,m)
 %  [1]  Methods for the calculation of the speech intelligibility index.
 %       ANSI Standard S3.5-1997 (R2007), American National Standards Institute, 1997.
 %  [2]  C. V. Pavlovic. Derivation of primary parameters and procedures for use in
-%       speech intelligibility predictions. J. Acoust Soc Amer, 82: 413–422, 1987.
+%       speech intelligibility predictions. J. Acoust Soc Amer, 82: 413ï¿½422, 1987.
 
 %	   Copyright (C) Mike Brookes 2006
 %      Version: $Id: v_importsii.m 10865 2018-09-21 17:22:45Z dmb $

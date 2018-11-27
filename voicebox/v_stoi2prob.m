@@ -1,5 +1,5 @@
 function p=v_stoi2prob(s,m)
-%STOI2PROB convert STOI to probability
+%V_STOI2PROB convert STOI to probability
 %
 %  Inputs:  S(M,N)       matrix containing STOI values
 %           M            mapping: 'i' IEEE sentences [default]
@@ -12,8 +12,8 @@ function p=v_stoi2prob(s,m)
 % this functions implements two mappings given in [1].
 %
 % [1]	C. H. Taal, R. C. Hendriks, R. Heusdens, and J. Jensen.
-%       An algorithm for intelligibility prediction of time–frequency weighted noisy speech.
-%       IEEE Trans. Audio, Speech, Language Processing, 19 (7): 2125–2136, 2011.
+%       An algorithm for intelligibility prediction of timeï¿½frequency weighted noisy speech.
+%       IEEE Trans. Audio, Speech, Language Processing, 19 (7): 2125ï¿½2136, 2011.
 %       doi: 10.1109/TASL.2011.2114881.
 
 %      Copyright (C) Mike Brookes 2014

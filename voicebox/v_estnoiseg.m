@@ -1,5 +1,5 @@
 function [x,zo]=v_estnoiseg(yf,tz,pp)
-%ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)
+%V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)
 %
 % Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
 %           ovf=2;                  % overlap factor

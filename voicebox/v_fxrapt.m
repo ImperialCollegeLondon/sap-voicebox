@@ -1,5 +1,5 @@
 function [fx,tt]=v_fxrapt(s,fs,mode,q)
-%FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)
+%V_FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)
 %
 % Input:   s(ns)      Speech signal
 %          fs         Sample frequency (Hz)

@@ -1,5 +1,5 @@
 function v_writehtk(file,d,fp,tc)
-%WRITEHTK write data in HTK format []=(FILE,D,FP,TC)
+%V_WRITEHTK write data in HTK format []=(FILE,D,FP,TC)
 %
 % Inputs:
 %    FILE = name of file to write (no default extension)

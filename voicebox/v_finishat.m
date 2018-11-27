@@ -1,5 +1,5 @@
 function [eta,etaf]=v_finishat(frac,tol,fmt)
-%FINISHAT print estimated finish time of a long computation (FRAC,TOL,FMT)
+%V_FINISHAT print estimated finish time of a long computation (FRAC,TOL,FMT)
 % Usage:  (1)  for i=1:many
 %                  v_finishat((i-1)/many);  % initializes on first pass when i=1
 %                  ... computation ...

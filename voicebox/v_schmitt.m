@@ -1,5 +1,5 @@
 function [y,t]=v_schmitt(x,thresh,minwid)
-% Pass input signal X through a v_schmitt trigger
+%V_SCHMITT Pass input signal X through a v_schmitt trigger
 % SCHMITT(X,[LOW HIGH]) gives low and high thresholds. LOW and HIGH can be
 % scalars or can be vectors specifiying different thresholds for each X element.
 %

@@ -1,5 +1,5 @@
 function [d,fp,dt,tc,t]=v_readhtk(file)
-%READHTK  read an HTK parameter file [D,FP,DT,TC,T]=(FILE)
+%V_READHTK  read an HTK parameter file [D,FP,DT,TC,T]=(FILE)
 %
 % Input:
 %    FILE = name of HTX file

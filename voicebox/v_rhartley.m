@@ -1,5 +1,5 @@
 function y=v_rhartley(x,n)
-%RHARTLEY Calculate the Hartley transform of real data Y=(X,N)
+%V_RHARTLEY Calculate the Hartley transform of real data Y=(X,N)
 % Data is truncated/padded to length N if specified.
 % The inverse transformation is x=hartley(y,n)/n
 

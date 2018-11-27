@@ -1,4 +1,4 @@
-%M2HTMLPWD - create html documentation of files in current directory
+%V_M2HTMLPWD - create html documentation of files in current directory
 %
 % M2HTML must be on the matlab path
 % available from http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=4039&objectType=FILE

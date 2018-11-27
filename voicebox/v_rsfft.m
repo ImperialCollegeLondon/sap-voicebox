@@ -1,5 +1,5 @@
 function x=v_rsfft(y,n)
-%RSFFT    fft of a real symmetric spectrum X=(Y,N)
+%V_RSFFT    fft of a real symmetric spectrum X=(Y,N)
 % Y is the "first half" of a symmetric real input signal and X is the
 % "first half" of the symmetric real fourier transform.
 % If the length, N, of the full signal is even, then the "first half"

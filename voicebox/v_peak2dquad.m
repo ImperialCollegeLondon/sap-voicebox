@@ -1,5 +1,5 @@
 function [v,xy,t,m]=v_peak2dquad(z)
-%PEAK2DQUAD find quadratically-interpolated peak in a 2D array
+%V_PEAK2DQUAD find quadratically-interpolated peak in a 2D array
 %
 % Note: This routine has been superceeded by v_quadpeak
 %

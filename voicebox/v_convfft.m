@@ -1,5 +1,5 @@
 function z=v_convfft(x,h,d,m,h0,x1,x2)
-%CONFFT 1-D convolution or correlation using FFT
+%V_CONFFT 1-D convolution or correlation using FFT
 %
 %  Usage: (1) z=v_convfft(x,h,d1,'',1,1,size(x,d)+length(h)-1);            % equivalent to conv(x,h)
 %

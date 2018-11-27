@@ -1,5 +1,5 @@
 function [cc,c0]=v_lpcpf2cc(pf,np,f)
-%LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)
+%V_LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)
 %
 %  Inputs: pf(nf,n)    Power spectrum, uniformly spaced DC to Nyquist
 %          np          Number of cepstral coefficients to calculate [n-1]

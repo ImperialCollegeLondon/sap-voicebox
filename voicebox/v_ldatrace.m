@@ -1,5 +1,5 @@
 function [a,f,B,W]=v_ldatrace(b,w,n,c)
-%LDATRACE Calculates an LDA transform to maximize trace discriminant [a,f,B,W]=(b,w,n,c)
+%V_LDATRACE Calculates an LDA transform to maximize trace discriminant [a,f,B,W]=(b,w,n,c)
 % If a feature vector X can come from one of several class and W and B are respectively
 % the within-class and between-class covariance matrices, then the generalized Fisher discriminant
 % F=trace(W\B) is a measure of how well the feature vector discriminates between the classes.

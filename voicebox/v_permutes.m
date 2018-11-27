@@ -1,5 +1,5 @@
 function [p,s]=v_permutes(n)
-%PERMUTES All N! permutations of 1:N + signatures [P,S]=(N)
+%V_PERMUTES All N! permutations of 1:N + signatures [P,S]=(N)
 % The output P is a matrix of size (N!,N) where each row
 % contains a permutation of the numbers 1:N. The rows are in 
 % lexically sorted order.

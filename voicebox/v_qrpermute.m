@@ -1,5 +1,5 @@
 function y=v_qrpermute(x,p)
-%QRPERMUTE transpose or permute a quaternion array y=[x,p]
+%V_QRPERMUTE transpose or permute a quaternion array y=[x,p]
 %
 % Inputs:   x(4m,...)  Real quaternions array
 %           p          new order of dimensions [default [2 1 ...]

@@ -1,5 +1,5 @@
 function [f,t,w]=v_enframe(x,win,hop,m,fs)
-%ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)
+%V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)
 %
 % Usage:  (1) f=v_enframe(x,n)                          % split into frames of length n
 %         (2) f=v_enframe(x,hamming(n,'periodic'),n/4)  % use a 75% overlapped Hamming window of length n

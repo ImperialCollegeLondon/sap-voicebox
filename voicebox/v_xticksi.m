@@ -1,5 +1,5 @@
 function s=v_xticksi(ah)
-%XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)
+%V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)
 %
 %  Inputs:  AH       axis handle [default: current axes]
 %

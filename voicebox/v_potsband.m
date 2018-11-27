@@ -1,5 +1,5 @@
 function [b,a]=v_potsband(fs)
-%POTSBAND Design filter for 300-3400 telephone bandwidth [B,A]=(FS)
+%V_POTSBAND Design filter for 300-3400 telephone bandwidth [B,A]=(FS)
 %
 %Input: FS=sample frequency in Hz
 %

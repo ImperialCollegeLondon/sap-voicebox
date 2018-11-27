@@ -1,5 +1,5 @@
 function d=v_meansqtf(b,a)
-%AVEPSPEC calculates the mean square transfer function for a filter D=(B,A)
+%V_AVEPSPEC calculates the mean square transfer function for a filter D=(B,A)
 %
 % Inputs: B,A         Numerator and denominator filter coefficients.
 %

@@ -1,5 +1,5 @@
 function [seg,glo]=v_snrseg(s,r,fs,m,tf)
-%SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)
+%V_SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)
 %
 %Usage: (1) seg=v_snrseg(s,r,fs);                  % s & r are noisy and clean signal
 %       (2) seg=v_snrseg(s,r,fs,'wz');             % no VAD or inerpolation used ['Vq' is default]

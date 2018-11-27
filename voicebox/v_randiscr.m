@@ -1,5 +1,5 @@
 function x=v_randiscr(p,n,a)
-%RANDISCR Generate discrete random numbers with specified probabiities [X]=(P,N,A)
+%V_RANDISCR Generate discrete random numbers with specified probabiities [X]=(P,N,A)
 %
 % Usage: (1) v_randiscr([],10)        % generate 10 uniform random binary values
 %        (2) v_randiscr(2:6,10)       % generate 10 random numbers in the range 1:5

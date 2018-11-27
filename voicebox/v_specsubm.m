@@ -1,5 +1,5 @@
 function [ss,po]=v_specsubm(s,fs,p)
-%SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead
+%V_SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead
 %
 % implementation of spectral subtraction algorithm by R Martin (rather slow)
 % algorithm parameters: t* in seconds, f* in Hz, k* dimensionless

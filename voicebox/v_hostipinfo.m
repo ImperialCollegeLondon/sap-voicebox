@@ -1,5 +1,5 @@
 function [ipinfo,tt]=v_hostipinfo(m,t)
-%HOSTIPINFO get host name and internet connection information
+%V_HOSTIPINFO get host name and internet connection information
 %  Usage:    hostname   = v_hostipinfo;        % computer name
 %            ip_address = v_hostipinfo('i');   % IP address
 %

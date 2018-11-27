@@ -1,5 +1,5 @@
 function s=v_xyzticksi(ax,ah)
-%XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)
+%V_XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)
 %
 % This routine is not intended to be called directly. See XTICKSI and YTICKSI.
 
@@ -42,7 +42,7 @@ tryglobal=nargout>0;
 digith=1;    % height of a digit in font units
 digitw=0.5;    % width of a digit in font units
 
-prefix={'y','z','a','f','p','n','µ','m','','k','M','G','T','P','E','Z','Y'};
+prefix={'y','z','a','f','p','n','ï¿½','m','','k','M','G','T','P','E','Z','Y'};
 marg=[2 0.5 0.25 0.25];     % gap between labels in font units
 ntreq=[3 2 2 1];        % minimum number of labelled ticks required as a function of IPAN
 % grid template: each pair is [#steps final-value]. Start=10, end=100

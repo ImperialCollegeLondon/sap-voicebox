@@ -1,5 +1,5 @@
 function v_tilefigs(pos)
-%TILEFIGS tile current figures
+%V_TILEFIGS tile current figures
 % Inputs: pos(1,4) Virtual screen: [xmin ymin width height] either in
 %                  pixels >=1 or normalized in the range 0 to 1
 %

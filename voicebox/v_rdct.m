@@ -1,5 +1,5 @@
 function y=v_rdct(x,n,a,b)
-%RDCT     Discrete cosine transform of real data Y=(X,N,A,B)
+%V_RDCT     Discrete cosine transform of real data Y=(X,N,A,B)
 % Data is truncated/padded to length N.
 %
 % This routine is equivalent to multiplying by the matrix

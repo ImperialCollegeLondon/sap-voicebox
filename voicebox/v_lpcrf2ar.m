@@ -1,5 +1,5 @@
 function [ar,arp,aru,g]=v_lpcrf2ar(rf)
-%LPCRF2AR Convert reflection coefs to autoregressive coefs [AR,ARP,ARU,G]=(RF)
+%V_LPCRF2AR Convert reflection coefs to autoregressive coefs [AR,ARP,ARU,G]=(RF)
 %
 % Input:  RF(:,p+1) gives reflection coefficients of one or more p-section lossless tubes 
 % Ouputs: G is the gain of the all-pole AR filter

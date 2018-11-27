@@ -1,5 +1,5 @@
 function [vs,zo]=v_vadsohn(si,fsz,m,pp)
-%VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)
+%V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)
 %
 % Inputs:
 %   si      input speech signal
@@ -70,7 +70,7 @@ function [vs,zo]=v_vadsohn(si,fsz,m,pp)
 % Refs:
 %    [1] J. Sohn, N. S. Kim, and W. Sung.
 %        A statistical model-based voice activity detection.
-%        IEEE Signal Processing Lett., 6 (1): 1–3, 1999. doi: 10.1109/97.736233.
+%        IEEE Signal Processing Lett., 6 (1): 1ï¿½3, 1999. doi: 10.1109/97.736233.
 %    [2] Ephraim, Y. & Malah, D.
 %        Speech enhancement using a minimum-mean square error short-time spectral amplitude estimator
 %        IEEE Trans Acoustics Speech and Signal Processing, 32(6):1109-1121, Dec 1984

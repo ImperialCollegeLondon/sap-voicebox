@@ -1,5 +1,5 @@
 function w=v_polygonwind(p,x)
-%POLYGONWIND Test if points are inside a polygon
+%V_POLYGONWIND Test if points are inside a polygon
 % Inputs:
 %    P(n,2)  polygon vertices
 %    X(m,2)  points to test

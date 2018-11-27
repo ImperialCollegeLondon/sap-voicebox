@@ -1,5 +1,5 @@
 function n=v_voicebox_update(fn,m)
-% update v_voicebox calls by prefixing with 'v_'
+%V_VOICEBOX_UPDATE update v_voicebox calls by prefixing with 'v_'
 %  Inputs: fn   file or folder name to update [default: current folder]
 %          m    'r' to search recursively through the folder tree
 %               's' silent mode: do not print out statistics

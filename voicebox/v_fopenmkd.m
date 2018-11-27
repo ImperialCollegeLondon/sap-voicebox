@@ -1,5 +1,5 @@
 function [fid,mes]=v_fopenmkd(fn,pe,mf,en)
-%FOPENMKD is the same as FOPEN but creates any missing directories [fid,mes]=(fn,pe,mf,en)
+%V_FOPENMKD is the same as FOPEN but creates any missing directories [fid,mes]=(fn,pe,mf,en)
 %
 % This procedure is functionally identical to fopen() except that
 % it will create the requested folder if it doesn't exist

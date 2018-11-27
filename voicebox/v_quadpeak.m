@@ -1,5 +1,5 @@
 function [v,x,t,m,ze]=v_quadpeak(z)
-%PEAK2DQUAD find quadratically-interpolated peak in a N-D array
+%V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array
 %
 %  Inputs:  Z(m,n,...)   is the input array (ignoring trailing singleton dimensions)
 %                        Note: a row vector will have 2 dimensions

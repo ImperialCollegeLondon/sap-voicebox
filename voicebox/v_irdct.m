@@ -1,5 +1,5 @@
 function x=v_irdct(y,n,a,b)
-%IRDCT    Inverse discrete cosine transform of real data X=(Y,N) 
+%V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N) 
 % Data is truncated/padded to length N.
 %
 % This routine is equivalent to multiplying by the matrix

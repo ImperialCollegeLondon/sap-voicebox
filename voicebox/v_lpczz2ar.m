@@ -1,5 +1,5 @@
 function ar=v_lpczz2ar(zz)
-%LPCZZ2AR Convert z-place poles to ar coefficients AR=(ZZ)
+%V_LPCZZ2AR Convert z-place poles to ar coefficients AR=(ZZ)
 % The complex poles must occur in complex conjugate pairs
 % but the order is unimportant.
 

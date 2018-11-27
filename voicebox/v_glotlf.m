@@ -1,5 +1,5 @@
 function [u,q]=v_glotlf(d,t,p)
-%GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)
+%V_GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)
 %  Usage: (1) f0=100;                % frequency in Hz
 %             t=linspace(0,0.1,100); % time axis
 %             u=v_glotlf(0,t*f0)       % glottal waveform using default parameters
@@ -37,7 +37,7 @@ function [u,q]=v_glotlf(d,t,p)
 % Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]
 %
 % References
-% [1]	G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1–13, 1985.
+% [1]	G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1ï¿½13, 1985.
 
 %      Copyright (C) Mike Brookes 1998-2017
 %      Version: $Id: v_glotlf.m 10865 2018-09-21 17:22:45Z dmb $
@@ -153,7 +153,7 @@ if ~nargout
         plot([te te+q.ta te+q.ta],[-q.Ee 0 ylim(2)],':k');
         v_texthvc(te,0,' te','rtk');
         v_texthvc(te+q.ta,0,' te+ta','lbk');
-        v_texthvc(0,-q.Ee,' –Ee','lbk');
+        v_texthvc(0,-q.Ee,' ï¿½Ee','lbk');
         v_texthvc(0,q.Ei,' Ei','ltk');
     elseif d==2
         plot(xlim,[1;1]*q.Ee/q.ta,':k');

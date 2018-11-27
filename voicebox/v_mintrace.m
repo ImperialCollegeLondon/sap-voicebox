@@ -1,5 +1,5 @@
 function p=v_mintrace(x)
-%MINTRACE find row permutation to minimize the trace p=(x)
+%V_MINTRACE find row permutation to minimize the trace p=(x)
 %Inputs:    x(n,n)  is a square real-valued matrix
 %
 %Outputs:   p(n,1)  is the row permutation that minimizes the trace

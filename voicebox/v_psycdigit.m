@@ -1,5 +1,5 @@
 function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)
-%PSYCDIGIT measures psychometric function using TIDIGITS stimuli
+%V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli
 %
 % Usage:
 %         (1)[m,v]=v_psycdigit([],[],'GMPWrn10',[],[],[],[],[],dfile);

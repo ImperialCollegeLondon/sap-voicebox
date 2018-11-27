@@ -1,5 +1,5 @@
 function rr=v_lpcpf2rr(pf,p)
-%LPCPF2RR convert power spectrum to autocorrelation coefs RR=(PF,P)
+%V_LPCPF2RR convert power spectrum to autocorrelation coefs RR=(PF,P)
 % Note that these will only be accurate if the power spectrum is much longer than p
 
 

@@ -1,5 +1,5 @@
 function ar=v_lpcra2ar(ra,tol)
-%LPCRA2AR Convert inverse filter autocorrelation coefs to AR filter. AR=(RA)
+%V_LPCRA2AR Convert inverse filter autocorrelation coefs to AR filter. AR=(RA)
 %
 % Usage: (1) ar0=poly([0.5 0.2]);  % ar0=[1 -0.7 0.1]
 %            ra0=v_lpcar2ra(ar0);    % ra0=[1.5 -0.77 0.1]
@@ -20,7 +20,7 @@ function ar=v_lpcra2ar(ra,tol)
 %
 % Refs:
 % [1]  G. Wilson. Factorization of the covariance generating function of a pure moving average process.
-%      SIAM Journal on Numerical Analysis, 6 (1): 1–7, 1969.
+%      SIAM Journal on Numerical Analysis, 6 (1): 1ï¿½7, 1969.
 
 %      Copyright (C) Mike Brookes 2015
 %      Version: $Id: v_lpcra2ar.m 10865 2018-09-21 17:22:45Z dmb $

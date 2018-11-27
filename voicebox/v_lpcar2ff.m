@@ -1,5 +1,5 @@
 function [ff,f]=v_lpcar2ff(ar,np)
-%LPCAR2FF LPC: Convert AR coefs to complex spectrum FF=(AR,NP)
+%V_LPCAR2FF LPC: Convert AR coefs to complex spectrum FF=(AR,NP)
 %
 %  Inputs: ar(nf,n)     AR coefficients, one frame per row
 %          np           Size of output spectrum is np+1 [n]

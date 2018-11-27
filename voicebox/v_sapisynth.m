@@ -1,5 +1,5 @@
 function [x,fs,txt] = v_sapisynth(t,m)
-%SAPISYNTH  text-to-speech synthesize of text string or matrix [X,FS,TXT]=(T,M)
+%V_SAPISYNTH  text-to-speech synthesize of text string or matrix [X,FS,TXT]=(T,M)
 %
 %  Usage:         v_sapisynth('Hello world');          % Speak text
 %                 v_sapisynth([1 2+3i; -1i 4],'j');    % speak a matrix using 'j' for sqrt(-1)

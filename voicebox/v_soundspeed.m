@@ -1,5 +1,5 @@
 function [v,d,z]=v_soundspeed(t,p,m,g)
-%SOUNDSPEED gives the speed of sound, density of air and acoustic impedance as a function of temp & pressure [V,D,Z]=(T,P,M,G)
+%V_SOUNDSPEED gives the speed of sound, density of air and acoustic impedance as a function of temp & pressure [V,D,Z]=(T,P,M,G)
 %
 %  Inputs:  T        air temperature in Celsius  [20 deg C]
 %           P        air pressure [1 atm]

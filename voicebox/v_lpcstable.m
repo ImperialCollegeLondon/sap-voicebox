@@ -1,5 +1,5 @@
 function [m,a]=v_lpcstable(ar)
-%LPCSTABLE Test AR coefficients for stability and stabilize if necessary [MA,A]=(AR)
+%V_LPCSTABLE Test AR coefficients for stability and stabilize if necessary [MA,A]=(AR)
 %
 % Usage: (1) [m,ar]=v_lpcstable(ar); % force ar polynolials to be stable
 %

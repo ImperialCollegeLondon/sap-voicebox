@@ -1,5 +1,5 @@
 function [mel,mr] = v_frq2mel(frq)
-%FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
+%V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
 %	[mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)
 %	to the corresponding values on the Mel scale which corresponds
 %	to the perceived pitch of a tone.
@@ -16,7 +16,7 @@ function [mel,mr] = v_frq2mel(frq)
 %     [1] J. Makhoul and L. Cosell. "Lpcw: An lpc vocoder with
 %         linear predictive spectral warping", In Proc IEEE Intl
 %         Conf Acoustics, Speech and Signal Processing, volume 1,
-%         pages 466–469, 1976. doi: 10.1109/ICASSP.1976.1170013.
+%         pages 466ï¿½469, 1976. doi: 10.1109/ICASSP.1976.1170013.
 %	  [2] S. S. Stevens & J. Volkman "The relation of pitch to
 %		  frequency", American J of Psychology, V 53, p329 1940
 %	  [3] C. G. M. Fant, "Acoustic description & classification

@@ -1,5 +1,5 @@
 function v_figbolden(pos,pv,m)
-%FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)
+%V_FIGBOLDEN embolden, resize and recolour the current figure =(POS,PV,M)
 % 
 % Inputs: pos = [xmin ymin width height] gives the lower left corner position and the window size in pixels
 %               [width height] leaves the lower left corner alone

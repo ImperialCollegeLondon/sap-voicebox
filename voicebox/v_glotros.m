@@ -1,5 +1,5 @@
 function u=v_glotros(d,t,p)
-%GLOTROS  Rosenberg glottal model U=(D,T,P)
+%V_GLOTROS  Rosenberg glottal model U=(D,T,P)
 % d is derivative of flow waveform
 % t is in fractions of a cycle
 % p has parameters

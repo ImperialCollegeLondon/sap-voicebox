@@ -1,5 +1,5 @@
 function x=v_irfft(y,n,d)
-%IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)
+%V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)
 %
 % Inputs:  Y(M)   The first half of a complex spectrum
 %          N      The number of output points to generate (default: 2M-2)

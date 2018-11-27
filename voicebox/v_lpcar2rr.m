@@ -1,5 +1,5 @@
 function rr=v_lpcar2rr(ar,p)
-%LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)
+%V_LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)
 % The routine calculated the autocorrelation coefficients of the signal
 % that results from feeding unit-variance, zero-mean noise into the all-pole filter
 % Input:   ar(:,n+1)  Autoregressive coefficients including 0'th coefficient

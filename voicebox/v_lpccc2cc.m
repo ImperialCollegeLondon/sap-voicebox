@@ -1,5 +1,5 @@
 function c=v_lpccc2cc(cc,np)
-%LPCCC2PF Extrapolate complex cepstrum C=(CC)
+%V_LPCCC2PF Extrapolate complex cepstrum C=(CC)
 
 %      Copyright (C) Mike Brookes 1998
 %      Version: $Id: v_lpccc2cc.m 10865 2018-09-21 17:22:45Z dmb $

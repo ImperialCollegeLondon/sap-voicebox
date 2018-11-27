@@ -1,5 +1,5 @@
 function [u,v,t]=v_rotro2pl(r)
-%ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r
+%V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r
 % Inputs:
 %
 %     R(n,n)   Rotation matrix

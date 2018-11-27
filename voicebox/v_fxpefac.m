@@ -1,5 +1,5 @@
 function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)
-%FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)
+%V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)
 %
 % Input:   s(ns)      Speech signal
 %          fs         Sample frequency (Hz)

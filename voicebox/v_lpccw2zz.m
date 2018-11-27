@@ -1,5 +1,5 @@
 function zz=v_lpccw2zz(cw)
-%LPCPZ2ZZ LPC: Power spectrum roots to LPC poles ZZ=(CW)
+%V_LPCPZ2ZZ LPC: Power spectrum roots to LPC poles ZZ=(CW)
 % pz are the roots of the power spectrum polynomial pp(cos(w))
 
 %      Copyright (C) Mike Brookes 1998

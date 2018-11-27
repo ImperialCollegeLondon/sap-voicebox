@@ -1,5 +1,5 @@
 function [a,t]=v_rotqr2ax(q)
-%ROTQR2AX converts a real quaternion to the corresponding rotation axis and angle
+%V_ROTQR2AX converts a real quaternion to the corresponding rotation axis and angle
 % Inputs: 
 %
 %     Q(4,1)   real-valued quaternion (with magnitude = 1)

@@ -1,5 +1,5 @@
 function a=v_polygonarea(p)
-%POLYGONAREA Calculate the area of a polygon
+%V_POLYGONAREA Calculate the area of a polygon
 %
 % Inputs:
 %    P(n,2) is the polygon vertices

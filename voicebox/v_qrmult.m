@@ -1,5 +1,5 @@
 function q=v_qrmult(q1,q2)
-%QRMULT multiplies together two real quaternions matrices q=[q1,q2]
+%V_QRMULT multiplies together two real quaternions matrices q=[q1,q2]
 %
 % Inputs:   q1(4m,n)  Two real quaternions arrays. Either array can
 %           q2(4n,r)  also be a scalar quaternion.

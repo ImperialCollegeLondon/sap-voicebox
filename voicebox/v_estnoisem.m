@@ -1,5 +1,5 @@
 function [x,zo,xs]=v_estnoisem(yf,tz,pp)
-%ESTNOISEM - estimate noise spectrum using minimum statistics
+%V_ESTNOISEM - estimate noise spectrum using minimum statistics
 %
 % Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
 %           ovf=2;                  % overlap factor

@@ -1,5 +1,5 @@
 function [v,y,w]=v_nearnonz(x,d)
-%NEARNONZ replace each zero element with the nearest non-zero element [V,Y,W]=v_nearnonz(X,D)
+%V_NEARNONZ replace each zero element with the nearest non-zero element [V,Y,W]=v_nearnonz(X,D)
 %
 %  Inputs:  x         input vector, matrix or larger array
 %           d         dimension to apply filter along [default 1st non-singleton]

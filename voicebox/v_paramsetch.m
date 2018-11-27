@@ -1,5 +1,5 @@
 function p=v_paramsetch(d,q,m,c,t)
-%PARAMSETCH update and check parameter values p=(d,q,m,c,t)
+%V_PARAMSETCH update and check parameter values p=(d,q,m,c,t)
 % Usage: (1) function x=func(y,q)
 %            d=struct('a',1,'b',2,'c',3); % default parameters
 %            p=v_paramsetch(d,q); % update selected parameters

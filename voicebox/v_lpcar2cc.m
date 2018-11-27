@@ -1,5 +1,5 @@
 function [cc,c0]=v_lpcar2cc(ar,np)
-%LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)
+%V_LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)
 %
 %  Inputs: ar(nf,n+1)   AR coefficients, one frame per row
 %          np           Number of cepstral coefficients to calculate [n]

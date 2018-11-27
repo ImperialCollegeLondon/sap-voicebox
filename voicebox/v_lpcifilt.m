@@ -1,5 +1,5 @@
 function u=v_lpcifilt(s,ar,t,dc,fade)
-%LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)
+%V_LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)
 %
 % Inputs:	S             speech signal
 %				AR(nf,p+1)    array of ar coefficients; one row per frame

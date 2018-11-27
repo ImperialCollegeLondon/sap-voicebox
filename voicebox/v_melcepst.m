@@ -1,5 +1,5 @@
 function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)
-%MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)
+%V_MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)
 %
 %
 % Simple use: (1) c=v_melcepst(s,fs)          % calculate mel cepstrum with 12 coefs, 256 sample frames

@@ -1,5 +1,5 @@
 function [r,p,q]=v_rotation(x,y,z)
-%ROTATION Encode and decode rotation matrices
+%V_ROTATION Encode and decode rotation matrices
 % (1) r=v_rotation(x,y,angle) creates a matrix that rotates vectors in the
 %     plane containing x and y. A small positive angle moves x towards y.
 % (2) [x,y,ang]=v_rotation(r) is the inverse of (1) above. The input argument r

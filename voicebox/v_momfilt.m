@@ -1,5 +1,5 @@
 function [y,mm]=v_momfilt(x,r,w,m)
-%MOMFILT calculates moments of a signal using a sliding window Y=(X,R,W,M)
+%V_MOMFILT calculates moments of a signal using a sliding window Y=(X,R,W,M)
 %
 % Inputs: x    is the input signal
 %         r    is a list of moments to calculate

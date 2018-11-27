@@ -1,5 +1,5 @@
 function ar=v_lpcls2ar(ls)
-%LPCLS2AR convert line spectrum pair frequencies to ar polynomial AR=(LS)
+%V_LPCLS2AR convert line spectrum pair frequencies to ar polynomial AR=(LS)
 % input vector elements should be in the range 0 to 0.5
 
 

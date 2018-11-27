@@ -1,5 +1,5 @@
 function [db,f]=v_lpccc2db(cc,np,nc,c0)
-%LPCCC2DB Convert complex cepstrum to dB power spectrum DB=(CC,NP,NC)
+%V_LPCCC2DB Convert complex cepstrum to dB power spectrum DB=(CC,NP,NC)
 %
 %  Inputs: cc(nf,n)     Complex ceptral coefficients excluding c(0), one frame per row
 %          np           Size of output spectrum is np+1 [n]

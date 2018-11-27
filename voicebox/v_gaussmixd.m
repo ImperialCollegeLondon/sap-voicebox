@@ -1,5 +1,5 @@
 function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)
-%GAUSSMIXD marginal and conditional Gaussian mixture densities
+%V_GAUSSMIXD marginal and conditional Gaussian mixture densities
 %
 % Usage: (1) [mz,vz,wz]=v_gaussmixd(y,m,v,w); % If {m,v,w} has dimension p, then y specifies
 %                                           % elements 1:q and {mz,vz,wz} is a GMM for elements q+1:p

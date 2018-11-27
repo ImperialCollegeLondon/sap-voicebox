@@ -1,5 +1,5 @@
 function pf=v_lpcff2pf(ff)
-%LPCFF2PF Convert complex spectrum to power spectrum PF=(FF)
+%V_LPCFF2PF Convert complex spectrum to power spectrum PF=(FF)
 
 
 %      Copyright (C) Mike Brookes 1997

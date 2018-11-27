@@ -1,5 +1,5 @@
 function rf=v_lpcaa2rf(aa)
-%LPCAA2RF LPC: Convert vocal tract areas to reflection coefficients RF=(AA)
+%V_LPCAA2RF LPC: Convert vocal tract areas to reflection coefficients RF=(AA)
 
 %      Copyright (C) Mike Brookes 1998
 %      Version: $Id: v_lpcaa2rf.m 10865 2018-09-21 17:22:45Z dmb $

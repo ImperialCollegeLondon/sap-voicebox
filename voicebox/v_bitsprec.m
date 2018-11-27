@@ -1,5 +1,5 @@
 function y=v_bitsprec(x,n,mode)
-%BITSPREC round values to a specified fixed or floating precision (X,N,MODE)
+%V_BITSPREC round values to a specified fixed or floating precision (X,N,MODE)
 %
 % mode is of the form 'uvw' where:
 %     u: s - n significant bits (default) 

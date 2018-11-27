@@ -1,5 +1,5 @@
 function [lev,xx] = v_activlevg(sp,fs,mode)
-%ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)
+%V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)
 %
 %Inputs: sp     is the speech signal
 %        FS     is the sample frequency in Hz (see also FSO below)
@@ -31,7 +31,7 @@ function [lev,xx] = v_activlevg(sp,fs,mode)
 %    [1] S. Gonzalez and M. Brookes.
 %        Speech active level estimation in noisy conditions.
 %        In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing,
-%        pp 6684–6688, Vancouver, May 2013. doi: 10.1109/ICASSP.2013.6638955.
+%        pp 6684ï¿½6688, Vancouver, May 2013. doi: 10.1109/ICASSP.2013.6638955.
 
 %      Copyright (C) Sira Gonzalez, Mike Brookes 2008-2012
 %      Version: $Id: v_activlevg.m 10865 2018-09-21 17:22:45Z dmb $

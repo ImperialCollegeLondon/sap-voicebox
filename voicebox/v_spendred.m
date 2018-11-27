@@ -1,5 +1,5 @@
 function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)
-% SPENDRED          Speech Enhancement and Dereverberation by Doire
+%V_SPENDRED Speech Enhancement and Dereverberation by Doire
 %
 % Usage : (1)       [enhanced_speech] = v_spendred(corrupted_speech,fs)   % performs enhancement in order to denoise and dereverberate the input speech file
 %         (2)       [enhanced_speech] = v_spendred(corrupted_speech,fs,algo_params)  % performs enhancement using the custom parameters specified in 'algo_params'
@@ -34,10 +34,10 @@ function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)
 %
 % [1] C. S. J. Doire, D. M. Brookes, P. A. Naylor, C. M. Hicks, D. Betts, M. A. Dmour, and S. H. Jensen.
 %           Single-channel online enhancement of speech corrupted by reverberation and noise.
-%           IEEE Trans. Audio, Speech, Language Processing, 25 (3): 572–587, Mar. 2017. doi: 10.1109/TASLP.2016.2641904.
+%           IEEE Trans. Audio, Speech, Language Processing, 25 (3): 572ï¿½587, Mar. 2017. doi: 10.1109/TASLP.2016.2641904.
 % [2] B. Cauchi et al.,
 %           Combination of MVDR beamforming and single-channel spectral processing for enhancing noisy and reverberant speech,
-%           EURASIP J. Adv. Signal Process., vol. 61, 2015, pp. 1–12.
+%           EURASIP J. Adv. Signal Process., vol. 61, 2015, pp. 1ï¿½12.
 %
 % Author :          Clement Doire
 %                   clement.doire11@imperial.ac.uk

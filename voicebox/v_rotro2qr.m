@@ -1,5 +1,5 @@
 function q=v_rotro2qr(r)
-%ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
+%V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
 % Inputs: 
 %
 %     R(3,3)   Input rotation matrix

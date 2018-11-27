@@ -1,5 +1,5 @@
 function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)
-%GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model
+%V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model
 %
 % Usage: (1) v_gaussmixp([],m,v,w) % plot a 1D or 2D gaussian mixture pdf
 %

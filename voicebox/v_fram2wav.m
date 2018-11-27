@@ -1,5 +1,5 @@
 function [w,s]=v_fram2wav(x,tt,mode)
-%FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)
+%V_FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)
 %  Inputs:
 %          x(nf,p)      is the input signal: one row per frame
 %	       tt(nf,3)     specifies the frames. Each row has the form [start_sample end_sample flag]

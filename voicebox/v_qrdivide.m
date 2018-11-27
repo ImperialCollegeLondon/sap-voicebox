@@ -1,5 +1,5 @@
 function q=v_qrdivide(q1,q2)
-%QRDIVIDE divdes two real quaternions q=[q1,q2]
+%V_QRDIVIDE divdes two real quaternions q=[q1,q2]
 %
 % Inputs:
 %

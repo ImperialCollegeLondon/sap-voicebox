@@ -1,5 +1,5 @@
 function [mm,mc]=v_gaussmixm(m,v,w,z)
-% GAUSSMIXM estimate mean and variance of the magnitude of a GMM
+%V_GAUSSMIXM estimate mean and variance of the magnitude of a GMM
 %
 %  Inputs:  M(K,P)   is the mean vectors (one row per mixture)
 %           V(K,P)   are diagonal covariances (one row per mixture) [ones(K,P)]

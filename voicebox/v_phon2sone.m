@@ -1,5 +1,5 @@
 function s=v_phon2sone(p)
-%PHON2SONE convert PHON loudness values to SONEs s=(p)
+%V_PHON2SONE convert PHON loudness values to SONEs s=(p)
 %Inputs:    p is a matrix of phon values
 %
 %Outputs:   s is a matrix, the same size as p, of sone values
@@ -11,7 +11,7 @@ function s=v_phon2sone(p)
 %
 % Refs: [1]	J. Lochner and J. Burger. Form of the loudness function in the presence of masking noise.
 %           The Journal of the Acoustical Society of America, 33: 1705, 1961.
-%       [2]	ISO/TC43. Acoustics – normal equal-loudness-level contours.
+%       [2]	ISO/TC43. Acoustics ï¿½ normal equal-loudness-level contours.
 %           Standard ISO 226:2003, Aug. 2003.
 
 

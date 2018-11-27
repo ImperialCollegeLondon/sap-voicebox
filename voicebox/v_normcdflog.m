@@ -1,5 +1,5 @@
 function p=v_normcdflog(x,m,s)
-%NORMCDFLOG calculates log of Normal Cumulative Distribution function p=(x,m,s)
+%V_NORMCDFLOG calculates log of Normal Cumulative Distribution function p=(x,m,s)
 %
 % Inputs: 
 %

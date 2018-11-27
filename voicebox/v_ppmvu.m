@@ -1,5 +1,5 @@
 function [v,fx,fx1]=v_ppmvu(x,fsx,m)
-%V_PPMVU calculate PPM, VU or EBU level of an audio signal [V,FX,FX1]=(X,FSX,M)
+%V_V_PPMVU calculate PPM, VU or EBU level of an audio signal [V,FX,FX1]=(X,FSX,M)
 %
 % Usage: (1) v=v_ppmvu(x,fs,'a')      % calculate PPM level of signal x with sampling freq fs
 %        (2) [v,f]=v_ppmvu(x,fs,'aw') % calculate PPM + fast version as well

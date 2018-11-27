@@ -1,5 +1,5 @@
 function s=v_yticksi(ah)
-%YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)
+%V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)
 %
 %  Inputs:  AH       axis handle [default: current axes]
 %

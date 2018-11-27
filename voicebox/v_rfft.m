@@ -1,5 +1,5 @@
 function y=v_rfft(x,n,d)
-%RFFT     Calculate the DFT of real data Y=(X,N,D)
+%V_RFFT     Calculate the DFT of real data Y=(X,N,D)
 % Data is truncated/padded to length N if specified.
 %   N even:	(N+2)/2 points are returned with
 % 			the first and last being real

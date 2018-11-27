@@ -1,5 +1,5 @@
 function [n,f,a,b]=v_lpcar2fm(ar,t)
-%LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)
+%V_LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)
 %
 % Input:   ar(:,p+1)  Autoregressive coefficients
 %          t          Threshold (see below)

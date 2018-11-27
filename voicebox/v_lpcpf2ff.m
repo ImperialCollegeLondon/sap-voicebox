@@ -1,5 +1,5 @@
 function [ff,fo]=v_lpcpf2ff(pf,np,fi)
-%LPCPF2FF Convert power spectrum to complex spectrum [FF,FO]=(PF,NP,FI)
+%V_LPCPF2FF Convert power spectrum to complex spectrum [FF,FO]=(PF,NP,FI)
 %
 %  Inputs: pf(nf,n)     Power spectrum at n discrete frequencies, one frame per row
 %          np           Number of complex cepstral coefficients to use (excluding c0) [n-1]

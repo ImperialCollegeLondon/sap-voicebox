@@ -1,5 +1,5 @@
 function [xc,ec,tc,xy0]=v_polygonxline(p,l)
-%POLYGONXLINE Find where a line crosses a polygon [xc,ec,tc,xy0]=(p,l)
+%V_POLYGONXLINE Find where a line crosses a polygon [xc,ec,tc,xy0]=(p,l)
 % Inputs
 % P(n,2) gives the polygon vertices
 % L(1,3) gives the line in the form L*[X; Y; 1]=0

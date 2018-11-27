@@ -1,5 +1,5 @@
 function d=v_distchar(ar1,ar2,mode)
-%DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)
+%V_DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)
 %
 % Inputs: AR1,AR2     AR coefficient sets to be compared. Each row contains a set of coefficients.
 %                     AR1 and AR2 must have the same number of columns.

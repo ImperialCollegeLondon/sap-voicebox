@@ -1,6 +1,5 @@
 function c=v_cblabel(l,h)
-% h is the handle of the colorbar, axis or figure
-%CBLABEL add a label to a colorbar c=(l,h)
+%V_CBLABEL add a label to a colorbar c=(l,h)
 %
 % Inputs:
 %

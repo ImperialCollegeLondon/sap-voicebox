@@ -1,5 +1,5 @@
 function [y,mm]=v_ewgrpdel(x,w,m)
-%EWGRPDEL calculates the energy weighted group delay waveform Y=(X,W,M)
+%V_EWGRPDEL calculates the energy weighted group delay waveform Y=(X,W,M)
 % For each sample, x(n), this routine calculates the energy-weighted average
 % group delay over frequency using a window centred on x(n). This is equal to
 % the delay from the window centre to the centre of gravity of energy in the window.

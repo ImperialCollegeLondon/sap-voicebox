@@ -1,5 +1,5 @@
 function [db,f]=v_lpcar2db(ar,np)
-%LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)
+%V_LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)
 %
 %  Inputs: ar(nf,n)     AR coefficients, one frame per row
 %          np           Size of output spectrum is np+1 [n]

@@ -1,5 +1,5 @@
 function z=v_zerotrim(x)
-%ZEROTRIM Remove zero trailing rows and columns Z=(X)
+%V_ZEROTRIM Remove zero trailing rows and columns Z=(X)
 % returns a null matrix if x is all zero.
 
 %      Copyright (C) Mike Brookes 1998

@@ -1,5 +1,5 @@
 function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)
-%WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)
+%V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)
 %
 %   The input arguments for WRITEWAV are as follows (use [] for null arguments):
 %

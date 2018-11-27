@@ -1,5 +1,5 @@
 function d=v_distispf(pf1,pf2,mode)
-%DISTISPF calculates the Itakura-Saito spectral distance between power spectra D=(PF1,PF2,MODE)
+%V_DISTISPF calculates the Itakura-Saito spectral distance between power spectra D=(PF1,PF2,MODE)
 %
 % Inputs: PF1,PF2     Power spectra to be compared. Each row represents a power spectrum: the first
 %                     and last columns represent the DC and Nyquist terms respectively.

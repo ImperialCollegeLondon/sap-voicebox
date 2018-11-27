@@ -1,5 +1,5 @@
 function x=v_randvec(n,m,c,w,mode)
-%RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
+%V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
 % generates a random matrix of size (|n|,p) where p is the maximum
 % dimension of M or C (see note below about row versus column vectos)
 %  Inputs:  N        is the number of points to generate

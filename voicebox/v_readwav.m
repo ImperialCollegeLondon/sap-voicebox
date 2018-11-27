@@ -1,5 +1,5 @@
 function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)
-%READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
+%V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
 %
 % Input Parameters:
 %
@@ -187,7 +187,7 @@ if ~info(3)
                 fseek(fid,len-16,0);				    % skip to end of header
             end
             if mh
-                fmttypes={'?' 'PCM' 'ADPCM' 'IEEE-float' '?' '?' 'A-law' 'µ-law' '?'};
+                fmttypes={'?' 'PCM' 'ADPCM' 'IEEE-float' '?' '?' 'A-law' 'ï¿½-law' '?'};
                 fprintf('        Format: %d = %s',info(8),fmttypes{1+max(min(info(8),8),0)});
                 if wavfmt==-2
                     fprintf(' (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x)\n',wfxguida,wfxguidb,wfxguidc);

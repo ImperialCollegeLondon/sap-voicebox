@@ -1,5 +1,5 @@
 function e=v_rotqr2eu(m,q)
-%ROTQR2EQ converts a real unit quaternion into the corresponding euler angles
+%V_ROTQR2EQ converts a real unit quaternion into the corresponding euler angles
 % Inputs: 
 %
 %     M(1,3)   a string of 3 characters from the set {'x','y','z'}

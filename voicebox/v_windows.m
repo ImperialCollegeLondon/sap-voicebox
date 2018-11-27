@@ -1,5 +1,5 @@
 function w = v_windows(wtype,n,mode,p,ov)
-%WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
+%V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
 % Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';
 %        (2) w=v_windows(2,n); % same as w=hanning(n)';
 %
@@ -111,17 +111,17 @@ function w = v_windows(wtype,n,mode,p,ov)
 %
 % References:
 %  [1]  F. J. Harris. On the use of windows for harmonic analysis with the
-%       discrete fourier transform. Proc IEEE, 66 (1): 51–83, Jan. 1978.
+%       discrete fourier transform. Proc IEEE, 66 (1): 51ï¿½83, Jan. 1978.
 %  [2]	L. D. Fielder, M. Bosi, G. Davidson, M. Davis, C. Todd, and S. Vernon.
 %       AC-2 and AC-3: Low-complexity transform-based audio coding.
 %       In Audio Engineering Society Conference: Collected Papers on Digital Audio Bit-Rate Reduction, May 1996.
 %  [3]	J. Princen, A. Johnson, and A. Bradley. Subband/transform coding using filter
 %       bank designs based on time domain aliasing cancellation.
 %       In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 12,
-%       pages 2161–2164, 1987. doi: 10.1109/ICASSP.1987.1169405.
+%       pages 2161ï¿½2164, 1987. doi: 10.1109/ICASSP.1987.1169405.
 %  [4]	T. Sporer, K. Brandenburg, and B. Edler.
 %       The use of multirate filter banks for coding of high quality digital audio.
-%       In Proc EUSIPCO, volume 1, pages 211–214, 1992.
+%       In Proc EUSIPCO, volume 1, pages 211ï¿½214, 1992.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      Copyright (C) Mike Brookes 2002-2015

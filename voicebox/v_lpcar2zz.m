@@ -1,5 +1,5 @@
 function zz=v_lpcar2zz(ar)
-%LPCAR2ZZ Convert ar filter to z-plane poles ZZ=(AR)
+%V_LPCAR2ZZ Convert ar filter to z-plane poles ZZ=(AR)
 
 
 %      Copyright (C) Mike Brookes 1997

@@ -1,5 +1,5 @@
 function p=v_vonmisespdf(x,m,k)
-%VONMISESPDF Von Mises probability distribution P=(x,m,k)
+%V_VONMISESPDF Von Mises probability distribution P=(x,m,k)
 %
 %  Inputs:  X         matrix of input values (in radians)
 %           M         mean angle of distribution (in radians)

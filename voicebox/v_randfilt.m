@@ -1,5 +1,5 @@
 function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)
-%RANDFILT Generate filtered gaussian noise without initial transient
+%V_RANDFILT Generate filtered gaussian noise without initial transient
 %
 %  Inputs: pb(1,:)  Numerator polynomial of discrete time filter
 %          pa(1,:)  Denominator polynomial of discrete time filter

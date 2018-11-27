@@ -1,5 +1,5 @@
 function [y,fs,h]=v_readcnx(filename,mode)
-%READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)
+%V_READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)
 %
 % Inputs:
 %           filename : character string containing filename (default extension .cnx)

@@ -1,5 +1,5 @@
 function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)
-% Estimate multiple psychometric functions
+%V_PSYCEST estimate multiple psychometric functions
 %
 % Usage: [xx,ii,m,v]=v_psycest(-n,p,q,xp,lf) % initialize n models
 %        [xx,ii,m,v]=v_psycest(i,x,r)     % supply a trial result to v_psycest

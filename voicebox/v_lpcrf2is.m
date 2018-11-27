@@ -1,5 +1,5 @@
 function is=v_lpcrf2is(rf)
-%LPCRF2IS Convert reflection coefficients to inverse sines IS=(RF)
+%V_LPCRF2IS Convert reflection coefficients to inverse sines IS=(RF)
 
 
 %      Copyright (C) Mike Brookes 1997

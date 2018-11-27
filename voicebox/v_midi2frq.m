@@ -1,5 +1,5 @@
 function f=v_midi2frq(n,s)
-%MIDI2FRQ	Convert musical note numbers to frequencies F=(N,S)
+%V_MIDI2FRQ	Convert musical note numbers to frequencies F=(N,S)
 %		s is:	'e' equal tempered (default)
 %			'p' pythagorean scale
 %			'j' just intonation

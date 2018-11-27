@@ -1,5 +1,5 @@
 function [p,s]=v_minspane(x)
-%MINSPANE calculate minimum spanning tree using euclidean distance [p,s]=X
+%V_MINSPANE calculate minimum spanning tree using euclidean distance [p,s]=X
 %
 % Inputs:  x(n,d)    d-dimensional data points, one per row
 %

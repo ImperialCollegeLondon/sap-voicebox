@@ -1,5 +1,5 @@
 function [y,f]=v_zoomfft(x,n,m,s,d)
-%ZOOMFFT    DTFT evaluated over a linear frequency range Y=(X,N,M,S,D)
+%V_ZOOMFFT    DTFT evaluated over a linear frequency range Y=(X,N,M,S,D)
 % Inputs:
 %    x    vector (or matrix)
 %    n    reciprocal of normalized frequency increment (can be non-integer).
@@ -24,7 +24,7 @@ function [y,f]=v_zoomfft(x,n,m,s,d)
 % Thus v_zoomfft(x,n,n,0,d) is equivalent to fft(x,n,d) for n>=length(x).
 
 % [1] L.R.Rabiner,  R.W.Schafer and C.M.Rader, "The chirp z-transform algorithm"
-%     IEEE Trans. Audio Electroacoustics 17 (2), 86–92 (1969). 
+%     IEEE Trans. Audio Electroacoustics 17 (2), 86ï¿½92 (1969). 
 
 %      Copyright (C) Mike Brookes 2007
 %      Version: $Id: v_zoomfft.m 10865 2018-09-21 17:22:45Z dmb $

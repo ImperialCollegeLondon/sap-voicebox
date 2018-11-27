@@ -1,5 +1,5 @@
 function s=v_sprintsi(x,d,w)
-%SPRINTSI Print X with SI multiplier S=(X,D,W)
+%V_SPRINTSI Print X with SI multiplier S=(X,D,W)
 % D is number of decimal places (+ve) or significant digits (-ve) [default=-3]
 % |W| is total width including multiplier
 % if W<=0 then trailing 0's will be eliminated

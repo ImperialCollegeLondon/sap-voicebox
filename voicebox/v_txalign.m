@@ -1,5 +1,5 @@
 function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)
-%TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)
+%V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)
 % x and y vectors contain a list of non-decreasing time values
 % we find the alignment between them to minimize (x-y)^2 with a penalty of maxt^2
 % for every unmatched pair of entries from x and y.

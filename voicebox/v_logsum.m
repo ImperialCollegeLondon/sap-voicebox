@@ -1,5 +1,5 @@
 function y=v_logsum(x,d,k)
-%LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))
+%V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))
 %
 % Usage: (1) y=v_logsum(x) % log(sum(exp(x)))
 %        (2) f=0.1*log(10); y=logsm(x*f)/f;  % add powers in dB

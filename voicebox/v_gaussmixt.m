@@ -1,5 +1,5 @@
 function [m,v,w]=v_gaussmixt(m1,v1,w1,m2,v2,w2)
-%GAUSSMIXT Multiply two GMM pdfs
+%V_GAUSSMIXT Multiply two GMM pdfs
 %
 % Inputs: Input mixtures: k1,k2 mixtures, p dimensions
 %

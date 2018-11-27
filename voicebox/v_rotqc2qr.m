@@ -1,5 +1,5 @@
 function qr=v_rotqc2qr(qc)
-%ROTQC2QR converts a matrix of complex quaternion row vectors into real form
+%V_ROTQC2QR converts a matrix of complex quaternion row vectors into real form
 %
 % Inputs: 
 %

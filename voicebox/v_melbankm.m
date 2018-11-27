@@ -1,5 +1,5 @@
 function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
-%MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)
+%V_MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)
 %
 % Inputs:
 %       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb [ceil(4.6*log10(fs))]
@@ -72,10 +72,10 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 % References:
 %
 % [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement
-%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185–19, 1937.
+%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185ï¿½19, 1937.
 % [2] S. Davis and P. Mermelstein. Comparison of parametric representations for
 %     monosyllabic word recognition in continuously spoken sentences.
-%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357–366, Aug. 1980.
+%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357ï¿½366, Aug. 1980.
 
 
 %      Copyright (C) Mike Brookes 1997-2009

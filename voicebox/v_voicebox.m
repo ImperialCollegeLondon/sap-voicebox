@@ -1,5 +1,5 @@
 function y=v_voicebox(f,v)
-%VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)
+%V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)
 %
 %  Inputs:  F   is a field name
 %           V   is a new value for the field

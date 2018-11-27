@@ -1,5 +1,5 @@
 function [ar,e,k]=v_lpcauto(s,p,t,w,m)
-%LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)
+%V_LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)
 % Usage: (1) [ar,e]=v_lpcauto(x,p,[],'r','e'); same as lpc(x,p);
 
 %  Inputs:

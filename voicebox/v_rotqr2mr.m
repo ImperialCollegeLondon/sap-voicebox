@@ -1,5 +1,5 @@
 function mr=v_rotqr2mr(qr)
-%ROTQR2MR converts a matrix of real quaternion vectors to quaternion matrices
+%V_ROTQR2MR converts a matrix of real quaternion vectors to quaternion matrices
 % Inputs:
 %
 %     QR(4m,n,...)   mxn matrix of real quaternion vectors (each 4x1)

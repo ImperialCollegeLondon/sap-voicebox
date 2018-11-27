@@ -1,5 +1,5 @@
 function [f,c] = v_bark2frq(b,m)
-%BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)
+%V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)
 %
 % Inputs: b  matrix of frequencies in Bark
 %         m  mode options
@@ -33,13 +33,13 @@ function [f,c] = v_bark2frq(b,m)
 %   widely used in the lterature.
 %
 %   [1] H. Traunmuller, Analytical Expressions for the
-%       Tonotopic Sensory Scale”, J. Acoust. Soc. Am. 88,
+%       Tonotopic Sensory Scaleï¿½, J. Acoust. Soc. Am. 88,
 %       1990, pp. 97-100.
 %   [2] E. Zwicker, Subdivision of the audible frequency range into
 %       critical bands, J Accoust Soc Am 33, 1961, p248.
 %   [3] M. R. Schroeder, B. S. Atal, and J. L. Hall. Optimizing digital
 %       speech coders by exploiting masking properties of the human ear.
-%       J. Acoust Soc Amer, 66 (6): 1647–1652, 1979. doi: 10.1121/1.383662.
+%       J. Acoust Soc Amer, 66 (6): 1647ï¿½1652, 1979. doi: 10.1121/1.383662.
 
 %      Copyright (C) Mike Brookes 2006-2010
 %      Version: $Id: v_bark2frq.m 10865 2018-09-21 17:22:45Z dmb $

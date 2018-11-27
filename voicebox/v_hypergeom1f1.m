@@ -1,5 +1,5 @@
 function [h,l,alg]=v_hypergeom1f1(a,b,z,tol,maxj,th)
-% HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)
+%V_HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)
 %
 %  Inputs: a,b,z  input arguments
 %                 a and b must be real scalars, z can be a real matrix
@@ -35,10 +35,10 @@ function [h,l,alg]=v_hypergeom1f1(a,b,z,tol,maxj,th)
 %       Dover, New York, 9 edition, 1964. ISBN 0-486-61272-4.
 % [2]	F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors.
 %       NIST Handbook of Mathematical Functions. CUP, 2010. ISBN 978-0-521-14063-8.
-% [3]	J. Pearson. Computation of hypergeometric functions. Master’s thesis, Oxford University, 2009.
-%       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-pearson_final.pdf.
+% [3]	J. Pearson. Computation of hypergeometric functions. Masterï¿½s thesis, Oxford University, 2009.
+%       URL http://ï¿½people.maths.ox.ac.uk/ï¿½porterm/ï¿½research/-pearson_final.pdf.
 % [4]	J. Pearson. Computation of hypergeometric functions. Matlab code, Oxford University, 2009.
-%       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-hypergeometricpackage.zip.
+%       URL http://ï¿½people.maths.ox.ac.uk/ï¿½porterm/ï¿½research/-hypergeometricpackage.zip.
 %
 
 %      Copyright (C) Mike Brookes 2016

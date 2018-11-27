@@ -1,5 +1,5 @@
 function s=v_lpcconv(from,to,x,y,np)
-%LPCCONV(from,to,x,y)->s convert between LPC parameter sets
+%V_LPCCONV(from,to,x,y)->s convert between LPC parameter sets
 %
 % The output is a string that may be passed to eval(s)
 % x and y are optionally the input and output matrices

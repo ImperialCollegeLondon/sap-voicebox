@@ -1,5 +1,5 @@
 function r=v_roteu2ro(m,t)
-%ROTEU2QR converts a sequence of Euler angles to a real unit quaternion
+%V_ROTEU2QR converts a sequence of Euler angles to a real unit quaternion
 % Inputs:
 %
 %     M(1,n)   a string of n characters from the set {'x','y','z'}

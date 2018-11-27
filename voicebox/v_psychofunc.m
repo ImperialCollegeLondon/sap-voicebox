@@ -1,5 +1,5 @@
 function p=v_psychofunc(m,q,x,r)
-% Calculate psychometric functions: trial success probability versus SNR
+%V_PSYCHOFUNC Calculate psychometric functions: trial success probability versus SNR
 %
 % Usage: p=v_psychofunc('',q,x)       % calculate probabilities
 %        b=v_psychofunc('r',q,x)       % generate boolean variables with success prob p

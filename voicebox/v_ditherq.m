@@ -1,5 +1,5 @@
 function [y,zf]=v_ditherq(x,m,zi)
-%DITHERQ  add dither and quantize [Y,ZF]=(X,M,ZI)
+%V_DITHERQ  add dither and quantize [Y,ZF]=(X,M,ZI)
 %  Inputs:
 %      x   is the input signal
 %	   m   specifies the mode:

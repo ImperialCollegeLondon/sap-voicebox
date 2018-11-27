@@ -1,5 +1,5 @@
 function [s,c,r,t]=v_atan2sc(y,x)
-%ATAN2SC    sin and cosine of atan(y/x) [S,C,R,T]=(Y,X)
+%V_ATAN2SC    sin and cosine of atan(y/x) [S,C,R,T]=(Y,X)
 %
 % Outputs:
 %    s    sin(t) where tan(t) = y/x

@@ -1,5 +1,5 @@
 function v_fig2emf(h,s,p,f)
-%FIG2EMF save a figure in windows metafile format (H,S,P)
+%V_FIG2EMF save a figure in windows metafile format (H,S,P)
 % Usage:  (1) v_fig2emf      % save current figure in current folder
 %         (2) emf=1;                        % set emf=1 to print
 %             figsize=[500 300];            % default size

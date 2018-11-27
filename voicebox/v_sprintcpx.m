@@ -1,5 +1,5 @@
 function s=v_sprintcpx(z,f)
-%SPRINTCPX  format a complex number for printing S=(Z,F)
+%V_SPRINTCPX  format a complex number for printing S=(Z,F)
 %
 % Usage: fprintf('%s',v_sprintcpx(z));
 %

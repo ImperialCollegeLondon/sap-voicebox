@@ -1,5 +1,5 @@
 function cw=v_lpcpp2cw(pp)
-%LPCPP2PZ LPC: Convert power spectrum polynomial in cos(w) to power spectrum zeros CW=(RP)
+%V_LPCPP2PZ LPC: Convert power spectrum polynomial in cos(w) to power spectrum zeros CW=(RP)
 % pp is a polynomial such that |polyval(ra,e^jw)| = polyval(pp,cos(w))
 
 %      Copyright (C) Mike Brookes 1998

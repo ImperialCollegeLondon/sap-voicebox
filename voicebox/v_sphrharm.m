@@ -1,5 +1,5 @@
 function [u,v,w]=v_sphrharm(m,a,b,c,d)
-%SPHRHARM  forward and inverse spherical harmonic transform
+%V_SPHRHARM  forward and inverse spherical harmonic transform
 %
 % Usage: (1) y=('f',n,x)      % Calculate complex transform of spatial data x up to order n
 %

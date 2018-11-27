@@ -1,5 +1,5 @@
 function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip)
-%READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
+%V_READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
 %
 % Input Parameters:
 %

@@ -1,5 +1,5 @@
 function m = v_rnsubset(k,n)
-%RNSUBSET choose k distinct random integers from 1:n M=(K,N)
+%V_RNSUBSET choose k distinct random integers from 1:n M=(K,N)
 %
 %  Inputs:
 %

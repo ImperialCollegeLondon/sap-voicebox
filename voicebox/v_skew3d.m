@@ -1,5 +1,5 @@
 function y=v_skew3d(x,m)
-%SKEW3D Convert between a vector and the corresponding skew-symmetric matrix
+%V_SKEW3D Convert between a vector and the corresponding skew-symmetric matrix
 %
 % Inputs:   x   input vector or matrix
 %                size(x) must equal [3 1], [3 3], [6 1] or [4 4]

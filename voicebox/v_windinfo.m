@@ -1,5 +1,5 @@
 function x=windinfo(w,fs)
-%WINDINFO window information and figures of merit X=(W,FS)
+%V_WINDINFO window information and figures of merit X=(W,FS)
 %
 %  Inputs:  W        is a vector containing the window
 %           FS       is the sampling frequency (default=1)
@@ -31,7 +31,7 @@ function x=windinfo(w,fs)
 % listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).
 %
 %  [1]  F. J. Harris. On the use of windows for harmonic analysis with the
-%       discrete fourier transform. Proc IEEE, 66 (1): 51–83, Jan. 1978.
+%       discrete fourier transform. Proc IEEE, 66 (1): 51ï¿½83, Jan. 1978.
 
 %	   Copyright (C) Mike Brookes 2009-2014
 %      Version: $Id: v_windinfo.m 6801 2015-09-12 09:30:42Z dmb $
@@ -199,13 +199,13 @@ if ~nargout
     texthvc(tax(end),max(w),sprintf('N=%d',nw),'rtk');
     if length(x.cola)>3
         tcola=sprintf(',%d',x.cola(1:3));
-        tcola=[tcola ',…'];
+        tcola=[tcola ',ï¿½'];
     else
         tcola=sprintf(',%d',x.cola);
     end
     if length(x.cola2)>3
         tcola2=sprintf(',%d',x.cola2(1:3));
-        tcola2=[tcola2 ',…'];
+        tcola2=[tcola2 ',ï¿½'];
     else
         tcola2=sprintf(',%d',x.cola2);
     end

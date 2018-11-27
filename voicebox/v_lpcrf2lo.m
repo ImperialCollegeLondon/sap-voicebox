@@ -1,5 +1,5 @@
 function lo=v_lpcrf2lo(rf)
-%LPCRF2LO Convert reflection coefficients to log area ratios LO=(RF)
+%V_LPCRF2LO Convert reflection coefficients to log area ratios LO=(RF)
 %the output values are limited to about +-14.5
 
 

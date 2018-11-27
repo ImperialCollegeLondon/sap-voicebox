@@ -1,5 +1,5 @@
 function v=v_dlyapsq(a,b)
-%DLYAPSQ Solves the discrete Lyapunov equation AV'VA' - V'V + BB' = 0
+%V_DLYAPSQ Solves the discrete Lyapunov equation AV'VA' - V'V + BB' = 0
 % V is upper triangular with real non-negative diagonal entries
 % this is equivalent to v=chol(dlyap(a,b*b')) but better conditioned numerically
 

@@ -1,5 +1,5 @@
 function [x,esq,j] = v_kmeanlbg(d,k)
-%KMEANLBG Vector quantisation using the Linde-Buzo-Gray algorithm [X,ESQ,J]=(D,K)
+%V_KMEANLBG Vector quantisation using the Linde-Buzo-Gray algorithm [X,ESQ,J]=(D,K)
 %
 %Inputs:
 % D contains data vectors (one per row)

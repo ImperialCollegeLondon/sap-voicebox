@@ -1,5 +1,5 @@
 function p=v_lognmpdf(x,m,v)
-%LOGNMPDF calculate pdf of a multivariate lognormal distribution P=(X,M,V)
+%V_LOGNMPDF calculate pdf of a multivariate lognormal distribution P=(X,M,V)
 %
 %  Inputs:  X(N,D)   are the points at which to calculate the pdf (one point per row)
 %           M(D)     is the mean vector of the distribution [default M = ones]

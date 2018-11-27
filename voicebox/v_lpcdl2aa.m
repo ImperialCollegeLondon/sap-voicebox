@@ -1,5 +1,5 @@
 function aa=v_lpcdl2aa(dl)
-%LPCDL2AA dct of log area to area coefficients AA=(DL)
+%V_LPCDL2AA dct of log area to area coefficients AA=(DL)
 
 % we do not correct for sinc errors
 

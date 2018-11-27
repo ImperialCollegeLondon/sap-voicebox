@@ -1,5 +1,5 @@
 function [rr,ar]=v_lpcrf2rr(rf,p);
-%LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)
+%V_LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)
 %
 % Inputs:  rf(:,n+1)  reflection coefficients: one row per frame
 %          p          specifies number of rr coefficients to calculate (default=n)

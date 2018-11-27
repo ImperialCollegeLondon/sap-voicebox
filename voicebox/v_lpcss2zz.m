@@ -1,5 +1,5 @@
 function zz=v_lpcss2zz(ss)
-%LPCSS2ZZ Convert s-place poles to z-plane poles ZZ=(SS)
+%V_LPCSS2ZZ Convert s-place poles to z-plane poles ZZ=(SS)
 %the s-plane is in units of Normalized Hz and so the imaginary part
 % of each ss() value is in the range +-0.5
 %

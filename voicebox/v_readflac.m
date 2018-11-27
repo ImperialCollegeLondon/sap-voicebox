@@ -1,5 +1,5 @@
 function [y,fs]=v_readflac(filename,mode)
-%READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)
+%V_READFLAC  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)
 %
 % Input Parameters:
 %

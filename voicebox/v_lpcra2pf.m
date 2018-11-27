@@ -1,5 +1,5 @@
 function pf=v_lpcra2pf(ra,np)
-%LPCAR2PF Convert AR coefs to power spectrum PF=(RA,NP)
+%V_LPCAR2PF Convert AR coefs to power spectrum PF=(RA,NP)
 % The routine is faster if NP+1 is a power of 2
 % For RA(:,p+1) the default value of np is p and the output is PF(:,p+2)
 

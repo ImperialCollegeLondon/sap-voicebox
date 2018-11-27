@@ -1,5 +1,5 @@
 function [cc,ll,l]=v_huffman(p,a)
-%HUFFMAN calculates a D-ary v_huffman code [CC,LL]=(P,A)
+%V_HUFFMAN calculates a D-ary v_huffman code [CC,LL]=(P,A)
 %
 %  Inputs:  P        is a vector or matrix of probabilities
 %           A(D)     is a vector of alphabet characters either integers of chars [default: '01']

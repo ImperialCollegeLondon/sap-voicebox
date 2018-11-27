@@ -1,5 +1,5 @@
 function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
-%ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)
+%V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)
 %
 %Usage: (1) lev=v_activlev(s,fs);     % speech level in units of power
 %       (2) db=v_activlev(s,fs,'d');  % speech level in dB

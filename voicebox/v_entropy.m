@@ -1,5 +1,5 @@
 function h=v_entropy(p,dim,cond,arg,step)
-%ENTROPY calculates the v_entropy of discrete and sampled continuous distributions H=(P,DIM,COND,ARG,STEP)
+%V_ENTROPY calculates the v_entropy of discrete and sampled continuous distributions H=(P,DIM,COND,ARG,STEP)
 %
 %  Inputs:  P        is a vector or matrix of probabilities - one dimension per variable
 %           DIM      lists dimensions along which to evaluate the v_entropy [default: 1st non singleton dimension]

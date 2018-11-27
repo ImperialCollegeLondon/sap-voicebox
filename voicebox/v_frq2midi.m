@@ -1,5 +1,5 @@
 function [n,t]=v_frq2midi(f)
-%FRQ2MIDI Convert frequencies to musical note numbers [N,T]=(F)
+%V_FRQ2MIDI Convert frequencies to musical note numbers [N,T]=(F)
 % notes are numbered in semitones with middle C being 60
 % Note 69 (the A above middle C) has a frequency of 440 Hz.
 % These note numbers are used by MIDI. Note numbers are not necessarily

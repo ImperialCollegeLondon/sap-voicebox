@@ -1,5 +1,5 @@
 function [gci goi] = v_sigma(lx,fs,fmax)
-
+%V_SIGMA Estimate glottal opening an closing instants
 %   Singularity in EGG by Multiscale Analysis (SIGMA) Algorithm
 %
 %   [gci goi] = v_sigma(lx,fs,fmax)

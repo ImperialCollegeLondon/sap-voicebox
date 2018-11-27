@@ -1,5 +1,5 @@
 function x=v_usasi(n,fs)
-%USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)
+%V_USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)
 
 % This routine is based on the USASI noise defined in [1] which was later
 % reissued as [2]. USASI noise is intended to simulate the long-term average

@@ -1,5 +1,5 @@
 function cc=v_lpczz2cc(zz,np)
-%LPCZZ2CC Convert poles to "complex" cepstrum CC=(ZZ,NP)
+%V_LPCZZ2CC Convert poles to "complex" cepstrum CC=(ZZ,NP)
 
 
 %      Copyright (C) Mike Brookes 1997

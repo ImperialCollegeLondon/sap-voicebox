@@ -1,5 +1,5 @@
 function pp=v_lpcar2pp(ar)
-%LPCAR2PP LPC: Convert ar filter to power spectrum polynomial in cos(w) PP=(AR)
+%V_LPCAR2PP LPC: Convert ar filter to power spectrum polynomial in cos(w) PP=(AR)
 % the pp is a polynomial such that |polyval(ar,e^jw)|^2 = polyval(pp,cos(w))
 
 %      Copyright (C) Mike Brookes 1998

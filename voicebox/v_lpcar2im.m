@@ -1,5 +1,5 @@
 function im=v_lpcar2im(ar,np)
-%LPCAR2IM Convert AR coefs to impulse response IM=(AR,NP)
+%V_LPCAR2IM Convert AR coefs to impulse response IM=(AR,NP)
 
 
 %      Copyright (C) Mike Brookes 1997

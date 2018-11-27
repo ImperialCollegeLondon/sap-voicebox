@@ -1,5 +1,5 @@
 function v_axisenlarge(f,h)
-%AXISENLARGE - enlarge the axes of a figure (f,h)
+%V_AXISENLARGE - enlarge the axes of a figure (f,h)
 %
 % Usage:  (1) v_axisenlarge(1.05)    % enlarge axes by 5% in each direction
 %         (2) v_axisenlarge(-1.05)   % shrink to fit content before enlarging

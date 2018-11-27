@@ -1,5 +1,5 @@
 function ar=v_lpcim2ar(im)
-%LPCIM2AR Convert impulse response to AR coefs AR=(IM)
+%V_LPCIM2AR Convert impulse response to AR coefs AR=(IM)
 
 
 %      Copyright (C) Mike Brookes 1997

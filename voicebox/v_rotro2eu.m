@@ -1,5 +1,5 @@
 function e=v_rotro2eu(m,ro)
-%ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles
+%V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles
 % Inputs: 
 %
 %     M(1,3)   a string of 3 characters from the set {'x','y','z'} e.g. "zxz" or "zyx"

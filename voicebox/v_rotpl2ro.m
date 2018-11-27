@@ -1,5 +1,5 @@
 function r=v_rotpl2ro(u,v,t)
-%ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]
+%V_ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]
 % Inputs:
 %
 %     U(n,1) and V(n,1) define a plane in n-dimensional space

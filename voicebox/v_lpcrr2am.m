@@ -1,5 +1,5 @@
 function [am,em]=v_lpcrr2am(rr);
-%LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)
+%V_LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)
 %AM is a 3-dimensional matrix of size (p+1,p+1,nf) where p is the lpc order
 %and nf the number of frames.
 %The matrix AM(:,:,*) is upper triangular with 1's on the main diagonal

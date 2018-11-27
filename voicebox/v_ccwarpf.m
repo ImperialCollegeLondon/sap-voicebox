@@ -1,5 +1,5 @@
 function m=v_ccwarpf(f,n,s)
-%CCWARPF  Warp cepstral coefficients M=(F,N,S) 
+%V_CCWARPF  Warp cepstral coefficients M=(F,N,S) 
 % f(1) is the original sample freq, f(2) is the new sample freq
 % n(1) is the original number of coefficients, n(2) is the new number
 % s is a string: s(1),s(2) =l for linear, m for mel frequency, use capitals if c0 included

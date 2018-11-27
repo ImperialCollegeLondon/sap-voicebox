@@ -1,5 +1,5 @@
 function [t,s]=v_zerocros(y,m,x)
-%ZEROCROS finds the zeros crossings in a signal [T,S]=(Y,M,X)
+%V_ZEROCROS finds the zeros crossings in a signal [T,S]=(Y,M,X)
 % Inputs:  y = input waveform
 %          m = mode string containing:
 %              'p' - positive crossings only

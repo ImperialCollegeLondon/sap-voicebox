@@ -1,5 +1,5 @@
 function p=v_lin2pcma(x,m,s)
-%LIN2PCMA Convert linear PCM to A-law P=(X,M,S)
+%V_LIN2PCMA Convert linear PCM to A-law P=(X,M,S)
 %	pcma = v_lin2pcma(lin) where lin contains a vector
 %	or matrix of signal values.
 %	The input values will be converted to integer

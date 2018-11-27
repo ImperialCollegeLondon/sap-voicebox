@@ -1,5 +1,5 @@
 function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)
-% v_psycestu estimate unimodal psychometric function
+%V_PSYCESTU estimate unimodal psychometric function
 %
 % Usage: [xx,ii,m,v]=v_psycestu(-n,p,q,xp) % initialize n models
 %        [xx,ii,m,v]=v_psycestu(i,x,r)     % supply a trial result to v_psycest

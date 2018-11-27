@@ -1,5 +1,5 @@
 function [m,q]=v_qrabs(q1)
-%QRABS absolute value and normalization of a real quaternions [m,q]=[q1]
+%V_QRABS absolute value and normalization of a real quaternions [m,q]=[q1]
 %
 % Inputs:   q1(4n,...)  A real quaternion array. Each quaternion is a column
 %                          vector of the form [r, i, j, k]'

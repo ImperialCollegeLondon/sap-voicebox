@@ -1,5 +1,5 @@
 function y=v_besselratio(x,v,p)
-%BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)
+%V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)
 %
 %  Inputs: x Bessel function argument (scalar or matrix)
 %          v denominator Bessel function order [0]
@@ -13,7 +13,7 @@ function y=v_besselratio(x,v,p)
 % required precision to improve efficiency.
 %
 % [1]	D. E. Amos. Computation of modified bessel functions and their ratios.
-%       Mathematics of Computation, 28 (125): 239–251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.
+%       Mathematics of Computation, 28 (125): 239ï¿½251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.
 % [2]	G. Kurz, I. Gilitschenski, and U. D. Hanebeck.
 %       Recursive nonlinear filtering for angular data based on circular distributions.
 %       In Proc American Control Conf, Washington, June 2013.

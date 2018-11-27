@@ -1,5 +1,5 @@
 function x=v_choosenk(n,k)
-%CHOOSENK All choices of K elements taken from 1:N [X]=(N,K)
+%V_CHOOSENK All choices of K elements taken from 1:N [X]=(N,K)
 % The output X is a matrix of size (N!/(K!*(N-K)!),K) where each row
 % contains a choice of K elements taken from 1:N without duplications.
 % The rows of X are in lexically sorted order.

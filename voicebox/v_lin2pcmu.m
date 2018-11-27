@@ -1,5 +1,5 @@
 function p=v_lin2pcmu(x,s)
-%LIN2PCMU Convert linear to Mu-law PCM P=(X,S)
+%V_LIN2PCMU Convert linear to Mu-law PCM P=(X,S)
 %	pcmu = v_lin2pcmu(lin) where lin contains a vector
 %	or matrix of signal values within a range determined by
 %	the scale factor s (see table below).

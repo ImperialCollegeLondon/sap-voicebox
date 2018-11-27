@@ -1,5 +1,5 @@
 function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)
-%KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)
+%V_KMEANHAR Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)
 %
 %  Inputs:
 %

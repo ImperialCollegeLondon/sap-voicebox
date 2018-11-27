@@ -1,5 +1,5 @@
 function [g,u,k]=v_gausprod(m,c,e)
-%GAUSPROD calculates a product of gaussians [G,U,K]=(M,C)
+%V_GAUSPROD calculates a product of gaussians [G,U,K]=(M,C)
 % calculates the product of n d-dimensional multivariate gaussians
 % this product is itself a gaussian
 % Inputs: m(d,n) - each column is the mean of one of the gaussians

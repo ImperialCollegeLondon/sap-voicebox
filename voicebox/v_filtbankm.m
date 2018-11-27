@@ -1,5 +1,5 @@
 function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
-%FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)
+%V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)
 %
 % Usage:
 % (1) Calcuate the Mel-frequency Cepstral Coefficients
@@ -80,10 +80,10 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 % References:
 %
 % [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement
-%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185–19, 1937.
+%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185ï¿½19, 1937.
 % [2] S. Davis and P. Mermelstein. Comparison of parametric representations for
 %     monosyllabic word recognition in continuously spoken sentences.
-%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357–366, Aug. 1980.
+%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357ï¿½366, Aug. 1980.
 
 % Bugs/Suggestions
 % (1) default frequencies won't work if the h option is specified

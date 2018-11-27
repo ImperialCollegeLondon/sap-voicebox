@@ -1,5 +1,5 @@
 function y=v_teager(x,d,m)
-%TEAGER calculate v_teager energy waveform Y=(X,D,M)
+%V_TEAGER calculate v_teager energy waveform Y=(X,D,M)
 %
 %  Inputs:  x         speech signal
 %           d         dimension to apply filter along [default 1st non-singleton]
@@ -18,9 +18,9 @@ function y=v_teager(x,d,m)
 %  (d) x(n) = A*exp(B*n+C)    -->   y(n) = 0
 %
 % Reference:
-%  [1]	J. Kaiser. On a simple algorithm to calculate the ‘energy’ of a signal.
+%  [1]	J. Kaiser. On a simple algorithm to calculate the ï¿½energyï¿½ of a signal.
 %       In Proc IEEE Intl Conf Acoustics, Speech and Signal Processing,
-%       pages 381–384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.
+%       pages 381ï¿½384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.
 
 %      Copyright (C) Mike Brookes 1997
 %      Version: $Id: v_teager.m 10865 2018-09-21 17:22:45Z dmb $

@@ -1,5 +1,5 @@
 function x=v_lambda2rgb(l,m)
-%LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)
+%V_LAMBDA2XYZ Convert wavelength to XYZ or RGB colour space X=(L,M)
 %
 %Inputs:   l(n,1)  column vector of wavelengths in nanometres
 %          m       mode:
@@ -17,7 +17,7 @@ function x=v_lambda2rgb(l,m)
 % References:
 %  [1]	C. Wyman, P.-P. Sloan, and P. Shirley.
 %       Simple analytic approximations to the CIE XYZ color matching functions.
-%       Journal of Computer Graphics Techniques, 2 (2): 1–11, 2013.
+%       Journal of Computer Graphics Techniques, 2 (2): 1ï¿½11, 2013.
 %  [2]	D. Wyble. Useful color data. Website, Rochester Institute of Technology, 2001.
 %       URL http://www.rit.edu/cos/colorscience/rc_useful_data.php
 

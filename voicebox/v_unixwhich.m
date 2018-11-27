@@ -1,5 +1,5 @@
 function f=v_unixwhich(c,e)
-%UNIXWHICH Search system path for an executable program [F]=(C,E)
+%V_UNIXWHICH Search system path for an executable program [F]=(C,E)
 %
 % Inputs: C  name of file to search for (excluding extension)
 %         E  list of extensions [default = '.com;.exe;.bat' unless C contains '.']

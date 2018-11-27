@@ -1,5 +1,5 @@
 function [a,d,e]=v_dualdiag(w,b)
-%DUALDIAG Simultaneous diagonalisation of two hermitian matrices [A,D,E]=(W,B)
+%V_DUALDIAG Simultaneous diagonalisation of two hermitian matrices [A,D,E]=(W,B)
 % Inputs:   W,B     Two square hermitian matrices
 %
 % Outputs:  A       Diagonalizing matrix (not normally unitary or hermitian)

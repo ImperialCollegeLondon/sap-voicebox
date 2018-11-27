@@ -1,5 +1,5 @@
 function zz=v_lpcfq2zz(f,q)
-%LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)
+%V_LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)
 %all input values are in normalized Hz
 % roots are at exp(2*pi*f*(-1/(2q) +- j)
 % if f has more columns than q, remaining columns are real roots at -f

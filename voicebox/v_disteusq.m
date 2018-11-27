@@ -1,5 +1,5 @@
 function d=v_disteusq(x,y,mode,w)
-%DISTEUSQ calculate euclidean, squared euclidean or mahanalobis distance D=(X,Y,MODE,W)
+%V_DISTEUSQ calculate euclidean, squared euclidean or mahanalobis distance D=(X,Y,MODE,W)
 %
 % Inputs: X,Y         Vector sets to be compared. Each row contains a data vector.
 %                     X and Y must have the same number of columns.

@@ -1,5 +1,5 @@
 function p=v_mos2pesq(m)
-%MOS2PESQ convert MOS speech quality scores to PESQ p=(m)
+%V_MOS2PESQ convert MOS speech quality scores to PESQ p=(m)
 %Inputs:    m  is a matrix of MOS scores
 %
 %Outputs:   p  is a matrix, the same size as m, of PESQ scores

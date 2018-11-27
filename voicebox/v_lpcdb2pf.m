@@ -1,5 +1,5 @@
 function pf=v_lpcdb2pf(db)
-%LPCDB2PF Convert decibel power spectrum to power spectrum PF=(DB)
+%V_LPCDB2PF Convert decibel power spectrum to power spectrum PF=(DB)
 
 
 %      Copyright (C) Mike Brookes 1997

@@ -1,5 +1,5 @@
 function [erb,bnd] = v_frq2erb(frq)
-%FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)
+%V_FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)
 %	erb = v_frq2erb(frq) converts a vector of frequencies (in Hz)
 %	to the corresponding values on the ERB-rate scale on which
 %  	the human ear has roughly constant resolution as judged by
@@ -39,7 +39,7 @@ function [erb,bnd] = v_frq2erb(frq)
 %		  IEEE Trans on Speech & Audio Processing, Vol 2,
 %		  pp 115-132, Jan 1994
 %     [3] R. D. Patterson. Auditory filter shapes derived with noise
-%         stimuli. J. Acoust. Soc. Amer., 59: 640–654, 1976.
+%         stimuli. J. Acoust. Soc. Amer., 59: 640ï¿½654, 1976.
 
 %      Copyright (C) Mike Brookes 1998-2015
 %      Version: $Id: v_frq2erb.m 10865 2018-09-21 17:22:45Z dmb $

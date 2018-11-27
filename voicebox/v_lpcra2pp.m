@@ -1,5 +1,5 @@
 function pp=v_lpcra2pp(ra)
-%LPCAR2PP LPC: Convert ar filter autocorrelation to power spectrum polynomial in cos(w) PP=(RA)
+%V_LPCAR2PP LPC: Convert ar filter autocorrelation to power spectrum polynomial in cos(w) PP=(RA)
 % pp is a polynomial such that |polyval(ra,e^jw)| = polyval(pp,cos(w))
 
 %      Copyright (C) Mike Brookes 1998

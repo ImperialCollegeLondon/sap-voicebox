@@ -1,5 +1,5 @@
 function h=v_texthvc(x,y,t,p,q,r)
-%TEXTHVC - write text on graph with specified alignment and colour
+%V_TEXTHVC - write text on graph with specified alignment and colour
 %
 %Usage: (1) v_texthvc(x,y,'Hello','mlr')          % align centre-baseline colour=red
 %       (2) v_texthvc(x,y,'\alpha','ml',[1 0 0])  % align centre-baseline colour=red

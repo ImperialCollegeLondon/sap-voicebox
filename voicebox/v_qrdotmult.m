@@ -1,5 +1,5 @@
 function q=v_qrdotmult(q1,q2)
-%QRDOTMULT multiplies together two real quaternions arrays q=[q1,q2]
+%V_QRDOTMULT multiplies together two real quaternions arrays q=[q1,q2]
 %
 % Inputs:  q1(4n,...)
 %          q2(4n,...)   Two real quaternion arrays of equal size

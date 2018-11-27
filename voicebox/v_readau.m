@@ -1,5 +1,5 @@
 function [y,fs,h]=v_readau(filename,mode)
-%READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)
+%V_READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)
 %
 % Inputs:
 %           filename : character string containing filename (default extension .au)

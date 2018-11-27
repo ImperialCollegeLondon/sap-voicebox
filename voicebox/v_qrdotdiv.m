@@ -1,5 +1,5 @@
 function q=v_qrdotdiv(x,y)
-%QRDOTDIV divides two real quaternions arrays elementwise q=[x,y]
+%V_QRDOTDIV divides two real quaternions arrays elementwise q=[x,y]
 %
 % Inputs:  x(4n,...)
 %          y(4n,...)   Two real quaternion arrays of equal size

@@ -1,5 +1,5 @@
 function qc=v_rotqr2qc(qr)
-%ROTQR2QC converts a matrix of real quaternion vectors into complex form
+%V_ROTQR2QC converts a matrix of real quaternion vectors into complex form
 %
 % Inputs: 
 %

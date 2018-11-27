@@ -1,5 +1,5 @@
 function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)
-%GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)
+%V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)
 %
 % Usage:
 %          (1) [b,a,fx,bx,gd,ph]=v_gammabank(0.35,fs,'',[100 6000]);
@@ -77,7 +77,7 @@ function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)
 
 % For k>1, the impulse response of filter i is proportional to:
 %       h[n]=(((n+1)/fs).^(k-1))*cos(2*pi*fx(i)*(n+1)/fs+ph(i))*exp(-2*pi*bx(i)*(n+1)/fs)
-% where n>=0. For k=1 replace "(n+1)" by "n". If the 'c' option is used, replace "cos(…)" by "exp(1i*…)".
+% where n>=0. For k=1 replace "(n+1)" by "n". If the 'c' option is used, replace "cos(ï¿½)" by "exp(1i*ï¿½)".
 % Note that the DC gain is only equal to zero for two particular value of ph(i) that differ by pi.
 % Each filter is normalized to have unity gain at the centre frequency, fx(i).
 %
@@ -91,7 +91,7 @@ function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)
 % References
 %  [1]	R. F. Lyon, A. G. Katsiamis, and E. M. Drakakis.
 %       History and future of auditory filter models.
-%       In Proc Intl Symp Circuits and Systems, pages 3809–3812, 2010.
+%       In Proc Intl Symp Circuits and Systems, pages 3809ï¿½3812, 2010.
 %       doi: 10.1109/ISCAS.2010.5537724.
 %  [2]	M. Slaney.
 %       An efficient implementation of the patterson-holdsworth auditory filter bank.

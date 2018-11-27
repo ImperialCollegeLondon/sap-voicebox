@@ -1,5 +1,5 @@
 function la=v_lpcrf2la(rf)
-%LPCRF2LA Convert reflection coefficients to log areas LA=(RF)
+%V_LPCRF2LA Convert reflection coefficients to log areas LA=(RF)
 % areas are normalised to give la(p+2)=0, the log area of the free space beyond lips
 
 

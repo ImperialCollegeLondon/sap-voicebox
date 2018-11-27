@@ -1,5 +1,5 @@
 function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)
-%SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)
+%V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)
 %
 % Usage: (1) y=v_specsub(x,fs);   % enhance the speech using default parameters
 %

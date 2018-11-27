@@ -1,5 +1,5 @@
 function [y,zo]=v_filterbank(b,a,x,gd)
-%FILTERBANK appply v_filterbank to a signal: [y,zo]=(b,a,x,gd)
+%V_FILTERBANK appply v_filterbank to a signal: [y,zo]=(b,a,x,gd)
 %
 % Inputs:
 %    b    numerator coefficients, one row per filter

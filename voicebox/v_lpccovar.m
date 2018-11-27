@@ -1,5 +1,5 @@
 function [ar,e,dc]=v_lpccovar(s,p,t,w)
-%LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)
+%V_LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)
 %
 %  Inputs:  S(NS)    is the input signal
 %           P        is the order (default: 12)

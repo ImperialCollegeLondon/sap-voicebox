@@ -1,5 +1,5 @@
 function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
-%GAUSSMIXK approximate Kullback-Leibler divergence between two GMMs + derivatives
+%V_GAUSSMIXK approximate Kullback-Leibler divergence between two GMMs + derivatives
 %
 % Inputs: with kf & kg mixtures, p data dimensions
 %
@@ -30,11 +30,11 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 %
 % Refs:
 % [1]	S. Kullback and R. Leibler. On information and sufficiency.
-%       Annals of Mathematical Statistics, 22 (1): 79–86, 1951. doi: 10.1214/aoms/1177729694.
+%       Annals of Mathematical Statistics, 22 (1): 79ï¿½86, 1951. doi: 10.1214/aoms/1177729694.
 % [2]	J. R. Hershey and P. A. Olsen.
 %       Approximating the kullback leibler divergence between gaussian mixture models.
 %       In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 4,
-%       pages IV–317–IV–320, Apr. 2007. doi: 10.1109/ICASSP.2007.366913.
+%       pages IVï¿½317ï¿½IVï¿½320, Apr. 2007. doi: 10.1109/ICASSP.2007.366913.
 
 %	   Copyright (C) Mike Brookes 2012
 %      Version: $Id: v_gaussmixk.m 10865 2018-09-21 17:22:45Z dmb $

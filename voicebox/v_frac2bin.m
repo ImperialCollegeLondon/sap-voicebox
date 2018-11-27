@@ -1,5 +1,5 @@
 function s=v_frac2bin(d,n,m)
-%FRAC2BIN Convert an column vector to binary S=(D,N,M)
+%V_FRAC2BIN Convert an column vector to binary S=(D,N,M)
 %  Inputs:  D   scalar or column vector to convert
 %           N   minimum number of integer bits to output [default 1]
 %           M   number of places after binary point [default 0]

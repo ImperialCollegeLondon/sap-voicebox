@@ -1,5 +1,5 @@
 function x=v_choosrnk(n,k)
-%CHOOSRNK All choices of K elements taken from 1:N with replacement. [X]=(N,K)
+%V_CHOOSRNK All choices of K elements taken from 1:N with replacement. [X]=(N,K)
 % The output X is a matrix of size ((N+K-1)!/(K!*(N-1)!),K) where each row
 % contains a choice of K elements taken from 1:N with duplications allowed.
 % The rows of X are in lexically sorted order.

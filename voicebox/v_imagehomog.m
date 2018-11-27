@@ -1,5 +1,5 @@
 function [ih,xa,ya]=v_imagehomog(im,h,m,clip)
-%IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation
+%V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation
 %Inputs: im(ny,nx,nc)  input image (uint8)
 %        h(3,3)        homography
 %        m             mode string

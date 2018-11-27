@@ -1,5 +1,5 @@
 function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)
-%READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)
+%V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)
 %
 % Input Parameters:
 %

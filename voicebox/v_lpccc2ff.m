@@ -1,5 +1,5 @@
 function [ff,f]=v_lpccc2ff(cc,np,nc,c0)
-%LPCCC2FF Convert complex cepstrum to complex spectrum FF=(CC,NP,NC)
+%V_LPCCC2FF Convert complex cepstrum to complex spectrum FF=(CC,NP,NC)
 %
 %  Inputs: cc(nf,n)     Complex ceptral coefficients excluding c(0), one frame per row
 %          np           Size of output spectrum is np+1 [n]

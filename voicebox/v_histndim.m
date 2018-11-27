@@ -1,5 +1,5 @@
 function [v,t]=v_histndim(x,b,mode)
-%HISTNDIM - generates and/or plots an n-dimensional histogram
+%V_HISTNDIM - generates and/or plots an n-dimensional histogram
 %
 %  Inputs:  X(m,d)   is the input data: each row is one d-dimensiona data point
 %           B(3,d)   specifies the histogram bins.

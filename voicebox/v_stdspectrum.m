@@ -1,5 +1,5 @@
 function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
-%STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)
+%V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)
 %
 % Usage: (1) [b,a]=v_stdspectrum(2,'z',fs)  % create A-weighting z-domain filter for sample frequency fs
 %        (2) [b,a]=v_stdspectrum(2,'zMLT',fs) % as above but also plot both s- and z-domain responses with log freq axis
@@ -77,7 +77,7 @@ function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
 %       W. A. H. E. Kholy, Y. Nakanishi, H. Oyer, R. Powell, D. Stephens, R. Meredith,
 %       T. Sirimanna, G. Tavartkiladze, G. I. Frolenkov, S. Westerman, and C. Ludvigsen.
 %       An international comparison of long-term average speech spectra.
-%       JASA, 96 (4): 2108–2120, Oct. 1994.
+%       JASA, 96 (4): 2108ï¿½2120, Oct. 1994.
 % [3]	CENELEC. Electroacoustics - sound level meters. Technical Report EN EN 61672-1:2003, 2003.
 %       (also ANSI S1.42-2001)
 % [4]	ITU-T. Artificial voices. Standard P.50, Sept. 1999.
@@ -90,13 +90,13 @@ function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
 % [8]   NRSC AM Reemphasis, Deemphasize, and Broadcast Audio Transmission Bandwidth Specifications,
 %       NRSC-1-A Standard, Sept 2007, Online: http://www.nrscstandards.org/SG/NRSC-1-A.pdf
 % [9]   H. Fletcher and W. A. Munson. Loudness, its definition, measurement and calculation.
-%       J. Acoust Soc Amer, 5: 82–108, Oct. 1933.
+%       J. Acoust Soc Amer, 5: 82ï¿½108, Oct. 1933.
 % [10]  American National Standard Specification for Sound Level Meters.
 %       ANSI S1.4-1983 (R2006)/ANSI S1.4a-1985 (R2006), American National Standards Institute
 % [11]	IEEE standard equipment requirements and measurement techniques for analog transmission
 %       parameters for telecommunications. Standard IEEE Std 743-1995, Dec. 1995.
 % [12]  S.C.Thompson, J.L.LoPresti, E.M.Ring, H.G.Nepomuceno, J.J.Beard, W.J.Ballad, and E.V.Carlson.
-%       Noise in miniature microphones. J. Acoust. Soc. Amer., 111 (2): 861–866, feb 2002. doi: 10.1121/1.1436072.
+%       Noise in miniature microphones. J. Acoust. Soc. Amer., 111 (2): 861ï¿½866, feb 2002. doi: 10.1121/1.1436072.
 
 % Other candidates: (a) Z-weighting, (b) ISO226, (c) P.48 spectra
 %
@@ -104,7 +104,7 @@ function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
 %    IEEE743 has several weighting filters defined
 %    ITU-T 0.41 Psophometer for use on telephone-type circuits
 %    Bell System Technical Reference 41009 (C-message)
-%    ISO 8041:2005 (E): Human Response to Vibration – Measuring
+%    ISO 8041:2005 (E): Human Response to Vibration ï¿½ Measuring
 %    Instrumentation
 %    IEC 1260:1995, class 1 (also IEC 61260/ANSI S1.11-2004) Octave band and fractional octave band filters
 %    IEC 651: Specification for Sound Level Meters

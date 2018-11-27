@@ -1,5 +1,5 @@
 function x=v_pcmu2lin(p,s)
-%PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
+%V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
 %	lin = v_pcmu2lin(pcmu) where pcmu contains a vector
 %	of mu-law values in the range 0 to 255.
 %	No checking is performed to see that numbers are in this range.

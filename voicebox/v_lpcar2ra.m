@@ -1,5 +1,5 @@
 function ra=v_lpcar2ra(ar)
-%LPCAR2RA Convert ar filter to inverse filter autocorrelation coefs. RA=(AR)
+%V_LPCAR2RA Convert ar filter to inverse filter autocorrelation coefs. RA=(AR)
 
 
 %      Copyright (C) Mike Brookes 1997

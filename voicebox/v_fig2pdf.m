@@ -1,5 +1,5 @@
 function v_fig2pdf(h,s,p,f)
-%FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)
+%V_FIG2EMF save a figure in pdf/eps/ps formats (H,S,P,F)
 % [needs MikTeX installed]
 % Usage:  (1) v_fig2pdf                       % save current figure to pdf in current folder
 %         (2) v_fig2pdf([],[],'e');           % save current figure to eps in current folder

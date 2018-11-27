@@ -1,5 +1,5 @@
 function rf=v_lpcar2rf(ar)
-%LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)
+%V_LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)
 %
 % Input:   ar(:,p+1)  Autoregressive coefficients
 % Output:  rf(:,p+1)  Reflection coefficients with rf(:,1)=1

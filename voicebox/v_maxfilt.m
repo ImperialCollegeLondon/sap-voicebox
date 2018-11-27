@@ -1,5 +1,5 @@
 function [y,k,y0]=v_maxfilt(x,f,n,d,x0)
-%MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)
+%V_MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)
 %
 % Usage: (1) y=v_maxfilt(x)   % maximum filter along first non-singleton dimension
 %        (2) y=v_maxfilt(x,0.95) % use a forgetting factor of 0.95 (= time const of -1/log(0.95)=19.5 samples)

@@ -1,5 +1,5 @@
 function [ar,e]=v_lpcrr2ar(rr);
-%LPCRR2AR convert autocorrelation coefs to ar coefs [AR,E]=(RR)
+%V_LPCRR2AR convert autocorrelation coefs to ar coefs [AR,E]=(RR)
 %E is the residual energy
 
 % could test e each time and remove rows when it gets small

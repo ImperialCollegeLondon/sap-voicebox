@@ -1,4 +1,5 @@
 function ar=v_lpcrand(p,n,bw)
+%V_LPCRAND generate random stable polynomials AR=(P,N,BW)
 % generate n random stable polynomials of order p with a minimum pole
 % bandwidth of bw*fs where fs is the sampling fequency.
 % To limit the pole radius to r set bw=-log(r)/pi

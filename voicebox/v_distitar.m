@@ -1,5 +1,5 @@
 function d=v_distitar(ar1,ar2,mode)
-%DISTITAR calculates the Itakura distance between AR coefficients D=(AR1,AR2,MODE)
+%V_DISTITAR calculates the Itakura distance between AR coefficients D=(AR1,AR2,MODE)
 %
 % Inputs: AR1,AR2     AR coefficient sets to be compared. Each row contains a set of coefficients.
 %                     AR1 and AR2 must have the same number of columns.

@@ -1,5 +1,5 @@
 function [pf,f]=v_lpcar2pf(ar,np)
-%LPCAR2PF Convert AR coefs to power spectrum PF=(AR,NP)
+%V_LPCAR2PF Convert AR coefs to power spectrum PF=(AR,NP)
 %
 %  Inputs: ar(nf,n)     AR coefficients, one frame per row
 %          np           Size of output spectrum is np+1 [n]

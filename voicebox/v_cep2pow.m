@@ -1,5 +1,5 @@
 function [m,c]=v_cep2pow(u,v,mode)
-%CEP2POW convert cepstral means and variances to the power domain
+%V_CEP2POW convert cepstral means and variances to the power domain
 % Inputs:
 %    u: vector giving the cepstral means with u(1) the 0'th cepstral coefficient
 %    v: cepstral covariance matrix or else a vector containing the diagonal elements 

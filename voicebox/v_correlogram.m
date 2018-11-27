@@ -1,5 +1,5 @@
 function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)
-% make v_correlogram,
+%V_CORRELOGRAM calculate correlogram [y,ty]=(x,inc,nw,nlag,m,fs)
 % Usage:
 %        do_env=1; do_hp=1;                            % flags to control options
 %        [b,a,fx,bx,gd]=v_gammabank(25,fs,'',[80 5000]); % determine v_filterbank

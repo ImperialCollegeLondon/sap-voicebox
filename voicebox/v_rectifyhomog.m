@@ -1,5 +1,5 @@
 function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)
-%RECTIFYHOMOG Apply rectifying homographies to an image set
+%V_RECTIFYHOMOG Apply rectifying homographies to an image set
 %
 % Usage:    figure(101);     % Initial figure for rectiied image display
 %           v_rectifyhomog(ims,roc,k0,'ga');   % plot in individual figures
@@ -128,7 +128,7 @@ for i=1:nc
     end
     j=min(i,ncr);
     rocall=rocmean*roc(:,:,i)';
-    titl=sprintf('%d: pan-tilt-roll = %.1f°, %.1f°, %.1f°',i,-v_rotro2eu('yxz',rocall)*180/pi);
+    titl=sprintf('%d: pan-tilt-roll = %.1fï¿½, %.1fï¿½, %.1fï¿½',i,-v_rotro2eu('yxz',rocall)*180/pi);
     [imr{j},xa{j},ya{j}]=v_imagehomog(uint8(ims{i}),k0*rocall/k0,modeh);  % apply inverse of v_rotation matrix
     if gmode>0
         if gmode>1

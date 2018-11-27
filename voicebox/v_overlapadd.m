@@ -1,5 +1,5 @@
 function [x,zo]=v_overlapadd(f,win,inc)
-%OVERLAPADD join overlapping frames together X=(F,WIN,INC)
+%V_OVERLAPADD join overlapping frames together X=(F,WIN,INC)
 %
 % Usage for frequency-domain processing:
 %       S=...;                              % input signal

@@ -1,5 +1,5 @@
 function [y,s,v]=v_rotqrmean(q)
-%ROTQRMEAN calculates the mean rotation of a quaternion array [y,s]=[q]
+%V_ROTQRMEAN calculates the mean rotation of a quaternion array [y,s]=[q]
 %
 % Inputs:   q(4,n)    normalized real quaternion array
 %

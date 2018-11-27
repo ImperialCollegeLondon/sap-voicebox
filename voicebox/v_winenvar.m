@@ -1,5 +1,5 @@
 function d=v_winenvar(n)
-%WINENVAR get windows environment variable [D]=(N)
+%V_WINENVAR get windows environment variable [D]=(N)
 %
 % Inputs: N  name of environment variable (e.g. 'temp')
 %

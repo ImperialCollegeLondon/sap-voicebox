@@ -1,5 +1,5 @@
 function d=v_distchpf(pf1,pf2,mode)
-%DISTCHPF calculates the cosh spectral distance between power spectra D=(PF1,PF2,MODE)
+%V_DISTCHPF calculates the cosh spectral distance between power spectra D=(PF1,PF2,MODE)
 %
 % Inputs: PF1,PF2     Power spectra to be compared. Each row represents a power spectrum: the first
 %                     and last columns represent the DC and Nyquist terms respectively.
