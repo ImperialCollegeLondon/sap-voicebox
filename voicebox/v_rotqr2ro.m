@@ -1,13 +1,13 @@
 function r=v_rotqr2ro(q)
-%V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix
+%ROTQR2RO converts a real quaternion to a 3x3 rotation matrix
 % Inputs:
 %
-%     Q(4,1)   real-valued quaternion (possibly unnormalized)
+%     Q(4,...)      Real-valued quaternion array (possibly unnormalized)
 %
 % Outputs:
 %
-%     R(3,3)   Input rotation matrix
-%              Plots a diagram if no output specified
+%     R(3,3,...)    Rotation matrix array
+%                   Plots a diagram if no output specified
 %
 % In the quaternion representation of a rotation, and q(1) = cos(t/2)
 % where t is the angle of rotation in the range 0 to 2pi
@@ -36,7 +36,7 @@ function r=v_rotqr2ro(q)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-persistent a b c d e f g
+persistent a b c d e f g h m
 if isempty(a)
     a=[1 5 9];
     b=[11 16 6];
@@ -45,17 +45,23 @@ if isempty(a)
     e=[10 15 14];
     f=[4 2 3];
     g=[2 6 7];
+    h=[1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4]';
+    m=[1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4]';
 end
-p=2*(q*q.')/(q.'*q);            % force normalized
-r=zeros(3,3);
-r(a)=1-p(b)-p(c);
-r(d)=p(e)-p(f);
-r(g)=p(e)+p(f);
+sz=size(q);
+q=reshape(q,4,[]);      % convert to 2D matrix
+nq =size(q,2);          % number of quaternions to convert
+p=2*q(h,:).*q(m,:)./repmat(sum(q.^2,1),16,1); % force normalized and calculate quadratic terms       
+r=zeros(9,nq);          % space for nq rotation matrices
+r(a,:)=1-p(b,:)-p(c,:);
+r(d,:)=p(e,:)-p(f,:);
+r(g,:)=p(e,:)+p(f,:);
+r=reshape(r,[3 3 sz(2:end)]);
 if ~nargout
     % display rotated cube
     clf('reset'); % clear current axis
     v0=[-1 1 1 -1 -1 1 1 -1; -1 -1 1 1 -1 -1 1 1; -1 -1 -1 -1 1 1 1 1]*0.5; % unrotated coordinates
-    v=r*v0; % unrotated for now
+    v=r(:,:,1)*v0; % unrotated for now
     fv=[4 1 5 8; 2 3 7 6; 1 2 6 5; 3 4 8 7; 2 1 4 3; 5 6 7 8]; % verices for each face
     fc=[0 1 1; 1 0 0; 1 0 1; 0 1 0; 1 1 0; 0 0 1]; % colours for faces
     xc={[25 46 46 25; 55 55 49 49]/100,
@@ -81,8 +87,8 @@ if ~nargout
     xlabel('x axis');
     ylabel('y axis');
     zlabel('z axis');
-    q=q*((2*(q(find(q~=0,1))>0)-1)/sqrt(q'*q)); % normalize and force leading coefficient to be positive
-    title(sprintf('qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]^\\circ',q,round(v_rotro2eu('xyz',r)*180/pi)));
+    q=q(:,1)*((2*(q(find(q(:,1)~=0,1))>0)-1)/sqrt(q(:,1)'*q(:,1))); % normalize and force leading coefficient to be positive
+    title(sprintf('qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]^\\circ',q(:,1),round(v_rotro2eu('xyz',r)*180/pi)));
     axis([-1 1 -1 1 -1 1 0 1]*sqrt(3)/2);
     axis equal
     grid on
