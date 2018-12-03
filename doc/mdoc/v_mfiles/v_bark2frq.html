@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_bark2frq</title>
   <meta name="keywords" content="v_bark2frq">
-  <meta name="description" content="BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)">
+  <meta name="description" content="V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</strong></div>
+<div class="box"><strong>V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [f,c] = v_bark2frq(b,m) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)
+<div class="fragment"><pre class="comment">V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)
 
  Inputs: b  matrix of frequencies in Bark
          m  mode options
@@ -47,16 +47,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	V_FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	V_MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f,c] = v_bark2frq(b,m)</a>
-0002 <span class="comment">%BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</span>
+0002 <span class="comment">%V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs: b  matrix of frequencies in Bark</span>
 0005 <span class="comment">%         m  mode options</span>
@@ -90,13 +90,13 @@ This function is called by:
 0033 <span class="comment">%   widely used in the lterature.</span>
 0034 <span class="comment">%</span>
 0035 <span class="comment">%   [1] H. Traunmuller, Analytical Expressions for the</span>
-0036 <span class="comment">%       Tonotopic Sensory Scale”, J. Acoust. Soc. Am. 88,</span>
+0036 <span class="comment">%       Tonotopic Sensory Scaleï¿½, J. Acoust. Soc. Am. 88,</span>
 0037 <span class="comment">%       1990, pp. 97-100.</span>
 0038 <span class="comment">%   [2] E. Zwicker, Subdivision of the audible frequency range into</span>
 0039 <span class="comment">%       critical bands, J Accoust Soc Am 33, 1961, p248.</span>
 0040 <span class="comment">%   [3] M. R. Schroeder, B. S. Atal, and J. L. Hall. Optimizing digital</span>
 0041 <span class="comment">%       speech coders by exploiting masking properties of the human ear.</span>
-0042 <span class="comment">%       J. Acoust Soc Amer, 66 (6): 1647–1652, 1979. doi: 10.1121/1.383662.</span>
+0042 <span class="comment">%       J. Acoust Soc Amer, 66 (6): 1647ï¿½1652, 1979. doi: 10.1121/1.383662.</span>
 0043 
 0044 <span class="comment">%      Copyright (C) Mike Brookes 2006-2010</span>
 0045 <span class="comment">%      Version: $Id: v_bark2frq.m 10865 2018-09-21 17:22:45Z dmb $</span>

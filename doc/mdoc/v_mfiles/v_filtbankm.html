@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_filtbankm</title>
   <meta name="keywords" content="v_filtbankm">
-  <meta name="description" content="FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)">
+  <meta name="description" content="V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</strong></div>
+<div class="box"><strong>V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)
+<div class="fragment"><pre class="comment">V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)
 
  Usage:
  (1) Calcuate the Mel-frequency Cepstral Coefficients
@@ -108,16 +108,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	h is the handle of the colorbar, axis or figure</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	V_CBLABEL add a label to a colorbar c=(l,h)</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	V_FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	V_FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	V_MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	SPENDRED          Speech Enhancement and Dereverberation by Doire</li></ul>
+<li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	V_SPENDRED Speech Enhancement and Dereverberation by Doire</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)</a>
-0002 <span class="comment">%FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</span>
+0002 <span class="comment">%V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:</span>
 0005 <span class="comment">% (1) Calcuate the Mel-frequency Cepstral Coefficients</span>
@@ -198,10 +198,10 @@ This function is called by:
 0080 <span class="comment">% References:</span>
 0081 <span class="comment">%</span>
 0082 <span class="comment">% [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement</span>
-0083 <span class="comment">%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185–19, 1937.</span>
+0083 <span class="comment">%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185ï¿½19, 1937.</span>
 0084 <span class="comment">% [2] S. Davis and P. Mermelstein. Comparison of parametric representations for</span>
 0085 <span class="comment">%     monosyllabic word recognition in continuously spoken sentences.</span>
-0086 <span class="comment">%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357–366, Aug. 1980.</span>
+0086 <span class="comment">%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357ï¿½366, Aug. 1980.</span>
 0087 
 0088 <span class="comment">% Bugs/Suggestions</span>
 0089 <span class="comment">% (1) default frequencies won't work if the h option is specified</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_activlevg</title>
   <meta name="keywords" content="v_activlevg">
-  <meta name="description" content="ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)">
+  <meta name="description" content="V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</strong></div>
+<div class="box"><strong>V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [lev,xx] = v_activlevg(sp,fs,mode) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)
+<div class="fragment"><pre class="comment">V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)
 
 Inputs: sp     is the speech signal
         FS     is the sample frequency in Hz (see also FSO below)
@@ -57,7 +57,7 @@ Outputs:
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li></ul>
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -66,7 +66,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [lev,xx] = v_activlevg(sp,fs,mode)</a>
-0002 <span class="comment">%ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</span>
+0002 <span class="comment">%V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%Inputs: sp     is the speech signal</span>
 0005 <span class="comment">%        FS     is the sample frequency in Hz (see also FSO below)</span>
@@ -98,7 +98,7 @@ This function is called by:
 0031 <span class="comment">%    [1] S. Gonzalez and M. Brookes.</span>
 0032 <span class="comment">%        Speech active level estimation in noisy conditions.</span>
 0033 <span class="comment">%        In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing,</span>
-0034 <span class="comment">%        pp 6684–6688, Vancouver, May 2013. doi: 10.1109/ICASSP.2013.6638955.</span>
+0034 <span class="comment">%        pp 6684ï¿½6688, Vancouver, May 2013. doi: 10.1109/ICASSP.2013.6638955.</span>
 0035 
 0036 <span class="comment">%      Copyright (C) Sira Gonzalez, Mike Brookes 2008-2012</span>
 0037 <span class="comment">%      Version: $Id: v_activlevg.m 10865 2018-09-21 17:22:45Z dmb $</span>

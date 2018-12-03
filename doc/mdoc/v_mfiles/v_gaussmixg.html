@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_gaussmixg</title>
   <meta name="keywords" content="v_gaussmixg">
-  <meta name="description" content="GAUSSMIXG global mean, variance and mode of a GMM">
+  <meta name="description" content="V_GAUSSMIXG global mean, variance and mode of a GMM">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>GAUSSMIXG global mean, variance and mode of a GMM</strong></div>
+<div class="box"><strong>V_GAUSSMIXG global mean, variance and mode of a GMM</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">GAUSSMIXG global mean, variance and mode of a GMM
+<div class="fragment"><pre class="comment">V_GAUSSMIXG global mean, variance and mode of a GMM
 
  Usage: (1) v_gaussmixg(m,v,w)               % plot the mean and mode positions of a GMM
         (2) [mg,vg]=v_gaussmixg(m,v,w)       % find global mean and covariance of a GMM
@@ -54,17 +54,17 @@
   the identity.
 
  Refs:
-   [1]    M. Á. Carreira-Perpiñán. Mode-finding for mixtures of gaussian distributions.
-       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318–1323, 2000. doi: 10.1109/34.888716.
-   [2] M. Á. Carreira-Perpiñán and C. K. I. Williams. On the number of modes of a gaussian mixture.
-       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625–640,
+   [1]    M. ï¿½. Carreira-Perpiï¿½ï¿½n. Mode-finding for mixtures of gaussian distributions.
+       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318ï¿½1323, 2000. doi: 10.1109/34.888716.
+   [2] M. ï¿½. Carreira-Perpiï¿½ï¿½n and C. K. I. Williams. On the number of modes of a gaussian mixture.
+       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625ï¿½640,
        Isle of Skye, June 2003. doi: 10.1007/3-540-44935-3_44.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>	GAUSSMIXD marginal and conditional Gaussian mixture densities</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	V_AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>	V_GAUSSMIXD marginal and conditional Gaussian mixture densities</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -73,7 +73,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)</a>
-0002 <span class="comment">%GAUSSMIXG global mean, variance and mode of a GMM</span>
+0002 <span class="comment">%V_GAUSSMIXG global mean, variance and mode of a GMM</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) v_gaussmixg(m,v,w)               % plot the mean and mode positions of a GMM</span>
 0005 <span class="comment">%        (2) [mg,vg]=v_gaussmixg(m,v,w)       % find global mean and covariance of a GMM</span>
@@ -100,10 +100,10 @@ This function is called by:
 0026 <span class="comment">%  the identity.</span>
 0027 <span class="comment">%</span>
 0028 <span class="comment">% Refs:</span>
-0029 <span class="comment">%   [1]    M. Á. Carreira-Perpiñán. Mode-finding for mixtures of gaussian distributions.</span>
-0030 <span class="comment">%       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318–1323, 2000. doi: 10.1109/34.888716.</span>
-0031 <span class="comment">%   [2] M. Á. Carreira-Perpiñán and C. K. I. Williams. On the number of modes of a gaussian mixture.</span>
-0032 <span class="comment">%       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625–640,</span>
+0029 <span class="comment">%   [1]    M. ï¿½. Carreira-Perpiï¿½ï¿½n. Mode-finding for mixtures of gaussian distributions.</span>
+0030 <span class="comment">%       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318ï¿½1323, 2000. doi: 10.1109/34.888716.</span>
+0031 <span class="comment">%   [2] M. ï¿½. Carreira-Perpiï¿½ï¿½n and C. K. I. Williams. On the number of modes of a gaussian mixture.</span>
+0032 <span class="comment">%       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625ï¿½640,</span>
 0033 <span class="comment">%       Isle of Skye, June 2003. doi: 10.1007/3-540-44935-3_44.</span>
 0034 
 0035 <span class="comment">% Bugs/Suggestions:</span>

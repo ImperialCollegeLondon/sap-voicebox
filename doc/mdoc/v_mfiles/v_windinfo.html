@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_windinfo</title>
   <meta name="keywords" content="v_windinfo">
-  <meta name="description" content="WINDINFO window information and figures of merit X=(W,FS)">
+  <meta name="description" content="V_WINDINFO window information and figures of merit X=(W,FS)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>WINDINFO window information and figures of merit X=(W,FS)</strong></div>
+<div class="box"><strong>V_WINDINFO window information and figures of merit X=(W,FS)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function x=windinfo(w,fs) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">WINDINFO window information and figures of merit X=(W,FS)
+<div class="fragment"><pre class="comment">V_WINDINFO window information and figures of merit X=(W,FS)
 
   Inputs:  W        is a vector containing the window
            FS       is the sampling frequency (default=1)
@@ -59,7 +59,7 @@
  listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).
 
   [1]  F. J. Harris. On the use of windows for harmonic analysis with the
-       discrete fourier transform. Proc IEEE, 66 (1): 51–83, Jan. 1978.</pre></div>
+       discrete fourier transform. Proc IEEE, 66 (1): 51ï¿½83, Jan. 1978.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -68,13 +68,13 @@ This function calls:
 <li><a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>	V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>	WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</li></ul>
+<li><a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>	V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=windinfo(w,fs)</a>
-0002 <span class="comment">%WINDINFO window information and figures of merit X=(W,FS)</span>
+0002 <span class="comment">%V_WINDINFO window information and figures of merit X=(W,FS)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  W        is a vector containing the window</span>
 0005 <span class="comment">%           FS       is the sampling frequency (default=1)</span>
@@ -106,7 +106,7 @@ This function is called by:
 0031 <span class="comment">% listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).</span>
 0032 <span class="comment">%</span>
 0033 <span class="comment">%  [1]  F. J. Harris. On the use of windows for harmonic analysis with the</span>
-0034 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51–83, Jan. 1978.</span>
+0034 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51ï¿½83, Jan. 1978.</span>
 0035 
 0036 <span class="comment">%       Copyright (C) Mike Brookes 2009-2014</span>
 0037 <span class="comment">%      Version: $Id: v_windinfo.m 6801 2015-09-12 09:30:42Z dmb $</span>
@@ -274,13 +274,13 @@ This function is called by:
 0199     texthvc(tax(end),max(w),sprintf(<span class="string">'N=%d'</span>,nw),<span class="string">'rtk'</span>);
 0200     <span class="keyword">if</span> length(x.cola)&gt;3
 0201         tcola=sprintf(<span class="string">',%d'</span>,x.cola(1:3));
-0202         tcola=[tcola <span class="string">',…'</span>];
+0202         tcola=[tcola <span class="string">',ï¿½'</span>];
 0203     <span class="keyword">else</span>
 0204         tcola=sprintf(<span class="string">',%d'</span>,x.cola);
 0205     <span class="keyword">end</span>
 0206     <span class="keyword">if</span> length(x.cola2)&gt;3
 0207         tcola2=sprintf(<span class="string">',%d'</span>,x.cola2(1:3));
-0208         tcola2=[tcola2 <span class="string">',…'</span>];
+0208         tcola2=[tcola2 <span class="string">',ï¿½'</span>];
 0209     <span class="keyword">else</span>
 0210         tcola2=sprintf(<span class="string">',%d'</span>,x.cola2);
 0211     <span class="keyword">end</span>

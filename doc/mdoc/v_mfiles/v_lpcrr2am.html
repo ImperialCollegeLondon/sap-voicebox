@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcrr2am</title>
   <meta name="keywords" content="v_lpcrr2am">
-  <meta name="description" content="LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)">
+  <meta name="description" content="V_LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)</strong></div>
+<div class="box"><strong>V_LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [am,em]=v_lpcrr2am(rr); </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)
+<div class="fragment"><pre class="comment">V_LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)
 AM is a 3-dimensional matrix of size (p+1,p+1,nf) where p is the lpc order
 and nf the number of frames.
 The matrix AM(:,:,*) is upper triangular with 1's on the main diagonal
@@ -54,7 +54,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [am,em]=v_lpcrr2am(rr);</a>
-0002 <span class="comment">%LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)</span>
+0002 <span class="comment">%V_LPCRR2AM Convert autocorrelation coefs to ar coef matrix [AM,EM]=(RR)</span>
 0003 <span class="comment">%AM is a 3-dimensional matrix of size (p+1,p+1,nf) where p is the lpc order</span>
 0004 <span class="comment">%and nf the number of frames.</span>
 0005 <span class="comment">%The matrix AM(:,:,*) is upper triangular with 1's on the main diagonal</span>

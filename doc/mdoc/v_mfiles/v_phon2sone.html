@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_phon2sone</title>
   <meta name="keywords" content="v_phon2sone">
-  <meta name="description" content="PHON2SONE convert PHON loudness values to SONEs s=(p)">
+  <meta name="description" content="V_PHON2SONE convert PHON loudness values to SONEs s=(p)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>PHON2SONE convert PHON loudness values to SONEs s=(p)</strong></div>
+<div class="box"><strong>V_PHON2SONE convert PHON loudness values to SONEs s=(p)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function s=v_phon2sone(p) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">PHON2SONE convert PHON loudness values to SONEs s=(p)
+<div class="fragment"><pre class="comment">V_PHON2SONE convert PHON loudness values to SONEs s=(p)
 Inputs:    p is a matrix of phon values
 
 Outputs:   s is a matrix, the same size as p, of sone values
@@ -39,23 +39,23 @@ Outputs:   s is a matrix, the same size as p, of sone values
 
  Refs: [1]    J. Lochner and J. Burger. Form of the loudness function in the presence of masking noise.
            The Journal of the Acoustical Society of America, 33: 1705, 1961.
-       [2]    ISO/TC43. Acoustics – normal equal-loudness-level contours.
+       [2]    ISO/TC43. Acoustics ï¿½ normal equal-loudness-level contours.
            Standard ISO 226:2003, Aug. 2003.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_phon2sone.html" class="code" title="function s=v_phon2sone(p)">v_phon2sone</a>	PHON2SONE convert PHON loudness values to SONEs s=(p)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	V_AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_phon2sone.html" class="code" title="function s=v_phon2sone(p)">v_phon2sone</a>	V_PHON2SONE convert PHON loudness values to SONEs s=(p)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_phon2sone.html" class="code" title="function s=v_phon2sone(p)">v_phon2sone</a>	PHON2SONE convert PHON loudness values to SONEs s=(p)</li><li><a href="v_sone2phon.html" class="code" title="function p=v_sone2phon(s)">v_sone2phon</a>	PHON2SONE convert SONE loudness values to PHONs p=(s)</li></ul>
+<li><a href="v_phon2sone.html" class="code" title="function s=v_phon2sone(p)">v_phon2sone</a>	V_PHON2SONE convert PHON loudness values to SONEs s=(p)</li><li><a href="v_sone2phon.html" class="code" title="function p=v_sone2phon(s)">v_sone2phon</a>	V_PHON2SONE convert SONE loudness values to PHONs p=(s)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_phon2sone(p)</a>
-0002 <span class="comment">%PHON2SONE convert PHON loudness values to SONEs s=(p)</span>
+0002 <span class="comment">%V_PHON2SONE convert PHON loudness values to SONEs s=(p)</span>
 0003 <span class="comment">%Inputs:    p is a matrix of phon values</span>
 0004 <span class="comment">%</span>
 0005 <span class="comment">%Outputs:   s is a matrix, the same size as p, of sone values</span>
@@ -67,7 +67,7 @@ This function is called by:
 0011 <span class="comment">%</span>
 0012 <span class="comment">% Refs: [1]    J. Lochner and J. Burger. Form of the loudness function in the presence of masking noise.</span>
 0013 <span class="comment">%           The Journal of the Acoustical Society of America, 33: 1705, 1961.</span>
-0014 <span class="comment">%       [2]    ISO/TC43. Acoustics – normal equal-loudness-level contours.</span>
+0014 <span class="comment">%       [2]    ISO/TC43. Acoustics ï¿½ normal equal-loudness-level contours.</span>
 0015 <span class="comment">%           Standard ISO 226:2003, Aug. 2003.</span>
 0016 
 0017 

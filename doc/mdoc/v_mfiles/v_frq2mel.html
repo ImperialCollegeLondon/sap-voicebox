@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_frq2mel</title>
   <meta name="keywords" content="v_frq2mel">
-  <meta name="description" content="FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)">
+  <meta name="description" content="V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</strong></div>
+<div class="box"><strong>V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [mel,mr] = v_frq2mel(frq) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
+<div class="fragment"><pre class="comment">V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
     [mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)
     to the corresponding values on the Mel scale which corresponds
     to the perceived pitch of a tone.
@@ -37,16 +37,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	SPENDRED          Speech Enhancement and Dereverberation by Doire</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	V_MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	V_SPENDRED Speech Enhancement and Dereverberation by Doire</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mel,mr] = v_frq2mel(frq)</a>
-0002 <span class="comment">%FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</span>
+0002 <span class="comment">%V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</span>
 0003 <span class="comment">%    [mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)</span>
 0004 <span class="comment">%    to the corresponding values on the Mel scale which corresponds</span>
 0005 <span class="comment">%    to the perceived pitch of a tone.</span>
@@ -63,7 +63,7 @@ This function is called by:
 0016 <span class="comment">%     [1] J. Makhoul and L. Cosell. &quot;Lpcw: An lpc vocoder with</span>
 0017 <span class="comment">%         linear predictive spectral warping&quot;, In Proc IEEE Intl</span>
 0018 <span class="comment">%         Conf Acoustics, Speech and Signal Processing, volume 1,</span>
-0019 <span class="comment">%         pages 466–469, 1976. doi: 10.1109/ICASSP.1976.1170013.</span>
+0019 <span class="comment">%         pages 466ï¿½469, 1976. doi: 10.1109/ICASSP.1976.1170013.</span>
 0020 <span class="comment">%      [2] S. S. Stevens &amp; J. Volkman &quot;The relation of pitch to</span>
 0021 <span class="comment">%          frequency&quot;, American J of Psychology, V 53, p329 1940</span>
 0022 <span class="comment">%      [3] C. G. M. Fant, &quot;Acoustic description &amp; classification</span>

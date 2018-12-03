@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_teager</title>
   <meta name="keywords" content="v_teager">
-  <meta name="description" content="TEAGER calculate v_teager energy waveform Y=(X,D,M)">
+  <meta name="description" content="V_TEAGER calculate v_teager energy waveform Y=(X,D,M)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>TEAGER calculate v_teager energy waveform Y=(X,D,M)</strong></div>
+<div class="box"><strong>V_TEAGER calculate v_teager energy waveform Y=(X,D,M)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function y=v_teager(x,d,m) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">TEAGER calculate v_teager energy waveform Y=(X,D,M)
+<div class="fragment"><pre class="comment">V_TEAGER calculate v_teager energy waveform Y=(X,D,M)
 
   Inputs:  x         speech signal
            d         dimension to apply filter along [default 1st non-singleton]
@@ -46,9 +46,9 @@
   (d) x(n) = A*exp(B*n+C)    --&gt;   y(n) = 0
 
  Reference:
-  [1]    J. Kaiser. On a simple algorithm to calculate the ‘energy’ of a signal.
+  [1]    J. Kaiser. On a simple algorithm to calculate the ï¿½energyï¿½ of a signal.
        In Proc IEEE Intl Conf Acoustics, Speech and Signal Processing,
-       pages 381–384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.</pre></div>
+       pages 381ï¿½384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -63,7 +63,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_teager(x,d,m)</a>
-0002 <span class="comment">%TEAGER calculate v_teager energy waveform Y=(X,D,M)</span>
+0002 <span class="comment">%V_TEAGER calculate v_teager energy waveform Y=(X,D,M)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  x         speech signal</span>
 0005 <span class="comment">%           d         dimension to apply filter along [default 1st non-singleton]</span>
@@ -82,9 +82,9 @@ This function is called by:
 0018 <span class="comment">%  (d) x(n) = A*exp(B*n+C)    --&gt;   y(n) = 0</span>
 0019 <span class="comment">%</span>
 0020 <span class="comment">% Reference:</span>
-0021 <span class="comment">%  [1]    J. Kaiser. On a simple algorithm to calculate the ‘energy’ of a signal.</span>
+0021 <span class="comment">%  [1]    J. Kaiser. On a simple algorithm to calculate the ï¿½energyï¿½ of a signal.</span>
 0022 <span class="comment">%       In Proc IEEE Intl Conf Acoustics, Speech and Signal Processing,</span>
-0023 <span class="comment">%       pages 381–384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.</span>
+0023 <span class="comment">%       pages 381ï¿½384, vol.1, Apr. 1990. doi: 10.1109/ICASSP.1990.115702.</span>
 0024 
 0025 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
 0026 <span class="comment">%      Version: $Id: v_teager.m 10865 2018-09-21 17:22:45Z dmb $</span>

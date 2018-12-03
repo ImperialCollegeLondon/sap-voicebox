@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_psycdigit</title>
   <meta name="keywords" content="v_psycdigit">
-  <meta name="description" content="PSYCDIGIT measures psychometric function using TIDIGITS stimuli">
+  <meta name="description" content="V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>PSYCDIGIT measures psychometric function using TIDIGITS stimuli</strong></div>
+<div class="box"><strong>V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">PSYCDIGIT measures psychometric function using TIDIGITS stimuli
+<div class="fragment"><pre class="comment">V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli
 
  Usage:
          (1)[m,v]=v_psycdigit([],[],'GMPWrn10',[],[],[],[],[],dfile);
@@ -92,7 +92,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	Estimate multiple psychometric functions</li><li><a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>	v_psycestu estimate unimodal psychometric function</li><li><a href="v_psychofunc.html" class="code" title="function p=v_psychofunc(m,q,x,r)">v_psychofunc</a>	Calculate psychometric functions: trial success probability versus SNR</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	V_PSYCEST estimate multiple psychometric functions</li><li><a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>	V_PSYCESTU estimate unimodal psychometric function</li><li><a href="v_psychofunc.html" class="code" title="function p=v_psychofunc(m,q,x,r)">v_psychofunc</a>	V_PSYCHOFUNC Calculate psychometric functions: trial success probability versus SNR</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -101,7 +101,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)</a>
-0002 <span class="comment">%PSYCDIGIT measures psychometric function using TIDIGITS stimuli</span>
+0002 <span class="comment">%V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:</span>
 0005 <span class="comment">%         (1)[m,v]=v_psycdigit([],[],'GMPWrn10',[],[],[],[],[],dfile);</span>

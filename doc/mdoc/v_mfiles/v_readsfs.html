@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_readsfs</title>
   <meta name="keywords" content="v_readsfs">
-  <meta name="description" content="READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)">
+  <meta name="description" content="V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</strong></div>
+<div class="box"><strong>V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)
+<div class="fragment"><pre class="comment">V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)
 
  Usage:  [s,fs]=v_readsfs(filename,1); % read the last speech item in a file
 
@@ -124,16 +124,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>	SPRINTSI Print X with SI multiplier S=(X,D,W)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_zerotrim.html" class="code" title="function z=v_zerotrim(x)">v_zerotrim</a>	ZEROTRIM Remove zero trailing rows and columns Z=(X)</li></ul>
+<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>	V_SPRINTSI Print X with SI multiplier S=(X,D,W)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_zerotrim.html" class="code" title="function z=v_zerotrim(x)">v_zerotrim</a>	V_ZEROTRIM Remove zero trailing rows and columns Z=(X)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li></ul>
+<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)</a>
-0002 <span class="comment">%READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</span>
+0002 <span class="comment">%V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:  [s,fs]=v_readsfs(filename,1); % read the last speech item in a file</span>
 0005 <span class="comment">%</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_randvec</title>
   <meta name="keywords" content="v_randvec">
-  <meta name="description" content="RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)">
+  <meta name="description" content="V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</strong></div>
+<div class="box"><strong>V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function x=v_randvec(n,m,c,w,mode) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
+<div class="fragment"><pre class="comment">V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
  generates a random matrix of size (|n|,p) where p is the maximum
  dimension of M or C (see note below about row versus column vectos)
   Inputs:  N        is the number of points to generate
@@ -49,7 +49,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_randiscr.html" class="code" title="function x=v_randiscr(p,n,a)">v_randiscr</a>	RANDISCR Generate discrete random numbers with specified probabiities [X]=(P,N,A)</li></ul>
+<li><a href="v_randiscr.html" class="code" title="function x=v_randiscr(p,n,a)">v_randiscr</a>	V_RANDISCR Generate discrete random numbers with specified probabiities [X]=(P,N,A)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -58,7 +58,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_randvec(n,m,c,w,mode)</a>
-0002 <span class="comment">%RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</span>
+0002 <span class="comment">%V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</span>
 0003 <span class="comment">% generates a random matrix of size (|n|,p) where p is the maximum</span>
 0004 <span class="comment">% dimension of M or C (see note below about row versus column vectos)</span>
 0005 <span class="comment">%  Inputs:  N        is the number of points to generate</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_stoi2prob</title>
   <meta name="keywords" content="v_stoi2prob">
-  <meta name="description" content="STOI2PROB convert STOI to probability">
+  <meta name="description" content="V_STOI2PROB convert STOI to probability">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>STOI2PROB convert STOI to probability</strong></div>
+<div class="box"><strong>V_STOI2PROB convert STOI to probability</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function p=v_stoi2prob(s,m) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">STOI2PROB convert STOI to probability
+<div class="fragment"><pre class="comment">V_STOI2PROB convert STOI to probability
 
   Inputs:  S(M,N)       matrix containing STOI values
            M            mapping: 'i' IEEE sentences [default]
@@ -40,24 +40,24 @@
  this functions implements two mappings given in [1].
 
  [1]    C. H. Taal, R. C. Hendriks, R. Heusdens, and J. Jensen.
-       An algorithm for intelligibility prediction of time–frequency weighted noisy speech.
-       IEEE Trans. Audio, Speech, Language Processing, 19 (7): 2125–2136, 2011.
+       An algorithm for intelligibility prediction of timeï¿½frequency weighted noisy speech.
+       IEEE Trans. Audio, Speech, Language Processing, 19 (7): 2125ï¿½2136, 2011.
        doi: 10.1109/TASL.2011.2114881.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_stoi2prob.html" class="code" title="function p=v_stoi2prob(s,m)">v_stoi2prob</a>	STOI2PROB convert STOI to probability</li></ul>
+<li><a href="v_stoi2prob.html" class="code" title="function p=v_stoi2prob(s,m)">v_stoi2prob</a>	V_STOI2PROB convert STOI to probability</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_stoi2prob.html" class="code" title="function p=v_stoi2prob(s,m)">v_stoi2prob</a>	STOI2PROB convert STOI to probability</li></ul>
+<li><a href="v_stoi2prob.html" class="code" title="function p=v_stoi2prob(s,m)">v_stoi2prob</a>	V_STOI2PROB convert STOI to probability</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function p=v_stoi2prob(s,m)</a>
-0002 <span class="comment">%STOI2PROB convert STOI to probability</span>
+0002 <span class="comment">%V_STOI2PROB convert STOI to probability</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  S(M,N)       matrix containing STOI values</span>
 0005 <span class="comment">%           M            mapping: 'i' IEEE sentences [default]</span>
@@ -70,8 +70,8 @@ This function is called by:
 0012 <span class="comment">% this functions implements two mappings given in [1].</span>
 0013 <span class="comment">%</span>
 0014 <span class="comment">% [1]    C. H. Taal, R. C. Hendriks, R. Heusdens, and J. Jensen.</span>
-0015 <span class="comment">%       An algorithm for intelligibility prediction of time–frequency weighted noisy speech.</span>
-0016 <span class="comment">%       IEEE Trans. Audio, Speech, Language Processing, 19 (7): 2125–2136, 2011.</span>
+0015 <span class="comment">%       An algorithm for intelligibility prediction of timeï¿½frequency weighted noisy speech.</span>
+0016 <span class="comment">%       IEEE Trans. Audio, Speech, Language Processing, 19 (7): 2125ï¿½2136, 2011.</span>
 0017 <span class="comment">%       doi: 10.1109/TASL.2011.2114881.</span>
 0018 
 0019 <span class="comment">%      Copyright (C) Mike Brookes 2014</span>

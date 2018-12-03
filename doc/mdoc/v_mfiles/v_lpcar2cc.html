@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcar2cc</title>
   <meta name="keywords" content="v_lpcar2cc">
-  <meta name="description" content="LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)">
+  <meta name="description" content="V_LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)</strong></div>
+<div class="box"><strong>V_LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [cc,c0]=v_lpcar2cc(ar,np) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)
+<div class="fragment"><pre class="comment">V_LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)
 
   Inputs: ar(nf,n+1)   AR coefficients, one frame per row
           np           Number of cepstral coefficients to calculate [n]
@@ -44,16 +44,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpccc2pf.html" class="code" title="function [pf,f]=v_lpccc2pf(cc,np,nc,c0)">v_lpccc2pf</a>	LPCCC2PF Convert complex cepstrum to power spectrum PF=(CC,NP,NC)</li></ul>
+<li><a href="v_lpccc2pf.html" class="code" title="function [pf,f]=v_lpccc2pf(cc,np,nc,c0)">v_lpccc2pf</a>	V_LPCCC2PF Convert complex cepstrum to power spectrum PF=(CC,NP,NC)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpccc2cc.html" class="code" title="function c=v_lpccc2cc(cc,np)">v_lpccc2cc</a>	LPCCC2PF Extrapolate complex cepstrum C=(CC)</li></ul>
+<li><a href="v_lpccc2cc.html" class="code" title="function c=v_lpccc2cc(cc,np)">v_lpccc2cc</a>	V_LPCCC2PF Extrapolate complex cepstrum C=(CC)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [cc,c0]=v_lpcar2cc(ar,np)</a>
-0002 <span class="comment">%LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)</span>
+0002 <span class="comment">%V_LPCAR2CC LPC: Convert AR filter to complex cepstrum [CC,C0]=(AR,NP)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs: ar(nf,n+1)   AR coefficients, one frame per row</span>
 0005 <span class="comment">%          np           Number of cepstral coefficients to calculate [n]</span>

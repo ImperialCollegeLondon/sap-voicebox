@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcar2db</title>
   <meta name="keywords" content="v_lpcar2db">
-  <meta name="description" content="LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)">
+  <meta name="description" content="V_LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)</strong></div>
+<div class="box"><strong>V_LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [db,f]=v_lpcar2db(ar,np) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)
+<div class="fragment"><pre class="comment">V_LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)
 
   Inputs: ar(nf,n)     AR coefficients, one frame per row
           np           Size of output spectrum is np+1 [n]
@@ -41,7 +41,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+<li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -50,7 +50,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [db,f]=v_lpcar2db(ar,np)</a>
-0002 <span class="comment">%LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)</span>
+0002 <span class="comment">%V_LPCAR2DB LPC: Convert AR coefs to power spectrum in dB DB=(AR)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs: ar(nf,n)     AR coefficients, one frame per row</span>
 0005 <span class="comment">%          np           Size of output spectrum is np+1 [n]</span>

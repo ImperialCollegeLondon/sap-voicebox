@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_imagehomog</title>
   <meta name="keywords" content="v_imagehomog">
-  <meta name="description" content="IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation">
+  <meta name="description" content="V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</strong></div>
+<div class="box"><strong>V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [ih,xa,ya]=v_imagehomog(im,h,m,clip) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation
+<div class="fragment"><pre class="comment">V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation
 Inputs: im(ny,nx,nc)  input image (uint8)
         h(3,3)        homography
         m             mode string
@@ -51,13 +51,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	RECTIFYHOMOG Apply rectifying homographies to an image set</li></ul>
+<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	V_RECTIFYHOMOG Apply rectifying homographies to an image set</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ih,xa,ya]=v_imagehomog(im,h,m,clip)</a>
-0002 <span class="comment">%IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</span>
+0002 <span class="comment">%V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</span>
 0003 <span class="comment">%Inputs: im(ny,nx,nc)  input image (uint8)</span>
 0004 <span class="comment">%        h(3,3)        homography</span>
 0005 <span class="comment">%        m             mode string</span>

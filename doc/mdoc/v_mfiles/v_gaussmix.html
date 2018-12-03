@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_gaussmix</title>
   <meta name="keywords" content="v_gaussmix">
-  <meta name="description" content="GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)">
+  <meta name="description" content="V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</strong></div>
+<div class="box"><strong>V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)
+<div class="fragment"><pre class="comment">V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)
 
  Usage:
     (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances
@@ -87,7 +87,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>	KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</li><li><a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>	V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)</li><li><a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>	RNSUBSET choose k distinct random integers from 1:n M=(K,N)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+<li><a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>	V_KMEANHAR Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</li><li><a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>	V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)</li><li><a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>	V_RNSUBSET choose k distinct random integers from 1:n M=(K,N)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -96,7 +96,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)</a>
-0002 <span class="comment">%GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</span>
+0002 <span class="comment">%V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:</span>
 0005 <span class="comment">%    (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances</span>

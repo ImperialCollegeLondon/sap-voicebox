@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_ssubmmse</title>
   <meta name="keywords" content="v_ssubmmse">
-  <meta name="description" content="SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)">
+  <meta name="description" content="V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</strong></div>
+<div class="box"><strong>V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)
+<div class="fragment"><pre class="comment">V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)
 
  Usage:
     (1) %%%%%%%%%%%% Simple Enhancement %%%%%%%%%%%%
@@ -173,14 +173,14 @@
         IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.
     [4] O. Cappe.
         Elimination of the musical noise phenomenon with the ephraim and malah noise suppressor.
-        IEEE Trans Speech Audio Processing, 2 (2): 345–349, Apr. 1994. doi: 10.1109/89.279283.
+        IEEE Trans Speech Audio Processing, 2 (2): 345ï¿½349, Apr. 1994. doi: 10.1109/89.279283.
     [5] J. Erkelens, J. Jensen, and R. Heusdens.
         A data-driven approach to optimizing spectral speech enhancement methods for various error criteria.
-        Speech Communication, 49: 530–541, 2007. doi: 10.1016/j.specom.2006.06.012.
+        Speech Communication, 49: 530ï¿½541, 2007. doi: 10.1016/j.specom.2006.06.012.
     [6] R. Martin.
         Statistical methods for the enhancement of noisy speech.
         In J. Benesty, S. Makino, and J. Chen, editors,
-        Speech Enhancement, chapter 3, pages 43–64. Springer-Verlag, 2005.
+        Speech Enhancement, chapter 3, pages 43ï¿½64. Springer-Verlag, 2005.
     [7] Gerkmann, T. &amp; Hendriks, R. C.
         Unbiased MMSE-Based Noise Power Estimation With Low Complexity and Low Tracking Delay
         IEEE Trans Audio, Speech, Language Processing, 2012, 20, 1383-1393
@@ -192,7 +192,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	V_ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -201,7 +201,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)</a>
-0002 <span class="comment">%SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</span>
+0002 <span class="comment">%V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:</span>
 0005 <span class="comment">%    (1) %%%%%%%%%%%% Simple Enhancement %%%%%%%%%%%%</span>
@@ -347,14 +347,14 @@ This function is called by:
 0145 <span class="comment">%        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.</span>
 0146 <span class="comment">%    [4] O. Cappe.</span>
 0147 <span class="comment">%        Elimination of the musical noise phenomenon with the ephraim and malah noise suppressor.</span>
-0148 <span class="comment">%        IEEE Trans Speech Audio Processing, 2 (2): 345–349, Apr. 1994. doi: 10.1109/89.279283.</span>
+0148 <span class="comment">%        IEEE Trans Speech Audio Processing, 2 (2): 345ï¿½349, Apr. 1994. doi: 10.1109/89.279283.</span>
 0149 <span class="comment">%    [5] J. Erkelens, J. Jensen, and R. Heusdens.</span>
 0150 <span class="comment">%        A data-driven approach to optimizing spectral speech enhancement methods for various error criteria.</span>
-0151 <span class="comment">%        Speech Communication, 49: 530–541, 2007. doi: 10.1016/j.specom.2006.06.012.</span>
+0151 <span class="comment">%        Speech Communication, 49: 530ï¿½541, 2007. doi: 10.1016/j.specom.2006.06.012.</span>
 0152 <span class="comment">%    [6] R. Martin.</span>
 0153 <span class="comment">%        Statistical methods for the enhancement of noisy speech.</span>
 0154 <span class="comment">%        In J. Benesty, S. Makino, and J. Chen, editors,</span>
-0155 <span class="comment">%        Speech Enhancement, chapter 3, pages 43–64. Springer-Verlag, 2005.</span>
+0155 <span class="comment">%        Speech Enhancement, chapter 3, pages 43ï¿½64. Springer-Verlag, 2005.</span>
 0156 <span class="comment">%    [7] Gerkmann, T. &amp; Hendriks, R. C.</span>
 0157 <span class="comment">%        Unbiased MMSE-Based Noise Power Estimation With Low Complexity and Low Tracking Delay</span>
 0158 <span class="comment">%        IEEE Trans Audio, Speech, Language Processing, 2012, 20, 1383-1393</span>

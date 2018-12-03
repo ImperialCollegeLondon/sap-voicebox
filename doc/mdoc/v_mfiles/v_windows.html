@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_windows</title>
   <meta name="keywords" content="v_windows">
-  <meta name="description" content="WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)">
+  <meta name="description" content="V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</strong></div>
+<div class="box"><strong>V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function w = v_windows(wtype,n,mode,p,ov) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
+<div class="fragment"><pre class="comment">V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
  Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';
         (2) w=v_windows(2,n); % same as w=hanning(n)';
 
@@ -139,17 +139,17 @@
 
  References:
   [1]  F. J. Harris. On the use of windows for harmonic analysis with the
-       discrete fourier transform. Proc IEEE, 66 (1): 51–83, Jan. 1978.
+       discrete fourier transform. Proc IEEE, 66 (1): 51ï¿½83, Jan. 1978.
   [2]    L. D. Fielder, M. Bosi, G. Davidson, M. Davis, C. Todd, and S. Vernon.
        AC-2 and AC-3: Low-complexity transform-based audio coding.
        In Audio Engineering Society Conference: Collected Papers on Digital Audio Bit-Rate Reduction, May 1996.
   [3]    J. Princen, A. Johnson, and A. Bradley. Subband/transform coding using filter
        bank designs based on time domain aliasing cancellation.
        In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 12,
-       pages 2161–2164, 1987. doi: 10.1109/ICASSP.1987.1169405.
+       pages 2161ï¿½2164, 1987. doi: 10.1109/ICASSP.1987.1169405.
   [4]    T. Sporer, K. Brandenburg, and B. Edler.
        The use of multirate filter banks for coding of high quality digital audio.
-       In Proc EUSIPCO, volume 1, pages 211–214, 1992.
+       In Proc EUSIPCO, volume 1, pages 211ï¿½214, 1992.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       Copyright (C) Mike Brookes 2002-2015
@@ -178,16 +178,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_windinfo.html" class="code" title="function x=windinfo(w,fs)">v_windinfo</a>	WINDINFO window information and figures of merit X=(W,FS)</li></ul>
+<li><a href="v_windinfo.html" class="code" title="function x=windinfo(w,fs)">v_windinfo</a>	V_WINDINFO window information and figures of merit X=(W,FS)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>	LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</li></ul>
+<li><a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>	V_LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function w = v_windows(wtype,n,mode,p,ov)</a>
-0002 <span class="comment">%WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</span>
+0002 <span class="comment">%V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</span>
 0003 <span class="comment">% Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';</span>
 0004 <span class="comment">%        (2) w=v_windows(2,n); % same as w=hanning(n)';</span>
 0005 <span class="comment">%</span>
@@ -299,17 +299,17 @@ This function is called by:
 0111 <span class="comment">%</span>
 0112 <span class="comment">% References:</span>
 0113 <span class="comment">%  [1]  F. J. Harris. On the use of windows for harmonic analysis with the</span>
-0114 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51–83, Jan. 1978.</span>
+0114 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51ï¿½83, Jan. 1978.</span>
 0115 <span class="comment">%  [2]    L. D. Fielder, M. Bosi, G. Davidson, M. Davis, C. Todd, and S. Vernon.</span>
 0116 <span class="comment">%       AC-2 and AC-3: Low-complexity transform-based audio coding.</span>
 0117 <span class="comment">%       In Audio Engineering Society Conference: Collected Papers on Digital Audio Bit-Rate Reduction, May 1996.</span>
 0118 <span class="comment">%  [3]    J. Princen, A. Johnson, and A. Bradley. Subband/transform coding using filter</span>
 0119 <span class="comment">%       bank designs based on time domain aliasing cancellation.</span>
 0120 <span class="comment">%       In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 12,</span>
-0121 <span class="comment">%       pages 2161–2164, 1987. doi: 10.1109/ICASSP.1987.1169405.</span>
+0121 <span class="comment">%       pages 2161ï¿½2164, 1987. doi: 10.1109/ICASSP.1987.1169405.</span>
 0122 <span class="comment">%  [4]    T. Sporer, K. Brandenburg, and B. Edler.</span>
 0123 <span class="comment">%       The use of multirate filter banks for coding of high quality digital audio.</span>
-0124 <span class="comment">%       In Proc EUSIPCO, volume 1, pages 211–214, 1992.</span>
+0124 <span class="comment">%       In Proc EUSIPCO, volume 1, pages 211ï¿½214, 1992.</span>
 0125 <span class="comment">%</span>
 0126 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
 0127 <span class="comment">%      Copyright (C) Mike Brookes 2002-2015</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_estnoiseg</title>
   <meta name="keywords" content="v_estnoiseg">
-  <meta name="description" content="ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)">
+  <meta name="description" content="V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</strong></div>
+<div class="box"><strong>V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [x,zo]=v_estnoiseg(yf,tz,pp) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)
+<div class="fragment"><pre class="comment">V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)
 
  Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
            ovf=2;                  % overlap factor
@@ -69,16 +69,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li></ul>
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	V_AXISENLARGE - enlarge the axes of a figure (f,h)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>	VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</li></ul>
+<li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>	V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,zo]=v_estnoiseg(yf,tz,pp)</a>
-0002 <span class="comment">%ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</span>
+0002 <span class="comment">%V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]</span>
 0005 <span class="comment">%           ovf=2;                  % overlap factor</span>

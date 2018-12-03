@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_voicebox</title>
   <meta name="keywords" content="v_voicebox">
-  <meta name="description" content="VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)">
+  <meta name="description" content="V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</strong></div>
+<div class="box"><strong>V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function y=v_voicebox(f,v) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)
+<div class="fragment"><pre class="comment">V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)
 
   Inputs:  F   is a field name
            V   is a new value for the field
@@ -64,16 +64,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_winenvar.html" class="code" title="function d=v_winenvar(n)">v_winenvar</a>	WINENVAR get windows environment variable [D]=(N)</li></ul>
+<li><a href="v_winenvar.html" class="code" title="function d=v_winenvar(n)">v_winenvar</a>	V_WINENVAR get windows environment variable [D]=(N)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_correlogram.html" class="code" title="function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)">v_correlogram</a>	make v_correlogram,</li><li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li><li><a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>	GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>	KMEANS Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</li><li><a href="v_readaif.html" class="code" title="function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip)">v_readaif</a>	READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readau.html" class="code" title="function [y,fs,h]=v_readau(filename,mode)">v_readau</a>	READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readcnx.html" class="code" title="function [y,fs,h]=v_readcnx(filename,mode)">v_readcnx</a>	READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readflac.html" class="code" title="function [y,fs]=v_readflac(filename,mode)">v_readflac</a>	READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</li><li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
+<li><a href="v_correlogram.html" class="code" title="function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)">v_correlogram</a>	V_CORRELOGRAM calculate correlogram [y,ty]=(x,inc,nw,nlag,m,fs)</li><li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	V_DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li><li><a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>	V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>	V_KMEANHAR Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</li><li><a href="v_readaif.html" class="code" title="function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip)">v_readaif</a>	V_READAIF  Read a .AIF format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readau.html" class="code" title="function [y,fs,h]=v_readau(filename,mode)">v_readau</a>	V_READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readcnx.html" class="code" title="function [y,fs,h]=v_readcnx(filename,mode)">v_readcnx</a>	V_READCNX  Read a .CNX format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readflac.html" class="code" title="function [y,fs]=v_readflac(filename,mode)">v_readflac</a>	V_READFLAC  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</li><li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_voicebox(f,v)</a>
-0002 <span class="comment">%VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</span>
+0002 <span class="comment">%V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  F   is a field name</span>
 0005 <span class="comment">%           V   is a new value for the field</span>

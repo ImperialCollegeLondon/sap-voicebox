@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_stdspectrum</title>
   <meta name="keywords" content="v_stdspectrum">
-  <meta name="description" content="STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)">
+  <meta name="description" content="V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</strong></div>
+<div class="box"><strong>V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)
+<div class="fragment"><pre class="comment">V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)
 
  Usage: (1) [b,a]=v_stdspectrum(2,'z',fs)  % create A-weighting z-domain filter for sample frequency fs
         (2) [b,a]=v_stdspectrum(2,'zMLT',fs) % as above but also plot both s- and z-domain responses with log freq axis
@@ -101,16 +101,16 @@ Inputs:  s  Spectrum type (either text or number - see below) or 0 to use bs/as
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>	RANDFILT Generate filtered gaussian noise without initial transient</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>	TEXTHVC - write text on graph with specified alignment and colour</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	V_AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>	V_RANDFILT Generate filtered gaussian noise without initial transient</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>	V_TEXTHVC - write text on graph with specified alignment and colour</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_sigalign.html" class="code" title="function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)">v_sigalign</a>	SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</li><li><a href="v_snrseg.html" class="code" title="function [seg,glo]=v_snrseg(s,r,fs,m,tf)">v_snrseg</a>	SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</li></ul>
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_sigalign.html" class="code" title="function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)">v_sigalign</a>	V_SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</li><li><a href="v_snrseg.html" class="code" title="function [seg,glo]=v_snrseg(s,r,fs,m,tf)">v_snrseg</a>	V_SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)</a>
-0002 <span class="comment">%STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</span>
+0002 <span class="comment">%V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) [b,a]=v_stdspectrum(2,'z',fs)  % create A-weighting z-domain filter for sample frequency fs</span>
 0005 <span class="comment">%        (2) [b,a]=v_stdspectrum(2,'zMLT',fs) % as above but also plot both s- and z-domain responses with log freq axis</span>
@@ -188,7 +188,7 @@ This function is called by:
 0077 <span class="comment">%       W. A. H. E. Kholy, Y. Nakanishi, H. Oyer, R. Powell, D. Stephens, R. Meredith,</span>
 0078 <span class="comment">%       T. Sirimanna, G. Tavartkiladze, G. I. Frolenkov, S. Westerman, and C. Ludvigsen.</span>
 0079 <span class="comment">%       An international comparison of long-term average speech spectra.</span>
-0080 <span class="comment">%       JASA, 96 (4): 2108–2120, Oct. 1994.</span>
+0080 <span class="comment">%       JASA, 96 (4): 2108ï¿½2120, Oct. 1994.</span>
 0081 <span class="comment">% [3]    CENELEC. Electroacoustics - sound level meters. Technical Report EN EN 61672-1:2003, 2003.</span>
 0082 <span class="comment">%       (also ANSI S1.42-2001)</span>
 0083 <span class="comment">% [4]    ITU-T. Artificial voices. Standard P.50, Sept. 1999.</span>
@@ -201,13 +201,13 @@ This function is called by:
 0090 <span class="comment">% [8]   NRSC AM Reemphasis, Deemphasize, and Broadcast Audio Transmission Bandwidth Specifications,</span>
 0091 <span class="comment">%       NRSC-1-A Standard, Sept 2007, Online: http://www.nrscstandards.org/SG/NRSC-1-A.pdf</span>
 0092 <span class="comment">% [9]   H. Fletcher and W. A. Munson. Loudness, its definition, measurement and calculation.</span>
-0093 <span class="comment">%       J. Acoust Soc Amer, 5: 82–108, Oct. 1933.</span>
+0093 <span class="comment">%       J. Acoust Soc Amer, 5: 82ï¿½108, Oct. 1933.</span>
 0094 <span class="comment">% [10]  American National Standard Specification for Sound Level Meters.</span>
 0095 <span class="comment">%       ANSI S1.4-1983 (R2006)/ANSI S1.4a-1985 (R2006), American National Standards Institute</span>
 0096 <span class="comment">% [11]    IEEE standard equipment requirements and measurement techniques for analog transmission</span>
 0097 <span class="comment">%       parameters for telecommunications. Standard IEEE Std 743-1995, Dec. 1995.</span>
 0098 <span class="comment">% [12]  S.C.Thompson, J.L.LoPresti, E.M.Ring, H.G.Nepomuceno, J.J.Beard, W.J.Ballad, and E.V.Carlson.</span>
-0099 <span class="comment">%       Noise in miniature microphones. J. Acoust. Soc. Amer., 111 (2): 861–866, feb 2002. doi: 10.1121/1.1436072.</span>
+0099 <span class="comment">%       Noise in miniature microphones. J. Acoust. Soc. Amer., 111 (2): 861ï¿½866, feb 2002. doi: 10.1121/1.1436072.</span>
 0100 
 0101 <span class="comment">% Other candidates: (a) Z-weighting, (b) ISO226, (c) P.48 spectra</span>
 0102 <span class="comment">%</span>
@@ -215,7 +215,7 @@ This function is called by:
 0104 <span class="comment">%    IEEE743 has several weighting filters defined</span>
 0105 <span class="comment">%    ITU-T 0.41 Psophometer for use on telephone-type circuits</span>
 0106 <span class="comment">%    Bell System Technical Reference 41009 (C-message)</span>
-0107 <span class="comment">%    ISO 8041:2005 (E): Human Response to Vibration – Measuring</span>
+0107 <span class="comment">%    ISO 8041:2005 (E): Human Response to Vibration ï¿½ Measuring</span>
 0108 <span class="comment">%    Instrumentation</span>
 0109 <span class="comment">%    IEC 1260:1995, class 1 (also IEC 61260/ANSI S1.11-2004) Octave band and fractional octave band filters</span>
 0110 <span class="comment">%    IEC 651: Specification for Sound Level Meters</span>

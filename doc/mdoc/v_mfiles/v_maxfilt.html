@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_maxfilt</title>
   <meta name="keywords" content="v_maxfilt">
-  <meta name="description" content="MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)">
+  <meta name="description" content="V_MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</strong></div>
+<div class="box"><strong>V_MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [y,k,y0]=v_maxfilt(x,f,n,d,x0) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)
+<div class="fragment"><pre class="comment">V_MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)
 
  Usage: (1) y=v_maxfilt(x)   % maximum filter along first non-singleton dimension
         (2) y=v_maxfilt(x,0.95) % use a forgetting factor of 0.95 (= time const of -1/log(0.95)=19.5 samples)
@@ -58,13 +58,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li></ul>
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	V_DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,k,y0]=v_maxfilt(x,f,n,d,x0)</a>
-0002 <span class="comment">%MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</span>
+0002 <span class="comment">%V_MAXFILT find max of an exponentially weighted sliding window  [Y,K,Y0]=(X,F,nn,D,X0)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) y=v_maxfilt(x)   % maximum filter along first non-singleton dimension</span>
 0005 <span class="comment">%        (2) y=v_maxfilt(x,0.95) % use a forgetting factor of 0.95 (= time const of -1/log(0.95)=19.5 samples)</span>

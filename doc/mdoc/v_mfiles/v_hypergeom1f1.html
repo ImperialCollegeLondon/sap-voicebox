@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_hypergeom1f1</title>
   <meta name="keywords" content="v_hypergeom1f1">
-  <meta name="description" content="HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)">
+  <meta name="description" content="V_HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)</strong></div>
+<div class="box"><strong>V_HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [h,l,alg]=v_hypergeom1f1(a,b,z,tol,maxj,th) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)
+<div class="fragment"><pre class="comment">V_HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)
 
   Inputs: a,b,z  input arguments
                  a and b must be real scalars, z can be a real matrix
@@ -63,16 +63,16 @@
        Dover, New York, 9 edition, 1964. ISBN 0-486-61272-4.
  [2]    F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors.
        NIST Handbook of Mathematical Functions. CUP, 2010. ISBN 978-0-521-14063-8.
- [3]    J. Pearson. Computation of hypergeometric functions. Master’s thesis, Oxford University, 2009.
-       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-pearson_final.pdf.
+ [3]    J. Pearson. Computation of hypergeometric functions. Masterï¿½s thesis, Oxford University, 2009.
+       URL http://ï¿½people.maths.ox.ac.uk/ï¿½porterm/ï¿½research/-pearson_final.pdf.
  [4]    J. Pearson. Computation of hypergeometric functions. Matlab code, Oxford University, 2009.
-       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-hypergeometricpackage.zip.</pre></div>
+       URL http://ï¿½people.maths.ox.ac.uk/ï¿½porterm/ï¿½research/-hypergeometricpackage.zip.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_gammalns.html" class="code" title="function [y,s]=v_gammalns(x)">v_gammalns</a>	GAMMALNS Log of Gamma(x) for positive or negative real x [y,s]=(x)</li></ul>
+<li><a href="v_gammalns.html" class="code" title="function [y,s]=v_gammalns(x)">v_gammalns</a>	V_GAMMALNS Log of Gamma(x) for positive or negative real x [y,s]=(x)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -81,7 +81,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [h,l,alg]=v_hypergeom1f1(a,b,z,tol,maxj,th)</a>
-0002 <span class="comment">% HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)</span>
+0002 <span class="comment">%V_HYPERGEOM1F1 Confluent hypergeometric function, 1F1 a.k.a Kummer's M function [h,l]=(a,b,z,tol,maxj)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs: a,b,z  input arguments</span>
 0005 <span class="comment">%                 a and b must be real scalars, z can be a real matrix</span>
@@ -117,10 +117,10 @@ This function is called by:
 0035 <span class="comment">%       Dover, New York, 9 edition, 1964. ISBN 0-486-61272-4.</span>
 0036 <span class="comment">% [2]    F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors.</span>
 0037 <span class="comment">%       NIST Handbook of Mathematical Functions. CUP, 2010. ISBN 978-0-521-14063-8.</span>
-0038 <span class="comment">% [3]    J. Pearson. Computation of hypergeometric functions. Master’s thesis, Oxford University, 2009.</span>
-0039 <span class="comment">%       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-pearson_final.pdf.</span>
+0038 <span class="comment">% [3]    J. Pearson. Computation of hypergeometric functions. Masterï¿½s thesis, Oxford University, 2009.</span>
+0039 <span class="comment">%       URL http://ï¿½people.maths.ox.ac.uk/ï¿½porterm/ï¿½research/-pearson_final.pdf.</span>
 0040 <span class="comment">% [4]    J. Pearson. Computation of hypergeometric functions. Matlab code, Oxford University, 2009.</span>
-0041 <span class="comment">%       URL http://¬people.maths.ox.ac.uk/¬porterm/¬research/-hypergeometricpackage.zip.</span>
+0041 <span class="comment">%       URL http://ï¿½people.maths.ox.ac.uk/ï¿½porterm/ï¿½research/-hypergeometricpackage.zip.</span>
 0042 <span class="comment">%</span>
 0043 
 0044 <span class="comment">%      Copyright (C) Mike Brookes 2016</span>

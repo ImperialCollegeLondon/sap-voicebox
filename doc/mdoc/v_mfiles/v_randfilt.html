@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_randfilt</title>
   <meta name="keywords" content="v_randfilt">
-  <meta name="description" content="RANDFILT Generate filtered gaussian noise without initial transient">
+  <meta name="description" content="V_RANDFILT Generate filtered gaussian noise without initial transient">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>RANDFILT Generate filtered gaussian noise without initial transient</strong></div>
+<div class="box"><strong>V_RANDFILT Generate filtered gaussian noise without initial transient</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">RANDFILT Generate filtered gaussian noise without initial transient
+<div class="fragment"><pre class="comment">V_RANDFILT Generate filtered gaussian noise without initial transient
 
   Inputs: pb(1,:)  Numerator polynomial of discrete time filter
           pa(1,:)  Denominator polynomial of discrete time filter
@@ -51,13 +51,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li><li><a href="v_usasi.html" class="code" title="function x=v_usasi(n,fs)">v_usasi</a>	USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)</li></ul>
+<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li><li><a href="v_usasi.html" class="code" title="function x=v_usasi(n,fs)">v_usasi</a>	V_USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)</a>
-0002 <span class="comment">%RANDFILT Generate filtered gaussian noise without initial transient</span>
+0002 <span class="comment">%V_RANDFILT Generate filtered gaussian noise without initial transient</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs: pb(1,:)  Numerator polynomial of discrete time filter</span>
 0005 <span class="comment">%          pa(1,:)  Denominator polynomial of discrete time filter</span>

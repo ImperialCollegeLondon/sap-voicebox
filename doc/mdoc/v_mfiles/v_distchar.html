@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_distchar</title>
   <meta name="keywords" content="v_distchar">
-  <meta name="description" content="DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)">
+  <meta name="description" content="V_DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)</strong></div>
+<div class="box"><strong>V_DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function d=v_distchar(ar1,ar2,mode) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)
+<div class="fragment"><pre class="comment">V_DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)
 
  Inputs: AR1,AR2     AR coefficient sets to be compared. Each row contains a set of coefficients.
                      AR1 and AR2 must have the same number of columns.
@@ -51,7 +51,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcar2ra.html" class="code" title="function ra=v_lpcar2ra(ar)">v_lpcar2ra</a>	LPCAR2RA Convert ar filter to inverse filter autocorrelation coefs. RA=(AR)</li><li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
+<li><a href="v_lpcar2ra.html" class="code" title="function ra=v_lpcar2ra(ar)">v_lpcar2ra</a>	V_LPCAR2RA Convert ar filter to inverse filter autocorrelation coefs. RA=(AR)</li><li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	V_LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -60,7 +60,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function d=v_distchar(ar1,ar2,mode)</a>
-0002 <span class="comment">%DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)</span>
+0002 <span class="comment">%V_DISTCHAR calculates the cosh spectral distance between AR coefficients D=(AR1,AR2,MODE)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs: AR1,AR2     AR coefficient sets to be compared. Each row contains a set of coefficients.</span>
 0005 <span class="comment">%                     AR1 and AR2 must have the same number of columns.</span>

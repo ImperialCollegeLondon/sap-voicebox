@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_fram2wav</title>
   <meta name="keywords" content="v_fram2wav">
-  <meta name="description" content="FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)">
+  <meta name="description" content="V_FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)</strong></div>
+<div class="box"><strong>V_FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [w,s]=v_fram2wav(x,tt,mode) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)
+<div class="fragment"><pre class="comment">V_FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)
   Inputs:
           x(nf,p)      is the input signal: one row per frame
            tt(nf,3)     specifies the frames. Each row has the form [start_sample end_sample flag]
@@ -59,7 +59,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [w,s]=v_fram2wav(x,tt,mode)</a>
-0002 <span class="comment">%FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)</span>
+0002 <span class="comment">%V_FRAM2WAV  converts frame values to a continuous waveform [W]=(X,TT,MODE)</span>
 0003 <span class="comment">%  Inputs:</span>
 0004 <span class="comment">%          x(nf,p)      is the input signal: one row per frame</span>
 0005 <span class="comment">%           tt(nf,3)     specifies the frames. Each row has the form [start_sample end_sample flag]</span>

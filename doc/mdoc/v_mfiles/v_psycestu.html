@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_psycestu</title>
   <meta name="keywords" content="v_psycestu">
-  <meta name="description" content="v_psycestu estimate unimodal psychometric function">
+  <meta name="description" content="V_PSYCESTU estimate unimodal psychometric function">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>v_psycestu estimate unimodal psychometric function</strong></div>
+<div class="box"><strong>V_PSYCESTU estimate unimodal psychometric function</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [xx,ii,m,v]=v_psycestu(iq,x,r,xp) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> v_psycestu estimate unimodal psychometric function
+<div class="fragment"><pre class="comment">V_PSYCESTU estimate unimodal psychometric function
 
  Usage: [xx,ii,m,v]=v_psycestu(-n,p,q,xp) % initialize n models
         [xx,ii,m,v]=v_psycestu(i,x,r)     % supply a trial result to v_psycest
@@ -67,10 +67,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>	PEAK2DQUAD find quadratically-interpolated peak in a N-D array</li></ul>
+<li><a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>	V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li></ul>
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li></ul>
 <!-- crossreference -->
 
 <h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -78,7 +78,7 @@ This function is called by:
 <li><a href="#_sub1" class="code">function y=linres(x,d,a,b)</a></li></ul>
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)</a>
-0002 <span class="comment">% v_psycestu estimate unimodal psychometric function</span>
+0002 <span class="comment">%V_PSYCESTU estimate unimodal psychometric function</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: [xx,ii,m,v]=v_psycestu(-n,p,q,xp) % initialize n models</span>
 0005 <span class="comment">%        [xx,ii,m,v]=v_psycestu(i,x,r)     % supply a trial result to v_psycest</span>

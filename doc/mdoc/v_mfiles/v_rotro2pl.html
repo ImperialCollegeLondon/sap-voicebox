@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotro2pl</title>
   <meta name="keywords" content="v_rotro2pl">
-  <meta name="description" content="ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r">
+  <meta name="description" content="V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</strong></div>
+<div class="box"><strong>V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [u,v,t]=v_rotro2pl(r) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r
+<div class="fragment"><pre class="comment">V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r
  Inputs:
 
      R(n,n)   Rotation matrix
@@ -42,7 +42,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>	ATAN2SC    sin and cosine of atan(y/x) [S,C,R,T]=(Y,X)</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
+<li><a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>	V_ATAN2SC    sin and cosine of atan(y/x) [S,C,R,T]=(Y,X)</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -51,7 +51,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [u,v,t]=v_rotro2pl(r)</a>
-0002 <span class="comment">%ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</span>
+0002 <span class="comment">%V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</span>
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
 0005 <span class="comment">%     R(n,n)   Rotation matrix</span>

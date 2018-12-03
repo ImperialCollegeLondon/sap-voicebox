@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotqr2ro</title>
   <meta name="keywords" content="v_rotqr2ro">
-  <meta name="description" content="ROTQR2RO converts a real quaternion to a 3x3 rotation matrix">
+  <meta name="description" content="V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</strong></div>
+<div class="box"><strong>V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function r=v_rotqr2ro(q) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ROTQR2RO converts a real quaternion to a 3x3 rotation matrix
+<div class="fragment"><pre class="comment">V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix
  Inputs:
 
      Q(4,1)   real-valued quaternion (possibly unnormalized)
@@ -68,16 +68,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li></ul>
+<li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_rotax2qr.html" class="code" title="function q=v_rotax2qr(a,t)">v_rotax2qr</a>	ROTQR2AX converts a rotation axis and angle to the corresponding real quaternion</li><li><a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>	ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_roteu2ro.html" class="code" title="function r=v_roteu2ro(m,t)">v_roteu2ro</a>	ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_rotmc2qc.html" class="code" title="function qc=v_rotmc2qc(mc)">v_rotmc2qc</a>	ROTMC2QC converts a matrix of complex quaternion matrices to a matrix of complex quaternion vectors</li><li><a href="v_rotmr2qr.html" class="code" title="function qr=v_rotmr2qr(mr)">v_rotmr2qr</a>	ROTMR2QR converts a matrix of real quaternion matrices to quaternion vectors</li><li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotqc2mc.html" class="code" title="function mc=v_rotqc2mc(qc)">v_rotqc2mc</a>	ROTQC2MC converts a matrix of complex quaternion vectors to quaternion matrices</li><li><a href="v_rotqc2qr.html" class="code" title="function qr=v_rotqc2qr(qc)">v_rotqc2qr</a>	ROTQC2QR converts a matrix of complex quaternion row vectors into real form</li><li><a href="v_rotqr2ax.html" class="code" title="function [a,t]=v_rotqr2ax(q)">v_rotqr2ax</a>	ROTQR2AX converts a real quaternion to the corresponding rotation axis and angle</li><li><a href="v_rotqr2eu.html" class="code" title="function e=v_rotqr2eu(m,q)">v_rotqr2eu</a>	ROTQR2EQ converts a real unit quaternion into the corresponding euler angles</li><li><a href="v_rotqr2mr.html" class="code" title="function mr=v_rotqr2mr(qr)">v_rotqr2mr</a>	ROTQR2MR converts a matrix of real quaternion vectors to quaternion matrices</li><li><a href="v_rotqr2qc.html" class="code" title="function qc=v_rotqr2qc(qr)">v_rotqr2qc</a>	ROTQR2QC converts a matrix of real quaternion vectors into complex form</li><li><a href="v_rotqrvec.html" class="code" title="function y=v_rotqrvec(q,x)">v_rotqrvec</a>	ROTQRVEC applies a quaternion rotation ot a vector array y=[q,x]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
+<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	V_RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_rotax2qr.html" class="code" title="function q=v_rotax2qr(a,t)">v_rotax2qr</a>	V_ROTQR2AX converts a rotation axis and angle to the corresponding real quaternion</li><li><a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>	V_ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_roteu2ro.html" class="code" title="function r=v_roteu2ro(m,t)">v_roteu2ro</a>	V_ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li><li><a href="v_rotmc2qc.html" class="code" title="function qc=v_rotmc2qc(mc)">v_rotmc2qc</a>	V_ROTMC2QC converts a matrix of complex quaternion matrices to a matrix of complex quaternion vectors</li><li><a href="v_rotmr2qr.html" class="code" title="function qr=v_rotmr2qr(mr)">v_rotmr2qr</a>	V_ROTMR2QR converts a matrix of real quaternion matrices to quaternion vectors</li><li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	V_ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotqc2mc.html" class="code" title="function mc=v_rotqc2mc(qc)">v_rotqc2mc</a>	V_ROTQC2MC converts a matrix of complex quaternion vectors to quaternion matrices</li><li><a href="v_rotqc2qr.html" class="code" title="function qr=v_rotqc2qr(qc)">v_rotqc2qr</a>	V_ROTQC2QR converts a matrix of complex quaternion row vectors into real form</li><li><a href="v_rotqr2ax.html" class="code" title="function [a,t]=v_rotqr2ax(q)">v_rotqr2ax</a>	V_ROTQR2AX converts a real quaternion to the corresponding rotation axis and angle</li><li><a href="v_rotqr2eu.html" class="code" title="function e=v_rotqr2eu(m,q)">v_rotqr2eu</a>	V_ROTQR2EQ converts a real unit quaternion into the corresponding euler angles</li><li><a href="v_rotqr2mr.html" class="code" title="function mr=v_rotqr2mr(qr)">v_rotqr2mr</a>	V_ROTQR2MR converts a matrix of real quaternion vectors to quaternion matrices</li><li><a href="v_rotqr2qc.html" class="code" title="function qc=v_rotqr2qc(qr)">v_rotqr2qc</a>	V_ROTQR2QC converts a matrix of real quaternion vectors into complex form</li><li><a href="v_rotqrvec.html" class="code" title="function y=v_rotqrvec(q,x)">v_rotqrvec</a>	V_ROTQRVEC applies a quaternion rotation ot a vector array y=[q,x]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function r=v_rotqr2ro(q)</a>
-0002 <span class="comment">%ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</span>
+0002 <span class="comment">%V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</span>
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
 0005 <span class="comment">%     Q(4,1)   real-valued quaternion (possibly unnormalized)</span>

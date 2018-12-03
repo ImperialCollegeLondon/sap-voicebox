@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_vadsohn</title>
   <meta name="keywords" content="v_vadsohn">
-  <meta name="description" content="VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)">
+  <meta name="description" content="V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</strong></div>
+<div class="box"><strong>V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [vs,zo]=v_vadsohn(si,fsz,m,pp) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)
+<div class="fragment"><pre class="comment">V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)
 
  Inputs:
    si      input speech signal
@@ -98,7 +98,7 @@
  Refs:
     [1] J. Sohn, N. S. Kim, and W. Sung.
         A statistical model-based voice activity detection.
-        IEEE Signal Processing Lett., 6 (1): 1–3, 1999. doi: 10.1109/97.736233.
+        IEEE Signal Processing Lett., 6 (1): 1ï¿½3, 1999. doi: 10.1109/97.736233.
     [2] Ephraim, Y. &amp; Malah, D.
         Speech enhancement using a minimum-mean square error short-time spectral amplitude estimator
         IEEE Trans Acoustics Speech and Signal Processing, 32(6):1109-1121, Dec 1984
@@ -110,16 +110,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	V_ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_snrseg.html" class="code" title="function [seg,glo]=v_snrseg(s,r,fs,m,tf)">v_snrseg</a>	SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</li></ul>
+<li><a href="v_snrseg.html" class="code" title="function [seg,glo]=v_snrseg(s,r,fs,m,tf)">v_snrseg</a>	V_SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [vs,zo]=v_vadsohn(si,fsz,m,pp)</a>
-0002 <span class="comment">%VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</span>
+0002 <span class="comment">%V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs:</span>
 0005 <span class="comment">%   si      input speech signal</span>
@@ -190,7 +190,7 @@ This function is called by:
 0070 <span class="comment">% Refs:</span>
 0071 <span class="comment">%    [1] J. Sohn, N. S. Kim, and W. Sung.</span>
 0072 <span class="comment">%        A statistical model-based voice activity detection.</span>
-0073 <span class="comment">%        IEEE Signal Processing Lett., 6 (1): 1–3, 1999. doi: 10.1109/97.736233.</span>
+0073 <span class="comment">%        IEEE Signal Processing Lett., 6 (1): 1ï¿½3, 1999. doi: 10.1109/97.736233.</span>
 0074 <span class="comment">%    [2] Ephraim, Y. &amp; Malah, D.</span>
 0075 <span class="comment">%        Speech enhancement using a minimum-mean square error short-time spectral amplitude estimator</span>
 0076 <span class="comment">%        IEEE Trans Acoustics Speech and Signal Processing, 32(6):1109-1121, Dec 1984</span>
