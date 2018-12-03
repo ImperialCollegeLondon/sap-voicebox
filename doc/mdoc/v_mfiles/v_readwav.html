@@ -289,7 +289,7 @@ This function is called by:
 0187                 fseek(fid,len-16,0);                    <span class="comment">% skip to end of header</span>
 0188             <span class="keyword">end</span>
 0189             <span class="keyword">if</span> mh
-0190                 fmttypes={<span class="string">'?'</span> <span class="string">'PCM'</span> <span class="string">'ADPCM'</span> <span class="string">'IEEE-float'</span> <span class="string">'?'</span> <span class="string">'?'</span> <span class="string">'A-law'</span> <span class="string">'�-law'</span> <span class="string">'?'</span>};
+0190                 fmttypes={<span class="string">'?'</span> <span class="string">'PCM'</span> <span class="string">'ADPCM'</span> <span class="string">'IEEE-float'</span> <span class="string">'?'</span> <span class="string">'?'</span> <span class="string">'A-law'</span> <span class="string">'Mu-law'</span> <span class="string">'?'</span>};
 0191                 fprintf(<span class="string">'        Format: %d = %s'</span>,info(8),fmttypes{1+max(min(info(8),8),0)});
 0192                 <span class="keyword">if</span> wavfmt==-2
 0193                     fprintf(<span class="string">' (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x)\n'</span>,wfxguida,wfxguidb,wfxguidc);
