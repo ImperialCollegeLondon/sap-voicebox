@@ -11,7 +11,7 @@ function p=v_sone2phon(s)
 %
 % Refs: [1]	J. Lochner and J. Burger. Form of the loudness function in the presence of masking noise.
 %           The Journal of the Acoustical Society of America, 33: 1705, 1961.
-%       [2]	ISO/TC43. Acoustics � normal equal-loudness-level contours.
+%       [2]	ISO/TC43. Acoustics, Normal equal-loudness-level contours.
 %           Standard ISO 226:2003, Aug. 2003.
 
 

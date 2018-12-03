@@ -65,12 +65,12 @@ function [vlist,edgeq,flist,info]=v_upolyhedron(w,md)
 %    1:5 can occur, and 4 and 5 cannot occur together. If all are integers then the poyhedron is convex.
 %
 % References:
-%   [1] R. E. Maeder. Uniform polyhedra. The Mathematica Journal, 3 (4): 48�57, 1993.
-%   [2] Z. Har�El. Uniform solution for uniform polyhedra. Geometriae Dedicata, 47: 57�110, 1993.
+%   [1] R. E. Maeder. Uniform polyhedra. The Mathematica Journal, 3 (4): 48-57, 1993.
+%   [2] Z. Har'El. Uniform solution for uniform polyhedra. Geometriae Dedicata, 47: 57-110, 1993.
 %   [3] H. S. M. Coxeter, M. S. Longuet-Higgins, and J. C. P. Miller. Uniform polyhedra.
-%       Philosophical Transactions of the Royal Society A, 246 (916): 401�450, May 1954.
+%       Philosophical Transactions of the Royal Society A, 246 (916): 401-450, May 1954.
 %   [4] P. W. Messer. Closed-form expressions for uniform polyhedra and their duals.
-%       Discrete and Computational Geometry, 27 (3): 353�375, Jan. 2002.
+%       Discrete and Computational Geometry, 27 (3): 353-375, Jan. 2002.
 
 %%%% BUGS and SUGGESTIONS %%%%%%
 % (1) we should ensure the "first" edges of the vertices and faces are consistent

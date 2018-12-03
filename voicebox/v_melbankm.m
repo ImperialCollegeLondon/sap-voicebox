@@ -72,10 +72,10 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 % References:
 %
 % [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement
-%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185�19, 1937.
+%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185-19, 1937.
 % [2] S. Davis and P. Mermelstein. Comparison of parametric representations for
 %     monosyllabic word recognition in continuously spoken sentences.
-%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357�366, Aug. 1980.
+%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357-366, Aug. 1980.
 
 
 %      Copyright (C) Mike Brookes 1997-2009

@@ -5,7 +5,7 @@ function ar=v_lpcrand(p,n,bw)
 % To limit the pole radius to r set bw=-log(r)/pi
 % bw may be a vector specifying a different max bandwidth for each row
 
-%      Copyright (C) Mike Brookes 1997
+%      Copyright (C) Mike Brookes 1997-2018
 %      Version: $Id: v_lpcrand.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.

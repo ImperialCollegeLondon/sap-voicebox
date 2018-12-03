@@ -26,10 +26,10 @@ function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)
 %  the identity.
 %
 % Refs:
-%   [1]	M. �. Carreira-Perpi��n. Mode-finding for mixtures of gaussian distributions.
-%       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318�1323, 2000. doi: 10.1109/34.888716.
-%   [2] M. �. Carreira-Perpi��n and C. K. I. Williams. On the number of modes of a gaussian mixture.
-%       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625�640,
+%   [1]	M. A. Carreira-Perpinan. Mode-finding for mixtures of gaussian distributions.
+%       IEEE Trans. Pattern Anal and Machine Intell, 22 (11): 1318-1323, 2000. doi: 10.1109/34.888716.
+%   [2] M. A. Carreira-Perpinan and C. K. I. Williams. On the number of modes of a gaussian mixture.
+%       In Proc Intl Conf on Scale Space Theories in Computer Vision, volume LNCS 2695, pages 625-640,
 %       Isle of Skye, June 2003. doi: 10.1007/3-540-44935-3_44.
 
 % Bugs/Suggestions:

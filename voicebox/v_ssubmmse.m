@@ -145,14 +145,14 @@ function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)
 %        IEEE Trans. Speech and Audio Processing, 9(5):504-512, July 2001.
 %    [4] O. Cappe.
 %        Elimination of the musical noise phenomenon with the ephraim and malah noise suppressor.
-%        IEEE Trans Speech Audio Processing, 2 (2): 345�349, Apr. 1994. doi: 10.1109/89.279283.
+%        IEEE Trans Speech Audio Processing, 2 (2): 345-349, Apr. 1994. doi: 10.1109/89.279283.
 %    [5] J. Erkelens, J. Jensen, and R. Heusdens.
 %        A data-driven approach to optimizing spectral speech enhancement methods for various error criteria.
-%        Speech Communication, 49: 530�541, 2007. doi: 10.1016/j.specom.2006.06.012.
+%        Speech Communication, 49: 530-541, 2007. doi: 10.1016/j.specom.2006.06.012.
 %    [6] R. Martin.
 %        Statistical methods for the enhancement of noisy speech.
 %        In J. Benesty, S. Makino, and J. Chen, editors,
-%        Speech Enhancement, chapter 3, pages 43�64. Springer-Verlag, 2005.
+%        Speech Enhancement, chapter 3, pages 43-64. Springer-Verlag, 2005.
 %    [7] Gerkmann, T. & Hendriks, R. C.
 %        Unbiased MMSE-Based Noise Power Estimation With Low Complexity and Low Tracking Delay
 %        IEEE Trans Audio, Speech, Language Processing, 2012, 20, 1383-1393

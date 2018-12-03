@@ -187,7 +187,7 @@ if ~info(3)
                 fseek(fid,len-16,0);				    % skip to end of header
             end
             if mh
-                fmttypes={'?' 'PCM' 'ADPCM' 'IEEE-float' '?' '?' 'A-law' '�-law' '?'};
+                fmttypes={'?' 'PCM' 'ADPCM' 'IEEE-float' '?' '?' 'A-law' 'Mu-law' '?'};
                 fprintf('        Format: %d = %s',info(8),fmttypes{1+max(min(info(8),8),0)});
                 if wavfmt==-2
                     fprintf(' (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x)\n',wfxguida,wfxguidb,wfxguidc);

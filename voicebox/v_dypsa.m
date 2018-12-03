@@ -13,17 +13,17 @@ function [gci,goi] = v_dypsa(s,fs)
 %         an assumed constant closed-phase fraction
 %
 %   References:
-%   [1]  P. A. Naylor, A. Kounoudes, J. Gudnason, and M. Brookes, �Estimation of Glottal Closure
-%        Instants in Voiced Speech using the DYPSA Algorithm,� IEEE Trans on Speech and Audio
-%        Processing, vol. 15, pp. 34�43, Jan. 2007.
-%   [2]  M. Brookes, P. A. Naylor, and J. Gudnason, �A Quantitative Assessment of Group Delay Methods
-%        for Identifying Glottal Closures in Voiced Speech,� IEEE Trans on Speech & Audio Processing,
-%        vol. 14, no. 2, pp. 456�466, Mar. 2006.
-%   [3]  A. Kounoudes, P. A. Naylor, and M. Brookes, �The DYPSA algorithm for estimation of glottal
-%        closure instants in voiced speech,� in Proc ICASSP 2002, vol. 1, Orlando, 2002, pp. 349�352.
-%   [4]  C. Ma, Y. Kamp, and L. F. Willems, �A Frobenius norm approach to glottal closure detection
-%        from the speech signal,� IEEE Trans. Speech Audio Processing, vol. 2, pp. 258�265, Apr. 1994.
-%   [5]  A. Kounoudes, �Epoch Estimation for Closed-Phase Analysis of Speech,� PhD Thesis,
+%   [1]  P. A. Naylor, A. Kounoudes, J. Gudnason, and M. Brookes, "Estimation of Glottal Closure
+%        Instants in Voiced Speech using the DYPSA Algorithm," IEEE Trans on Speech and Audio
+%        Processing, vol. 15, pp. 34-43, Jan. 2007.
+%   [2]  M. Brookes, P. A. Naylor, and J. Gudnason, "A Quantitative Assessment of Group Delay Methods
+%        for Identifying Glottal Closures in Voiced Speech," IEEE Trans on Speech & Audio Processing,
+%        vol. 14, no. 2, pp. 456-466, Mar. 2006.
+%   [3]  A. Kounoudes, P. A. Naylor, and M. Brookes, "The DYPSA algorithm for estimation of glottal
+%        closure instants in voiced speech," in Proc ICASSP 2002, vol. 1, Orlando, 2002, pp. 349-352.
+%   [4]  C. Ma, Y. Kamp, and L. F. Willems, "A Frobenius norm approach to glottal closure detection
+%        from the speech signal," IEEE Trans. Speech Audio Processing, vol. 2, pp. 258-265, Apr. 1994.
+%   [5]  A. Kounoudes, "Epoch Estimation for Closed-Phase Analysis of Speech," PhD Thesis,
 %        Imperial College, 2001.
 
 % Algorithm Parameters
@@ -282,8 +282,8 @@ function [frob]=frobfun(sp,p,m,offset)
 % It equals the square of the Frobenius norm of the m by p+1 data matrix divided by p+1
 %
 % Reference:
-%   [4]  C. Ma, Y. Kamp, and L. F. Willems, �A Frobenius norm approach to glottal closure detection
-%        from the speech signal,� IEEE Trans. Speech Audio Processing, vol. 2, pp. 258�265, Apr. 1994.
+%   [4]  C. Ma, Y. Kamp, and L. F. Willems, "A Frobenius norm approach to glottal closure detection
+%        from the speech signal," IEEE Trans. Speech Audio Processing, vol. 2, pp. 258"265, Apr. 1994.
 
 
 %   Revision History: 
