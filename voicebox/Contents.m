@@ -106,7 +106,7 @@
 %   v_stoi2prob     - Convert STOI intelligibility measure to probability of correct recognition
 %   v_txalign       - Align two sets of time markers
 %   v_vadsohn       - Voice activity detector
-%   v_ppmvu       - Calculate the PPM, VU or EBU levels of a signal
+%   v_ppmvu         - Calculate the PPM, VU or EBU levels of a signal
 %
 % LPC Analysis of Speech
 %   v_ccwarpf       - warp complex cepstrum coefficients
@@ -228,6 +228,7 @@
 %   v_finishat      - Estimate the finishing time of a long loop
 %   v_fopenmkd      - Like FOPEN() but creates any missing directories/folders
 %   v_gammalns      - Calculates log(gamma(x)) for signed real-valued x
+%   v_horizdiff     - Estimate the horizontal difference between two functions of x
 %   v_hypergeom1f1  - Confluent Hypergeometric function or Kummer's M function
 %   v_logsum        - Calculates log(sum(exp(x))) without overflow/underflow
 %   v_minspane      - calculate the minimum (or shortest) spanning tree
