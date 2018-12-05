@@ -84,7 +84,7 @@ This function is called by:
 0025     fn=<span class="string">'.'</span>; <span class="comment">% do files in current folder</span>
 0026 <span class="keyword">end</span>
 0027 <span class="keyword">if</span> exist(fn,<span class="string">'dir'</span>)
-0028     ff=<a href="v_regexfiles.html" class="code" title="function tok=v_regexfiles(regex,root,m)">v_regexfiles</a>(<span class="string">'\.m$'</span>,fn,char(<span class="string">'n'</span>+(<span class="string">' '</span>-<span class="string">'n'</span>)*any(m==<span class="string">'r'</span>)));
+0028     ff=<a href="v_regexfiles.html" class="code" title="function tok=v_regexfiles(regex,root,m)">v_regexfiles</a>(<span class="string">'\.m$'</span>,fn,char(<span class="string">'n'</span>+(<span class="string">'r'</span>-<span class="string">'n'</span>)*any(m==<span class="string">'r'</span>)));
 0029 <span class="keyword">elseif</span> exist(fn,<span class="string">'file'</span>)
 0030     ff={fn};
 0031 <span class="keyword">else</span>

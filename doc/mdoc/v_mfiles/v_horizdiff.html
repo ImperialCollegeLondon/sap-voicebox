@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_horizdiff</title>
+  <meta name="keywords" content="v_horizdiff">
+  <meta name="description" content="V_HORIZDIFF - Estimates the horizontal difference between two functions of x">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_horizdiff.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>v_horizdiff
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_HORIZDIFF - Estimates the horizontal difference between two functions of x</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [z,zm]=horizdiff(y,v,x,u,q) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_HORIZDIFF - Estimates the horizontal difference between two functions of x
+
+ Usage: z=horizdiff(y,v,x); % Approximately: y(x) = v(x+z)
+
+  Inputs: y(n,m) each column is a function of x
+          v(k,1) reference function of u
+          x(n,1) x values [default: x'=1:n]
+          u(k,1) x values for v [default: v=x]
+          q      interpolation mode
+                    'l' linear [default]
+                    'p' pchip (n&gt;=2)
+                    's' spline (n&gt;=4)
+
+ Outputs: z(n,m)   horizontal difference between v and y
+          zm(1,m)  MMSE horizontal difference that minimizes sum((y(x)-v(x+z)).^2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [z,zm]=horizdiff(y,v,x,u,q)</a>
+0002 <span class="comment">%V_HORIZDIFF - Estimates the horizontal difference between two functions of x</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: z=horizdiff(y,v,x); % Approximately: y(x) = v(x+z)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%  Inputs: y(n,m) each column is a function of x</span>
+0007 <span class="comment">%          v(k,1) reference function of u</span>
+0008 <span class="comment">%          x(n,1) x values [default: x'=1:n]</span>
+0009 <span class="comment">%          u(k,1) x values for v [default: v=x]</span>
+0010 <span class="comment">%          q      interpolation mode</span>
+0011 <span class="comment">%                    'l' linear [default]</span>
+0012 <span class="comment">%                    'p' pchip (n&gt;=2)</span>
+0013 <span class="comment">%                    's' spline (n&gt;=4)</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Outputs: z(n,m)   horizontal difference between v and y</span>
+0016 <span class="comment">%          zm(1,m)  MMSE horizontal difference that minimizes sum((y(x)-v(x+z)).^2)</span>
+0017 <span class="comment">%</span>
+0018 
+0019 <span class="comment">%       Copyright (C) Mike Brookes 2012</span>
+0020 <span class="comment">%      Version: $Id: v_axisenlarge.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0023 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0026 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0027 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0028 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0029 <span class="comment">%   (at your option) any later version.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0032 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0033 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0034 <span class="comment">%   GNU General Public License for more details.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0037 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0038 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0039 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% choose interpolation method</span>
+0043 <span class="comment">%</span>
+0044 [n,m]=size(y);
+0045 <span class="keyword">if</span> nargin&lt;5 || isempty(m)
+0046     q=<span class="string">''</span>;
+0047 <span class="keyword">end</span>
+0048 <span class="keyword">if</span> n&gt;=4 &amp;&amp; any(q==<span class="string">'s'</span>)
+0049     im=<span class="string">'spline'</span>;
+0050 <span class="keyword">elseif</span> n&gt;=2 &amp;&amp; (any(q==<span class="string">'s'</span>) || any(q==<span class="string">'p'</span>))
+0051     im=<span class="string">'pchip'</span>;
+0052 <span class="keyword">else</span>
+0053     im=<span class="string">'linear'</span>;
+0054 <span class="keyword">end</span>
+0055 <span class="keyword">if</span> nargin&lt;3 || isempty(x)
+0056     x=(1:n)';
+0057 <span class="keyword">end</span>
+0058 <span class="keyword">if</span> nargin&lt;4 || isempty(u)
+0059     u=x;
+0060 <span class="keyword">end</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">% Interpolate inverse function, u(v)</span>
+0063 <span class="comment">%</span>
+0064 z=interp1(v,u,y,im,<span class="string">'extrap'</span>)-repmat(x,1,m);
+0065 <span class="keyword">if</span> nargout&gt;1
+0066     zm=zeros(1,m);
+0067     ff=@(zm,c)sum((c-interp1(u,v,x+zm,im,<span class="string">'extrap'</span>)).^2);
+0068     <span class="keyword">for</span> i=1:m
+0069         zm(i)=fminbnd(@(zm) ff(zm,y(:,i)),u(1)-x(end),u(end)-x(1));
+0070     <span class="keyword">end</span>
+0071 <span class="keyword">end</span>
+0072 <span class="keyword">if</span> ~nargout
+0073     subplot(212);
+0074     plot(x,z);
+0075     xlabel(<span class="string">'x'</span>);
+0076     ylabel(<span class="string">'x shift'</span>);
+0077     <span class="keyword">if</span> all(abs(z-z(1))&lt;=z(1)*1e-4)
+0078         set(gca,<span class="string">'ylim'</span>,2*[min(z(1),0) max(z(1),0)]);
+0079     <span class="keyword">end</span>
+0080     subplot(211);
+0081     plot(x,y);
+0082     hold on
+0083     plot(u,v,<span class="string">':k'</span>);
+0084     hold off
+0085     ylabel(<span class="string">'y and v'</span>);
+0086 <span class="keyword">end</span></pre></div>
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
