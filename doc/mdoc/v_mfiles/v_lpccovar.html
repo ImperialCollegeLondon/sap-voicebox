@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpccovar</title>
   <meta name="keywords" content="v_lpccovar">
-  <meta name="description" content="LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)">
+  <meta name="description" content="V_LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)</strong></div>
+<div class="box"><strong>V_LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [ar,e,dc]=v_lpccovar(s,p,t,w) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)
+<div class="fragment"><pre class="comment">V_LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)
 
   Inputs:  S(NS)    is the input signal
            P        is the order (default: 12)
@@ -52,7 +52,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcar2ff.html" class="code" title="function [ff,f]=v_lpcar2ff(ar,np)">v_lpcar2ff</a>	LPCAR2FF LPC: Convert AR coefs to complex spectrum FF=(AR,NP)</li></ul>
+<li><a href="v_lpcar2ff.html" class="code" title="function [ff,f]=v_lpcar2ff(ar,np)">v_lpcar2ff</a>	V_LPCAR2FF LPC: Convert AR coefs to complex spectrum FF=(AR,NP)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -61,7 +61,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ar,e,dc]=v_lpccovar(s,p,t,w)</a>
-0002 <span class="comment">%LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)</span>
+0002 <span class="comment">%V_LPCCOVAR performs covariance LPC analysis [AR,E,DC]=(S,P,T)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  S(NS)    is the input signal</span>
 0005 <span class="comment">%           P        is the order (default: 12)</span>

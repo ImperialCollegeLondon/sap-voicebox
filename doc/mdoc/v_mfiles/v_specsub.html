@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_specsub</title>
   <meta name="keywords" content="v_specsub">
-  <meta name="description" content="SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)">
+  <meta name="description" content="V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</strong></div>
+<div class="box"><strong>V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)
+<div class="fragment"><pre class="comment">V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)
 
  Usage: (1) y=v_specsub(x,fs);   % enhance the speech using default parameters
 
@@ -137,7 +137,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_estnoiseg.html" class="code" title="function [x,zo]=v_estnoiseg(yf,tz,pp)">v_estnoiseg</a>	V_ESTNOISEG - estimate MMSE noise spectrum [x,zo]=(yf,tz,pp)</li><li><a href="v_estnoisem.html" class="code" title="function [x,zo,xs]=v_estnoisem(yf,tz,pp)">v_estnoisem</a>	V_ESTNOISEM - estimate noise spectrum using minimum statistics</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -146,7 +146,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)</a>
-0002 <span class="comment">%SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</span>
+0002 <span class="comment">%V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) y=v_specsub(x,fs);   % enhance the speech using default parameters</span>
 0005 <span class="comment">%</span>

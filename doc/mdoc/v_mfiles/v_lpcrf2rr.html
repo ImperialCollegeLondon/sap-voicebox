@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcrf2rr</title>
   <meta name="keywords" content="v_lpcrf2rr">
-  <meta name="description" content="LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)">
+  <meta name="description" content="V_LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)</strong></div>
+<div class="box"><strong>V_LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [rr,ar]=v_lpcrf2rr(rf,p); </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)
+<div class="fragment"><pre class="comment">V_LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)
 
  Inputs:  rf(:,n+1)  reflection coefficients: one row per frame
           p          specifies number of rr coefficients to calculate (default=n)
@@ -41,13 +41,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
+<li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	V_LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [rr,ar]=v_lpcrf2rr(rf,p);</a>
-0002 <span class="comment">%LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)</span>
+0002 <span class="comment">%V_LPCRR2AR convert reflection coefs to autocorrelation coefs [RR,AR]=(RF,P)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs:  rf(:,n+1)  reflection coefficients: one row per frame</span>
 0005 <span class="comment">%          p          specifies number of rr coefficients to calculate (default=n)</span>

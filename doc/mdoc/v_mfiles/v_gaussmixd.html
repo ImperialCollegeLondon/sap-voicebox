@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_gaussmixd</title>
   <meta name="keywords" content="v_gaussmixd">
-  <meta name="description" content="GAUSSMIXD marginal and conditional Gaussian mixture densities">
+  <meta name="description" content="V_GAUSSMIXD marginal and conditional Gaussian mixture densities">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>GAUSSMIXD marginal and conditional Gaussian mixture densities</strong></div>
+<div class="box"><strong>V_GAUSSMIXD marginal and conditional Gaussian mixture densities</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">GAUSSMIXD marginal and conditional Gaussian mixture densities
+<div class="fragment"><pre class="comment">V_GAUSSMIXD marginal and conditional Gaussian mixture densities
 
  Usage: (1) [mz,vz,wz]=v_gaussmixd(y,m,v,w); % If {m,v,w} has dimension p, then y specifies
                                            % elements 1:q and {mz,vz,wz} is a GMM for elements q+1:p
@@ -79,16 +79,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
+<li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>	GAUSSMIXG global mean, variance and mode of a GMM</li></ul>
+<li><a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>	V_GAUSSMIXG global mean, variance and mode of a GMM</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)</a>
-0002 <span class="comment">%GAUSSMIXD marginal and conditional Gaussian mixture densities</span>
+0002 <span class="comment">%V_GAUSSMIXD marginal and conditional Gaussian mixture densities</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) [mz,vz,wz]=v_gaussmixd(y,m,v,w); % If {m,v,w} has dimension p, then y specifies</span>
 0005 <span class="comment">%                                           % elements 1:q and {mz,vz,wz} is a GMM for elements q+1:p</span>

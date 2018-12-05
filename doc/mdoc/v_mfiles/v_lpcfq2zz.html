@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcfq2zz</title>
   <meta name="keywords" content="v_lpcfq2zz">
-  <meta name="description" content="LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)">
+  <meta name="description" content="V_LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)</strong></div>
+<div class="box"><strong>V_LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function zz=v_lpcfq2zz(f,q) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)
+<div class="fragment"><pre class="comment">V_LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)
 all input values are in normalized Hz
  roots are at exp(2*pi*f*(-1/(2q) +- j)
  if f has more columns than q, remaining columns are real roots at -f</pre></div>
@@ -45,7 +45,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function zz=v_lpcfq2zz(f,q)</a>
-0002 <span class="comment">%LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)</span>
+0002 <span class="comment">%V_LPCFQ2ZZ Convert frequencies and q factors to z-plane poles ZZ=(F,Q)</span>
 0003 <span class="comment">%all input values are in normalized Hz</span>
 0004 <span class="comment">% roots are at exp(2*pi*f*(-1/(2q) +- j)</span>
 0005 <span class="comment">% if f has more columns than q, remaining columns are real roots at -f</span>

@@ -509,7 +509,7 @@ seps=[0.4 1 3 6]; % spacings: (a) min subtick, (b) min tick, (c) min good tick, 
 ww=[0.5 0.6 0.8 0.1 0.3 0.3 0.2];  % weight for (a) last digit=5, (b) power of 10, (c) power of 1000, (d) equal spacing, (e) 1:2:5 labels (f) <seps(3) (g) >seps(4)
 nbest=10; % number of possibilities to track
 
-prefix={'y','z','a','f','p','n','�','m','','k','M','G','T','P','E','Z','Y'};
+prefix={'y','z','a','f','p','n','u','m','','k','M','G','T','P','E','Z','Y'};
 
 ah=gca;
 getgca=get(ah);  % Get original axis properties

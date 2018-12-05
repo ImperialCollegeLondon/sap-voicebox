@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_writewav</title>
   <meta name="keywords" content="v_writewav">
-  <meta name="description" content="WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)">
+  <meta name="description" content="V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</strong></div>
+<div class="box"><strong>V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)
+<div class="fragment"><pre class="comment">V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)
 
    The input arguments for WRITEWAV are as follows (use [] for null arguments):
 
@@ -101,16 +101,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_ditherq.html" class="code" title="function [y,zf]=v_ditherq(x,m,zi)">v_ditherq</a>	DITHERQ  add dither and quantize [Y,ZF]=(X,M,ZI)</li><li><a href="v_lin2pcma.html" class="code" title="function p=v_lin2pcma(x,m,s)">v_lin2pcma</a>	LIN2PCMA Convert linear PCM to A-law P=(X,M,S)</li><li><a href="v_lin2pcmu.html" class="code" title="function p=v_lin2pcmu(x,s)">v_lin2pcmu</a>	LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+<li><a href="v_ditherq.html" class="code" title="function [y,zf]=v_ditherq(x,m,zi)">v_ditherq</a>	V_DITHERQ  add dither and quantize [Y,ZF]=(X,M,ZI)</li><li><a href="v_lin2pcma.html" class="code" title="function p=v_lin2pcma(x,m,s)">v_lin2pcma</a>	V_LIN2PCMA Convert linear PCM to A-law P=(X,M,S)</li><li><a href="v_lin2pcmu.html" class="code" title="function p=v_lin2pcmu(x,s)">v_lin2pcmu</a>	V_LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="wavwrite.html" class="code" title="function v_wavwrite(y,fs,n,fn)">wavwrite</a>	WAVREAD  Legacy MATLAB function to write .WAV file (Y,Fs,N,FILENAME)</li></ul>
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="wavwrite.html" class="code" title="function wavwrite(y,fs,n,fn)">wavwrite</a>	WAVREAD  Legacy MATLAB function to write .WAV file (Y,Fs,N,FILENAME)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)</a>
-0002 <span class="comment">%WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</span>
+0002 <span class="comment">%V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%   The input arguments for WRITEWAV are as follows (use [] for null arguments):</span>
 0005 <span class="comment">%</span>

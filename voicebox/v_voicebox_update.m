@@ -25,7 +25,7 @@ if nargin<1 || isempty(fn)
     fn='.'; % do files in current folder
 end
 if exist(fn,'dir')
-    ff=v_regexfiles('\.m$',fn,char('n'+(' '-'n')*any(m=='r')));
+    ff=v_regexfiles('\.m$',fn,char('n'+('r'-'n')*any(m=='r')));
 elseif exist(fn,'file')
     ff={fn};
 else

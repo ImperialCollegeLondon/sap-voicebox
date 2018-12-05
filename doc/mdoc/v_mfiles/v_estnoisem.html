@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_estnoisem</title>
   <meta name="keywords" content="v_estnoisem">
-  <meta name="description" content="ESTNOISEM - estimate noise spectrum using minimum statistics">
+  <meta name="description" content="V_ESTNOISEM - estimate noise spectrum using minimum statistics">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ESTNOISEM - estimate noise spectrum using minimum statistics</strong></div>
+<div class="box"><strong>V_ESTNOISEM - estimate noise spectrum using minimum statistics</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [x,zo,xs]=v_estnoisem(yf,tz,pp) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ESTNOISEM - estimate noise spectrum using minimum statistics
+<div class="fragment"><pre class="comment">V_ESTNOISEM - estimate noise spectrum using minimum statistics
 
  Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
            ovf=2;                  % overlap factor
@@ -80,10 +80,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li></ul>
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	V_AXISENLARGE - enlarge the axes of a figure (f,h)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>	VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</li></ul>
+<li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_vadsohn.html" class="code" title="function [vs,zo]=v_vadsohn(si,fsz,m,pp)">v_vadsohn</a>	V_VADSOHN implements a voice activity detector [VS,ZO]=(S,FSZ,M,P)</li></ul>
 <!-- crossreference -->
 
 <h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -91,7 +91,7 @@ This function is called by:
 <li><a href="#_sub1" class="code">function [m,h,d]=mhvals(d)</a></li></ul>
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,zo,xs]=v_estnoisem(yf,tz,pp)</a>
-0002 <span class="comment">%ESTNOISEM - estimate noise spectrum using minimum statistics</span>
+0002 <span class="comment">%V_ESTNOISEM - estimate noise spectrum using minimum statistics</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]</span>
 0005 <span class="comment">%           ovf=2;                  % overlap factor</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_xyzticksi</title>
   <meta name="keywords" content="v_xyzticksi">
-  <meta name="description" content="XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)">
+  <meta name="description" content="V_XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)</strong></div>
+<div class="box"><strong>V_XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function s=v_xyzticksi(ax,ah) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)
+<div class="fragment"><pre class="comment">V_XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)
 
  This routine is not intended to be called directly. See XTICKSI and YTICKSI.</pre></div>
 
@@ -38,13 +38,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_xyzticksi(ax,ah)</a>
-0002 <span class="comment">%XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)</span>
+0002 <span class="comment">%V_XYZTIXKSI labels an axis of a plot using SI multipliers S=(AX,AH)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% This routine is not intended to be called directly. See XTICKSI and YTICKSI.</span>
 0005 
@@ -87,7 +87,7 @@ This function is called by:
 0042 digith=1;    <span class="comment">% height of a digit in font units</span>
 0043 digitw=0.5;    <span class="comment">% width of a digit in font units</span>
 0044 
-0045 prefix={<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'a'</span>,<span class="string">'f'</span>,<span class="string">'p'</span>,<span class="string">'n'</span>,<span class="string">'µ'</span>,<span class="string">'m'</span>,<span class="string">''</span>,<span class="string">'k'</span>,<span class="string">'M'</span>,<span class="string">'G'</span>,<span class="string">'T'</span>,<span class="string">'P'</span>,<span class="string">'E'</span>,<span class="string">'Z'</span>,<span class="string">'Y'</span>};
+0045 prefix={<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'a'</span>,<span class="string">'f'</span>,<span class="string">'p'</span>,<span class="string">'n'</span>,<span class="string">'ï¿½'</span>,<span class="string">'m'</span>,<span class="string">''</span>,<span class="string">'k'</span>,<span class="string">'M'</span>,<span class="string">'G'</span>,<span class="string">'T'</span>,<span class="string">'P'</span>,<span class="string">'E'</span>,<span class="string">'Z'</span>,<span class="string">'Y'</span>};
 0046 marg=[2 0.5 0.25 0.25];     <span class="comment">% gap between labels in font units</span>
 0047 ntreq=[3 2 2 1];        <span class="comment">% minimum number of labelled ticks required as a function of IPAN</span>
 0048 <span class="comment">% grid template: each pair is [#steps final-value]. Start=10, end=100</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lin2pcmu</title>
   <meta name="keywords" content="v_lin2pcmu">
-  <meta name="description" content="LIN2PCMU Convert linear to Mu-law PCM P=(X,S)">
+  <meta name="description" content="V_LIN2PCMU Convert linear to Mu-law PCM P=(X,S)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</strong></div>
+<div class="box"><strong>V_LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function p=v_lin2pcmu(x,s) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LIN2PCMU Convert linear to Mu-law PCM P=(X,S)
+<div class="fragment"><pre class="comment">V_LIN2PCMU Convert linear to Mu-law PCM P=(X,S)
     pcmu = v_lin2pcmu(lin) where lin contains a vector
     or matrix of signal values within a range determined by
     the scale factor s (see table below).
@@ -55,13 +55,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
+<li><a href="v_writewav.html" class="code" title="function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)">v_writewav</a>	V_WRITEWAV Creates .WAV format sound files FIDX=(D,FS,FILENAME,MODE,NSKIP,MASK,MAD)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function p=v_lin2pcmu(x,s)</a>
-0002 <span class="comment">%LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</span>
+0002 <span class="comment">%V_LIN2PCMU Convert linear to Mu-law PCM P=(X,S)</span>
 0003 <span class="comment">%    pcmu = v_lin2pcmu(lin) where lin contains a vector</span>
 0004 <span class="comment">%    or matrix of signal values within a range determined by</span>
 0005 <span class="comment">%    the scale factor s (see table below).</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_upolyhedron</title>
   <meta name="keywords" content="v_upolyhedron">
-  <meta name="description" content="UPOLYHEDRON calculate uniform polyhedron characteristics">
+  <meta name="description" content="V_UPOLYHEDRON calculate uniform polyhedron characteristics">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>UPOLYHEDRON calculate uniform polyhedron characteristics</strong></div>
+<div class="box"><strong>V_UPOLYHEDRON calculate uniform polyhedron characteristics</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [vlist,edgeq,flist,info]=v_upolyhedron(w,md) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> UPOLYHEDRON calculate uniform polyhedron characteristics
+<div class="fragment"><pre class="comment">V_UPOLYHEDRON calculate uniform polyhedron characteristics
 
  Inputs:  W    Specifies the desired polyhedron in one of three forms:
                  (a) name e.g. W='cube'; precede by 'dual' for dual or
@@ -86,7 +86,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [vlist,edgeq,flist,info]=v_upolyhedron(w,md)</a>
-0002 <span class="comment">% UPOLYHEDRON calculate uniform polyhedron characteristics</span>
+0002 <span class="comment">%V_UPOLYHEDRON calculate uniform polyhedron characteristics</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs:  W    Specifies the desired polyhedron in one of three forms:</span>
 0005 <span class="comment">%                 (a) name e.g. W='cube'; precede by 'dual' for dual or</span>
@@ -152,12 +152,12 @@ This function is called by:
 0065 <span class="comment">%    1:5 can occur, and 4 and 5 cannot occur together. If all are integers then the poyhedron is convex.</span>
 0066 <span class="comment">%</span>
 0067 <span class="comment">% References:</span>
-0068 <span class="comment">%   [1] R. E. Maeder. Uniform polyhedra. The Mathematica Journal, 3 (4): 48–57, 1993.</span>
-0069 <span class="comment">%   [2] Z. Har’El. Uniform solution for uniform polyhedra. Geometriae Dedicata, 47: 57–110, 1993.</span>
+0068 <span class="comment">%   [1] R. E. Maeder. Uniform polyhedra. The Mathematica Journal, 3 (4): 48-57, 1993.</span>
+0069 <span class="comment">%   [2] Z. Har'El. Uniform solution for uniform polyhedra. Geometriae Dedicata, 47: 57-110, 1993.</span>
 0070 <span class="comment">%   [3] H. S. M. Coxeter, M. S. Longuet-Higgins, and J. C. P. Miller. Uniform polyhedra.</span>
-0071 <span class="comment">%       Philosophical Transactions of the Royal Society A, 246 (916): 401–450, May 1954.</span>
+0071 <span class="comment">%       Philosophical Transactions of the Royal Society A, 246 (916): 401-450, May 1954.</span>
 0072 <span class="comment">%   [4] P. W. Messer. Closed-form expressions for uniform polyhedra and their duals.</span>
-0073 <span class="comment">%       Discrete and Computational Geometry, 27 (3): 353–375, Jan. 2002.</span>
+0073 <span class="comment">%       Discrete and Computational Geometry, 27 (3): 353-375, Jan. 2002.</span>
 0074 
 0075 <span class="comment">%%%% BUGS and SUGGESTIONS %%%%%%</span>
 0076 <span class="comment">% (1) we should ensure the &quot;first&quot; edges of the vertices and faces are consistent</span>

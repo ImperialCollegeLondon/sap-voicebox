@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_irfft</title>
   <meta name="keywords" content="v_irfft">
-  <meta name="description" content="IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)">
+  <meta name="description" content="V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</strong></div>
+<div class="box"><strong>V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function x=v_irfft(y,n,d) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)
+<div class="fragment"><pre class="comment">V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)
 
  Inputs:  Y(M)   The first half of a complex spectrum
           N      The number of output points to generate (default: 2M-2)
@@ -52,13 +52,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_fxrapt.html" class="code" title="function [fx,tt]=v_fxrapt(s,fs,mode,q)">v_fxrapt</a>	FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</li><li><a href="v_lpcpf2rr.html" class="code" title="function rr=v_lpcpf2rr(pf,p)">v_lpcpf2rr</a>	LPCPF2RR convert power spectrum to autocorrelation coefs RR=(PF,P)</li><li><a href="v_sigalign.html" class="code" title="function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)">v_sigalign</a>	SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</li><li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_specsubm.html" class="code" title="function [ss,po]=v_specsubm(s,fs,p)">v_specsubm</a>	SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	SPENDRED          Speech Enhancement and Dereverberation by Doire</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_ssubmmsev.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmsev(si,fsz,pp)">v_ssubmmsev</a>	SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,P)</li></ul>
+<li><a href="v_fxrapt.html" class="code" title="function [fx,tt]=v_fxrapt(s,fs,mode,q)">v_fxrapt</a>	V_FXRAPT RAPT pitch tracker [FX,VUV]=(S,FS,M,Q)</li><li><a href="v_lpcpf2rr.html" class="code" title="function rr=v_lpcpf2rr(pf,p)">v_lpcpf2rr</a>	V_LPCPF2RR convert power spectrum to autocorrelation coefs RR=(PF,P)</li><li><a href="v_sigalign.html" class="code" title="function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)">v_sigalign</a>	V_SIGALIGN align a clean reference with a noisy signal [d,g,rr,ss]=(s,r,maxd,m,fs)</li><li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li><li><a href="v_specsubm.html" class="code" title="function [ss,po]=v_specsubm(s,fs,p)">v_specsubm</a>	V_SPECSUBM obsolete speech enhancement algorithm - use v_specsub instead</li><li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	V_SPENDRED Speech Enhancement and Dereverberation by Doire</li><li><a href="v_ssubmmse.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmse(si,fsz,pp)">v_ssubmmse</a>	V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,PP)</li><li><a href="v_ssubmmsev.html" class="code" title="function [ss,gg,tt,ff,zo]=v_ssubmmsev(si,fsz,pp)">v_ssubmmsev</a>	V_SSUBMMSE performs speech enhancement using mmse estimate of spectral amplitude or log amplitude [SS,ZO]=(S,FSZ,P)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_irfft(y,n,d)</a>
-0002 <span class="comment">%IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</span>
+0002 <span class="comment">%V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs:  Y(M)   The first half of a complex spectrum</span>
 0005 <span class="comment">%          N      The number of output points to generate (default: 2M-2)</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_maxgauss</title>
   <meta name="keywords" content="v_maxgauss">
-  <meta name="description" content="MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)">
+  <meta name="description" content="V_MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)</strong></div>
+<div class="box"><strong>V_MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [u,v,p,r] = v_maxgauss(m,c,d) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)
+<div class="fragment"><pre class="comment">V_MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)
 
  Inputs:
        m(N,1) is the mean vector of length N
@@ -55,7 +55,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [u,v,p,r] = v_maxgauss(m,c,d)</a>
-0002 <span class="comment">%MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)</span>
+0002 <span class="comment">%V_MAXGAUSS determine gaussian approximation to max of a gaussian vector [p,u,v,r]=(m,c,d)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs:</span>
 0005 <span class="comment">%       m(N,1) is the mean vector of length N</span>
@@ -77,11 +77,11 @@ This function is called by:
 0021 <span class="comment">%</span>
 0022 <span class="comment">%</span>
 0023 <span class="comment">% Refs: [1] C. E. Clark. The greatest of a finite set of random variables.</span>
-0024 <span class="comment">%           Operations Research, 9(2):145–162, March 1961.</span>
+0024 <span class="comment">%           Operations Research, 9(2):145ï¿½162, March 1961.</span>
 0025 <span class="comment">%       [2] D. Sinha, H. Zhou, and N. V. Shenoy.</span>
 0026 <span class="comment">%           Advances in Computation of the Maximum of a Set of Gaussian Random Variables.</span>
 0027 <span class="comment">%           IEEE Trans Computer-Aided Design of Integrated Circuits and Systems,</span>
-0028 <span class="comment">%           26(8):1522–1533, Aug. 2007. doi: 10.1109/TCAD.2007.893544.</span>
+0028 <span class="comment">%           26(8):1522ï¿½1533, Aug. 2007. doi: 10.1109/TCAD.2007.893544.</span>
 0029 
 0030 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
 0031 <span class="comment">%      Version: $Id: v_maxgauss.m 10865 2018-09-21 17:22:45Z dmb $</span>

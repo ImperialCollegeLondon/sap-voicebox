@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_readwav</title>
   <meta name="keywords" content="v_readwav">
-  <meta name="description" content="READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)">
+  <meta name="description" content="V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</strong></div>
+<div class="box"><strong>V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
+<div class="fragment"><pre class="comment">V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)
 
  Input Parameters:
 
@@ -92,16 +92,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>	PCMU2LIN Convert A-law PCM to linear X=(P,M,S)</li><li><a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>	PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+<li><a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>	V_PCMU2LIN Convert A-law PCM to linear X=(P,M,S)</li><li><a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>	V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="v_readflac.html" class="code" title="function [y,fs]=v_readflac(filename,mode)">v_readflac</a>	READWAV  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</li><li><a href="wavread.html" class="code" title="function [y,fs,bits]=v_wavread(fn,n)">wavread</a>	WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)</li></ul>
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="v_readflac.html" class="code" title="function [y,fs]=v_readflac(filename,mode)">v_readflac</a>	V_READFLAC  Read a .FLAC format sound file [Y,FS]=(FILENAME,MODE)</li><li><a href="wavread.html" class="code" title="function [y,fs,bits]=wavread(fn,n)">wavread</a>	WAVREAD  Legacy MATLAB function to read .WAV file [Y,FS,BITS]=(FILENAME,NMAX)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)</a>
-0002 <span class="comment">%READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</span>
+0002 <span class="comment">%V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Input Parameters:</span>
 0005 <span class="comment">%</span>
@@ -289,7 +289,7 @@ This function is called by:
 0187                 fseek(fid,len-16,0);                    <span class="comment">% skip to end of header</span>
 0188             <span class="keyword">end</span>
 0189             <span class="keyword">if</span> mh
-0190                 fmttypes={<span class="string">'?'</span> <span class="string">'PCM'</span> <span class="string">'ADPCM'</span> <span class="string">'IEEE-float'</span> <span class="string">'?'</span> <span class="string">'?'</span> <span class="string">'A-law'</span> <span class="string">'µ-law'</span> <span class="string">'?'</span>};
+0190                 fmttypes={<span class="string">'?'</span> <span class="string">'PCM'</span> <span class="string">'ADPCM'</span> <span class="string">'IEEE-float'</span> <span class="string">'?'</span> <span class="string">'?'</span> <span class="string">'A-law'</span> <span class="string">'Mu-law'</span> <span class="string">'?'</span>};
 0191                 fprintf(<span class="string">'        Format: %d = %s'</span>,info(8),fmttypes{1+max(min(info(8),8),0)});
 0192                 <span class="keyword">if</span> wavfmt==-2
 0193                     fprintf(<span class="string">' (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x)\n'</span>,wfxguida,wfxguidb,wfxguidc);

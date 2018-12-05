@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_spendred</title>
   <meta name="keywords" content="v_spendred">
-  <meta name="description" content="SPENDRED          Speech Enhancement and Dereverberation by Doire">
+  <meta name="description" content="V_SPENDRED Speech Enhancement and Dereverberation by Doire">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>SPENDRED          Speech Enhancement and Dereverberation by Doire</strong></div>
+<div class="box"><strong>V_SPENDRED Speech Enhancement and Dereverberation by Doire</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [enhanced_speech] = v_spendred(input_speech,fs,algo_params) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> SPENDRED          Speech Enhancement and Dereverberation by Doire
+<div class="fragment"><pre class="comment">V_SPENDRED Speech Enhancement and Dereverberation by Doire
 
  Usage : (1)       [enhanced_speech] = v_spendred(corrupted_speech,fs)   % performs enhancement in order to denoise and dereverberate the input speech file
          (2)       [enhanced_speech] = v_spendred(corrupted_speech,fs,algo_params)  % performs enhancement using the custom parameters specified in 'algo_params'
@@ -62,10 +62,10 @@
 
  [1] C. S. J. Doire, D. M. Brookes, P. A. Naylor, C. M. Hicks, D. Betts, M. A. Dmour, and S. H. Jensen.
            Single-channel online enhancement of speech corrupted by reverberation and noise.
-           IEEE Trans. Audio, Speech, Language Processing, 25 (3): 572–587, Mar. 2017. doi: 10.1109/TASLP.2016.2641904.
+           IEEE Trans. Audio, Speech, Language Processing, 25 (3): 572-587, Mar. 2017. doi: 10.1109/TASLP.2016.2641904.
  [2] B. Cauchi et al.,
            Combination of MVDR beamforming and single-channel spectral processing for enhancing noisy and reverberant speech,
-           EURASIP J. Adv. Signal Process., vol. 61, 2015, pp. 1–12.
+           EURASIP J. Adv. Signal Process., vol. 61, 2015, pp. 1-12.
 
  Author :          Clement Doire
                    clement.doire11@imperial.ac.uk
@@ -88,7 +88,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li><li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	V_MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -99,7 +99,7 @@ This function is called by:
 <li><a href="#_sub1" class="code">function [u,d] = mwgs_factor(W,D)</a></li><li><a href="#_sub2" class="code">function [U,D]=udu(P)</a></li><li><a href="#_sub3" class="code">function [x]=interpofiltbankm(p,n,fs)</a></li></ul>
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)</a>
-0002 <span class="comment">% SPENDRED          Speech Enhancement and Dereverberation by Doire</span>
+0002 <span class="comment">%V_SPENDRED Speech Enhancement and Dereverberation by Doire</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage : (1)       [enhanced_speech] = v_spendred(corrupted_speech,fs)   % performs enhancement in order to denoise and dereverberate the input speech file</span>
 0005 <span class="comment">%         (2)       [enhanced_speech] = v_spendred(corrupted_speech,fs,algo_params)  % performs enhancement using the custom parameters specified in 'algo_params'</span>
@@ -134,10 +134,10 @@ This function is called by:
 0034 <span class="comment">%</span>
 0035 <span class="comment">% [1] C. S. J. Doire, D. M. Brookes, P. A. Naylor, C. M. Hicks, D. Betts, M. A. Dmour, and S. H. Jensen.</span>
 0036 <span class="comment">%           Single-channel online enhancement of speech corrupted by reverberation and noise.</span>
-0037 <span class="comment">%           IEEE Trans. Audio, Speech, Language Processing, 25 (3): 572–587, Mar. 2017. doi: 10.1109/TASLP.2016.2641904.</span>
+0037 <span class="comment">%           IEEE Trans. Audio, Speech, Language Processing, 25 (3): 572-587, Mar. 2017. doi: 10.1109/TASLP.2016.2641904.</span>
 0038 <span class="comment">% [2] B. Cauchi et al.,</span>
 0039 <span class="comment">%           Combination of MVDR beamforming and single-channel spectral processing for enhancing noisy and reverberant speech,</span>
-0040 <span class="comment">%           EURASIP J. Adv. Signal Process., vol. 61, 2015, pp. 1–12.</span>
+0040 <span class="comment">%           EURASIP J. Adv. Signal Process., vol. 61, 2015, pp. 1-12.</span>
 0041 <span class="comment">%</span>
 0042 <span class="comment">% Author :          Clement Doire</span>
 0043 <span class="comment">%                   clement.doire11@imperial.ac.uk</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_quadpeak</title>
   <meta name="keywords" content="v_quadpeak">
-  <meta name="description" content="PEAK2DQUAD find quadratically-interpolated peak in a N-D array">
+  <meta name="description" content="V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>PEAK2DQUAD find quadratically-interpolated peak in a N-D array</strong></div>
+<div class="box"><strong>V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [v,x,t,m,ze]=v_quadpeak(z) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">PEAK2DQUAD find quadratically-interpolated peak in a N-D array
+<div class="fragment"><pre class="comment">V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array
 
   Inputs:  Z(m,n,...)   is the input array (ignoring trailing singleton dimensions)
                         Note: a row vector will have 2 dimensions
@@ -45,13 +45,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_peak2dquad.html" class="code" title="function [v,xy,t,m]=v_peak2dquad(z)">v_peak2dquad</a>	PEAK2DQUAD find quadratically-interpolated peak in a 2D array</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	Estimate multiple psychometric functions</li><li><a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>	v_psycestu estimate unimodal psychometric function</li></ul>
+<li><a href="v_peak2dquad.html" class="code" title="function [v,xy,t,m]=v_peak2dquad(z)">v_peak2dquad</a>	V_PEAK2DQUAD find quadratically-interpolated peak in a 2D array</li><li><a href="v_psycest.html" class="code" title="function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)">v_psycest</a>	V_PSYCEST estimate multiple psychometric functions</li><li><a href="v_psycestu.html" class="code" title="function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)">v_psycestu</a>	V_PSYCESTU estimate unimodal psychometric function</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [v,x,t,m,ze]=v_quadpeak(z)</a>
-0002 <span class="comment">%PEAK2DQUAD find quadratically-interpolated peak in a N-D array</span>
+0002 <span class="comment">%V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  Z(m,n,...)   is the input array (ignoring trailing singleton dimensions)</span>
 0005 <span class="comment">%                        Note: a row vector will have 2 dimensions</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcifilt</title>
   <meta name="keywords" content="v_lpcifilt">
-  <meta name="description" content="LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)">
+  <meta name="description" content="V_LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</strong></div>
+<div class="box"><strong>V_LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function u=v_lpcifilt(s,ar,t,dc,fade) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)
+<div class="fragment"><pre class="comment">V_LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)
 
  Inputs:    S             speech signal
                 AR(nf,p+1)    array of ar coefficients; one row per frame
@@ -43,13 +43,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li></ul>
+<li><a href="v_dypsa.html" class="code" title="function [gci,goi] = v_dypsa(s,fs)">v_dypsa</a>	V_DYPSA   Derive glottal closure instances from speech [gci,goi] = (s,fs)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function u=v_lpcifilt(s,ar,t,dc,fade)</a>
-0002 <span class="comment">%LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</span>
+0002 <span class="comment">%V_LPCIFILT Apply inverse filter to speech signal U=(S,AR,T,DC,FADE)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Inputs:    S             speech signal</span>
 0005 <span class="comment">%                AR(nf,p+1)    array of ar coefficients; one row per frame</span>

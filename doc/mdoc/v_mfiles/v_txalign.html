@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_txalign</title>
   <meta name="keywords" content="v_txalign">
-  <meta name="description" content="TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)">
+  <meta name="description" content="V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</strong></div>
+<div class="box"><strong>V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)
+<div class="fragment"><pre class="comment">V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)
  x and y vectors contain a list of non-decreasing time values
  we find the alignment between them to minimize (x-y)^2 with a penalty of maxt^2
  for every unmatched pair of entries from x and y.
@@ -39,16 +39,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_txalign.html" class="code" title="function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)">v_txalign</a>	TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</li></ul>
+<li><a href="v_txalign.html" class="code" title="function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)">v_txalign</a>	V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_txalign.html" class="code" title="function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)">v_txalign</a>	TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</li></ul>
+<li><a href="v_txalign.html" class="code" title="function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)">v_txalign</a>	V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)</a>
-0002 <span class="comment">%TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</span>
+0002 <span class="comment">%V_TXALIGN Find the best alignment of two sets of time markers [KX,KY,N,M,S]=(X,Y,MAXT)</span>
 0003 <span class="comment">% x and y vectors contain a list of non-decreasing time values</span>
 0004 <span class="comment">% we find the alignment between them to minimize (x-y)^2 with a penalty of maxt^2</span>
 0005 <span class="comment">% for every unmatched pair of entries from x and y.</span>

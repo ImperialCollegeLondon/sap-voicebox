@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_besselratio</title>
   <meta name="keywords" content="v_besselratio">
-  <meta name="description" content="BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)">
+  <meta name="description" content="V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</strong></div>
+<div class="box"><strong>V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function y=v_besselratio(x,v,p) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)
+<div class="fragment"><pre class="comment">V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)
 
   Inputs: x Bessel function argument (scalar or matrix)
           v denominator Bessel function order [0]
@@ -41,7 +41,7 @@
  required precision to improve efficiency.
 
  [1]    D. E. Amos. Computation of modified bessel functions and their ratios.
-       Mathematics of Computation, 28 (125): 239–251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.
+       Mathematics of Computation, 28 (125): 239ï¿½251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.
  [2]    G. Kurz, I. Gilitschenski, and U. D. Hanebeck.
        Recursive nonlinear filtering for angular data based on circular distributions.
        In Proc American Control Conf, Washington, June 2013.</pre></div>
@@ -53,13 +53,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_besselratioi.html" class="code" title="function s=v_besselratioi(r,v,p)">v_besselratioi</a>	BESSELRATIOI calculate the inverse Bessel function ratio</li></ul>
+<li><a href="v_besselratioi.html" class="code" title="function s=v_besselratioi(r,v,p)">v_besselratioi</a>	V_BESSELRATIOI calculate the inverse Bessel function ratio</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_besselratio(x,v,p)</a>
-0002 <span class="comment">%BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</span>
+0002 <span class="comment">%V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs: x Bessel function argument (scalar or matrix)</span>
 0005 <span class="comment">%          v denominator Bessel function order [0]</span>
@@ -73,7 +73,7 @@ This function is called by:
 0013 <span class="comment">% required precision to improve efficiency.</span>
 0014 <span class="comment">%</span>
 0015 <span class="comment">% [1]    D. E. Amos. Computation of modified bessel functions and their ratios.</span>
-0016 <span class="comment">%       Mathematics of Computation, 28 (125): 239–251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.</span>
+0016 <span class="comment">%       Mathematics of Computation, 28 (125): 239ï¿½251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.</span>
 0017 <span class="comment">% [2]    G. Kurz, I. Gilitschenski, and U. D. Hanebeck.</span>
 0018 <span class="comment">%       Recursive nonlinear filtering for angular data based on circular distributions.</span>
 0019 <span class="comment">%       In Proc American Control Conf, Washington, June 2013.</span>

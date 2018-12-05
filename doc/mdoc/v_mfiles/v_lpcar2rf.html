@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcar2rf</title>
   <meta name="keywords" content="v_lpcar2rf">
-  <meta name="description" content="LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)">
+  <meta name="description" content="V_LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)</strong></div>
+<div class="box"><strong>V_LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function rf=v_lpcar2rf(ar) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)
+<div class="fragment"><pre class="comment">V_LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)
 
  Input:   ar(:,p+1)  Autoregressive coefficients
  Output:  rf(:,p+1)  Reflection coefficients with rf(:,1)=1</pre></div>
@@ -39,13 +39,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
+<li><a href="v_lpcar2rr.html" class="code" title="function rr=v_lpcar2rr(ar,p)">v_lpcar2rr</a>	V_LPCAR2RR Convert autoregressive coefficients to autocorrelation coefficients RR=(AR,P)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function rf=v_lpcar2rf(ar)</a>
-0002 <span class="comment">%LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)</span>
+0002 <span class="comment">%V_LPCAR2RF Convert autoregressive coefficients to reflection coefficients AR=(RF)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Input:   ar(:,p+1)  Autoregressive coefficients</span>
 0005 <span class="comment">% Output:  rf(:,p+1)  Reflection coefficients with rf(:,1)=1</span>

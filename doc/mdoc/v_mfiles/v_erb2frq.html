@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_erb2frq</title>
   <meta name="keywords" content="v_erb2frq">
-  <meta name="description" content="ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)">
+  <meta name="description" content="V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</strong></div>
+<div class="box"><strong>V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [frq,bnd] = v_erb2frq(erb) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)
+<div class="fragment"><pre class="comment">V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)
     frq = v_erb2frq(erb) converts a vector of ERB-rate values
     to the corresponding frequencies in Hz.
    [frq,bnd] =  v_erb2frq(erb) also calculates the ERB bandwidths
@@ -39,16 +39,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li><li><a href="v_gammabank.html" class="code" title="function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)">v_gammabank</a>	V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</li><li><a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>	V_MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)</li><li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [frq,bnd] = v_erb2frq(erb)</a>
-0002 <span class="comment">%ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</span>
+0002 <span class="comment">%V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</span>
 0003 <span class="comment">%    frq = v_erb2frq(erb) converts a vector of ERB-rate values</span>
 0004 <span class="comment">%    to the corresponding frequencies in Hz.</span>
 0005 <span class="comment">%   [frq,bnd] =  v_erb2frq(erb) also calculates the ERB bandwidths</span>
@@ -91,7 +91,7 @@ This function is called by:
 0042 <span class="comment">%          IEEE Trans on Speech &amp; Audio Processing, Vol 2,</span>
 0043 <span class="comment">%          pp 115-132, Jan 1994</span>
 0044 <span class="comment">%     [3] R. D. Patterson. Auditory filter shapes derived with noise</span>
-0045 <span class="comment">%         stimuli. J. Acoust. Soc. Amer., 59: 640–654, 1976.</span>
+0045 <span class="comment">%         stimuli. J. Acoust. Soc. Amer., 59: 640ï¿½654, 1976.</span>
 0046 <span class="comment">%</span>
 0047 
 0048 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>

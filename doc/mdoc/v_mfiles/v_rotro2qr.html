@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotro2qr</title>
   <meta name="keywords" content="v_rotro2qr">
-  <meta name="description" content="ROTRO2QR converts a 3x3 rotation matrix to a real quaternion">
+  <meta name="description" content="V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</strong></div>
+<div class="box"><strong>V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function q=v_rotro2qr(r) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
+<div class="fragment"><pre class="comment">V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
  Inputs: 
 
      R(3,3)   Input rotation matrix
@@ -45,16 +45,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
+<li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	V_ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li></ul>
+<li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	V_RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	V_ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function q=v_rotro2qr(r)</a>
-0002 <span class="comment">%ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</span>
+0002 <span class="comment">%V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</span>
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
 0005 <span class="comment">%     R(3,3)   Input rotation matrix</span>

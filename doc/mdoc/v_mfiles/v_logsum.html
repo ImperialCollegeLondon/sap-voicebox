@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_logsum</title>
   <meta name="keywords" content="v_logsum">
-  <meta name="description" content="LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))">
+  <meta name="description" content="V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))</strong></div>
+<div class="box"><strong>V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function y=v_logsum(x,d,k) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))
+<div class="fragment"><pre class="comment">V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))
 
  Usage: (1) y=v_logsum(x) % log(sum(exp(x)))
         (2) f=0.1*log(10); y=logsm(x*f)/f;  % add powers in dB
@@ -50,13 +50,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_gaussmixk.html" class="code" title="function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)">v_gaussmixk</a>	GAUSSMIXK approximate Kullback-Leibler divergence between two GMMs + derivatives</li></ul>
+<li><a href="v_gaussmixk.html" class="code" title="function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)">v_gaussmixk</a>	V_GAUSSMIXK approximate Kullback-Leibler divergence between two GMMs + derivatives</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_logsum(x,d,k)</a>
-0002 <span class="comment">%LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))</span>
+0002 <span class="comment">%V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) y=v_logsum(x) % log(sum(exp(x)))</span>
 0005 <span class="comment">%        (2) f=0.1*log(10); y=logsm(x*f)/f;  % add powers in dB</span>

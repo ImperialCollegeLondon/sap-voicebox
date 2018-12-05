@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rdct</title>
   <meta name="keywords" content="v_rdct">
-  <meta name="description" content="RDCT     Discrete cosine transform of real data Y=(X,N,A,B)">
+  <meta name="description" content="V_RDCT     Discrete cosine transform of real data Y=(X,N,A,B)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</strong></div>
+<div class="box"><strong>V_RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function y=v_rdct(x,n,a,b) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">RDCT     Discrete cosine transform of real data Y=(X,N,A,B)
+<div class="fragment"><pre class="comment">V_RDCT     Discrete cosine transform of real data Y=(X,N,A,B)
  Data is truncated/padded to length N.
 
  This routine is equivalent to multiplying by the matrix
@@ -47,13 +47,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcaa2dl.html" class="code" title="function dl=v_lpcaa2dl(aa)">v_lpcaa2dl</a>	LPCAA2DL LPC: Convert area coefficients to dct of log area DL=(AA)</li><li><a href="v_modspect.html" class="code" title="function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p)">v_modspect</a>	MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li><li><a href="v_pow2cep.html" class="code" title="function [u,v]=v_pow2cep(m,c,mode)">v_pow2cep</a>	CEP2POW convert cepstral means and variances to the power domain</li></ul>
+<li><a href="v_lpcaa2dl.html" class="code" title="function dl=v_lpcaa2dl(aa)">v_lpcaa2dl</a>	V_LPCAA2DL LPC: Convert area coefficients to dct of log area DL=(AA)</li><li><a href="v_modspect.html" class="code" title="function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p)">v_modspect</a>	V_MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li><li><a href="v_pow2cep.html" class="code" title="function [u,v]=v_pow2cep(m,c,mode)">v_pow2cep</a>	V_CEP2POW convert cepstral means and variances to the power domain</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_rdct(x,n,a,b)</a>
-0002 <span class="comment">%RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</span>
+0002 <span class="comment">%V_RDCT     Discrete cosine transform of real data Y=(X,N,A,B)</span>
 0003 <span class="comment">% Data is truncated/padded to length N.</span>
 0004 <span class="comment">%</span>
 0005 <span class="comment">% This routine is equivalent to multiplying by the matrix</span>

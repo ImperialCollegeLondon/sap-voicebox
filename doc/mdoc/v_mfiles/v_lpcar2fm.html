@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcar2fm</title>
   <meta name="keywords" content="v_lpcar2fm">
-  <meta name="description" content="LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)">
+  <meta name="description" content="V_LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)</strong></div>
+<div class="box"><strong>V_LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [n,f,a,b]=v_lpcar2fm(ar,t) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)
+<div class="fragment"><pre class="comment">V_LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)
 
  Input:   ar(:,p+1)  Autoregressive coefficients
           t          Threshold (see below)
@@ -48,7 +48,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcar2zz.html" class="code" title="function zz=v_lpcar2zz(ar)">v_lpcar2zz</a>	LPCAR2ZZ Convert ar filter to z-plane poles ZZ=(AR)</li></ul>
+<li><a href="v_lpcar2zz.html" class="code" title="function zz=v_lpcar2zz(ar)">v_lpcar2zz</a>	V_LPCAR2ZZ Convert ar filter to z-plane poles ZZ=(AR)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -57,7 +57,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [n,f,a,b]=v_lpcar2fm(ar,t)</a>
-0002 <span class="comment">%LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)</span>
+0002 <span class="comment">%V_LPCAR2RF Convert autoregressive coefficients to formant freq+amp+bw [N,F,A,B]=(AR,T)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Input:   ar(:,p+1)  Autoregressive coefficients</span>
 0005 <span class="comment">%          t          Threshold (see below)</span>

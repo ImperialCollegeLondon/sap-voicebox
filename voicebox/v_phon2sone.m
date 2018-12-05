@@ -11,7 +11,7 @@ function s=v_phon2sone(p)
 %
 % Refs: [1]	J. Lochner and J. Burger. Form of the loudness function in the presence of masking noise.
 %           The Journal of the Acoustical Society of America, 33: 1705, 1961.
-%       [2]	ISO/TC43. Acoustics � normal equal-loudness-level contours.
+%       [2]	ISO/TC43. Acoustics Normal equal-loudness-level contours.
 %           Standard ISO 226:2003, Aug. 2003.
 
 
@@ -39,7 +39,7 @@ function s=v_phon2sone(p)
 persistent a b d
 if isempty(a)
     b=log(10)*0.1*0.27; % 0.27 is the exponent from [1] and [2]
-    d=exp(b*2.4); % 2.4 dB is teh hearing threshold from [2]
+    d=exp(b*2.4); % 2.4 dB is the hearing threshold from [2]
     a=1/(exp(b*40)-d); % scale factor to make p=40 give s=1
 end
 if nargout>0

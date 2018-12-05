@@ -1,15 +1,16 @@
 function tok=v_regexfiles(regex,root,m)
 %V_REGEXFILES recursively searches for files matching a pattern tok=(regex,root)
 %
-% Usage:  (1) v_regexfiles('\.m$')      % find all files *.m in current folder tree
+% Usage:  (1) v_regexfiles('\.m$',[],'r')      % find all files *.m in current folder tree
 %
 % Inputs:
 %         regex  regular expression giving the pattern to match (not including root path)
 %         root   path to initial folder [default: current folder]
-%         m      'n'   % non recursive search
+%         m      'n'   non recursive search [default]
+%                'r'   recursive search through tree starting at root
 %
 % Outputs:
-%          tok   cell array listing the file paths (not including the root)
+%          tok   cell array listing the file paths sorted alphabetically (not including the root path)
 %
 % Regular expressions:
 %    Each character matches itself except for +?.*^$()[]{}|\
@@ -28,7 +29,7 @@ function tok=v_regexfiles(regex,root,m)
 %         \oN or \o{N}  Character of octal value N
 %         \xN or \x{N}  Character of hexadecimal value N
 %
-%         (...)   Group 
+%         (...)   Group
 %         cat|dog Alternatives 'cat' or 'dog'
 %         ^       match start of full file name (if first character)
 %         $       match end of full file name (if last character)
@@ -65,9 +66,9 @@ function tok=v_regexfiles(regex,root,m)
 % root='Z:/dmb/data\speech/timit/TRAIN/DR1';
 % regex='^FD.*\.wav$';
 if nargin<3 || isempty(m)
-    m='';
+    m='n';
 end
-    if nargin<2 || isempty(root)
+if nargin<2 || isempty(root)
     root='./';
 end
 if isempty(regex)
@@ -80,7 +81,7 @@ end
 dirlist{1}=''; % list of sub directories to process (e.g. '/xx/yy')
 ntok=0;
 tok=cell(0);
-rec=~any(m=='n'); % recursive search
+rec=any(m=='r'); % recursive search
 while ~isempty(dirlist)
     dd=dir([root dirlist{1}]);
     for i=1:length(dd)
@@ -92,7 +93,7 @@ while ~isempty(dirlist)
             end
         else
             full(1)=[]; % remove leading '/'
-            if ~isempty(regexpi(full,regex));
+            if ~isempty(regexpi(full,regex))
                 ntok=ntok+1;
                 tok{ntok,1}=full;
             end
@@ -100,3 +101,4 @@ while ~isempty(dirlist)
     end
     dirlist(1)=[];  % remove this directory from the list
 end
+tok=sort(tok);

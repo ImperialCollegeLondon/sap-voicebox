@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_glotlf</title>
   <meta name="keywords" content="v_glotlf">
-  <meta name="description" content="GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)">
+  <meta name="description" content="V_GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</strong></div>
+<div class="box"><strong>V_GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [u,q]=v_glotlf(d,t,p) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)
+<div class="fragment"><pre class="comment">V_GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)
   Usage: (1) f0=100;                % frequency in Hz
              t=linspace(0,0.1,100); % time axis
              u=v_glotlf(0,t*f0)       % glottal waveform using default parameters
@@ -65,13 +65,13 @@
  Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]
 
  References
- [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1–13, 1985.</pre></div>
+ [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1ï¿½13, 1985.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>	TEXTHVC - write text on graph with specified alignment and colour</li></ul>
+<li><a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>	V_AXISENLARGE - enlarge the axes of a figure (f,h)</li><li><a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>	V_TEXTHVC - write text on graph with specified alignment and colour</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -80,7 +80,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [u,q]=v_glotlf(d,t,p)</a>
-0002 <span class="comment">%GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</span>
+0002 <span class="comment">%V_GLOTLF   Liljencrants-Fant glottal model U=(D,T,P)</span>
 0003 <span class="comment">%  Usage: (1) f0=100;                % frequency in Hz</span>
 0004 <span class="comment">%             t=linspace(0,0.1,100); % time axis</span>
 0005 <span class="comment">%             u=v_glotlf(0,t*f0)       % glottal waveform using default parameters</span>
@@ -118,7 +118,7 @@ This function is called by:
 0037 <span class="comment">% Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]</span>
 0038 <span class="comment">%</span>
 0039 <span class="comment">% References</span>
-0040 <span class="comment">% [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1–13, 1985.</span>
+0040 <span class="comment">% [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1ï¿½13, 1985.</span>
 0041 
 0042 <span class="comment">%      Copyright (C) Mike Brookes 1998-2017</span>
 0043 <span class="comment">%      Version: $Id: v_glotlf.m 10865 2018-09-21 17:22:45Z dmb $</span>
@@ -234,7 +234,7 @@ This function is called by:
 0153         plot([te te+q.ta te+q.ta],[-q.Ee 0 ylim(2)],<span class="string">':k'</span>);
 0154         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(te,0,<span class="string">' te'</span>,<span class="string">'rtk'</span>);
 0155         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(te+q.ta,0,<span class="string">' te+ta'</span>,<span class="string">'lbk'</span>);
-0156         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,-q.Ee,<span class="string">' –Ee'</span>,<span class="string">'lbk'</span>);
+0156         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,-q.Ee,<span class="string">' ï¿½Ee'</span>,<span class="string">'lbk'</span>);
 0157         <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0,q.Ei,<span class="string">' Ei'</span>,<span class="string">'ltk'</span>);
 0158     <span class="keyword">elseif</span> d==2
 0159         plot(xlim,[1;1]*q.Ee/q.ta,<span class="string">':k'</span>);

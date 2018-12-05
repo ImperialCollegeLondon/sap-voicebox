@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotation</title>
   <meta name="keywords" content="v_rotation">
-  <meta name="description" content="ROTATION Encode and decode rotation matrices">
+  <meta name="description" content="V_ROTATION Encode and decode rotation matrices">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>ROTATION Encode and decode rotation matrices</strong></div>
+<div class="box"><strong>V_ROTATION Encode and decode rotation matrices</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [r,p,q]=v_rotation(x,y,z) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">ROTATION Encode and decode rotation matrices
+<div class="fragment"><pre class="comment">V_ROTATION Encode and decode rotation matrices
  (1) r=v_rotation(x,y,angle) creates a matrix that rotates vectors in the
      plane containing x and y. A small positive angle moves x towards y.
  (2) [x,y,ang]=v_rotation(r) is the inverse of (1) above. The input argument r
@@ -49,7 +49,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [r,p,q]=v_rotation(x,y,z)</a>
-0002 <span class="comment">%ROTATION Encode and decode rotation matrices</span>
+0002 <span class="comment">%V_ROTATION Encode and decode rotation matrices</span>
 0003 <span class="comment">% (1) r=v_rotation(x,y,angle) creates a matrix that rotates vectors in the</span>
 0004 <span class="comment">%     plane containing x and y. A small positive angle moves x towards y.</span>
 0005 <span class="comment">% (2) [x,y,ang]=v_rotation(r) is the inverse of (1) above. The input argument r</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_pcmu2lin</title>
   <meta name="keywords" content="v_pcmu2lin">
-  <meta name="description" content="PCMU2LIN Convert Mu-law PCM to linear X=(P,S)">
+  <meta name="description" content="V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</strong></div>
+<div class="box"><strong>V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function x=v_pcmu2lin(p,s) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
+<div class="fragment"><pre class="comment">V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
     lin = v_pcmu2lin(pcmu) where pcmu contains a vector
     of mu-law values in the range 0 to 255.
     No checking is performed to see that numbers are in this range.
@@ -53,13 +53,13 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_readau.html" class="code" title="function [y,fs,h]=v_readau(filename,mode)">v_readau</a>	READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li></ul>
+<li><a href="v_readau.html" class="code" title="function [y,fs,h]=v_readau(filename,mode)">v_readau</a>	V_READAU  Read a SUN .AU format sound file [Y,FS,H]=(FILENAME)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_pcmu2lin(p,s)</a>
-0002 <span class="comment">%PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</span>
+0002 <span class="comment">%V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</span>
 0003 <span class="comment">%    lin = v_pcmu2lin(pcmu) where pcmu contains a vector</span>
 0004 <span class="comment">%    of mu-law values in the range 0 to 255.</span>
 0005 <span class="comment">%    No checking is performed to see that numbers are in this range.</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_gammabank</title>
   <meta name="keywords" content="v_gammabank">
-  <meta name="description" content="GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)">
+  <meta name="description" content="V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</strong></div>
+<div class="box"><strong>V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)
+<div class="fragment"><pre class="comment">V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)
 
  Usage:
           (1) [b,a,fx,bx,gd,ph]=v_gammabank(0.35,fs,'',[100 6000]);
@@ -106,7 +106,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	V_FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	V_FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	V_MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -115,7 +115,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)</a>
-0002 <span class="comment">%GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</span>
+0002 <span class="comment">%V_GAMMABANK gammatone filter bank [b,a,fx,bx,gd]=(n,fs,w,fc,bw,ph,k)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:</span>
 0005 <span class="comment">%          (1) [b,a,fx,bx,gd,ph]=v_gammabank(0.35,fs,'',[100 6000]);</span>
@@ -193,7 +193,7 @@ This function is called by:
 0077 
 0078 <span class="comment">% For k&gt;1, the impulse response of filter i is proportional to:</span>
 0079 <span class="comment">%       h[n]=(((n+1)/fs).^(k-1))*cos(2*pi*fx(i)*(n+1)/fs+ph(i))*exp(-2*pi*bx(i)*(n+1)/fs)</span>
-0080 <span class="comment">% where n&gt;=0. For k=1 replace &quot;(n+1)&quot; by &quot;n&quot;. If the 'c' option is used, replace &quot;cos(…)&quot; by &quot;exp(1i*…)&quot;.</span>
+0080 <span class="comment">% where n&gt;=0. For k=1 replace &quot;(n+1)&quot; by &quot;n&quot;. If the 'c' option is used, replace &quot;cos(ï¿½)&quot; by &quot;exp(1i*ï¿½)&quot;.</span>
 0081 <span class="comment">% Note that the DC gain is only equal to zero for two particular value of ph(i) that differ by pi.</span>
 0082 <span class="comment">% Each filter is normalized to have unity gain at the centre frequency, fx(i).</span>
 0083 <span class="comment">%</span>
@@ -207,7 +207,7 @@ This function is called by:
 0091 <span class="comment">% References</span>
 0092 <span class="comment">%  [1]    R. F. Lyon, A. G. Katsiamis, and E. M. Drakakis.</span>
 0093 <span class="comment">%       History and future of auditory filter models.</span>
-0094 <span class="comment">%       In Proc Intl Symp Circuits and Systems, pages 3809–3812, 2010.</span>
+0094 <span class="comment">%       In Proc Intl Symp Circuits and Systems, pages 3809ï¿½3812, 2010.</span>
 0095 <span class="comment">%       doi: 10.1109/ISCAS.2010.5537724.</span>
 0096 <span class="comment">%  [2]    M. Slaney.</span>
 0097 <span class="comment">%       An efficient implementation of the patterson-holdsworth auditory filter bank.</span>

@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcpf2cc</title>
   <meta name="keywords" content="v_lpcpf2cc">
-  <meta name="description" content="LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)">
+  <meta name="description" content="V_LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,13 +21,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)</strong></div>
+<div class="box"><strong>V_LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [cc,c0]=v_lpcpf2cc(pf,np,f) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)
+<div class="fragment"><pre class="comment">V_LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)
 
   Inputs: pf(nf,n)    Power spectrum, uniformly spaced DC to Nyquist
           np          Number of cepstral coefficients to calculate [n-1]
@@ -42,16 +42,16 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rsfft.html" class="code" title="function x=v_rsfft(y,n)">v_rsfft</a>	RSFFT    fft of a real symmetric spectrum X=(Y,N)</li></ul>
+<li><a href="v_rsfft.html" class="code" title="function x=v_rsfft(y,n)">v_rsfft</a>	V_RSFFT    fft of a real symmetric spectrum X=(Y,N)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcpf2ff.html" class="code" title="function [ff,fo]=v_lpcpf2ff(pf,np,fi)">v_lpcpf2ff</a>	LPCPF2FF Convert power spectrum to complex spectrum [FF,FO]=(PF,NP,FI)</li></ul>
+<li><a href="v_lpcpf2ff.html" class="code" title="function [ff,fo]=v_lpcpf2ff(pf,np,fi)">v_lpcpf2ff</a>	V_LPCPF2FF Convert power spectrum to complex spectrum [FF,FO]=(PF,NP,FI)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [cc,c0]=v_lpcpf2cc(pf,np,f)</a>
-0002 <span class="comment">%LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)</span>
+0002 <span class="comment">%V_LPCPF2CC Convert power spectrum to complex cepstrum CC=(PF,NP)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs: pf(nf,n)    Power spectrum, uniformly spaced DC to Nyquist</span>
 0005 <span class="comment">%          np          Number of cepstral coefficients to calculate [n-1]</span>
