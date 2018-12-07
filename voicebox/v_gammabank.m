@@ -46,7 +46,7 @@ function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)
 %                   instead of a cosine; the filter order is k instead of 2k. Take the real part of
 %                   the filter output to obtain the same signal as using the real-valued filter.
 %                   The imaginary part is approximately the Hilbert transform of the real part and
-%                   so the magnitude gives teh envelope.
+%                   so the magnitude gives the envelope.
 %             'q' = biquad filter; b(k,6,n) has the sos coefficients in the  same form as sosfilt.m.
 %                   Use y=sosfilt(b,x) to apply the filter.
 %
