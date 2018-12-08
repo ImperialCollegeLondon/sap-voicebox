@@ -2,8 +2,8 @@
 %
 % Function names have been prefixed "v_" to avoid name conflicts; the
 % unprefixed aliases will be removed in a future version. Use the function
-% v_voicebox_update to update old code (be default updates all .m files in the
-% current folder.
+% v_voicebox_update to update old code which, by default, updates all .m files
+% in the current folder.
 %
 % Audio File Input/Output
 %   v_readwav       - Read a WAV file
