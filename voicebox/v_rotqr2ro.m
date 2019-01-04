@@ -70,7 +70,7 @@ if ~nargout
     for i=1:6
         p(i)=patch(v(1,fv(i,:)),v(2,fv(i,:)),v(3,fv(i,:)),fc(i,:));
         set(p(i),'FaceAlpha',0.7);
-        k=1.0001; % factor to move out labels slightly to get correct depth ordering
+        k=1.001; % factor to move out labels slightly to get correct depth ordering
         for j=1:2
             xij=xc{xf(i,j)}; % relative coordinates of character vertices
             patch(k*(v(1,fv(i,1))+(v(1,fv(i,2))-v(1,fv(i,1)))*xij(1,:)+(v(1,fv(i,4))-v(1,fv(i,1)))*xij(2,:)), ...
