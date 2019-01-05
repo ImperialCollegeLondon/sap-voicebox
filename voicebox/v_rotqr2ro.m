@@ -65,8 +65,6 @@ if ~nargout
         [50 74 74 57 74 74 50 50 67 50; 68 68 62 43 43 37 37 43 62 62]/100};
     xf=[1 3; 2 3; 1 4; 2 4; 1 5; 2 5]; % characters to plot on each face
     nf=size(fv,1); % number of faces
-    figure(1);
-    clf;
     for i=1:6
         p(i)=patch(v(1,fv(i,:)),v(2,fv(i,:)),v(3,fv(i,:)),fc(i,:));
         set(p(i),'FaceAlpha',0.7);
