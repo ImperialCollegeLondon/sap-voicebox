@@ -273,10 +273,10 @@ This function is called by:
 0185     <span class="keyword">end</span>
 0186     <span class="keyword">if</span> any(mode==<span class="string">'a'</span>)
 0187         [fso.bw,fso.aw]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(2,<span class="string">'z'</span>,fs);
-0188         fso.zw=zeros(length(fso.aw)-1,1);
+0188         fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
 0189     <span class="keyword">elseif</span> any(mode==<span class="string">'i'</span>)
 0190         [fso.bw,fso.aw]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(8,<span class="string">'z'</span>,fs);
-0191         fso.zw=zeros(length(fso.aw)-1,1);
+0191         fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
 0192     <span class="keyword">end</span>
 0193 <span class="keyword">else</span>
 0194     fso=fs;             <span class="comment">% use existing structure</span>
