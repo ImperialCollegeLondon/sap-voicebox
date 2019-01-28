@@ -6,13 +6,13 @@ function q=v_roteu2qr(m,e)
 %              as listed below:
 %                'x','y','z'    rotate around the given axis by the corresponding angle
 %                               given in e()
-%                'r','d'        all angles are given in radians or degrees  [degrees]
+%                'r','d'        all angles are given in radians or degrees  [radians]
 %                'o'            rotate the object using extrinsic rotations (i.e. the rotation
 %                               axes remain fixed in space) [default]
 %                'O'            rotate the object using intrinsic rotations (i.e. the rotation
 %                               axes rotate along with the object)
 %                'a','A'        rotate the axes rather than the object with extrinsic ('a') or
-%                               intrinsic ('A') rotations
+%                               intrinsic ('A') rotations 
 %                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
 %                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
 %                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
