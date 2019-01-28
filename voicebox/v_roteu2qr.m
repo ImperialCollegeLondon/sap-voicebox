@@ -12,7 +12,7 @@ function q=v_roteu2qr(m,e)
 %                'O'            rotate the object using intrinsic rotations (i.e. the rotation
 %                               axes rotate along with the object)
 %                'a','A'        rotate the axes rather than the object with extrinsic ('a') or
-%                               intrinsic ('A') rotations 
+%                               intrinsic ('A') rotations
 %                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
 %                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
 %                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
@@ -103,7 +103,12 @@ if ne==0
     nq=1;
 else
     sz=size(e);
-    e=reshape(e,sz(1),[]); % put each set of angles in a separate column
+    if sz(1)==1 && numel(e)==ne % allow legacy call with row-vector input
+        e=e(:);
+        sz=size(e);
+    else
+        e=reshape(e,sz(1),[]); % put each set of angles in a separate column
+    end
     nq=size(e,2);
 end
 q=zeros(4,nq);
