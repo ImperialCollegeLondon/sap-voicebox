@@ -185,10 +185,10 @@ if ~isstruct(fs)                        % no state vector given
     end
     if any(mode=='a')
         [fso.bw,fso.aw]=v_stdspectrum(2,'z',fs);
-        fso.zw=zeros(length(fso.aw)-1,1);
+        fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
     elseif any(mode=='i')
         [fso.bw,fso.aw]=v_stdspectrum(8,'z',fs);
-        fso.zw=zeros(length(fso.aw)-1,1);
+        fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
     end
 else
     fso=fs;             % use existing structure
