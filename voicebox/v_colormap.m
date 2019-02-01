@@ -33,8 +33,9 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %                   'Y' like 'y' but with default p=0.667
 %                   'L' like 'l' but with default p=2
 %                   'f' flips the map to reverse its order
-%                   'b' make maximum luminance 0.05 (or 0.1 for 'B')
-%                   'w' make maximum luminance 0.95 (or 0.9 for 'W')
+%                   'b' force maximum luminance >=0.05 (or 0.1 for 'B')
+%                   'w' force maximum luminance <=0.95 (or 0.9 for 'W')
+%                   'k' to keep the current color map (i.e. don't update it to a new one]
 %
 %             n  the number of entries in the colourmap or the number in
 %                each linearly-interpolated segment excluding the entry shared
@@ -45,7 +46,9 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %             p  power law to use for linearized luminance or lightness [default p=1]
 %                see the description of 'y' and 'l' for its effect
 %
-% Outputs:
+% Outputs:       Note that the colormap will be updated regardless of whether outputs are
+%                specified. Use the 'k' option to supress updating.
+%
 %           rgb  RGB color map entries; one per row.
 %                All values will be in the range 0 to 1
 %
@@ -115,27 +118,29 @@ end
 pr=1/p;
 um=m;
 m=lower(m);   % convert mode letters to lower case
-gotmap= nargin==0 || numel(map)==0;   % already got the map
-if ~gotmap && ischar(map)   % if map given as a string
-    ix=find(strcmpi(map,nams),1); % check if it is one of ours
-    if numel(ix)
-        if mcal(ix)  % need to calculate the map the first time around
+oldmap=colormap; % get existing map
+rest=0; % do not restore old map by default
+if nargin==0 || numel(map)==0     % use existing map
+    rgb=oldmap;
+elseif ischar(map)               % if map given as a string
+    ix=find(strcmpi(map,nams),1);       % check if it is one of ours
+    if numel(ix)                        % if it is one of ours
+        if mcal(ix)             % need to calculate the map the first time around
             maps{ix}=v_colormap(maps{ix},modes{ix},nszs{ix},pows(ix));
-            mcal(ix)=0;  % don't calculate it again
+            mcal(ix)=0;                 % don't calculate it again
         end
-        colormap(maps{ix});
+        rgb=maps{ix};
     else
-        colormap(map); % not one of ours - just pass it on to standard colormap function
+        rgb=colormap(map); % not one of ours - just pass it on to standard colormap function
+        rest=any(m=='k'); % need to restore the old map if 'k' option is set
     end
-    gotmap=1;
+else
+    rgb=map; % numeric map specified
 end
 if any(m=='y') ||  any(m=='l') || (nargin>2 && numel(n)>0) % need to do linear interpolation
-    if gotmap
-        map=colormap;  % linearly interpolate the existing map
-    end
-    nm=size(map,1);
+    nm=size(rgb,1);
     if any(m=='y') ||  any(m=='l')
-        y=map*yv;  % convert map to luminance
+        y=rgb*yv;  % convert map to luminance
         up=y(2:nm)>y(1:nm-1); % find increasing
         ex=up(1:nm-2)~=up(2:nm-1); % +1 for a peak or valley
         yd=2*up(1)-1; % +1 if y initially increasing
@@ -190,31 +195,30 @@ if any(m=='y') ||  any(m=='l') || (nargin>2 && numel(n)>0) % need to do linear i
     jx(ix)=1:numel(jx);
     jx=min(max(jx(1:r)-(1:r)',1),nm-1);
     al=(tt-y(jx))./(y(jx+1)-y(jx)); % fraction of upper sample to include
-    map=map(jx,:)+(map(jx+1,:)-map(jx,:)).*al(:,ones(1,3));
-    colormap(map);
-    gotmap=1;
-end
-if ~gotmap
-    colormap(map);  % directly specified numerical map
+    rgb=rgb(jx,:)+(rgb(jx+1,:)-rgb(jx,:)).*al(:,ones(1,3)); % update the map
 end
 if any(m=='f')
-    rgb=colormap; % get output values from the current colourmap
-    colormap(rgb(end:-1:1,:))
+    rgb=rgb(end:-1:1,:);
 end
-rgb=colormap; % get output values from the current colourmap
 y=rgb*yv;  % convert RGB to luminance
-minyt=0.05*(any(m=='b')+any(um=='B')); % target minimum luminance
-maxyt=1-0.05*(any(m=='w')+any(um=='W')); % target maximum luminance
-maxy=max(y);
-miny=min(y);
-if maxy>maxyt || miny<minyt
-    maxy=max(maxy,maxyt);
-    miny=min(miny,minyt);
-    rgb=(rgb-miny)*(maxyt-minyt)/(maxy-miny)+minyt;
-    colormap(rgb);
-    y=rgb*yv;  % convert RGB to luminance
+if any(m=='b') || any(m=='w') % need to constrain luminance
+    minyt=0.05*(any(m=='b')+any(um=='B')); % target minimum luminance
+    maxyt=1-0.05*(any(m=='w')+any(um=='W')); % target maximum luminance
+    maxy=max(y);
+    miny=min(y);
+    if maxy>maxyt || miny<minyt
+        maxy=max(maxy,maxyt);
+        miny=min(miny,minyt);
+        rgb=(rgb-miny)*(maxyt-minyt)/(maxy-miny)+minyt;
+        y=rgb*yv;  % convert RGB to luminance
+    end
 end
 l=lc*(la*y+(y>lk).*(y.^(1/3)-la*y-lb)); % convert luminance to lightness
+if rest
+    colormap(oldmap);  % restore the old map
+elseif ~isequal(rgb,oldmap)
+    colormap(rgb); % update the system map
+end
 if any(m=='g')
     sp=[1 2 2];
     ssp=sum(sp);
