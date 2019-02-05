@@ -59,9 +59,11 @@ r(g,:)=p(e,:)+p(f,:);
 r=reshape(r,[3 3 sz(2:end)]);
 if ~nargout
     % display rotated cube
+    q1=q(:,1);
+    q1=q1/sqrt(q1'*q1); % normalize the first quaternion
     clf('reset'); % clear current axis
     v0=[-1 1 1 -1 -1 1 1 -1; -1 -1 1 1 -1 -1 1 1; -1 -1 -1 -1 1 1 1 1]*0.5; % unrotated coordinates
-    v=r(:,:,1)*v0; % unrotated for now
+    v=r(:,:,1)*v0; % use first elemnt of r to rotate
     fv=[4 1 5 8; 2 3 7 6; 1 2 6 5; 3 4 8 7; 2 1 4 3; 5 6 7 8]; % verices for each face
     fc=[0 1 1; 1 0 0; 1 0 1; 0 1 0; 1 1 0; 0 0 1]; % colours for faces
     xc={[25 46 46 25; 55 55 49 49]/100,
@@ -73,7 +75,7 @@ if ~nargout
     nf=size(fv,1); % number of faces
     for i=1:6
         p(i)=patch(v(1,fv(i,:)),v(2,fv(i,:)),v(3,fv(i,:)),fc(i,:));
-        set(p(i),'FaceAlpha',0.7);
+        set(p(i),'FaceAlpha',0.65);
         k=1.001; % factor to move out labels slightly to get correct depth ordering
         for j=1:2
             xij=xc{xf(i,j)}; % relative coordinates of character vertices
@@ -82,11 +84,20 @@ if ~nargout
                 k*(v(3,fv(i,1))+(v(3,fv(i,2))-v(3,fv(i,1)))*xij(1,:)+(v(3,fv(i,4))-v(3,fv(i,1)))*xij(2,:)),1-fc(i,:));
         end
     end
+    qa=q1(2:4);
+    qm=max(abs(qa));
+    if qm>1e-6*abs(q1(1))
+        qa=qa/(qm/0.7); % scale so axis extends outside the cube
+        hold on;
+        plot3([1 -1]*qa(1),[1 -1]*qa(2),[1 -1]*qa(3),'-');
+        hold off
+    end
+    th=360/pi*acos(abs(q1(1)));
     xlabel('x axis');
     ylabel('y axis');
     zlabel('z axis');
-    q=q(:,1)*((2*(q(find(q(:,1)~=0,1))>0)-1)/sqrt(q(:,1)'*q(:,1))); % normalize and force leading coefficient to be positive
-    title(sprintf('qr'' = [%.2f, %.2f, %.2f, %.2f],   eu_{xyz}'' = [%d, %d, %d]^\\circ',q(:,1),round(v_rotro2eu('xyz',r)*180/pi)));
+    q=q(:,1)*((2*(q(find(q1(:)~=0,1))>0)-1)); % force leading coefficient to be positive
+    title(sprintf('%d^\\circ, qr'' = [%.2f,%.2f,%.2f,%.2f], eu_{xyz}'' = [%d, %d, %d]^\\circ',round(th),q1(:),round(v_rotro2eu('xyz',r)*180/pi)));
     axis([-1 1 -1 1 -1 1 0 1]*sqrt(3)/2);
     axis equal
     grid on
