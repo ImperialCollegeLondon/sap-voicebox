@@ -6,19 +6,18 @@ function q=v_roteu2qr(m,e)
 %              as listed below:
 %                'x','y','z'    rotate around the given axis by the corresponding angle
 %                               given in e()
-%                'r','d'        all angles are given in radians or degrees  [radians]
-%                'o'            rotate the object using extrinsic rotations (i.e. the rotation
-%                               axes remain fixed in space) [default]
-%                'O'            rotate the object using intrinsic rotations (i.e. the rotation
-%                               axes rotate along with the object)
-%                'a','A'        rotate the axes rather than the object with extrinsic ('a') or
-%                               intrinsic ('A') rotations
 %                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
 %                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
 %                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+%                'r','d'        all angles are given in radians or degrees  [radians]
+%             'o','O','a','A'   selects whether to rotate the object ('o','O') or the coordinate
+%                               axes ('a','A') and whether the rotation axes remain fixed in
+%                               space for consecutive rotations (extrinsic: 'o','a') or else move
+%                               with each rotation (intrinsic: 'O','A').
+%                               The default is 'o' = object-extrinsic.
 %
-%     E(n,...) rotation angles in radians (or degrees if 'd' specified). A positive rotation
-%              is clockwise if looking along the axis away from the origin.
+%     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
+%              A positive rotation is clockwise if looking along the axis away from the origin.
 %
 % Outputs:
 %
@@ -27,9 +26,9 @@ function q=v_roteu2qr(m,e)
 %
 % The string M specifies the axes about which the rotations are performed.
 % You cannot have the same axis in adjacent positions and so there are 12
-% possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation is clockwise
-% if looking along the axis away from the origin; thus a rotation of +pi/2
-% around Z rotates [1 0 0]' to [0 1 0]'.
+% 3-character possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation
+% is clockwise if looking along the axis away from the origin; thus a rotation
+%  of +pi/2 around Z (i.e. '3' in m) rotates [1 0 0]' to [0 1 0]'.
 %
 % Inverse conversion: If m has length 3 with adjacent characters distinct,
 %                     then v_rotqr2eu(m,v_roteu2qr(m,e))=e.
@@ -101,6 +100,7 @@ if ne==0
     ne=1;
     sz=[1 1];
     nq=1;
+    e=[]; % create a dummy e in case it wasn't specified
 else
     sz=size(e);
     if sz(1)==1 && numel(e)==ne % allow legacy call with row-vector input
