@@ -1,22 +1,34 @@
-function r=v_roteu2ro(m,t)
+function r=v_roteu2ro(varargin)
 %V_ROTEU2QR converts a sequence of Euler angles to a real unit quaternion
 % Inputs:
 %
-%     M(1,n)   a string of n characters from the set {'x','y','z'}
-%              or, equivalently, a vector whose elements are 1, 2, or 3
-%     T(n,1)   n rotation angles. A positive rotation is clockwise if
-%              looking along the axis away from the origin.
+%     M        a string of n characters from the set determining the order of rotation axes
+%              as listed below:
+%                'x','y','z'    rotate around the given axis by the corresponding angle
+%                               given in e()
+%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
+%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
+%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+%                'r','d'        all angles are given in radians or degrees  [radians]
+%             'o','O','a','A'   selects whether to rotate the object ('o','O') or the coordinate
+%                               axes ('a','A') and whether the rotation axes remain fixed in
+%                               space for consecutive rotations (extrinsic: 'o','a') or else move
+%                               with each rotation (intrinsic: 'O','A').
+%                               The default is 'o' = object-extrinsic.
+%
+%     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
+%              A positive rotation is clockwise if looking along the axis away from the origin.
 %
 % Outputs:
 %
-%     R(3,3)   Input rotation matrix
+%     R(3,3,...)   Input rotation matrix
 %              Plots a diagram if no output specified
 %
 % The string M specifies the axes about which the rotations are performed.
 % You cannot have the same axis in adjacent positions and so there are 12
-% possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation is clockwise
-% if looking along the axis away from the origin; thus a rotation of +pi/2
-% around Z rotates [1 0 0]' to [0 1 0]'.
+% 3-character possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation
+% is clockwise if looking along the axis away from the origin; thus a rotation
+%  of +pi/2 around Z (i.e. '3' in m) rotates [1 0 0]' to [0 1 0]'.
 %
 % Inverse conversion: If m has length 3 with adjacent characters distinct,
 %                     then v_rotro2eu(m,v_roteu2ro(m,t))=t.
@@ -46,7 +58,7 @@ function r=v_roteu2ro(m,t)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargout
-    r=v_rotqr2ro(v_roteu2qr(m,t));
+    r=v_rotqr2ro(v_roteu2qr(varargin{:}));
 else
-    v_rotqr2ro(v_roteu2qr(m,t)); % draw a cube
+    v_rotqr2ro(v_roteu2qr(varargin{:})); % draw a cube
 end
