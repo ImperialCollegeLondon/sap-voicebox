@@ -1,5 +1,5 @@
 function r=v_roteu2ro(varargin)
-%V_ROTEU2QR converts a sequence of Euler angles to a real unit quaternion
+%V_ROTEU2QR converts a sequence of Euler angles to a rotation matrix
 % Inputs:
 %
 %     M        a string of n characters from the set determining the order of rotation axes
@@ -10,33 +10,32 @@ function r=v_roteu2ro(varargin)
 %                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
 %                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
 %                'r','d'        all angles are given in radians or degrees  [radians]
-%             'o','O','a','A'   selects whether to rotate the object ('o','O') or the coordinate
-%                               axes ('a','A') and whether the rotation axes remain fixed in
-%                               space for consecutive rotations (extrinsic: 'o','a') or else move
-%                               with each rotation (intrinsic: 'O','A').
-%                               The default is 'o' = object-extrinsic.
+%             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
+%                               whether the rotation axes remain fixed in space for consecutive
+%                               rotations (extrinsic) or else move with each rotation (intrinsic).
+%                                  'o' = object-extrinsic [default]
+%                                  'O' = object-intrinsic
+%                                  'a' = axes-extrinsic
+%                                  'A' = axes-intrinsic
 %
 %     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
-%              A positive rotation is clockwise if looking along the axis away from the origin.
+%              A positive rotation is clockwise if looking along the +ve axis away from the origin.
+%              The x, y, z axes form a right-handed triple.
 %
 % Outputs:
 %
 %     R(3,3,...)   Input rotation matrix
 %              Plots a diagram if no output specified
 %
-% The string M specifies the axes about which the rotations are performed.
-% You cannot have the same axis in adjacent positions and so there are 12
-% 3-character possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation
-% is clockwise if looking along the axis away from the origin; thus a rotation
-%  of +pi/2 around Z (i.e. '3' in m) rotates [1 0 0]' to [0 1 0]'.
+% The string M specifies the seqeunce of axes about which the rotations are performed. There are 12
+% possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if
+% there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:
+% (1) 'zxz' the most common Euler angle set (including a replicated axis, z)
+% (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
+%     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
+% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
 %
-% Inverse conversion: If m has length 3 with adjacent characters distinct,
-%                     then v_rotro2eu(m,v_roteu2ro(m,t))=t.
-%
-% Inverse rotation:   v_roteu2ro(m,t)*v_roteu2ro(fliplr(m),-fliplr(t))=eye(3)
-
-%
-%      Copyright (C) Mike Brookes 2007-2018
+%      Copyright (C) Mike Brookes 2007-2019
 %      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.

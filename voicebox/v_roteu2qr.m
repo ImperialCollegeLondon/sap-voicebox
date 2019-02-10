@@ -10,25 +10,30 @@ function q=v_roteu2qr(m,e)
 %                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
 %                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
 %                'r','d'        all angles are given in radians or degrees  [radians]
-%             'o','O','a','A'   selects whether to rotate the object ('o','O') or the coordinate
-%                               axes ('a','A') and whether the rotation axes remain fixed in
-%                               space for consecutive rotations (extrinsic: 'o','a') or else move
-%                               with each rotation (intrinsic: 'O','A').
-%                               The default is 'o' = object-extrinsic.
+%             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
+%                               whether the rotation axes remain fixed in space for consecutive
+%                               rotations (extrinsic) or else move with each rotation (intrinsic).
+%                                  'o' = object-extrinsic [default]
+%                                  'O' = object-intrinsic
+%                                  'a' = axes-extrinsic
+%                                  'A' = axes-intrinsic
 %
 %     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
-%              A positive rotation is clockwise if looking along the axis away from the origin.
+%              A positive rotation is clockwise if looking along the +ve axis away from the origin.
+%              The x, y, z axes form a right-handed triple.
 %
 % Outputs:
 %
 %     Q(4,...)   output quaternion. Q is normalized to have magnitude 1 with
 %                its first non-zero coefficient positive.
 %
-% The string M specifies the axes about which the rotations are performed.
-% You cannot have the same axis in adjacent positions and so there are 12
-% 3-character possibilities. Common ones are "ZXZ" and "ZYX". A positive rotation
-% is clockwise if looking along the axis away from the origin; thus a rotation
-%  of +pi/2 around Z (i.e. '3' in m) rotates [1 0 0]' to [0 1 0]'.
+% The string M specifies the seqeunce of axes about which the rotations are performed. There are 12
+% possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if
+% there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:
+% (1) 'zxz' the most common Euler angle set (including a replicated axis, z)
+% (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
+%     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
+% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
 %
 % Inverse conversion: If m has length 3 with adjacent characters distinct,
 %                     then v_rotqr2eu(m,v_roteu2qr(m,e))=e.
