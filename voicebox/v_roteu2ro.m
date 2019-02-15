@@ -30,11 +30,15 @@ function r=v_roteu2ro(varargin)
 % The string M specifies the seqeunce of axes about which the rotations are performed. There are 12
 % possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if
 % there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:
-% (1) 'zxz' the most common Euler angle set (including a replicated axis, z)
+% (1) 'zxz' the most common Euler angle set
 % (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
 %     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
 % (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
 %
+% The Euler angles are not, in general, unique. In particular:
+%  (1) v_roteu2ro('zxz',[a b c]) = v_roteu2ro('zxz',[a+pi -b c+pi])
+%  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('zxz',[a+pi pi-b c+pi])
+
 %      Copyright (C) Mike Brookes 2007-2019
 %      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $
 %
