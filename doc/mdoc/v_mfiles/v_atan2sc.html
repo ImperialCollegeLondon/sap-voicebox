@@ -31,9 +31,12 @@
 
  Outputs:
     s    sin(t) where tan(t) = y/x
-    C    cos(t) where tan(t) = y/x
+    c    cos(t) where tan(t) = y/x
     r    sqrt(x^2 + y^2)
-    t    arctan of y/x</pre></div>
+    t    arctan of y/x
+
+ Note y and x can be arrays but must be the same size. The outputs will
+ all be the same size as y.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -42,7 +45,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	V_ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotqr2eu.html" class="code" title="function e=v_rotqr2eu(m,q)">v_rotqr2eu</a>	V_ROTQR2EQ converts a real unit quaternion into the corresponding euler angles</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li></ul>
+<li><a href="v_rotpl2ro.html" class="code" title="function r=v_rotpl2ro(u,v,t)">v_rotpl2ro</a>	V_ROTPL2RO find matrix to rotate in the plane containing u and v r=[u,v,t]</li><li><a href="v_rotqr2eu.html" class="code" title="function e=v_rotqr2eu(m,q)">v_rotqr2eu</a>	V_ROTQR2EQ converts a real unit quaternion into the corresponding euler angles</li><li><a href="v_rotro2pl.html" class="code" title="function [u,v,t]=v_rotro2pl(r)">v_rotro2pl</a>	V_ROTRO2PL find the plane and rotation angle of a rotation matrix [u,v,t]=r</li></ul>
 <!-- crossreference -->
 
 
@@ -52,61 +55,67 @@ This function is called by:
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Outputs:</span>
 0005 <span class="comment">%    s    sin(t) where tan(t) = y/x</span>
-0006 <span class="comment">%    C    cos(t) where tan(t) = y/x</span>
+0006 <span class="comment">%    c    cos(t) where tan(t) = y/x</span>
 0007 <span class="comment">%    r    sqrt(x^2 + y^2)</span>
 0008 <span class="comment">%    t    arctan of y/x</span>
-0009 
-0010 <span class="comment">%      Copyright (C) Mike Brookes 2007</span>
-0011 <span class="comment">%      Version: $Id: v_atan2sc.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0012 <span class="comment">%</span>
-0013 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0014 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Note y and x can be arrays but must be the same size. The outputs will</span>
+0011 <span class="comment">% all be the same size as y.</span>
+0012 
+0013 <span class="comment">%      Copyright (C) Mike Brookes 2007</span>
+0014 <span class="comment">%      Version: $Id: v_atan2sc.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0015 <span class="comment">%</span>
-0016 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0017 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0018 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0019 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0020 <span class="comment">%   (at your option) any later version.</span>
-0021 <span class="comment">%</span>
-0022 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0023 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0024 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0025 <span class="comment">%   GNU General Public License for more details.</span>
-0026 <span class="comment">%</span>
-0027 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0028 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0029 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0030 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0031 
-0032 
-0033 t=NaN;
-0034 <span class="keyword">if</span> y == 0
-0035     t=(x&lt;0);
-0036     c=1-2*t;
-0037     s=0;
-0038     r=abs(x);
-0039     t=t*pi;
-0040 <span class="keyword">elseif</span> x == 0
-0041     s=2*(y&gt;=0)-1;
-0042     c=0;
-0043     r=abs(y);
-0044     t=s*0.5*pi;
-0045 <span class="keyword">elseif</span> (abs(y) &gt; abs(x))
-0046     q = x/y;
-0047     u = sqrt(1+q^2)*(2*(y&gt;=0)-1);
-0048     s = 1/u;
-0049     c = s*q;
-0050     r = y*u;
-0051 <span class="keyword">else</span>
-0052     q = y/x;
-0053     u = sqrt(1+q^2)*(2*(x&gt;=0)-1);
-0054     c = 1/u;
-0055     s = c*q;
-0056     r = x*u;
-0057 <span class="keyword">end</span>
-0058 <span class="keyword">if</span> nargout&gt;3 &amp;&amp; isnan(t)
-0059     t=atan2(s,c);
-0060 <span class="keyword">end</span></pre></div>
+0016 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0017 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0020 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0021 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0022 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0023 <span class="comment">%   (at your option) any later version.</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0026 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0027 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0028 <span class="comment">%   GNU General Public License for more details.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0031 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0032 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0033 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0034 
+0035 sz=size(y);
+0036 s=zeros(sz);
+0037 c=NaN(sz);
+0038 r=zeros(sz);
+0039 t=NaN(sz);
+0040 m=y==0;
+0041 <span class="keyword">if</span> any(m(:)) <span class="comment">% handle case when y=0 and possibly x=0 also</span>
+0042     t(m)=(x(m)&lt;0);
+0043     c(m)=1-2*t(m);
+0044     r(m)=abs(x(m));
+0045     t(m)=t(m)*pi;
+0046 <span class="keyword">end</span>
+0047 m=abs(y)&gt;abs(x) &amp; isnan(c);
+0048 <span class="keyword">if</span> any(m(:))
+0049     q = x(m)./y(m);
+0050     u = sqrt(1+q.^2).*sign(y(m)); <span class="comment">% avoids underflow even if x and y are very small</span>
+0051     s(m) = 1./u;
+0052     c(m) = s(m).*q;
+0053     r(m) = y(m).*u;
+0054 <span class="keyword">end</span>
+0055 m=isnan(c);
+0056 <span class="keyword">if</span> any(m(:))
+0057     q = y(m)./x(m);
+0058     u = sqrt(1+q.^2).*sign(x(m));
+0059     c(m) = 1./u;
+0060     s(m) = c(m).*q;
+0061     r(m) = x(m).*u;
+0062 <span class="keyword">end</span>
+0063 m=isnan(t);
+0064 <span class="keyword">if</span> nargout&gt;3 &amp;&amp; any(m(:))
+0065     t(m)=atan2(s(m),c(m));
+0066 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

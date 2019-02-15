@@ -54,7 +54,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_imagehomog.html" class="code" title="function [ih,xa,ya]=v_imagehomog(im,h,m,clip)">v_imagehomog</a>	V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li><li><a href="v_rotqrmean.html" class="code" title="function [y,s,v]=v_rotqrmean(q)">v_rotqrmean</a>	V_ROTQRMEAN calculates the mean rotation of a quaternion array [y,s]=[q]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>	V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
+<li><a href="v_imagehomog.html" class="code" title="function [ih,xa,ya]=v_imagehomog(im,h,m,clip)">v_imagehomog</a>	V_IMAGEHOMOG Apply a homography transformation to an image with bilinear interpolation</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li><li><a href="v_rotqrmean.html" class="code" title="function [y,s,v]=v_rotqrmean(q)">v_rotqrmean</a>	V_ROTQRMEAN calculates the mean rotation of a quaternion array [y,s]=[q]</li><li><a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,r)">v_rotro2eu</a>	V_ROTRO2EU converts a 3x3 rotation matrix into the corresponding euler angles</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -192,7 +192,7 @@ This function is called by:
 0128     <span class="keyword">end</span>
 0129     j=min(i,ncr);
 0130     rocall=rocmean*roc(:,:,i)';
-0131     titl=sprintf(<span class="string">'%d: pan-tilt-roll = %.1f�, %.1f�, %.1f�'</span>,i,-<a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,ro)">v_rotro2eu</a>(<span class="string">'yxz'</span>,rocall)*180/pi);
+0131     titl=sprintf(<span class="string">'%d: pan-tilt-roll = %.1f�, %.1f�, %.1f�'</span>,i,-<a href="v_rotro2eu.html" class="code" title="function e=v_rotro2eu(m,r)">v_rotro2eu</a>(<span class="string">'yxz'</span>,rocall)*180/pi);
 0132     [imr{j},xa{j},ya{j}]=<a href="v_imagehomog.html" class="code" title="function [ih,xa,ya]=v_imagehomog(im,h,m,clip)">v_imagehomog</a>(uint8(ims{i}),k0*rocall/k0,modeh);  <span class="comment">% apply inverse of v_rotation matrix</span>
 0133     <span class="keyword">if</span> gmode&gt;0
 0134         <span class="keyword">if</span> gmode&gt;1
