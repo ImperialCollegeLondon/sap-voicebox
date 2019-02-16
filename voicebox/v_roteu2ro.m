@@ -35,9 +35,11 @@ function r=v_roteu2ro(varargin)
 %     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
 % (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
 %
-% The Euler angles are not, in general, unique. In particular:
+% The Euler angles are not, in general, unique. In particular the following equivalences exist:
 %  (1) v_roteu2ro('zxz',[a b c]) = v_roteu2ro('zxz',[a+pi -b c+pi])
 %  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('zxz',[a+pi pi-b c+pi])
+%  (3) v_roteu2ro('456',[]) = eye(3) % also true for any ordering of '456'
+%  (4) v_roteu2ro('x',a) = v_roteu2ro('5x5',-a) = v_roteu2ro('5x6',pi-a) % also true if 5,6 are interchanged
 
 %      Copyright (C) Mike Brookes 2007-2019
 %      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $
