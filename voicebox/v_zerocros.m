@@ -63,5 +63,10 @@ if nargin>2
 end
 if ~nargout
     n=length(y);
-    plot(1:n,y,'-',t,zeros(length(t),1),'o');
+    if nargin>2
+        plot(x,y,'-b',t,zeros(length(t),1),'or');
+    else
+        plot(1:n,y,'-b',t,zeros(length(t),1),'or');
+    end
+    v_axisenlarge([-1 -1.05]);
 end
