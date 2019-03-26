@@ -1,10 +1,18 @@
 function [rgb,y,l]=v_colormap(map,m,n,p)
 %V_COLORMAP set and plot color map
 %
-%   Usage: (1) v_colormap([],'g'); % plot the current color map
-%          (2) v_colormap([],'',256); % intepolate the current color map to 256 entries
-%          (3) v_colormap('copper','y'); % make copper color map linear in luminance
-%          (4) v_colormap('copper','L'); % make copper color map linear in lightness^2
+%   Usage: (1) v_colormap([],'g');          % plot the current color map
+%
+%          (2) v_colormap([],'',256);       % intepolate the current color map to 256 entries
+%
+%          (3) v_colormap('copper','y');    % make copper color map linear in luminance
+%
+%          (4) v_colormap('copper','L');    % make copper color map linear in lightness^2
+%
+%          (5) imagesc(x);                                  % plot an image containing signed data
+%              v_colormap('v_bipveey');                     % select a bipolar colormap
+%              set(gca,'clim',max(abs(x(:)))*[-1 31/32]);   % set the range to make zero=black
+%              colorbar;                                    % show the color bar
 %
 %  Inputs:
 %           map  Either an (r,3) array specifying the RGB colourmap entries
@@ -226,7 +234,7 @@ if any(m=='g')
     nc=size(rgb,1);  % size of color map
     hsv=rgb2hsv(rgb);
     subplot(ssp,1,sp(1)+(1:sp(2)));
-    plot(1:nc,y,'-k');
+    plot(1:nc,y,'--k');
     hold on
     plot(1:nc,rgb(:,1),'-r');
     plot(1:nc,rgb(:,2),'-g');
@@ -235,7 +243,7 @@ if any(m=='g')
     axis([0.5 nc+0.5 -axw 1+axw]);
     ylabel('RGB + Y');
     subplot(ssp,1,sp(1)+sp(2)+1:ssp);
-    plot(1:nc,l,'-k');
+    plot(1:nc,l,'--k');
     hold on
     plot(1:nc,hsv(:,1),'-r');
     plot(1:nc,hsv(:,2),'-g');
