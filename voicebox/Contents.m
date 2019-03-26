@@ -245,7 +245,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 1998-2018 Mike Brookes
+%   Copyright (c) 1998-2019 Mike Brookes
 %   Version: $Id: Contents.m 10863 2018-09-21 15:39:23Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.

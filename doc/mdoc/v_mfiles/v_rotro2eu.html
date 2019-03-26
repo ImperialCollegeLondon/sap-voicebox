@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rotro2eu</title>
   <meta name="keywords" content="v_rotro2eu">
-  <meta name="description" content="V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles">
+  <meta name="description" content="V_ROTRO2EU converts a 3x3 rotation matrix into the corresponding euler angles">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,41 +21,55 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</strong></div>
+<div class="box"><strong>V_ROTRO2EU converts a 3x3 rotation matrix into the corresponding euler angles</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function e=v_rotro2eu(m,ro) </strong></div>
+<div class="box"><strong>function e=v_rotro2eu(m,r) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles
- Inputs: 
+<div class="fragment"><pre class="comment">V_ROTRO2EU converts a 3x3 rotation matrix into the corresponding euler angles
+ inverse of v_roteu2ro
+     M        a string of n characters from the set determining the order of rotation axes
+              as listed below:
+                'x','y','z'    rotate around the given axis by the corresponding angle
+                               given in e()
+                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
+                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
+                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+                'r','d'        all angles are given in radians or degrees  [radians]
+             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
+                               whether the rotation axes remain fixed in space for consecutive
+                               rotations (extrinsic) or else move with each rotation (intrinsic).
+                                  'o' = object-extrinsic [default]
+                                  'O' = object-intrinsic
+                                  'a' = axes-extrinsic
+                                  'A' = axes-intrinsic
 
-     M(1,3)   a string of 3 characters from the set {'x','y','z'} e.g. &quot;zxz&quot; or &quot;zyx&quot;
-              or, equivalently, a vector whose elements are 1, 2 or 3
-     RO(3,3)  3x3 rotation matrix
+     E(n,...) rotation angles in radians (or degrees if 'd' specified). A positive rotation
+              is clockwise if looking along the axis away from the origin.
 
  Outputs:
 
-     E(3,1)   3 euler angles in the range +-pi. A positive rotation is clockwise
-               if looking along the axis away from the origin.
+     Q(4,...)   output quaternion. Q is normalized to have magnitude 1 with
+                its first non-zero coefficient positive.
 
- The string M specifies the axes (fixed in space) about which the rotations of
- an object are performed. You cannot have the same axis in adjacent positions
- and so there are 12 possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;.
- If you want the axes to move with the object, you should reverse the
- ordering of both &quot;m&quot; and &quot;e&quot;.
+ The string M specifies the seqeunce of axes about which the rotations are performed. There are 12
+ possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if
+ there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:
+ (1) 'zxz' the most common Euler angle set
+ (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
+     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
+ (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
 
- There is some reduncancy in euler angle values:
-  (i)  If m(1)==m(3) then e=[a b c] and e=[a+-pi -b c+-pi] are equivalent.
-       The output of this routine will always have b&gt;=0;
-  (ii) If m(1)~=m(3) then e=[a b c] and e=[a+-pi pi-b c+-pi] are equivalent.
-       The output of this routine will always have |b|&lt;=pi/2</pre></div>
+ The Euler angles are not, in general, unique. In particular:
+  (1) v_roteu2ro('zxz',[a b c]) = v_roteu2ro('zxz',[a+pi -b c+pi])
+  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('zxz',[a+pi pi-b c+pi])</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>	V_ATAN2SC    sin and cosine of atan(y/x) [S,C,R,T]=(Y,X)</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li><li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
+<li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="v_rectifyhomog.html" class="code" title="function [imr,xa,ya]=v_rectifyhomog(ims,roc,k0,mode)">v_rectifyhomog</a>	V_RECTIFYHOMOG Apply rectifying homographies to an image set</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
@@ -63,83 +77,323 @@ This function is called by:
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function e=v_rotro2eu(m,ro)</a>
-0002 <span class="comment">%V_ROTRO2EQ converts a 3x3 rotation matrix into the corresponding euler angles</span>
-0003 <span class="comment">% Inputs:</span>
-0004 <span class="comment">%</span>
-0005 <span class="comment">%     M(1,3)   a string of 3 characters from the set {'x','y','z'} e.g. &quot;zxz&quot; or &quot;zyx&quot;</span>
-0006 <span class="comment">%              or, equivalently, a vector whose elements are 1, 2 or 3</span>
-0007 <span class="comment">%     RO(3,3)  3x3 rotation matrix</span>
-0008 <span class="comment">%</span>
-0009 <span class="comment">% Outputs:</span>
-0010 <span class="comment">%</span>
-0011 <span class="comment">%     E(3,1)   3 euler angles in the range +-pi. A positive rotation is clockwise</span>
-0012 <span class="comment">%               if looking along the axis away from the origin.</span>
-0013 <span class="comment">%</span>
-0014 <span class="comment">% The string M specifies the axes (fixed in space) about which the rotations of</span>
-0015 <span class="comment">% an object are performed. You cannot have the same axis in adjacent positions</span>
-0016 <span class="comment">% and so there are 12 possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;.</span>
-0017 <span class="comment">% If you want the axes to move with the object, you should reverse the</span>
-0018 <span class="comment">% ordering of both &quot;m&quot; and &quot;e&quot;.</span>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function e=v_rotro2eu(m,r)</a>
+0002 <span class="comment">%V_ROTRO2EU converts a 3x3 rotation matrix into the corresponding euler angles</span>
+0003 <span class="comment">% inverse of v_roteu2ro</span>
+0004 <span class="comment">%     M        a string of n characters from the set determining the order of rotation axes</span>
+0005 <span class="comment">%              as listed below:</span>
+0006 <span class="comment">%                'x','y','z'    rotate around the given axis by the corresponding angle</span>
+0007 <span class="comment">%                               given in e()</span>
+0008 <span class="comment">%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()</span>
+0009 <span class="comment">%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()</span>
+0010 <span class="comment">%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()</span>
+0011 <span class="comment">%                'r','d'        all angles are given in radians or degrees  [radians]</span>
+0012 <span class="comment">%             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and</span>
+0013 <span class="comment">%                               whether the rotation axes remain fixed in space for consecutive</span>
+0014 <span class="comment">%                               rotations (extrinsic) or else move with each rotation (intrinsic).</span>
+0015 <span class="comment">%                                  'o' = object-extrinsic [default]</span>
+0016 <span class="comment">%                                  'O' = object-intrinsic</span>
+0017 <span class="comment">%                                  'a' = axes-extrinsic</span>
+0018 <span class="comment">%                                  'A' = axes-intrinsic</span>
 0019 <span class="comment">%</span>
-0020 <span class="comment">% There is some reduncancy in euler angle values:</span>
-0021 <span class="comment">%  (i)  If m(1)==m(3) then e=[a b c] and e=[a+-pi -b c+-pi] are equivalent.</span>
-0022 <span class="comment">%       The output of this routine will always have b&gt;=0;</span>
-0023 <span class="comment">%  (ii) If m(1)~=m(3) then e=[a b c] and e=[a+-pi pi-b c+-pi] are equivalent.</span>
-0024 <span class="comment">%       The output of this routine will always have |b|&lt;=pi/2</span>
-0025 
-0026 <span class="comment">%</span>
-0027 <span class="comment">%      Copyright (C) Mike Brookes 2007-2018</span>
-0028 <span class="comment">%      Version: $Id: v_rotro2eu.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0029 <span class="comment">%</span>
-0030 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0031 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0032 <span class="comment">%</span>
-0033 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0034 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0035 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0036 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0037 <span class="comment">%   (at your option) any later version.</span>
-0038 <span class="comment">%</span>
-0039 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0040 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0041 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0042 <span class="comment">%   GNU General Public License for more details.</span>
-0043 <span class="comment">%</span>
-0044 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0045 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0046 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0047 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0048 
-0049 e=zeros(3,1);
-0050 <span class="keyword">if</span> ischar(m)
-0051     m=lower(m)-<span class="string">'w'</span>;
-0052 <span class="keyword">end</span>
-0053 <span class="keyword">if</span> numel(m)~=3 | any(abs(m-2)&gt;1), error(<span class="string">'Euler axis must be an x,y or z triplet'</span>); <span class="keyword">end</span>
-0054 u=m(1);
-0055 v=m(2);
-0056 w=m(3);
-0057 <span class="keyword">if</span> sum(m==v)&gt;1, error(<span class="string">'Consecutive Euler axes must differ'</span>); <span class="keyword">end</span>
-0058 <span class="comment">% first we rotate around w to null element (v,u) with respect to element (!vw,u) of rotation matrix</span>
-0059 g=2*mod(u-v,3)-3;   <span class="comment">% +1 if v follows u or -1 if u follows v</span>
-0060 h=2*mod(v-w,3)-3;   <span class="comment">% +1 if w follows v or -1 if v follows w</span>
-0061 [s,c,r,e(3)]=<a href="v_atan2sc.html" class="code" title="function [s,c,r,t]=v_atan2sc(y,x)">v_atan2sc</a>(h*ro(v,u),ro(6-v-w,u));
-0062 r2=ro;
-0063 ix=1+mod(w+(0:1),3);
-0064 r2(ix,:)=[c s; -s c]*ro(ix,:);
-0065 <span class="comment">% next we rotate around v to null element (!uv,u) with repect to element (u,u) of rotation matrix</span>
-0066 e(2)=atan2(-g*r2(6-u-v,u),r2(u,u));
-0067 <span class="comment">% finally we rotate around u to null element (v,!uv) with respect to element (!uv,!uv) = element (v,v)</span>
-0068 e(1)=atan2(-g*r2(v,6-u-v),r2(v,v));
-0069 <span class="keyword">if</span> (u==w &amp;&amp; e(2)&lt;0) || (u~=w &amp;&amp; abs(e(2))&gt;pi/2)  <span class="comment">% remove redundancy</span>
-0070     mk=u~=w;
-0071     e(2)=(2*mk-1)*e(2);
-0072     e=e-((2*(e&gt;0)-1) .* [1; mk; 1])*pi;
-0073 <span class="keyword">end</span>
-0074 <span class="keyword">if</span> ~nargout
-0075     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>(ro));
-0076 <span class="keyword">end</span>
-0077</pre></div>
+0020 <span class="comment">%     E(n,...) rotation angles in radians (or degrees if 'd' specified). A positive rotation</span>
+0021 <span class="comment">%              is clockwise if looking along the axis away from the origin.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Outputs:</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%     Q(4,...)   output quaternion. Q is normalized to have magnitude 1 with</span>
+0026 <span class="comment">%                its first non-zero coefficient positive.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% The string M specifies the seqeunce of axes about which the rotations are performed. There are 12</span>
+0029 <span class="comment">% possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if</span>
+0030 <span class="comment">% there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:</span>
+0031 <span class="comment">% (1) 'zxz' the most common Euler angle set</span>
+0032 <span class="comment">% (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to</span>
+0033 <span class="comment">%     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.</span>
+0034 <span class="comment">% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% The Euler angles are not, in general, unique. In particular:</span>
+0037 <span class="comment">%  (1) v_roteu2ro('zxz',[a b c]) = v_roteu2ro('zxz',[a+pi -b c+pi])</span>
+0038 <span class="comment">%  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('zxz',[a+pi pi-b c+pi])</span>
+0039 
+0040 <span class="comment">%      Copyright (C) Mike Brookes 2007-2019</span>
+0041 <span class="comment">%      Version: $Id: v_rotro2eu.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0044 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0047 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0048 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0049 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0050 <span class="comment">%   (at your option) any later version.</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0053 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0054 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0055 <span class="comment">%   GNU General Public License for more details.</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0058 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0059 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0060 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0061 
+0062 <span class="keyword">persistent</span> mes trmap zel mch mvch flefch jch rtci rtsi rtr w6 th6 x6 scai nch
+0063 <span class="keyword">if</span> isempty(mes)     <span class="comment">% setup fixed arrays and initialize cache of mode strings</span>
+0064     nch=5;          <span class="comment">% size of cache</span>
+0065     mch=cell(nch,1);
+0066     mvch=cell(nch,1);
+0067     flefch=zeros(nch,2);
+0068     jch=(1:nch); <span class="comment">% cache usage order</span>
+0069     <span class="keyword">for</span> i=1:nch
+0070         mch{i}=<span class="string">'1'</span>;
+0071         mvch{i}=[4;0;1];
+0072         flefch(i,:)=[0 1];
+0073     <span class="keyword">end</span>
+0074     mes=[1:3 10:12 7:9 4:6]; <span class="comment">% sign reversal look-up table</span>
+0075     rtci=[2 3 5 6 8 9; 3 1 6 4 9 7; 1 2 4 5 7 8]';
+0076     rtsi=[3 2 6 5 9 8; 1 3 4 6 7 9; 2 1 5 4 8 7]';
+0077     rtr=[1 4 7 2 5 8 3 6 9]; <span class="comment">% indices to transpose a vectorized 3x3 matrix</span>
+0078     w6=ones(6,1); <span class="comment">%</span>
+0079     th6=3*w6;
+0080     x6=[2 1 2 1 2 1]'; <span class="comment">% Index for sin components</span>
+0081     scai=[0 0 0 1; 0 0 0 2; 0 0 0 3; 1 -1 0 1; 1 -1 0 2; 1 -1 0 3; 0 0 -1 1; 0 0 -1 2; 0 0 -1 3; -1 1 0 1; -1 1 0 2; -1 1 0 3]'; <span class="comment">% [sin; -sin; cos; xyz] for fixed rotations</span>
+0082     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0083     <span class="comment">% The trmap and zel arrays contain information about each of 52 different  %</span>
+0084     <span class="comment">% patterns of -1,0,+1 that may exist in a rotation matrix as follows:      %</span>
+0085     <span class="comment">%                                                                          %</span>
+0086     <span class="comment">%   1- 3: identity matrix rows in order: 123, 231, 312                     %</span>
+0087     <span class="comment">%   1- 3: negated identity matrix rows in order: 132, 213, 321             %</span>
+0088     <span class="comment">%   7-12: As 1-6 but with rows 2,3 negated                                 %</span>
+0089     <span class="comment">%  13-18: As 1-6 but with rows 1,3 negated                                 %</span>
+0090     <span class="comment">%  19-24: As 1-6 but with rows 1,2 negated                                 %</span>
+0091     <span class="comment">%  25-33: +1 in position (i-24) and 0's in remainder of this row and col   %</span>
+0092     <span class="comment">%  34-42: -1 in position (i-24) and 0's in remainder of this row and col   %</span>
+0093     <span class="comment">%  43-51: 0 in position (i-42)                                             %</span>
+0094     <span class="comment">%  52: no special symmetry                                                 %</span>
+0095     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0096     <span class="comment">% trmap(i,j) gives the pattern that i is transformed into by rotation j    %</span>
+0097     <span class="comment">% where j=1:3 corresponds to x,y,z and j=4:12 corresponds to the 9         %</span>
+0098     <span class="comment">% multiples of 90° rotations listed in the main comments.                  %</span>
+0099     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0100     trmap=[ 25 29 33 16 24 11  7 13 19 22 12 17;
+0101         28 32 27 17 22 12  8 14 20 23 10 18;
+0102         31 26 30 18 23 10  9 15 21 24 11 16;
+0103         34 41 39 13 20  9 10 16 22 19  8 15;
+0104         37 35 42 14 21  7 11 17 23 20  9 13;
+0105         40 38 36 15 19  8 12 18 24 21  7 14;
+0106         25 38 42 22  6 23  1 19 13 16 18  5;
+0107         28 41 36 23  4 24  2 20 14 17 16  6;
+0108         31 35 39 24  5 22  3 21 15 18 17  4;
+0109         34 32 30 19  2 21  4 22 16 13 14  3;
+0110         37 26 33 20  3 19  5 23 17 14 15  1;
+0111         40 29 27 21  1 20  6 24 18 15 13  2;
+0112         34 29 42 10 12  5 19  1  7  4 24 23;
+0113         37 32 36 11 10  6 20  2  8  5 22 24;
+0114         40 26 39 12 11  4 21  3  9  6 23 22;
+0115         25 41 30  7  8  3 22  4 10  1 20 21;
+0116         28 35 33  8  9  1 23  5 11  2 21 19;
+0117         31 38 27  9  7  2 24  6 12  3 19 20;
+0118         34 38 33  4 18 17 13  7  1 10  6 11;
+0119         37 41 27  5 16 18 14  8  2 11  4 12;
+0120         40 35 30  6 17 16 15  9  3 12  5 10;
+0121         25 32 39  1 14 15 16 10  4  7  2  9;
+0122         28 26 42  2 15 13 17 11  5  8  3  7;
+0123         31 29 36  3 13 14 18 12  6  9  1  8;
+0124         25 44 45 25 36 26 25 34 34 25 27 35;
+0125         43 26 45 27 26 34 35 26 35 36 26 25;
+0126         43 44 27 35 25 27 36 36 27 26 34 27;
+0127         28 47 48 28 39 29 28 37 37 28 30 38;
+0128         46 29 48 30 29 37 38 29 38 39 29 28;
+0129         46 47 30 38 28 30 39 39 30 29 37 30;
+0130         31 50 51 31 42 32 31 40 40 31 33 41;
+0131         49 32 51 33 32 40 41 32 41 42 32 31;
+0132         49 50 33 41 31 33 42 42 33 32 40 33;
+0133         34 44 45 34 27 35 34 25 25 34 36 26;
+0134         43 35 45 36 35 25 26 35 26 27 35 34;
+0135         43 44 36 26 34 36 27 27 36 35 25 36;
+0136         37 47 48 37 30 38 37 28 28 37 39 29;
+0137         46 38 48 39 38 28 29 38 29 30 38 37;
+0138         46 47 39 29 37 39 30 30 39 38 28 39;
+0139         40 50 51 40 33 41 40 31 31 40 42 32;
+0140         49 41 51 42 41 31 32 41 32 33 41 40;
+0141         49 50 42 32 40 42 33 33 42 41 31 42;
+0142         43 52 52 43 45 44 43 43 43 43 45 44;
+0143         52 44 52 45 44 43 44 44 44 45 44 43;
+0144         52 52 45 44 43 45 45 45 45 44 43 45;
+0145         46 52 52 46 48 47 46 46 46 46 48 47;
+0146         52 47 52 48 47 46 47 47 47 48 47 46;
+0147         52 52 48 47 46 48 48 48 48 47 46 48;
+0148         49 52 52 49 51 50 49 49 49 49 51 50;
+0149         52 50 52 51 50 49 50 50 50 51 50 49;
+0150         52 52 51 50 49 51 51 51 51 50 49 51;
+0151         52 52 52 52 52 52 52 52 52 52 52 52];
+0152     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0153     <span class="comment">% Each Euler angle is chosen so that the inverse rotation forces a specific element  %</span>
+0154     <span class="comment">% of the rotation matrix to zero. zel(k,j,i) gives information about which element   %</span>
+0155     <span class="comment">% ceases to be zero when a rotation around axis j is applied to pattern i.           %</span>
+0156     <span class="comment">%    k=1 gives the index into a vectorized matrix of the entry that becomes non-zero %</span>
+0157     <span class="comment">%    k=2 gives the index of the other element in the same column that changes        %</span>
+0158     <span class="comment">%    k=3 gives the sign of the sine term affecting the first of these entries        %</span>
+0159     <span class="comment">%    k=4 gives the sign of the initial value of the second of these entries if known %</span>
+0160     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0161     zel=reshape([  6  5  1  1  3  1 -1  1  2  1  1  1;
+0162         2  3 -1  1  1  3  1  1  5  4  1  1;
+0163         3  2  1  1  4  6  1  1  1  2 -1  1;
+0164         5  6 -1 -1  3  1 -1 -1  2  1  1 -1;
+0165         3  2  1 -1  6  4 -1 -1  1  2 -1 -1;
+0166         2  3 -1 -1  1  3  1 -1  4  5 -1 -1;
+0167         6  5  1 -1  3  1 -1  1  2  1  1  1;
+0168         2  3 -1 -1  1  3  1 -1  5  4  1  1;
+0169         3  2  1 -1  4  6  1 -1  1  2 -1 -1;
+0170         5  6 -1  1  3  1 -1 -1  2  1  1 -1;
+0171         3  2  1  1  6  4 -1 -1  1  2 -1  1;
+0172         2  3 -1  1  1  3  1  1  4  5 -1  1;
+0173         6  5  1  1  3  1 -1 -1  2  1  1 -1;
+0174         2  3 -1 -1  1  3  1 -1  5  4  1 -1;
+0175         3  2  1  1  4  6  1 -1  1  2 -1  1;
+0176         5  6 -1  1  3  1 -1  1  2  1  1  1;
+0177         3  2  1 -1  6  4 -1  1  1  2 -1 -1;
+0178         2  3 -1  1  1  3  1  1  4  5 -1 -1;
+0179         6  5  1 -1  3  1 -1 -1  2  1  1 -1;
+0180         2  3 -1  1  1  3  1  1  5  4  1 -1;
+0181         3  2  1 -1  4  6  1  1  1  2 -1 -1;
+0182         5  6 -1 -1  3  1 -1  1  2  1  1  1;
+0183         3  2  1  1  6  4 -1  1  1  2 -1  1;
+0184         2  3 -1 -1  1  3  1 -1  4  5 -1  1;
+0185         0  0  0  0  3  1 -1  1  2  1  1  1;
+0186         3  2  1  1  0  0  0  0  1  2 -1  1;
+0187         2  3 -1  1  1  3  1  1  0  0  0  0;
+0188         0  0  0  0  6  4 -1  1  5  4  1  1;
+0189         6  5  1  1  0  0  0  0  4  5 -1  1;
+0190         5  6 -1  1  4  6  1  1  0  0  0  0;
+0191         0  0  0  0  9  7 -1  1  8  7  1  1;
+0192         9  8  1  1  0  0  0  0  7  8 -1  1;
+0193         8  9 -1  1  7  9  1  1  0  0  0  0;
+0194         0  0  0  0  3  1 -1 -1  2  1  1 -1;
+0195         3  2  1 -1  0  0  0  0  1  2 -1 -1;
+0196         2  3 -1 -1  1  3  1 -1  0  0  0  0;
+0197         0  0  0  0  6  4 -1 -1  5  4  1 -1;
+0198         6  5  1 -1  0  0  0  0  4  5 -1 -1;
+0199         5  6 -1 -1  4  6  1 -1  0  0  0  0;
+0200         0  0  0  0  9  7 -1 -1  8  7  1 -1;
+0201         9  8  1 -1  0  0  0  0  7  8 -1 -1;
+0202         8  9 -1 -1  7  9  1 -1  0  0  0  0;
+0203         0  0  0  0  1  3  1  1  1  2 -1  1;
+0204         2  3 -1  1  0  0  0  0  2  1  1  1;
+0205         3  2  1  1  3  1 -1  1  0  0  0  0;
+0206         0  0  0  0  4  6  1  1  4  5 -1  1;
+0207         5  6 -1  1  0  0  0  0  5  4  1  1;
+0208         6  5  1  1  6  4 -1  1  0  0  0  0;
+0209         0  0  0  0  7  9  1  1  7  8 -1  1;
+0210         8  9 -1  1  0  0  0  0  8  7  1  1;
+0211         9  8  1  1  9  7 -1  1  0  0  0  0;
+0212         0  0  0  0  0  0  0  0  0  0  0  0]',4,3,52);
+0213 <span class="keyword">end</span>
+0214 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0215 <span class="comment">% Convert the m string</span>
+0216 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0217 <span class="keyword">if</span> ~nargout
+0218     <a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>(r);
+0219 <span class="keyword">else</span>
+0220     <span class="keyword">if</span> ischar(m)
+0221         ich=find(strcmp(m,mch),1);      <span class="comment">% check if already in the cache</span>
+0222         <span class="keyword">if</span> isempty(ich)                 <span class="comment">% not yet in the cache</span>
+0223             mm=m-<span class="string">'w'</span>;                   <span class="comment">% convert to integers with x -&gt; 1</span>
+0224             mi=mm&gt;=-31 &amp; mm&lt;=-29;       <span class="comment">% find characters XYZ</span>
+0225             mm(mi)=mm(mi)+32;           <span class="comment">% convert XYZ to xyz</span>
+0226             mi=mm&gt;=-70 &amp; mm&lt;=-62;       <span class="comment">% find digits 1:9</span>
+0227             mm(mi)=mm(mi)+74;           <span class="comment">% convert to 4:12</span>
+0228             mi=mm&lt;=0;                   <span class="comment">% select control characters</span>
+0229             mc=mm(mi);                  <span class="comment">% controls</span>
+0230             mm=mm(~mi);                 <span class="comment">% rotations</span>
+0231             ef=1;                       <span class="comment">% angle scale factor</span>
+0232             es=1;                       <span class="comment">% angle sign</span>
+0233             fl=0;                       <span class="comment">% default to no rotation matrix tranposing</span>
+0234             <span class="keyword">for</span> i=1:length(mc)
+0235                 <span class="keyword">switch</span> mc(i)
+0236                     <span class="keyword">case</span> -5             <span class="comment">% 'r' = radians</span>
+0237                     <span class="keyword">case</span> -19            <span class="comment">% 'd' = degrees</span>
+0238                         ef=pi/180;      <span class="comment">% scale factor to convert to radians</span>
+0239                     <span class="keyword">case</span> -8             <span class="comment">% 'o' = object-extrinsic</span>
+0240                     <span class="keyword">case</span> -40            <span class="comment">% 'O' = object-intrinsic</span>
+0241                         fl=1;
+0242                         es=-1;
+0243                     <span class="keyword">case</span> -22            <span class="comment">% 'a' = axes-extrinsic</span>
+0244                         fl=1;
+0245                     <span class="keyword">case</span> -54            <span class="comment">% 'A' = axes-intrinsic</span>
+0246                         es=-1;
+0247                     <span class="keyword">otherwise</span>
+0248                         error(<span class="string">'Invalid character: %s'</span>,mc(i)+<span class="string">'w'</span>)
+0249                 <span class="keyword">end</span>
+0250             <span class="keyword">end</span>
+0251             ef=ef*es;               <span class="comment">% change sign of scale factor if necessary</span>
+0252             <span class="keyword">if</span> es&lt;0
+0253                 mm=mes(mm);         <span class="comment">% sign-reverse: interchage 4,5,6 with 10,11,12</span>
+0254             <span class="keyword">end</span>
+0255             nm=length(mm);
+0256             mv=ones(3,nm);
+0257             mv(1,:)=mm;
+0258             mv(2,:)=cumsum(mm&lt;=3);      <span class="comment">% index into euler angle array</span>
+0259             <span class="keyword">for</span> i=1:nm-1                <span class="comment">% pattern ID before each rotation</span>
+0260                 mv(3,i+1)=trmap(mv(3,i),mm(i));
+0261             <span class="keyword">end</span>
+0262             flef=[fl ef];
+0263             ich=find(jch==nch,1);       <span class="comment">% find oldest cache entry</span>
+0264             mch{ich}=m;                 <span class="comment">% save input string</span>
+0265             mvch{ich}=mv;               <span class="comment">% save parameters</span>
+0266             flefch(ich,:)=flef;         <span class="comment">% save transpose flag and scale factor</span>
+0267             jch=jch+1;                  <span class="comment">% age all the other cache entries</span>
+0268             jch(ich)=1;                 <span class="comment">% and set this as the most recent</span>
+0269         <span class="keyword">else</span>                            <span class="comment">% already in the cache</span>
+0270             <span class="keyword">if</span> jch(ich)&gt;1               <span class="comment">% not currently the most recent</span>
+0271                 mi=jch&lt;jch(ich);        <span class="comment">% find the younger cache entries</span>
+0272                 jch(mi)=jch(mi)+1;      <span class="comment">% age all younger cache entries</span>
+0273                 jch(ich)=1;
+0274             <span class="keyword">end</span>
+0275             mv=mvch{ich};               <span class="comment">% retrieve from cache</span>
+0276             flef=flefch(ich,:);
+0277             nm=size(mv,2);              <span class="comment">% total rotation count</span>
+0278         <span class="keyword">end</span>
+0279     <span class="keyword">else</span> <span class="comment">% lecacy call with integer m argument</span>
+0280         nm=length(m);
+0281         mv=ones(3,nm);
+0282         mv(1,:)=m;
+0283         <span class="keyword">for</span> i=1:nm-1                    <span class="comment">% pattern ID before each rotation</span>
+0284             mv(3,i+1)=trmap(mv(3,i),mm(i));
+0285         <span class="keyword">end</span>
+0286         mv(2,:)=cumsum(mv(1,:)&lt;=3);     <span class="comment">% index into euler angle array</span>
+0287         flef=0:1;                       <span class="comment">% no transposing; unity scale factor</span>
+0288     <span class="keyword">end</span>
+0289     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0290     <span class="comment">% Now calculate euler angles</span>
+0291     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0292     sz=size(r);
+0293     r=reshape(r,9,[]);
+0294     nr=size(r,2);                       <span class="comment">% number of rotation matrices</span>
+0295     <span class="keyword">if</span> flef(1)
+0296         r=r(rtr,:);                     <span class="comment">% transpose rotation matrix</span>
+0297     <span class="keyword">end</span>
+0298     e=zeros(mv(2,end),nr);              <span class="comment">% initialize array of euler angles</span>
+0299     <span class="keyword">for</span> i=nm:-1:1                       <span class="comment">% process rotations in reverse order</span>
+0300         mi=mv(1,i);
+0301         <span class="keyword">if</span> mi&lt;=3                        <span class="comment">% rotation around x,y or z</span>
+0302             zeli=zel(:,mi,mv(3,i));
+0303             <span class="keyword">if</span> zeli(3)~=0               <span class="comment">% skip if this rotation is redundant</span>
+0304                 [si,ci,ri,ti]=atan2sc(zeli(4)*r(zeli(1),:),zeli(4)*r(zeli(2),:));
+0305                 e(mv(2,i),:)=ti*zeli(3)/flef(2);  <span class="comment">% save the euler angle</span>
+0306                 si=zeli(3)*[1; -1]*si;          <span class="comment">% make -si available and correct sign</span>
+0307                 r(rtci(:,mi),:)=ci(w6,:).*r(rtci(:,mi),:)-si(x6,:).*r(rtsi(:,mi),:); <span class="comment">% apply reverse rotation</span>
+0308             <span class="keyword">end</span>
+0309         <span class="keyword">else</span> <span class="comment">% fixed rotation</span>
+0310             ai=scai(4,mi);                      <span class="comment">% axis of rotation: 1, 2 or 3</span>
+0311             r(rtci(:,ai),:)=scai(th6,mi).*r(rtci(:,ai),:)-scai(x6,mi).*r(rtsi(:,ai),:); <span class="comment">% apply reverse rotation</span>
+0312         <span class="keyword">end</span>
+0313     <span class="keyword">end</span>
+0314     <span class="keyword">if</span> nr&gt;1                                     <span class="comment">% if there was &gt;1 input matrix</span>
+0315         e=reshape(e,[size(e,1) sz(3:end)]);     <span class="comment">% restore the shape of the Euler angle array</span>
+0316     <span class="keyword">end</span>
+0317 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

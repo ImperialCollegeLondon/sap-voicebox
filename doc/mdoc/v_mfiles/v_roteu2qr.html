@@ -34,30 +34,34 @@
               as listed below:
                 'x','y','z'    rotate around the given axis by the corresponding angle
                                given in e()
-                'r','d'        all angles are given in radians or degrees  [radians]
-                'o'            rotate the object using extrinsic rotations (i.e. the rotation
-                               axes remain fixed in space) [default]
-                'O'            rotate the object using intrinsic rotations (i.e. the rotation
-                               axes rotate along with the object)
-                'a','A'        rotate the axes rather than the object with extrinsic ('a') or
-                               intrinsic ('A') rotations
                 '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
                 '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
                 '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+                'r','d'        all angles are given in radians or degrees  [radians]
+             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
+                               whether the rotation axes remain fixed in space for consecutive
+                               rotations (extrinsic) or else move with each rotation (intrinsic).
+                                  'o' = object-extrinsic [default]
+                                  'O' = object-intrinsic
+                                  'a' = axes-extrinsic
+                                  'A' = axes-intrinsic
 
-     E(n,...) rotation angles in radians (or degrees if 'd' specified). A positive rotation
-              is clockwise if looking along the axis away from the origin.
+     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
+              A positive rotation is clockwise if looking along the +ve axis away from the origin.
+              The x, y, z axes form a right-handed triple.
 
  Outputs:
 
      Q(4,...)   output quaternion. Q is normalized to have magnitude 1 with
                 its first non-zero coefficient positive.
 
- The string M specifies the axes about which the rotations are performed.
- You cannot have the same axis in adjacent positions and so there are 12
- possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;. A positive rotation is clockwise
- if looking along the axis away from the origin; thus a rotation of +pi/2
- around Z rotates [1 0 0]' to [0 1 0]'.
+ The string M specifies the seqeunce of axes about which the rotations are performed. There are 12
+ possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if
+ there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:
+ (1) 'zxz' the most common Euler angle set (including a replicated axis, z)
+ (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
+     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
+ (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
 
  Inverse conversion: If m has length 3 with adjacent characters distinct,
                      then v_rotqr2eu(m,v_roteu2qr(m,e))=e.
@@ -71,7 +75,7 @@ This function calls:
 <li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_roteu2ro.html" class="code" title="function r=v_roteu2ro(m,t)">v_roteu2ro</a>	V_ROTEU2QR converts a sequence of Euler angles to a real unit quaternion</li></ul>
+<li><a href="v_roteu2ro.html" class="code" title="function r=v_roteu2ro(varargin)">v_roteu2ro</a>	V_ROTEU2QR converts a sequence of Euler angles to a rotation matrix</li></ul>
 <!-- crossreference -->
 
 
@@ -84,141 +88,146 @@ This function is called by:
 0006 <span class="comment">%              as listed below:</span>
 0007 <span class="comment">%                'x','y','z'    rotate around the given axis by the corresponding angle</span>
 0008 <span class="comment">%                               given in e()</span>
-0009 <span class="comment">%                'r','d'        all angles are given in radians or degrees  [radians]</span>
-0010 <span class="comment">%                'o'            rotate the object using extrinsic rotations (i.e. the rotation</span>
-0011 <span class="comment">%                               axes remain fixed in space) [default]</span>
-0012 <span class="comment">%                'O'            rotate the object using intrinsic rotations (i.e. the rotation</span>
-0013 <span class="comment">%                               axes rotate along with the object)</span>
-0014 <span class="comment">%                'a','A'        rotate the axes rather than the object with extrinsic ('a') or</span>
-0015 <span class="comment">%                               intrinsic ('A') rotations</span>
-0016 <span class="comment">%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()</span>
-0017 <span class="comment">%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()</span>
-0018 <span class="comment">%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()</span>
-0019 <span class="comment">%</span>
-0020 <span class="comment">%     E(n,...) rotation angles in radians (or degrees if 'd' specified). A positive rotation</span>
-0021 <span class="comment">%              is clockwise if looking along the axis away from the origin.</span>
-0022 <span class="comment">%</span>
-0023 <span class="comment">% Outputs:</span>
+0009 <span class="comment">%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()</span>
+0010 <span class="comment">%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()</span>
+0011 <span class="comment">%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()</span>
+0012 <span class="comment">%                'r','d'        all angles are given in radians or degrees  [radians]</span>
+0013 <span class="comment">%             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and</span>
+0014 <span class="comment">%                               whether the rotation axes remain fixed in space for consecutive</span>
+0015 <span class="comment">%                               rotations (extrinsic) or else move with each rotation (intrinsic).</span>
+0016 <span class="comment">%                                  'o' = object-extrinsic [default]</span>
+0017 <span class="comment">%                                  'O' = object-intrinsic</span>
+0018 <span class="comment">%                                  'a' = axes-extrinsic</span>
+0019 <span class="comment">%                                  'A' = axes-intrinsic</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).</span>
+0022 <span class="comment">%              A positive rotation is clockwise if looking along the +ve axis away from the origin.</span>
+0023 <span class="comment">%              The x, y, z axes form a right-handed triple.</span>
 0024 <span class="comment">%</span>
-0025 <span class="comment">%     Q(4,...)   output quaternion. Q is normalized to have magnitude 1 with</span>
-0026 <span class="comment">%                its first non-zero coefficient positive.</span>
-0027 <span class="comment">%</span>
-0028 <span class="comment">% The string M specifies the axes about which the rotations are performed.</span>
-0029 <span class="comment">% You cannot have the same axis in adjacent positions and so there are 12</span>
-0030 <span class="comment">% possibilities. Common ones are &quot;ZXZ&quot; and &quot;ZYX&quot;. A positive rotation is clockwise</span>
-0031 <span class="comment">% if looking along the axis away from the origin; thus a rotation of +pi/2</span>
-0032 <span class="comment">% around Z rotates [1 0 0]' to [0 1 0]'.</span>
-0033 <span class="comment">%</span>
-0034 <span class="comment">% Inverse conversion: If m has length 3 with adjacent characters distinct,</span>
-0035 <span class="comment">%                     then v_rotqr2eu(m,v_roteu2qr(m,e))=e.</span>
-0036 <span class="comment">%</span>
-0037 <span class="comment">% Inverse rotation:   qrmult(roteu2qr(m,e),roteu2qr(fliplr(m),-fliplr(e)))=+-[ 1 0 0 0]'</span>
-0038 
-0039 <span class="comment">%</span>
-0040 <span class="comment">%      Copyright (C) Mike Brookes 2007-2018</span>
-0041 <span class="comment">%      Version: $Id: v_roteu2qr.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0042 <span class="comment">%</span>
-0043 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0044 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0045 <span class="comment">%</span>
-0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0047 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0048 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0049 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0050 <span class="comment">%   (at your option) any later version.</span>
-0051 <span class="comment">%</span>
-0052 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0053 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0054 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0055 <span class="comment">%   GNU General Public License for more details.</span>
-0056 <span class="comment">%</span>
-0057 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0058 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0059 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0060 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0061 <span class="keyword">persistent</span> y cb sb
-0062 <span class="keyword">if</span> isempty(y)
-0063     y=repmat([2 4 1 3 1 3 2 4; 3 2 1 4 1 4 3 2; 3 4 2 1 1 2 4 3],4,1);
-0064     cb=cos([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
-0065     sb=sin([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
-0066 <span class="keyword">end</span>
-0067 <span class="comment">% m consists of a sequence of axes e.g. 'zxy'</span>
-0068 <span class="comment">% and e gives the rotation angles in radians or degrees</span>
-0069 <span class="keyword">if</span> ischar(m)
-0070     m=m-<span class="string">'w'</span>; <span class="comment">% convert to integers for backwards compatibiity</span>
-0071 <span class="keyword">end</span>
-0072 mi=m&gt;=-31 &amp; m&lt;=-29; <span class="comment">% convert XYZ to xyz</span>
-0073 m(mi)=m(mi)+32;
-0074 mi=m&gt;=-70 &amp; m&lt;=-62; <span class="comment">% find digits 1:9</span>
-0075 m(mi)=m(mi)+74; <span class="comment">% convert to 4:12</span>
-0076 mi=m&lt;=0; <span class="comment">% select control characters</span>
-0077 mc=m(mi); <span class="comment">% controls</span>
-0078 m=m(~mi); <span class="comment">% rotations</span>
-0079 ef=0.5; <span class="comment">% angle scale factor</span>
-0080 es=1; <span class="comment">% angle sign</span>
-0081 fl=0; <span class="comment">% need to flip rotation order</span>
-0082 <span class="keyword">for</span> i=1:length(mc)
-0083     <span class="keyword">switch</span> mc(i)
-0084         <span class="keyword">case</span> -5 <span class="comment">% 'r' = radians</span>
-0085         <span class="keyword">case</span> -19 <span class="comment">% 'd' = degrees</span>
-0086             ef=pi/360; <span class="comment">% scale factor to convert to radians and halve</span>
-0087         <span class="keyword">case</span> -8 <span class="comment">% 'o' = object-extrinsic</span>
-0088         <span class="keyword">case</span> -40 <span class="comment">% 'O' = object-intrinsic</span>
-0089             fl=1;
-0090         <span class="keyword">case</span> -22 <span class="comment">% 'a' = axes-extrinsic</span>
-0091             fl=1;
-0092             es=-1;
-0093         <span class="keyword">case</span> -54 <span class="comment">% 'A' = axes-intrinsic</span>
-0094             es=-1;
-0095         <span class="keyword">otherwise</span>
-0096             error(<span class="string">'Invalid character: %s'</span>,mc(i)+<span class="string">'w'</span>)
-0097     <span class="keyword">end</span>
-0098 <span class="keyword">end</span>
-0099 ne=sum(m&lt;=3); <span class="comment">% number of elements required in e per output</span>
-0100 <span class="keyword">if</span> ne==0
-0101     ne=1;
-0102     sz=[1 1];
-0103     nq=1;
-0104 <span class="keyword">else</span>
-0105     sz=size(e);
-0106     <span class="keyword">if</span> sz(1)==1 &amp;&amp; numel(e)==ne <span class="comment">% allow legacy call with row-vector input</span>
-0107         e=e(:);
-0108         sz=size(e);
-0109     <span class="keyword">else</span>
-0110         e=reshape(e,sz(1),[]); <span class="comment">% put each set of angles in a separate column</span>
-0111     <span class="keyword">end</span>
-0112     nq=size(e,2);
-0113 <span class="keyword">end</span>
-0114 q=zeros(4,nq);
-0115 q(1,:)=1; <span class="comment">% initialize output quaternions to the value 1</span>
-0116 r=q; <span class="comment">% space for temporary quaternion</span>
-0117 j=0; <span class="comment">% number of angles used so far</span>
-0118 <span class="keyword">if</span> fl
-0119     m=m(end:-1:1); <span class="comment">% reverse the order of m</span>
-0120     e=e(end:-1:1,:); <span class="comment">% and of e</span>
-0121 <span class="keyword">end</span>
-0122 <span class="keyword">for</span> i=1:length(m)
-0123     mi=m(i);
-0124     x=y(mi,:); <span class="comment">% index for x,y,or z axes</span>
-0125     <span class="keyword">if</span> mi&lt;4
-0126         j=j+1; <span class="comment">% next angle required</span>
-0127         b=ef*e(j,:); <span class="comment">% rotation semi-angle in radians</span>
-0128         c=cos(b);
-0129         s=sin(b);
-0130     <span class="keyword">else</span>
-0131         c=cb(mi);
-0132         s=sb(mi);
-0133     <span class="keyword">end</span>
-0134     r(x(1:2),:)=q(x(3:4),:);
-0135     r(x(5:6),:)=-q(x(7:8),:);
-0136     q=repmat(c,4,1).*q+repmat(s*es,4,1).*r;
-0137 <span class="keyword">end</span>
-0138 <span class="keyword">if</span> ~nargout
-0139     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q(:,1)); <span class="comment">% plot a cube</span>
-0140 <span class="keyword">else</span>
-0141     sz(1)=4; <span class="comment">% each rotation needs 4 outputs</span>
-0142     q=reshape(q.*repmat(sign([8 4 2 1]*sign(q)),4,1),sz); <span class="comment">% force leading coefficient to be positive and reshape</span>
-0143 <span class="keyword">end</span></pre></div>
+0025 <span class="comment">% Outputs:</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%     Q(4,...)   output quaternion. Q is normalized to have magnitude 1 with</span>
+0028 <span class="comment">%                its first non-zero coefficient positive.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% The string M specifies the seqeunce of axes about which the rotations are performed. There are 12</span>
+0031 <span class="comment">% possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if</span>
+0032 <span class="comment">% there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:</span>
+0033 <span class="comment">% (1) 'zxz' the most common Euler angle set (including a replicated axis, z)</span>
+0034 <span class="comment">% (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to</span>
+0035 <span class="comment">%     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.</span>
+0036 <span class="comment">% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% Inverse conversion: If m has length 3 with adjacent characters distinct,</span>
+0039 <span class="comment">%                     then v_rotqr2eu(m,v_roteu2qr(m,e))=e.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">% Inverse rotation:   qrmult(roteu2qr(m,e),roteu2qr(fliplr(m),-fliplr(e)))=+-[ 1 0 0 0]'</span>
+0042 
+0043 <span class="comment">%</span>
+0044 <span class="comment">%      Copyright (C) Mike Brookes 2007-2018</span>
+0045 <span class="comment">%      Version: $Id: v_roteu2qr.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0048 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0052 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0053 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0054 <span class="comment">%   (at your option) any later version.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0057 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0058 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0059 <span class="comment">%   GNU General Public License for more details.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0062 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0063 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0065 <span class="keyword">persistent</span> y cb sb
+0066 <span class="keyword">if</span> isempty(y)
+0067     y=repmat([2 4 1 3 1 3 2 4; 3 2 1 4 1 4 3 2; 3 4 2 1 1 2 4 3],4,1);
+0068     cb=cos([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
+0069     sb=sin([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
+0070 <span class="keyword">end</span>
+0071 <span class="comment">% m consists of a sequence of axes e.g. 'zxy'</span>
+0072 <span class="comment">% and e gives the rotation angles in radians or degrees</span>
+0073 <span class="keyword">if</span> ischar(m)
+0074     m=m-<span class="string">'w'</span>; <span class="comment">% convert to integers for backwards compatibiity</span>
+0075 <span class="keyword">end</span>
+0076 mi=m&gt;=-31 &amp; m&lt;=-29; <span class="comment">% convert XYZ to xyz</span>
+0077 m(mi)=m(mi)+32;
+0078 mi=m&gt;=-70 &amp; m&lt;=-62; <span class="comment">% find digits 1:9</span>
+0079 m(mi)=m(mi)+74; <span class="comment">% convert to 4:12</span>
+0080 mi=m&lt;=0; <span class="comment">% select control characters</span>
+0081 mc=m(mi); <span class="comment">% controls</span>
+0082 m=m(~mi); <span class="comment">% rotations</span>
+0083 ef=0.5; <span class="comment">% angle scale factor</span>
+0084 es=1; <span class="comment">% angle sign</span>
+0085 fl=0; <span class="comment">% need to flip rotation order</span>
+0086 <span class="keyword">for</span> i=1:length(mc)
+0087     <span class="keyword">switch</span> mc(i)
+0088         <span class="keyword">case</span> -5 <span class="comment">% 'r' = radians</span>
+0089         <span class="keyword">case</span> -19 <span class="comment">% 'd' = degrees</span>
+0090             ef=pi/360; <span class="comment">% scale factor to convert to radians and halve</span>
+0091         <span class="keyword">case</span> -8 <span class="comment">% 'o' = object-extrinsic</span>
+0092         <span class="keyword">case</span> -40 <span class="comment">% 'O' = object-intrinsic</span>
+0093             fl=1;
+0094         <span class="keyword">case</span> -22 <span class="comment">% 'a' = axes-extrinsic</span>
+0095             fl=1;
+0096             es=-1;
+0097         <span class="keyword">case</span> -54 <span class="comment">% 'A' = axes-intrinsic</span>
+0098             es=-1;
+0099         <span class="keyword">otherwise</span>
+0100             error(<span class="string">'Invalid character: %s'</span>,mc(i)+<span class="string">'w'</span>)
+0101     <span class="keyword">end</span>
+0102 <span class="keyword">end</span>
+0103 ne=sum(m&lt;=3); <span class="comment">% number of elements required in e per output</span>
+0104 <span class="keyword">if</span> ne==0
+0105     ne=1;
+0106     sz=[1 1];
+0107     nq=1;
+0108     e=[]; <span class="comment">% create a dummy e in case it wasn't specified</span>
+0109 <span class="keyword">else</span>
+0110     sz=size(e);
+0111     <span class="keyword">if</span> sz(1)==1 &amp;&amp; numel(e)==ne <span class="comment">% allow legacy call with row-vector input</span>
+0112         e=e(:);
+0113         sz=size(e);
+0114     <span class="keyword">else</span>
+0115         e=reshape(e,sz(1),[]); <span class="comment">% put each set of angles in a separate column</span>
+0116     <span class="keyword">end</span>
+0117     nq=size(e,2);
+0118 <span class="keyword">end</span>
+0119 q=zeros(4,nq);
+0120 q(1,:)=1; <span class="comment">% initialize output quaternions to the value 1</span>
+0121 r=q; <span class="comment">% space for temporary quaternion</span>
+0122 j=0; <span class="comment">% number of angles used so far</span>
+0123 <span class="keyword">if</span> fl
+0124     m=m(end:-1:1); <span class="comment">% reverse the order of m</span>
+0125     e=e(end:-1:1,:); <span class="comment">% and of e</span>
+0126 <span class="keyword">end</span>
+0127 <span class="keyword">for</span> i=1:length(m)
+0128     mi=m(i);
+0129     x=y(mi,:); <span class="comment">% index for x,y,or z axes</span>
+0130     <span class="keyword">if</span> mi&lt;4
+0131         j=j+1; <span class="comment">% next angle required</span>
+0132         b=ef*e(j,:); <span class="comment">% rotation semi-angle in radians</span>
+0133         c=cos(b);
+0134         s=sin(b);
+0135     <span class="keyword">else</span>
+0136         c=cb(mi);
+0137         s=sb(mi);
+0138     <span class="keyword">end</span>
+0139     r(x(1:2),:)=q(x(3:4),:);
+0140     r(x(5:6),:)=-q(x(7:8),:);
+0141     q=repmat(c,4,1).*q+repmat(s*es,4,1).*r;
+0142 <span class="keyword">end</span>
+0143 <span class="keyword">if</span> ~nargout
+0144     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q(:,1)); <span class="comment">% plot a cube</span>
+0145 <span class="keyword">else</span>
+0146     sz(1)=4; <span class="comment">% each rotation needs 4 outputs</span>
+0147     q=reshape(q.*repmat(sign([8 4 2 1]*sign(q)),4,1),sz); <span class="comment">% force leading coefficient to be positive and reshape</span>
+0148 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
