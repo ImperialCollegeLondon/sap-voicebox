@@ -60,9 +60,9 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %           rgb  RGB color map entries; one per row.
 %                All values will be in the range 0 to 1
 %
-%             y  column vector of luminance values
+%             y  column vector of luminance values (from CIEXYZ colour space)
 %
-%             l  column vector of lightness values (lightness is the perceived brightness)
+%             l  column vector of lightness values (lightness is the perceived brightness from CIELUV colour space)
 
 % Bugs/Suggestions:
 % (1) add option to exclude black from the colormap

@@ -110,6 +110,7 @@ function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
 %    IRS P.48: sending and receiving characteristics defined by isolated points
 %    mIRS P.830 modified IRS also defined by isolated points (see Annex D) available in G.191
 %    G.191 software tools library contains IRS and mIRS implementations in FIR and IIR
+%    ISO226 gives equal-loudness curves
 
 %      Copyright (C) Mike Brookes 2008-2018
 %      Version: $Id: v_stdspectrum.m 10865 2018-09-21 17:22:45Z dmb $
