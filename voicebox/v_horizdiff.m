@@ -1,4 +1,4 @@
-function [z,zm]=horizdiff(y,v,x,u,q)
+function [z,zm]=v_horizdiff(y,v,x,u,q)
 %V_HORIZDIFF - Estimates the horizontal difference between two functions of x
 %
 % Usage: z=horizdiff(y,v,x); % Approximately: y(x) = v(x+z)
