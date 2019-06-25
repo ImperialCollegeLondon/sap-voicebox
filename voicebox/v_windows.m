@@ -1,9 +1,11 @@
 function w = v_windows(wtype,n,mode,p,ov)
 %V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
-% Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';
-%        (2) w=v_windows(2,n); % same as w=hanning(n)';
+% Usage: (1) w=v_windows(3,n)'; % same as w=hamming(n);
+%        (2) w=v_windows(3,n,'l')'; % same as w=hanning(n,'periodic');
+%        (3) w=v_windows(2,n)'; % same as w=hanning(n);
+%        (4) w=v_windows(2,n,'l')'; % same as w=hanning(n,'periodic');
 %
-% Inputs:   WTYPE  is a string specifying the window type (see below)
+% Inputs:   WTYPE  is a string or integer specifying the window type (see below)
 %           N      is the number of output points to generate (actually FLOOR(N))
 %                  and also determines the period of the underlying window [default 256]
 %           MODE   is a string specifying various options (see below)
@@ -21,6 +23,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 %    'cauchy'     'y'   13     1
 %    'cos'        'c'   10     1      cos window to the power P [default P=1]
 %    'dolph'      'd'   14     1      Dolph-Chebyshev window with sideband attenuation P dB [default P=50]
+%                                     Note that this window has impulses at the two ends.
 %    'gaussian'	  'g'   12     1      truncated at +-P std deviations [default P=3]
 %    'hamming'    'm'    3
 %    'hanning'    'n'    2            also called "hann" or "von hann"
@@ -188,7 +191,7 @@ end
 % determine the sample points
 % the number of points corresponding to a full period is (kk(k,3)*n+kk(k,4))
 fn=floor(n);
-kp=(kk(k,3)*n+kk(k,4));
+kp=(kk(k,3)*n+kk(k,4)); % number of points corresponding to a full period
 ks=kk(k,1)*fn+kk(k,2);
 v=((0:2:2*fn-2)+ks)/kp;
 
@@ -281,7 +284,7 @@ if ~nargout
     v_windinfo(w,n);
     np=wnamp(wtype); % number of parameters
     if np>0
-        title(sprintf('%s (%s ) window  - mode=''%s''',wnam{wtype},sprintf(' %g',p(1:np)),mode));
+        title(sprintf('%s(%s) window  - mode=''%s''',wnam{wtype},sprintf('%g',p(1:np)),mode));
     else
         title(sprintf('%s window - mode=''%s''',wnam{wtype},mode));
     end
