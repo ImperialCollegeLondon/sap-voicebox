@@ -163,9 +163,9 @@ if ~nargout
     if ff(end)>2000
         ff=ff/1000;
         fqi=fqi/1000;
-        xlab='kHz';
+        xlab='kcyc/L';
     else
-        xlab='Hz';
+        xlab='cyc/L';
     end
     dbn=20*log10(x.nw); % window width in dB
     dbrange=min(100,-1.5*x.sidelobe);
@@ -181,7 +181,7 @@ if ~nargout
     area(ffb,dbb-dbn,max(dd)-dbrange-dbn,'facecolor',[1 0.7 0.7]);
     hold on
     plot(ffs,dbs-dbn,':k',ff3,db3-dbn,':k',ff6,db6-dbn,':k',ffb,dbb-dbn,'r',ff,dd-dbn,'b');
-    legend(['Equiv Noise BW = ' sprintsi(x.enbw,-2) 'Hz'],['Max sidelobe = ' sprintf('%.0f',x.sidelobe) ' dB'],['-3 & -6dB BW = ' sprintsi(x.band3,-2) 'Hz & ' sprintsi(x.band6,-2) 'Hz']);
+    legend(['Equiv Noise BW = ' sprintsi(x.enbw,-2) 'cyc/L'],['Max sidelobe = ' sprintf('%.0f',x.sidelobe) ' dB'],['-3 & -6dB BW = ' sprintf('%.2g',(x.band3)) ' & ' sprintf('%.2g',(x.band6)) ' cyc/L']);
     hold off
     axis([0 ff(end) max(dd)-dbrange-dbn max(dd)+2-dbn]);
     ylabel('Gain/N (dB)');
@@ -193,7 +193,7 @@ if ~nargout
     tax=(0:nw-1)/fs-x.ewgdelay;
     area(tax,w,'FaceColor',[0.7 0.7 1]);
     ylabel('Window');
-    xlabel('Time (s)');
+    xlabel('Time/L');
     dtax=(tax(end)-tax(1))*0.02;
     axv=[tax(1)-dtax tax(end)+dtax min(0,min(w)) max(w)*1.05];
     texthvc(tax(end),max(w),sprintf('N=%d',nw),'rtk');
