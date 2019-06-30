@@ -156,7 +156,6 @@ x.cola2=find(co2);
 %
 if ~nargout
     clf;
-
     subplot(212);
     nf=min(max(floor(2*max(x.band6,x.band0)*of*nw/fs)+1,of*8),length(p));
     ff=(0:nf-1)*fs/(of*nw);
@@ -164,10 +163,11 @@ if ~nargout
     if ff(end)>2000
         ff=ff/1000;
         fqi=fqi/1000;
-        xlab='kHz';
+        xlab='kcyc/L';
     else
-        xlab='Hz';
+        xlab='cyc/L';
     end
+    dbn=20*log10(x.nw); % window width in dB
     dbrange=min(100,-1.5*x.sidelobe);
     dd=10*log10(max(p(1:nf),p(1)*0.1^(dbrange/10)));
     ffs=[0 ff(end)];
@@ -178,34 +178,34 @@ if ~nargout
     db3=[dd(1)+db(0.5)/2 dd(1)+db(0.5)/2 dd(1)-dbrange];
     ff6=[0 fqi(3) fqi(3)];
     db6=[dd(1)+db(0.5) dd(1)+db(0.5) dd(1)-dbrange];
-    area(ffb,dbb,max(dd)-dbrange,'facecolor',[1 0.7 0.7]);
+    area(ffb,dbb-dbn,max(dd)-dbrange-dbn,'facecolor',[1 0.7 0.7]);
     hold on
-    plot(ffs,dbs,':k',ff3,db3,':k',ff6,db6,':k',ffb,dbb,'r',ff,dd,'b');
-    legend(['Equiv Noise BW = ' sprintsi(x.enbw,-2) 'Hz'],['Max sidelobe = ' sprintf('%.0f',x.sidelobe) ' dB'],['-3 & -6dB BW = ' sprintsi(x.band3,-2) 'Hz & ' sprintsi(x.band6,-2) 'Hz']);
+    plot(ffs,dbs-dbn,':k',ff3,db3-dbn,':k',ff6,db6-dbn,':k',ffb,dbb-dbn,'r',ff,dd-dbn,'b');
+    legend(['Equiv Noise BW = ' sprintsi(x.enbw,-2) 'cyc/L'],['Max sidelobe = ' sprintf('%.0f',x.sidelobe) ' dB'],['-3 & -6dB BW = ' sprintf('%.2g',(x.band3)) ' & ' sprintf('%.2g',(x.band6)) ' cyc/L']);
     hold off
-    axis([0 ff(end) max(dd)-dbrange max(dd)+2]);
-    ylabel('Gain (dB)');
+    axis([0 ff(end) max(dd)-dbrange-dbn max(dd)+2-dbn]);
+    ylabel('Gain/N (dB)');
     xlabel(sprintf('Freq (%s)',xlab));
     %
     % Now plot the window itself
     %
     subplot(211);
     tax=(0:nw-1)/fs-x.ewgdelay;
-    area(tax,w);
+    area(tax,w,'FaceColor',[0.7 0.7 1]);
     ylabel('Window');
-    xlabel('Time (s)');
+    xlabel('Time/L');
     dtax=(tax(end)-tax(1))*0.02;
     axv=[tax(1)-dtax tax(end)+dtax min(0,min(w)) max(w)*1.05];
     texthvc(tax(end),max(w),sprintf('N=%d',nw),'rtk');
     if length(x.cola)>3
         tcola=sprintf(',%d',x.cola(1:3));
-        tcola=[tcola ',�'];
+        tcola=[tcola ',...'];
     else
         tcola=sprintf(',%d',x.cola);
     end
     if length(x.cola2)>3
         tcola2=sprintf(',%d',x.cola2(1:3));
-        tcola2=[tcola2 ',�'];
+        tcola2=[tcola2 ',...'];
     else
         tcola2=sprintf(',%d',x.cola2);
     end

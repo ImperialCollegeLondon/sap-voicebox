@@ -3,7 +3,7 @@ function [x,zo]=v_estnoiseg(yf,tz,pp)
 %
 % Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
 %           ovf=2;                  % overlap factor
-%           f=v_rfft(v_enframe(s,hanning(ovf*ninc,'periodic'),ninc),ovf*ninc,2);
+%           f=v_rfft(v_enframe(s,v_windows(2,ovf*ninc,'l'),ninc),ovf*ninc,2);  % enframe with hanning window
 %           f=f.*conj(f);           % convert to power spectrum
 %           x=v_estnoiseg(f,ninc/fs); % estimate the noise power spectrum
 %
