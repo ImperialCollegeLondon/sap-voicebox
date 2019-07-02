@@ -82,7 +82,7 @@ if nwin>1
 else
     nwin=nw;
     if any(m=='h')
-        win=hamming(nwin);
+        win=v_windows(3,nwin)'; % Hamming window
     else
         win=ones(nwin,1);               % window function
     end
