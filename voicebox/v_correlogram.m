@@ -14,7 +14,7 @@ function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)
 %        v_correlogram(y,round(10e-3*fs),round(16e-3*fs),round(12e-3*fs),'',fs);
 %
 % Inputs:
-%        x(*,chan)  is the output of a v_filterbank
+%        x(*,chan)  is the output of a filterbank (e.g. v_filterbank)
 %                   with one column per filter channel
 %        inc        frame increment in samples
 %        nw         window length in samples [or window function]
