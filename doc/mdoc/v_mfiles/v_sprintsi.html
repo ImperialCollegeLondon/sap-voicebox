@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_sprintsi</title>
   <meta name="keywords" content="v_sprintsi">
-  <meta name="description" content="V_SPRINTSI Print X with SI multiplier S=(X,D,W)">
+  <meta name="description" content="V_SPRINTSI Print X with SI multiplier S=(X,D,W,U)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -21,18 +21,32 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>V_SPRINTSI Print X with SI multiplier S=(X,D,W)</strong></div>
+<div class="box"><strong>V_SPRINTSI Print X with SI multiplier S=(X,D,W,U)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function s=v_sprintsi(x,d,w) </strong></div>
+<div class="box"><strong>function s=v_sprintsi(x,d,w,u) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">V_SPRINTSI Print X with SI multiplier S=(X,D,W)
+<div class="fragment"><pre class="comment">V_SPRINTSI Print X with SI multiplier S=(X,D,W,U)
  D is number of decimal places (+ve) or significant digits (-ve) [default=-3]
  |W| is total width including multiplier
  if W&lt;=0 then trailing 0's will be eliminated
+ U give a unit string (any initial space will be placed before the multiplier) [default ' ']
 
- Example: v_sprintsi(2345,-2) gives '2.3 k'</pre></div>
+ Example: v_sprintsi(2345,-2) gives '2.3 k'
+V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)
+
+  Usage: (1) v_sprintsi(2345,-2) -&gt; '2.3 k'
+         (2) v_sprintsi(2345,-2,8,' ') -&gt; '   2.3 k' 
+         (3) v_sprintsi(2345,-2,[],'Hz') -&gt; '2.3kHz' 
+
+  Inputs:  X        the value to print
+           D        number of decimal places (+ve) or significant digits (-ve) [default=-3]
+           W        add leading spaces so that |W| is total width including multiplier.
+                    If W&lt;=0 then trailing 0's will be eliminated.
+           U        string giving the unit (any initial space will be placed before the multiplier)
+
+ Outputs:  S        output string</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -46,51 +60,80 @@ This function is called by:
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_sprintsi(x,d,w)</a>
-0002 <span class="comment">%V_SPRINTSI Print X with SI multiplier S=(X,D,W)</span>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s=v_sprintsi(x,d,w,u)</a>
+0002 <span class="comment">%V_SPRINTSI Print X with SI multiplier S=(X,D,W,U)</span>
 0003 <span class="comment">% D is number of decimal places (+ve) or significant digits (-ve) [default=-3]</span>
 0004 <span class="comment">% |W| is total width including multiplier</span>
 0005 <span class="comment">% if W&lt;=0 then trailing 0's will be eliminated</span>
-0006 <span class="comment">%</span>
-0007 <span class="comment">% Example: v_sprintsi(2345,-2) gives '2.3 k'</span>
-0008 
-0009 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
-0010 <span class="comment">%      Version: $Id: v_sprintsi.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0011 <span class="comment">%</span>
-0012 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0013 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0006 <span class="comment">% U give a unit string (any initial space will be placed before the multiplier) [default ' ']</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Example: v_sprintsi(2345,-2) gives '2.3 k'</span>
+0009 <span class="comment">%V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%  Usage: (1) v_sprintsi(2345,-2) -&gt; '2.3 k'</span>
+0012 <span class="comment">%         (2) v_sprintsi(2345,-2,8,' ') -&gt; '   2.3 k'</span>
+0013 <span class="comment">%         (3) v_sprintsi(2345,-2,[],'Hz') -&gt; '2.3kHz'</span>
 0014 <span class="comment">%</span>
-0015 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0016 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0017 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0018 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0019 <span class="comment">%   (at your option) any later version.</span>
+0015 <span class="comment">%  Inputs:  X        the value to print</span>
+0016 <span class="comment">%           D        number of decimal places (+ve) or significant digits (-ve) [default=-3]</span>
+0017 <span class="comment">%           W        add leading spaces so that |W| is total width including multiplier.</span>
+0018 <span class="comment">%                    If W&lt;=0 then trailing 0's will be eliminated.</span>
+0019 <span class="comment">%           U        string giving the unit (any initial space will be placed before the multiplier)</span>
 0020 <span class="comment">%</span>
-0021 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0022 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0023 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0024 <span class="comment">%   GNU General Public License for more details.</span>
+0021 <span class="comment">% Outputs:  S        output string</span>
+0022 
+0023 <span class="comment">%      Copyright (C) Mike Brookes 1998-2019</span>
+0024 <span class="comment">%      Version: $Id: v_sprintsi.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0025 <span class="comment">%</span>
-0026 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0027 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0028 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0026 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0027 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0028 <span class="comment">%</span>
 0029 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0030 
-0031 <span class="keyword">if</span> nargin&lt;3 w=0; <span class="keyword">end</span>;
-0032 <span class="keyword">if</span> nargin&lt;2 d=-3; <span class="keyword">end</span>;
-0033 f=<span class="string">'afpnum kMGT'</span>;
-0034 e=max(-18,min(12,floor(log10(abs(x)))));
-0035 k=floor(e/3);
-0036 dp=max([0 d 3*k-d-e-1]);
-0037 <span class="keyword">if</span> w&lt;=0 &amp; dp
-0038    w=abs(w);
-0039    dp=max(find([1 mod(mod(round(x*10^(dp-3*k)),10^dp),10.^(dp:-1:1))]))-1;
-0040 <span class="keyword">end</span>
-0041 <span class="keyword">if</span>(k)
-0042    s=sprintf(sprintf(<span class="string">'%%%d.%df %c'</span>,max(w-2,0),dp,f(k+7)),x*1e-3^k);
-0043 <span class="keyword">else</span>
-0044    s=sprintf(sprintf(<span class="string">'%%%d.%df '</span>,max(w-1,0),dp),x*1e-3^k);
-0045 <span class="keyword">end</span></pre></div>
+0030 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0031 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0032 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0033 <span class="comment">%   (at your option) any later version.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0036 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0037 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0038 <span class="comment">%   GNU General Public License for more details.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0041 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0042 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 
+0045 <span class="keyword">if</span> nargin&lt;4
+0046     u=<span class="string">' '</span>;
+0047 <span class="keyword">end</span>
+0048 <span class="keyword">if</span> nargin&lt;3 || isempty(w)
+0049     w=0;
+0050 <span class="keyword">end</span>
+0051 <span class="keyword">if</span> nargin&lt;2 || isempty(d)
+0052     d=-3;
+0053 <span class="keyword">end</span>
+0054 f=<span class="string">'afpnum kMGT'</span>;
+0055 e=max(-18,min(12,floor(log10(abs(x)))));
+0056 k=floor(e/3);
+0057 dp=max([0 d 3*k-d-e-1]);
+0058 <span class="keyword">if</span> w&lt;=0 &amp; dp
+0059    w=abs(w);
+0060    dp=max(find([1 mod(mod(round(x*10^(dp-3*k)),10^dp),10.^(dp:-1:1))]))-1;
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span> length(u)&gt;0 &amp;&amp; u(1)==<span class="string">' '</span>
+0063 <span class="keyword">if</span>(k)
+0064    s=sprintf(sprintf(<span class="string">'%%%d.%df %c%s'</span>,max(w-2,0),dp,f(k+7),u(2:end)),x*1e-3^k);
+0065 <span class="keyword">else</span>
+0066    s=sprintf(sprintf(<span class="string">'%%%d.%df %s'</span>,max(w-1,0),dp,u(2:end)),x*1e-3^k);
+0067 <span class="keyword">end</span>
+0068 <span class="keyword">else</span>
+0069     <span class="keyword">if</span>(k)
+0070    s=sprintf(sprintf(<span class="string">'%%%d.%df%c%s'</span>,max(w-2,0),dp,f(k+7),u),x*1e-3^k);
+0071 <span class="keyword">else</span>
+0072    s=sprintf(sprintf(<span class="string">'%%%d.%df%s'</span>,max(w-1,0),dp,u),x*1e-3^k);
+0073 <span class="keyword">end</span>
+0074 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

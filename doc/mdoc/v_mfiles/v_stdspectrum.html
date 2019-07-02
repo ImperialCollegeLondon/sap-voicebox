@@ -221,496 +221,497 @@ This function is called by:
 0110 <span class="comment">%    IRS P.48: sending and receiving characteristics defined by isolated points</span>
 0111 <span class="comment">%    mIRS P.830 modified IRS also defined by isolated points (see Annex D) available in G.191</span>
 0112 <span class="comment">%    G.191 software tools library contains IRS and mIRS implementations in FIR and IIR</span>
-0113 
-0114 <span class="comment">%      Copyright (C) Mike Brookes 2008-2018</span>
-0115 <span class="comment">%      Version: $Id: v_stdspectrum.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0116 <span class="comment">%</span>
-0117 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0118 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0119 <span class="comment">%</span>
-0120 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0121 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0122 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0123 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0124 <span class="comment">%   (at your option) any later version.</span>
-0125 <span class="comment">%</span>
-0126 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0127 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0128 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0129 <span class="comment">%   GNU General Public License for more details.</span>
-0130 <span class="comment">%</span>
-0131 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0132 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0133 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0134 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0135 
-0136 <span class="comment">% Bugs/Suggestions:</span>
-0137 <span class="comment">% * Could generate impulse response by appending a LP filter (elliptic) to</span>
-0138 <span class="comment">%   the s-domain transfer function and sampling the impulse response</span>
-0139 <span class="comment">% * better calculation of impulse response length based on its total power</span>
-0140 <span class="comment">% * ensure that the number of z-domain zeros at z=1 is correct.</span>
-0141 
-0142 <span class="keyword">persistent</span> spty nspty spz ient fixz baz bazps spyax
-0143 <span class="comment">% spty contains the name of the spectrum</span>
-0144 <span class="comment">% spyax contains the y axis label</span>
-0145 <span class="comment">% spz contains a list of the poles and zeros</span>
-0146 <span class="comment">%    spz(1) = gain, spz(2) = number of zeros (excluding implicit conjugates), spz(3...) zeros followed by poles</span>
-0147 <span class="comment">%    only one of a complex conjugate pair is given. To print out b/a in the correct format use:</span>
-0148 <span class="comment">%        ra=roots(a);ra=ra(imag(ra)&gt;=0);rb=roots(b);rb=rb(imag(rb)&gt;=0);fprintf('\n[%0.14g %d',b(1)/a(1),length(rb));</span>
-0149 <span class="comment">%        for i=1:length(rb), fprintf(' %s',v_sprintcpx(rb(i),'0.14gi')); end</span>
-0150 <span class="comment">%        for i=1:length(ra), fprintf(' %s',v_sprintcpx(ra(i),'0.14gi')); end, fprintf('];\n');</span>
-0151 <span class="keyword">if</span> isempty(spz)
-0152     spty={<span class="string">'White'</span>;<span class="string">'A-Weight'</span>;<span class="string">'B-Weight'</span>;<span class="string">'C-Weight'</span>;<span class="string">'X1-LTASS-P50'</span>;<span class="string">'X1-LTASS-1994'</span>;<span class="string">'SII-IntInv'</span>;<span class="string">'BS-468'</span>;<span class="string">'USASI'</span>;<span class="string">'POTS'</span>;<span class="string">'LTASS-P50'</span>;
-0153         <span class="string">'X2-LTASS-1994'</span>;<span class="string">'LTASS-1994'</span>;<span class="string">'EM3346-Gain'</span>;<span class="string">'EM3346-Noise'</span>};
-0154     nspty=size(spty,1);
-0155     spyax={<span class="string">''</span>;<span class="string">''</span>;<span class="string">''</span>;<span class="string">''</span>;<span class="string">'dB-SPL/\surd{}Hz @ 25 mm'</span>;<span class="string">''</span>;<span class="string">'SII-IntInv'</span>;<span class="string">'BS-468'</span>;<span class="string">'USASI'</span>;<span class="string">'POTS'</span>;<span class="string">'dB-SPL/\surd{}Hz @ 1m'</span>; <span class="string">''</span>;
-0156         <span class="string">'dB-SPL/\surd{}Hz @ 1m'</span>;<span class="string">'dB-V/SPL'</span>;<span class="string">'dB-V/\surd{}Hz'</span>};
-0157     spz={[1 0];
-0158         [7390100803.6603 4 0 0 0 0 -129.42731565506 -129.42731565506 -676.40154023295 -4636.125126885 -76618.526016858 -76618.526016858];
-0159         [5986190155.0156 3 0 0 0 -129.42731565506 -129.42731565506 -995.88487118796 -76618.526016858 -76618.526016858];
-0160         [5912384617.784 2 0 0 -129.42731565506 -129.42731565506 -76618.526016858 -76618.526016858];
-0161         [1.1294790345421e+015 3 0 0 -34437.856184098 -721.94747118664+754.97798119504i -1721.704402273 -5234.2950286868 -10953.570773216+42789.342252749i];
-0162         [19720493.192959 5 0 0 0 -22550.637578954 -11319.635610404+70239.177107659i -253.31327846696+672.10855509952i -1299.1885437118+2301.2064056419i -10646.952627978+68290.702816027i -147307.51763333];
-0163         [6.1311266394354e+018 2 0 0 -381.08293630892 -5920.974797779 -4701.76218192+24369.279310049i 10597.854874768+39258.915154617i];
-0164         [2.1034520039796e+024 1 0 -25903.701047817 -23615.535213635+36379.908937329i -62675.170058468 -18743.746690721+62460.156452506i];
-0165         [72.648989380657 1 0 -2*pi*[100 320]];
-0166         [7.8820088171767e+016 4 0 0 0 0 -452.681+1924.28i -2334+1702.73i -11264.2+8213.32i -4665.8+19828.7i];
-0167         [2.67e+013 3 0 0 -34437.856184098 -721.94747118664+754.97798119504i -1721.704402273 -5234.2950286868 -10953.570773216+42789.342252749i];
-0168         [1600000000 5 0 0 0 -22550.637578954 -11319.635610404+70239.177107659i -253.31327846696+672.10855509952i -1299.1885437118+2301.2064056419i -10646.952627978+68290.702816027i -147307.51763333  -628.3185307180 ];
-0169         [0.40294607181247 6 0 0 0 0 -103821.41495527 -6138.6617784378 -1387.7780129857+2694.482976041i -212.70001558505+701.9845877834i -489.69089908576 -241.48780111882];
-0170         [-2.309644968403e+23 2 0 -58249.19407694 -23164.744808779+191400.50379156i -34701.140307771+126665.52643837i -11829.456694949+32636.504600476i -33607.63134518 -991.35267796254];
-0171         [1.8926228601879e+14 4 -37153.159597416+720298.30892497i -6408.3219736031+187320.82306394i -37654.306739587+61707.365378187i -8055.8650530296 -22183.512456212+641448.91012113i -114814.21280417+529521.53918435i -93068.804147647+170656.9265202i -9742.2020045189+186595.22125487i -15084.001933885+34453.016304251i -898.60967839055];
-0172         };
-0173     bazps=cell(nspty,4);
-0174     <span class="keyword">for</span> i=1:nspty
-0175         spzi=spz{i};
-0176         nsz=spzi(2);
-0177         sz=spzi(3:3+nsz-1);
-0178         sz=[sz conj(sz(imag(sz)~=0))];
-0179         sp=spzi(3+nsz:end);
-0180         sp=[sp conj(sp(imag(sp)~=0))];
-0181         bazps{i,1}=spzi(1)*poly(sz);
-0182         bazps{i,2}=poly(sp);
-0183         bazps{i,3}=sz;
-0184         bazps{i,4}=sp;
-0185     <span class="keyword">end</span>
-0186     nz=15;  <span class="comment">% size of cache</span>
-0187     ient=0; <span class="comment">% cache entry number</span>
-0188     fixz=repmat(-1,nz,2);
-0189     baz=cell(nz,2);
-0190     
-0191 <span class="keyword">end</span>
-0192 <span class="keyword">if</span> nargin&lt;2 || ~numel(m)
-0193     m=<span class="string">' '</span>;
-0194 <span class="keyword">end</span>
-0195 m1=m(1);        <span class="comment">% output format</span>
-0196 <span class="keyword">if</span> ~any(m1==<span class="string">'fmpldetszi'</span>)
-0197     m1=char(<span class="string">'s'</span>+~nargout*(<span class="string">'d'</span>-<span class="string">'s'</span>)); <span class="comment">% 's' normally, 'd' if no outputs</span>
-0198 <span class="keyword">end</span>
-0199 <span class="keyword">if</span> nargin&lt;3
-0200     f=8192;  <span class="comment">% default frequency</span>
-0201 <span class="keyword">end</span>
-0202 
-0203 <span class="comment">% determine the spectrum type</span>
-0204 
-0205 <span class="keyword">if</span> ~numel(s) || s(1)==0
-0206     si=0;
-0207     sn=<span class="string">''</span>;
-0208     sb=1;
-0209     sz=[];  <span class="comment">% list of s-domain zeros</span>
-0210     <span class="keyword">if</span> iscell(bs)
-0211         <span class="keyword">for</span> i=1:numel(bs)
-0212             sb=conv(sb,bs{i});
-0213             sz=[sz roots(bs{i}).'];
-0214         <span class="keyword">end</span>
-0215     <span class="keyword">elseif</span> numel(bs)&gt;0
-0216         sb=bs;
-0217         sz=roots(bs).';
-0218     <span class="keyword">end</span>
-0219     sa=1;
-0220     sp=[];  <span class="comment">% list of s-domain poles</span>
-0221     <span class="keyword">if</span> iscell(as)
-0222         <span class="keyword">for</span> i=1:numel(as)
-0223             sa=conv(sa,as{i});
-0224             sp=[sp roots(as{i}).'];
-0225         <span class="keyword">end</span>
-0226     <span class="keyword">elseif</span> numel(as)&gt;0
-0227         sa=as;
-0228         sp=roots(as).';
-0229     <span class="keyword">end</span>
-0230 <span class="keyword">else</span>
-0231     <span class="keyword">if</span> ischar(s)
-0232         si=find(strcmpi(s,spty));
-0233         <span class="keyword">if</span> isempty(si)
-0234             error(<span class="string">'undefined spectrum type: %s'</span>,s);
-0235         <span class="keyword">end</span>
-0236     <span class="keyword">else</span>
-0237         si=s;
-0238     <span class="keyword">end</span>
-0239     <span class="keyword">if</span> si&gt;nspty
-0240         error(<span class="string">'undefined spectrum type: %d'</span>,si);
-0241     <span class="keyword">end</span>
-0242     sn=spty{si};              <span class="comment">% name of spectrum</span>
-0243     <span class="comment">% get s-domain function</span>
-0244     sb=bazps{si,1};  <span class="comment">% sb/sa is transfer function</span>
-0245     sa=bazps{si,2};
-0246     sz=bazps{si,3};  <span class="comment">% sz and sp are lists of zeros and poles</span>
-0247     sp=bazps{si,4};
-0248 <span class="keyword">end</span>
-0249 <span class="keyword">if</span> (nargin&lt;3 || ~numel(f)) &amp;&amp; any(m1==<span class="string">'fmpd'</span>) <span class="comment">% calcualte the frequency range</span>
-0250     apz=abs([sp sz]);
-0251     apz(apz==0)=[]; <span class="comment">% ignore zero frequency poles/zeros</span>
-0252     <span class="keyword">if</span> ~numel(apz)
-0253         apz=[100 5000];
-0254     <span class="keyword">elseif</span> length(apz)==1
-0255         apz=[apz/10 apz*10];
-0256     <span class="keyword">end</span>
-0257     f=logspace(log10(min(apz)*0.5/pi)-0.5,log10(max(apz)*0.5/pi)+0.5,200);
-0258 <span class="keyword">end</span>
-0259 <span class="keyword">if</span> any(m1==<span class="string">'fmpdle'</span>)
-0260     h=polyval(sb,2i*pi*f)./polyval(sa,2i*pi*f);
-0261 <span class="keyword">end</span>
-0262 fs=f; <span class="comment">% save sampling frequency</span>
-0263 <span class="keyword">if</span> any(m1==<span class="string">'izt'</span>) <span class="comment">% we need a z-domain filter</span>
-0264     <span class="keyword">if</span> si==1 <span class="comment">% treat white noise specially</span>
-0265         bz=1;
-0266         az=1;
-0267     <span class="keyword">else</span>
-0268         jent=find(fixz(:,2)==f*nspty+si,1); <span class="comment">% see if it is in the cache already</span>
-0269         <span class="keyword">if</span> numel(jent)
-0270             ient=ient+1; <span class="comment">% cache entry number</span>
-0271             fixz(jent,1)=ient;  <span class="comment">% update index to show it is recently used</span>
-0272             bz=baz{jent,1};
-0273             az=baz{jent,2};
-0274         <span class="keyword">else</span>
-0275             <span class="comment">% we use an iterative method to find the best digital filter</span>
-0276             <span class="comment">% we initialize the phases with either bilinear or impulse invariance</span>
-0277             <span class="comment">% only using the impulse invariance if it is good (max error &lt; 10dB)</span>
-0278             <span class="comment">% we then iterate invfreqz using the s-domain magnitudes and</span>
-0279             <span class="comment">% the phases of the best fit so far.</span>
-0280             <span class="comment">% we use log-spaced frequencies at low frequencies and linear at high</span>
-0281             <span class="comment">% we then search for various numbers of poles and zeros</span>
-0282             warning off all <span class="comment">% avoid lots of ill-conditioning error messages</span>
-0283             nflin=100;      <span class="comment">% number of frequency samples in linear region (high freq)</span>
-0284             alp=1.15;        <span class="comment">% freq ratio increment in low freq region</span>
-0285             f0=10*2*pi/f;  <span class="comment">% minimum interesting frequency (10 Hz in radians)</span>
-0286             fx=pi/nflin/(alp-1);    <span class="comment">% boundary between log and linear portions</span>
-0287             <span class="keyword">if</span> fx&lt;=f0 || f0&gt;=pi
-0288                 fif=linspace(0,pi,nflin);
-0289             <span class="keyword">elseif</span> fx&gt;pi
-0290                 fif=[0 logspace(log10(f0),log10(pi),ceil(log10(pi/f0)/log10(alp)))];
-0291             <span class="keyword">else</span>
-0292                 nlin=ceil((pi-fx)*nflin/pi);
-0293                 fif=[0 logspace(log10(f0),log10(fx),ceil(log10(fx/f0)/log10(alp))) linspace(fx+(pi-fx)/nlin,pi,nlin-1)];
-0294             <span class="keyword">end</span>
-0295             h0=abs(polyval(sb,1i*fif*f)./polyval(sa,1i*fif*f));   <span class="comment">% target magnitude spectrum</span>
-0296             h0tol=max(h0)*1e-4;                                     <span class="comment">% absolute gain tolerance</span>
-0297             <span class="comment">% initialize with impulse invariance</span>
-0298             [bz,az]=impinvar(sb,sa,f);
-0299             hj=freqz(bz,az,fif);
-0300             maxj=max(abs(db(abs(hj)+h0tol)-db(h0+h0tol)));
-0301             <span class="comment">% or else with bilinear</span>
-0302             [ifb,ifa]=bilinear(sb,sa,f);
-0303             hn=freqz(ifb,ifa,fif);
-0304             maxi=max(abs(db(abs(hn+h0tol))-db(h0+h0tol)));
-0305             <span class="keyword">if</span> maxi&lt;maxj || maxj&gt;10 <span class="comment">% accept bilinear if it is better or if imp inv is bad</span>
-0306                 maxj=maxi;
-0307                 bz=ifb;
-0308                 az=ifa;
-0309                 hj=hn;
-0310             <span class="keyword">end</span>
-0311             pat0=sb(end)==0;        <span class="comment">% we have a zero at DC</span>
-0312             <span class="keyword">if</span> pat0
-0313                 fif(1)=[];          <span class="comment">% eliminate DC as a probe frequency</span>
-0314                 hz1=1-exp(-1i*fif); <span class="comment">% response of zero at z=1</span>
-0315                 h0=h0(2:end)./abs(hz1); <span class="comment">% remove a zero at z=1 from the target</span>
-0316                 hj=hj(2:end)./hz1; <span class="comment">% remove a zero at z=1 from the initial phase</span>
-0317             <span class="keyword">end</span>
-0318             upd=0;
-0319             <span class="keyword">for</span> mm=1:length(sa)     <span class="comment">% maximum number of poles</span>
-0320                 <span class="keyword">for</span> nn=1:mm         <span class="comment">% number of zeros is always less than number of poles</span>
-0321                     hn=hj;
-0322                     j=0;
-0323                     <span class="keyword">for</span> i=1:30          <span class="comment">% iterate up to 30 times (usually less)</span>
-0324                         h=h0.*exp(1i*angle(hn));
-0325                         [ifb,ifa]=invfreqz(h,fif,nn,mm,[],10);
-0326                         hn=freqz(ifb,ifa,fif);
-0327                         maxi=max(abs(db(abs(hn+h0tol))-db(h0+h0tol)));
-0328                         <span class="keyword">if</span> maxi&lt;maxj
-0329                             maxj=maxi;
-0330                             bz=ifb;
-0331                             az=ifa;
-0332                             hj=hn;
-0333                             j=i;
-0334                             upd=1;
-0335                         <span class="keyword">end</span>
-0336                         <span class="keyword">if</span> i&gt;j+5    <span class="comment">% quit if no improvement in last five iterations</span>
-0337                             <span class="keyword">break</span>
-0338                         <span class="keyword">end</span>
-0339                     <span class="keyword">end</span>
-0340                 <span class="keyword">end</span>
-0341             <span class="keyword">end</span>
-0342             <span class="keyword">if</span> upd
-0343                 bz=conv(bz,[1 -1]); <span class="comment">% restore the zero at z=0</span>
-0344             <span class="keyword">end</span>
-0345             warning on all
-0346             <span class="keyword">if</span> si&gt;0
-0347                 ient=ient+1; <span class="comment">% cache entry number</span>
-0348                 [jdum,jent]=min(fixz(:,1));     <span class="comment">% find least recently used cache entry</span>
-0349                 fixz(jent,1)=ient;  <span class="comment">% flag as recently used</span>
-0350                 fixz(jent,2)=f*nspty+si;   <span class="comment">% save frequency/spectrum code</span>
-0351                 baz{jent,1}=bz;
-0352                 baz{jent,2}=az;
-0353             <span class="keyword">end</span>
-0354         <span class="keyword">end</span>
-0355     <span class="keyword">end</span>
-0356 <span class="keyword">end</span>
-0357 <span class="keyword">switch</span> m1
-0358     <span class="keyword">case</span> <span class="string">'z'</span>
-0359         b=bz;
-0360         a=az;
-0361     <span class="keyword">case</span> <span class="string">'t'</span>
-0362         <span class="keyword">if</span> nargin&lt;5 || ~numel(zi)
-0363             [b,a]=<a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>(bz,az,n);
-0364         <span class="keyword">else</span>
-0365             [b,a]=<a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>(bz,az,n,zi);
-0366         <span class="keyword">end</span>
-0367         b=b*10*log10(fs/2); <span class="comment">% scale to compensate for bandwidth</span>
-0368     <span class="keyword">case</span> <span class="string">'i'</span>
-0369         <span class="keyword">if</span> nargin&lt;5 || ~numel(zi)
-0370             <span class="keyword">if</span> nargin&lt;4 || ~numel(n)  <span class="comment">% determine n to include 1 - 1e-8 of the energy</span>
-0371                 n=ceil(-fs*log(1e4)/max(real(sp)));
-0372             <span class="keyword">end</span>
-0373             [b,a]=filter(bz,az,[1; zeros(n-1,1)]);
-0374         <span class="keyword">else</span>
-0375             [b,a]=filter(bz,az,zeros(n,1),zi);
-0376         <span class="keyword">end</span>
-0377     <span class="keyword">case</span> <span class="string">'m'</span>
-0378         b = abs(h);
-0379     <span class="keyword">case</span> <span class="string">'f'</span>
-0380         b = h;
-0381     <span class="keyword">case</span> <span class="string">'d'</span>
-0382         b = db(abs(h));
-0383     <span class="keyword">case</span> <span class="string">'e'</span>
-0384         b=db(abs(h).*f*log(10)); <span class="comment">% convert to power per decade in dB</span>
-0385     <span class="keyword">case</span> <span class="string">'l'</span>
-0386         b=h.*conj(h).*f*log(10); <span class="comment">% convert to power per decade</span>
-0387     <span class="keyword">case</span> <span class="string">'p'</span>
-0388         b=h.*conj(h);
-0389     <span class="keyword">case</span> <span class="string">'s'</span>
-0390         b=sb;
-0391         a=sa;
-0392     <span class="keyword">otherwise</span>
-0393         error(<span class="string">'Output format %s not implemented'</span>,m1);
-0394 <span class="keyword">end</span>
-0395 
-0396 <span class="comment">% plot data</span>
-0397 <span class="keyword">if</span> ~nargout || ~strcmp(m,lower(m))
-0398     <span class="keyword">if</span> strcmp(m,lower(m)) <span class="comment">% if no upper case letters</span>
-0399         m=<span class="string">'MLT'</span>;
-0400     <span class="keyword">end</span>
-0401     <span class="keyword">if</span> ~any(m==<span class="string">'Q'</span>) &amp;&amp; ~any(m==<span class="string">'A'</span>) &amp;&amp; ~any(m==<span class="string">'E'</span>) &amp;&amp; ~any(m==<span class="string">'F'</span>) &amp;&amp; (m1~=<span class="string">'t'</span> || ~any(m==<span class="string">'W'</span>) &amp;&amp; ~any(m==<span class="string">'S'</span>))
-0402         m(end+1)=<span class="string">'M'</span>;  <span class="comment">% default plot type</span>
-0403     <span class="keyword">end</span>
-0404     nfig=0;
-0405     paz=any(m1==<span class="string">'itz'</span>);  <span class="comment">% plot discrete time result</span>
-0406     pas=~paz || any(m==<span class="string">'T'</span>); <span class="comment">% plot continuous time result</span>
-0407     <span class="keyword">if</span> any(m==<span class="string">'M'</span>) || any(m==<span class="string">'Q'</span>) || any(m==<span class="string">'E'</span>) || any(m==<span class="string">'E'</span>) <span class="comment">% draw a frequency response plot</span>
-0408         clf;
-0409         nfig=1;
-0410         pam=any(m==<span class="string">'M'</span>);                            <span class="comment">% magnitude response</span>
-0411         pae=(any(m==<span class="string">'E'</span>) || any(m==<span class="string">'F'</span>)) &amp;&amp; paz;    <span class="comment">% magnitude response error</span>
-0412         paq=any(m==<span class="string">'Q'</span>);                            <span class="comment">% phase response</span>
-0413         pat=any(m==<span class="string">'T'</span>) &amp;&amp; paz;                     <span class="comment">% include target spectrum</span>
-0414         pal=any(m==<span class="string">'L'</span>) || (~paz &amp;&amp; ~any(m==<span class="string">'U'</span>));  <span class="comment">% log frequency axis</span>
-0415         <span class="keyword">if</span> any(m1==<span class="string">'itz'</span>)
-0416             fs=f;                   <span class="comment">% save the sample frequency</span>
-0417             apz=abs([sp sz]);       <span class="comment">% and determine the frequency range</span>
-0418             apz(apz==0)=[];         <span class="comment">% ignore zero frequency poles/zeros</span>
-0419             <span class="keyword">if</span> ~numel(apz)
-0420                 apz=[100 5000];
-0421             <span class="keyword">elseif</span> length(apz)==1
-0422                 apz=[apz/10 apz*10];
-0423             <span class="keyword">end</span>
-0424             <span class="keyword">if</span> pal
-0425                 f=logspace(log10(min([fs/1000 apz*0.05/pi])),log10(fs/2),200);
-0426             <span class="keyword">else</span>
-0427                 f=linspace(min([fs/1000 apz*0.05/pi]),fs/2,200);
-0428             <span class="keyword">end</span>
-0429         <span class="keyword">end</span>
-0430         hs=freqs(sb,sa,2*pi*f);                     <span class="comment">% s domain response</span>
-0431         <span class="keyword">if</span> paz
-0432             hz=freqz(bz,az,f,fs);                   <span class="comment">% z domain response</span>
-0433         <span class="keyword">end</span>        
-0434         axh=[];
-0435         nax=pam+pae+paq;                            <span class="comment">% number of axis sets</span>
-0436         titex=<span class="string">''</span>;
-0437         <span class="keyword">if</span> pam                              <span class="comment">% plot a magnitude response</span>
-0438             nf=length(f);
-0439             df=0.5*(f([2:nf nf])-f([1 1:nf-1]))';
-0440             <span class="keyword">if</span> nax&gt;1
-0441                 subplot(nax,1,1);
-0442             <span class="keyword">end</span>
-0443             <span class="keyword">if</span> paz
-0444                 <span class="keyword">if</span> pas                      <span class="comment">% plot s domain and z domain magnitude plots</span>
-0445                     plot(f,db(abs(hs)),<span class="string">'--r'</span>,f,db(abs(hz)),<span class="string">'-b'</span>)
-0446                     ymax=max(db(abs([hs hz])))+1;
-0447                     ymin=min(db(abs([hs hz])))-1;
-0448                     titex=<span class="string">' ( : = s, - = z)'</span>;
-0449                     pwrint=sprintf(<span class="string">'\\int=%.1f, %.1f dB'</span>,db(abs(hs).^2*df)/2,db(abs(hz).^2*df)/2);
-0450                     <span class="comment">%                     legend('s-domain','z-domain','location','best');</span>
-0451                 <span class="keyword">else</span>                        <span class="comment">% plot z domain magnitude plot only</span>
-0452                     plot(f,db(abs(hz)),<span class="string">'-b'</span>)
-0453                     ymax=max(db(abs(hz)))+1;
-0454                     ymin=min(db(abs(hz)))-1;
-0455                      pwrint=sprintf(<span class="string">'\\int=%.1f dB'</span>,db(abs(hz).^2*df)/2);
-0456                 <span class="keyword">end</span>
-0457             <span class="keyword">else</span>                            <span class="comment">% plot s domain magnitude plot only</span>
-0458                 plot(f,db(abs(hs)),<span class="string">'-b'</span>)
-0459                 ymax=max(db(abs(hs)))+1;
-0460                 ymin=min(db(abs(hs)))-1;
-0461                  pwrint=sprintf(<span class="string">'\\int=%.1f dB'</span>,db(abs(hs).^2*df)/2);
-0462             <span class="keyword">end</span>
-0463             <span class="keyword">if</span> pal
-0464                 set(gca,<span class="string">'Xscale'</span>,<span class="string">'log'</span>);
-0465             <span class="keyword">end</span>
-0466             set(gca,<span class="string">'YLim'</span>,[max(ymin,ymax-60) ymax]);
-0467             <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 1.05]);
-0468             <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0.02,0.98,pwrint,<span class="string">'LTk'</span>);
-0469             xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0470             <span class="keyword">if</span> si&gt;0 &amp;&amp; ~isempty(spyax{si})
-0471                 ylabel(spyax{si});
-0472             <span class="keyword">else</span>
-0473                 ylabel(<span class="string">'Gain (dB)'</span>);
-0474             <span class="keyword">end</span>
-0475             
-0476             <span class="keyword">if</span> si&gt;0
-0477                 title(sprintf(<span class="string">'Type %d: %s%s'</span>,si,spty{si},titex));
-0478             <span class="keyword">end</span>
-0479             axh(end+1)=gca;
-0480         <span class="keyword">end</span>
-0481         <span class="keyword">if</span> pae <span class="comment">% plot magnitude response error</span>
-0482             <span class="keyword">if</span> nax&gt;1
-0483                 subplot(nax,1,1+pam);
-0484             <span class="keyword">end</span>
-0485             <span class="keyword">if</span> any(m==<span class="string">'F'</span>)
-0486                 dbflr=40;
-0487                 dbfl=max(abs(hs))*10^(-dbflr/20); <span class="comment">% make a floor 40 dB below peak</span>
-0488                 dbflt=sprintf(<span class="string">' (floor@-%.0fdB)'</span>,dbflr);
-0489             <span class="keyword">else</span>
-0490                 dbfl=0;
-0491                 dbflt=<span class="string">''</span>;
-0492             <span class="keyword">end</span>
-0493             dberr=db(abs(hz)+dbfl)-db(abs(hs)+dbfl);
-0494             plot([f(1) f(end)],[0 0],<span class="string">':k'</span>,f,dberr,<span class="string">'-b'</span>)
-0495             <span class="keyword">if</span> pal
-0496                 set(gca,<span class="string">'Xscale'</span>,<span class="string">'log'</span>);
-0497             <span class="keyword">end</span>
-0498             <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0499             <span class="comment">%             set(gca,'XLim',[min(f) max(f)]);</span>
-0500             xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0501             ylabel(<span class="string">'Gain Error (dB)'</span>);
-0502             <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0.95,0.95,sprintf(<span class="string">'Err &lt; %.1f dB%s'</span>,max(abs(dberr)),dbflt),<span class="string">'RTk'</span>);
-0503             <span class="keyword">if</span> si&gt;0 &amp;&amp; ~pam
-0504                 title(sprintf(<span class="string">'Type %d: %s%s'</span>,si,spty{si},titex));
-0505             <span class="keyword">end</span>
-0506             axh(end+1)=gca;
-0507         <span class="keyword">end</span>
-0508         <span class="keyword">if</span> paq
-0509             <span class="keyword">if</span> nax&gt;1
-0510                 subplot(nax,1,nax);
-0511             <span class="keyword">end</span>
-0512             <span class="keyword">if</span> paz
-0513                 <span class="keyword">if</span> pas
-0514                     plot(f,angle(hs),<span class="string">'--r'</span>,f,angle(hz),<span class="string">'-b'</span>)
-0515                 <span class="keyword">else</span>
-0516                     plot(f,angle(hz),<span class="string">'-b'</span>)
-0517                 <span class="keyword">end</span>
-0518             <span class="keyword">else</span>
-0519                 plot(f,angle(hs),<span class="string">'-b'</span>)
-0520             <span class="keyword">end</span>
-0521             <span class="keyword">if</span> pal
-0522                 set(gca,<span class="string">'Xscale'</span>,<span class="string">'log'</span>);
-0523             <span class="keyword">end</span>
-0524             <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0525             <span class="comment">%             set(gca,'XLim',[min(f) max(f)]);</span>
-0526             xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0527             ylabel(<span class="string">'Phase (rad)'</span>);
-0528             <span class="keyword">if</span> si&gt;0 &amp;&amp; nax==1
-0529                 title(spty{si});
-0530             <span class="keyword">end</span>
-0531             axh(end+1)=gca;
-0532         <span class="keyword">end</span>
-0533         <span class="keyword">if</span> nax&gt;1
-0534             linkaxes(axh,<span class="string">'x'</span>);
-0535         <span class="keyword">end</span>
-0536     <span class="keyword">end</span>
-0537     <span class="keyword">if</span> any(m==<span class="string">'A'</span>) <span class="comment">% plot complex plane</span>
-0538         <span class="keyword">if</span> nfig
-0539             figure();
-0540         <span class="keyword">end</span>
-0541         clf;
-0542         nfig=1;
-0543         <span class="keyword">if</span> pas
-0544             <span class="keyword">if</span> paz
-0545                 subplot(121);
-0546             <span class="keyword">end</span>
-0547             plot(real(sp),imag(sp),<span class="string">'xb'</span>,real(sz),imag(sz),<span class="string">'ob'</span>);
-0548             axis equal;
-0549             xlim=get(gca,<span class="string">'xlim'</span>);
-0550             xlim(1)=min(xlim(1),-1000);
-0551             xlim(2)=max(xlim(2),1000);
-0552             ylim=get(gca,<span class="string">'ylim'</span>);
-0553             ylim(1)=min(ylim(1),-1000);
-0554             ylim(2)=max(ylim(2),1000);
-0555             axis([xlim ylim]);
-0556             hold on
-0557             plot(xlim,[0 0],<span class="string">':r'</span>,[0 0],ylim,<span class="string">':r'</span>);
-0558             hold off
-0559             title(<span class="string">'s-plane'</span>);
-0560         <span class="keyword">end</span>
-0561         <span class="keyword">if</span> paz
-0562             <span class="keyword">if</span> pas
-0563                 subplot(122);
-0564             <span class="keyword">end</span>
-0565             axl=max(abs([1.1; az(:);bz(:)]));
-0566             t=linspace(0,2*pi);
-0567             rtzb=roots(bz);
-0568             rtza=roots(az);
-0569             plot(cos(t),sin(t),<span class="string">':r'</span>,[-1 0; 1 0],[0 -1; 0 1],<span class="string">':r'</span>,real(rtza),imag(rtza),<span class="string">'xb'</span>,real(rtzb),imag(rtzb),<span class="string">'ob'</span>);
-0570             axis equal;
-0571             axis([-1 1 -1 1]*axl);
-0572             title(<span class="string">'z-plane'</span>);
-0573         <span class="keyword">end</span>
-0574     <span class="keyword">end</span>
-0575     <span class="keyword">if</span> any(m==<span class="string">'W'</span>) &amp;&amp; any(m1==<span class="string">'it'</span>) <span class="comment">% plot waveform</span>
-0576         <span class="keyword">if</span> nfig
-0577             figure();
-0578         <span class="keyword">end</span>
-0579         clf;
-0580         nfig=1;
-0581         plot((1:length(b))/fs,b,<span class="string">'-b'</span>);
-0582         xlabel([<span class="string">'Time ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'s)'</span>]);
-0583         <span class="keyword">if</span> si&gt;0
-0584             title(spty{si});
-0585         <span class="keyword">end</span>
-0586     <span class="keyword">end</span>
-0587     <span class="keyword">if</span> any(m==<span class="string">'S'</span>) &amp;&amp; any(m1==<span class="string">'it'</span>) &amp;&amp; numel(b)&gt;0.1*fs <span class="comment">% plot spectrogram</span>
-0588         <span class="keyword">if</span> nfig
-0589             figure();
-0590         <span class="keyword">end</span>
-0591         clf;
-0592         <span class="keyword">if</span> any(m==<span class="string">'L'</span>)
-0593             sm=<span class="string">'pJcwl'</span>;
-0594         <span class="keyword">else</span>
-0595             sm=<span class="string">'pJcw'</span>;
-0596         <span class="keyword">end</span>
-0597         <a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>(b,fs,sm);
-0598         <span class="keyword">if</span> si&gt;0
-0599             title(spty{si});
-0600         <span class="keyword">end</span>
-0601     <span class="keyword">end</span>
-0602 <span class="keyword">end</span></pre></div>
+0113 <span class="comment">%    ISO226 gives equal-loudness curves</span>
+0114 
+0115 <span class="comment">%      Copyright (C) Mike Brookes 2008-2018</span>
+0116 <span class="comment">%      Version: $Id: v_stdspectrum.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0117 <span class="comment">%</span>
+0118 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0119 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0120 <span class="comment">%</span>
+0121 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0122 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0123 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0124 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0125 <span class="comment">%   (at your option) any later version.</span>
+0126 <span class="comment">%</span>
+0127 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0128 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0129 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0130 <span class="comment">%   GNU General Public License for more details.</span>
+0131 <span class="comment">%</span>
+0132 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0133 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0134 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0135 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0136 
+0137 <span class="comment">% Bugs/Suggestions:</span>
+0138 <span class="comment">% * Could generate impulse response by appending a LP filter (elliptic) to</span>
+0139 <span class="comment">%   the s-domain transfer function and sampling the impulse response</span>
+0140 <span class="comment">% * better calculation of impulse response length based on its total power</span>
+0141 <span class="comment">% * ensure that the number of z-domain zeros at z=1 is correct.</span>
+0142 
+0143 <span class="keyword">persistent</span> spty nspty spz ient fixz baz bazps spyax
+0144 <span class="comment">% spty contains the name of the spectrum</span>
+0145 <span class="comment">% spyax contains the y axis label</span>
+0146 <span class="comment">% spz contains a list of the poles and zeros</span>
+0147 <span class="comment">%    spz(1) = gain, spz(2) = number of zeros (excluding implicit conjugates), spz(3...) zeros followed by poles</span>
+0148 <span class="comment">%    only one of a complex conjugate pair is given. To print out b/a in the correct format use:</span>
+0149 <span class="comment">%        ra=roots(a);ra=ra(imag(ra)&gt;=0);rb=roots(b);rb=rb(imag(rb)&gt;=0);fprintf('\n[%0.14g %d',b(1)/a(1),length(rb));</span>
+0150 <span class="comment">%        for i=1:length(rb), fprintf(' %s',v_sprintcpx(rb(i),'0.14gi')); end</span>
+0151 <span class="comment">%        for i=1:length(ra), fprintf(' %s',v_sprintcpx(ra(i),'0.14gi')); end, fprintf('];\n');</span>
+0152 <span class="keyword">if</span> isempty(spz)
+0153     spty={<span class="string">'White'</span>;<span class="string">'A-Weight'</span>;<span class="string">'B-Weight'</span>;<span class="string">'C-Weight'</span>;<span class="string">'X1-LTASS-P50'</span>;<span class="string">'X1-LTASS-1994'</span>;<span class="string">'SII-IntInv'</span>;<span class="string">'BS-468'</span>;<span class="string">'USASI'</span>;<span class="string">'POTS'</span>;<span class="string">'LTASS-P50'</span>;
+0154         <span class="string">'X2-LTASS-1994'</span>;<span class="string">'LTASS-1994'</span>;<span class="string">'EM3346-Gain'</span>;<span class="string">'EM3346-Noise'</span>};
+0155     nspty=size(spty,1);
+0156     spyax={<span class="string">''</span>;<span class="string">''</span>;<span class="string">''</span>;<span class="string">''</span>;<span class="string">'dB-SPL/\surd{}Hz @ 25 mm'</span>;<span class="string">''</span>;<span class="string">'SII-IntInv'</span>;<span class="string">'BS-468'</span>;<span class="string">'USASI'</span>;<span class="string">'POTS'</span>;<span class="string">'dB-SPL/\surd{}Hz @ 1m'</span>; <span class="string">''</span>;
+0157         <span class="string">'dB-SPL/\surd{}Hz @ 1m'</span>;<span class="string">'dB-V/SPL'</span>;<span class="string">'dB-V/\surd{}Hz'</span>};
+0158     spz={[1 0];
+0159         [7390100803.6603 4 0 0 0 0 -129.42731565506 -129.42731565506 -676.40154023295 -4636.125126885 -76618.526016858 -76618.526016858];
+0160         [5986190155.0156 3 0 0 0 -129.42731565506 -129.42731565506 -995.88487118796 -76618.526016858 -76618.526016858];
+0161         [5912384617.784 2 0 0 -129.42731565506 -129.42731565506 -76618.526016858 -76618.526016858];
+0162         [1.1294790345421e+015 3 0 0 -34437.856184098 -721.94747118664+754.97798119504i -1721.704402273 -5234.2950286868 -10953.570773216+42789.342252749i];
+0163         [19720493.192959 5 0 0 0 -22550.637578954 -11319.635610404+70239.177107659i -253.31327846696+672.10855509952i -1299.1885437118+2301.2064056419i -10646.952627978+68290.702816027i -147307.51763333];
+0164         [6.1311266394354e+018 2 0 0 -381.08293630892 -5920.974797779 -4701.76218192+24369.279310049i 10597.854874768+39258.915154617i];
+0165         [2.1034520039796e+024 1 0 -25903.701047817 -23615.535213635+36379.908937329i -62675.170058468 -18743.746690721+62460.156452506i];
+0166         [72.648989380657 1 0 -2*pi*[100 320]];
+0167         [7.8820088171767e+016 4 0 0 0 0 -452.681+1924.28i -2334+1702.73i -11264.2+8213.32i -4665.8+19828.7i];
+0168         [2.67e+013 3 0 0 -34437.856184098 -721.94747118664+754.97798119504i -1721.704402273 -5234.2950286868 -10953.570773216+42789.342252749i];
+0169         [1600000000 5 0 0 0 -22550.637578954 -11319.635610404+70239.177107659i -253.31327846696+672.10855509952i -1299.1885437118+2301.2064056419i -10646.952627978+68290.702816027i -147307.51763333  -628.3185307180 ];
+0170         [0.40294607181247 6 0 0 0 0 -103821.41495527 -6138.6617784378 -1387.7780129857+2694.482976041i -212.70001558505+701.9845877834i -489.69089908576 -241.48780111882];
+0171         [-2.309644968403e+23 2 0 -58249.19407694 -23164.744808779+191400.50379156i -34701.140307771+126665.52643837i -11829.456694949+32636.504600476i -33607.63134518 -991.35267796254];
+0172         [1.8926228601879e+14 4 -37153.159597416+720298.30892497i -6408.3219736031+187320.82306394i -37654.306739587+61707.365378187i -8055.8650530296 -22183.512456212+641448.91012113i -114814.21280417+529521.53918435i -93068.804147647+170656.9265202i -9742.2020045189+186595.22125487i -15084.001933885+34453.016304251i -898.60967839055];
+0173         };
+0174     bazps=cell(nspty,4);
+0175     <span class="keyword">for</span> i=1:nspty
+0176         spzi=spz{i};
+0177         nsz=spzi(2);
+0178         sz=spzi(3:3+nsz-1);
+0179         sz=[sz conj(sz(imag(sz)~=0))];
+0180         sp=spzi(3+nsz:end);
+0181         sp=[sp conj(sp(imag(sp)~=0))];
+0182         bazps{i,1}=spzi(1)*poly(sz);
+0183         bazps{i,2}=poly(sp);
+0184         bazps{i,3}=sz;
+0185         bazps{i,4}=sp;
+0186     <span class="keyword">end</span>
+0187     nz=15;  <span class="comment">% size of cache</span>
+0188     ient=0; <span class="comment">% cache entry number</span>
+0189     fixz=repmat(-1,nz,2);
+0190     baz=cell(nz,2);
+0191     
+0192 <span class="keyword">end</span>
+0193 <span class="keyword">if</span> nargin&lt;2 || ~numel(m)
+0194     m=<span class="string">' '</span>;
+0195 <span class="keyword">end</span>
+0196 m1=m(1);        <span class="comment">% output format</span>
+0197 <span class="keyword">if</span> ~any(m1==<span class="string">'fmpldetszi'</span>)
+0198     m1=char(<span class="string">'s'</span>+~nargout*(<span class="string">'d'</span>-<span class="string">'s'</span>)); <span class="comment">% 's' normally, 'd' if no outputs</span>
+0199 <span class="keyword">end</span>
+0200 <span class="keyword">if</span> nargin&lt;3
+0201     f=8192;  <span class="comment">% default frequency</span>
+0202 <span class="keyword">end</span>
+0203 
+0204 <span class="comment">% determine the spectrum type</span>
+0205 
+0206 <span class="keyword">if</span> ~numel(s) || s(1)==0
+0207     si=0;
+0208     sn=<span class="string">''</span>;
+0209     sb=1;
+0210     sz=[];  <span class="comment">% list of s-domain zeros</span>
+0211     <span class="keyword">if</span> iscell(bs)
+0212         <span class="keyword">for</span> i=1:numel(bs)
+0213             sb=conv(sb,bs{i});
+0214             sz=[sz roots(bs{i}).'];
+0215         <span class="keyword">end</span>
+0216     <span class="keyword">elseif</span> numel(bs)&gt;0
+0217         sb=bs;
+0218         sz=roots(bs).';
+0219     <span class="keyword">end</span>
+0220     sa=1;
+0221     sp=[];  <span class="comment">% list of s-domain poles</span>
+0222     <span class="keyword">if</span> iscell(as)
+0223         <span class="keyword">for</span> i=1:numel(as)
+0224             sa=conv(sa,as{i});
+0225             sp=[sp roots(as{i}).'];
+0226         <span class="keyword">end</span>
+0227     <span class="keyword">elseif</span> numel(as)&gt;0
+0228         sa=as;
+0229         sp=roots(as).';
+0230     <span class="keyword">end</span>
+0231 <span class="keyword">else</span>
+0232     <span class="keyword">if</span> ischar(s)
+0233         si=find(strcmpi(s,spty));
+0234         <span class="keyword">if</span> isempty(si)
+0235             error(<span class="string">'undefined spectrum type: %s'</span>,s);
+0236         <span class="keyword">end</span>
+0237     <span class="keyword">else</span>
+0238         si=s;
+0239     <span class="keyword">end</span>
+0240     <span class="keyword">if</span> si&gt;nspty
+0241         error(<span class="string">'undefined spectrum type: %d'</span>,si);
+0242     <span class="keyword">end</span>
+0243     sn=spty{si};              <span class="comment">% name of spectrum</span>
+0244     <span class="comment">% get s-domain function</span>
+0245     sb=bazps{si,1};  <span class="comment">% sb/sa is transfer function</span>
+0246     sa=bazps{si,2};
+0247     sz=bazps{si,3};  <span class="comment">% sz and sp are lists of zeros and poles</span>
+0248     sp=bazps{si,4};
+0249 <span class="keyword">end</span>
+0250 <span class="keyword">if</span> (nargin&lt;3 || ~numel(f)) &amp;&amp; any(m1==<span class="string">'fmpd'</span>) <span class="comment">% calcualte the frequency range</span>
+0251     apz=abs([sp sz]);
+0252     apz(apz==0)=[]; <span class="comment">% ignore zero frequency poles/zeros</span>
+0253     <span class="keyword">if</span> ~numel(apz)
+0254         apz=[100 5000];
+0255     <span class="keyword">elseif</span> length(apz)==1
+0256         apz=[apz/10 apz*10];
+0257     <span class="keyword">end</span>
+0258     f=logspace(log10(min(apz)*0.5/pi)-0.5,log10(max(apz)*0.5/pi)+0.5,200);
+0259 <span class="keyword">end</span>
+0260 <span class="keyword">if</span> any(m1==<span class="string">'fmpdle'</span>)
+0261     h=polyval(sb,2i*pi*f)./polyval(sa,2i*pi*f);
+0262 <span class="keyword">end</span>
+0263 fs=f; <span class="comment">% save sampling frequency</span>
+0264 <span class="keyword">if</span> any(m1==<span class="string">'izt'</span>) <span class="comment">% we need a z-domain filter</span>
+0265     <span class="keyword">if</span> si==1 <span class="comment">% treat white noise specially</span>
+0266         bz=1;
+0267         az=1;
+0268     <span class="keyword">else</span>
+0269         jent=find(fixz(:,2)==f*nspty+si,1); <span class="comment">% see if it is in the cache already</span>
+0270         <span class="keyword">if</span> numel(jent)
+0271             ient=ient+1; <span class="comment">% cache entry number</span>
+0272             fixz(jent,1)=ient;  <span class="comment">% update index to show it is recently used</span>
+0273             bz=baz{jent,1};
+0274             az=baz{jent,2};
+0275         <span class="keyword">else</span>
+0276             <span class="comment">% we use an iterative method to find the best digital filter</span>
+0277             <span class="comment">% we initialize the phases with either bilinear or impulse invariance</span>
+0278             <span class="comment">% only using the impulse invariance if it is good (max error &lt; 10dB)</span>
+0279             <span class="comment">% we then iterate invfreqz using the s-domain magnitudes and</span>
+0280             <span class="comment">% the phases of the best fit so far.</span>
+0281             <span class="comment">% we use log-spaced frequencies at low frequencies and linear at high</span>
+0282             <span class="comment">% we then search for various numbers of poles and zeros</span>
+0283             warning off all <span class="comment">% avoid lots of ill-conditioning error messages</span>
+0284             nflin=100;      <span class="comment">% number of frequency samples in linear region (high freq)</span>
+0285             alp=1.15;        <span class="comment">% freq ratio increment in low freq region</span>
+0286             f0=10*2*pi/f;  <span class="comment">% minimum interesting frequency (10 Hz in radians)</span>
+0287             fx=pi/nflin/(alp-1);    <span class="comment">% boundary between log and linear portions</span>
+0288             <span class="keyword">if</span> fx&lt;=f0 || f0&gt;=pi
+0289                 fif=linspace(0,pi,nflin);
+0290             <span class="keyword">elseif</span> fx&gt;pi
+0291                 fif=[0 logspace(log10(f0),log10(pi),ceil(log10(pi/f0)/log10(alp)))];
+0292             <span class="keyword">else</span>
+0293                 nlin=ceil((pi-fx)*nflin/pi);
+0294                 fif=[0 logspace(log10(f0),log10(fx),ceil(log10(fx/f0)/log10(alp))) linspace(fx+(pi-fx)/nlin,pi,nlin-1)];
+0295             <span class="keyword">end</span>
+0296             h0=abs(polyval(sb,1i*fif*f)./polyval(sa,1i*fif*f));   <span class="comment">% target magnitude spectrum</span>
+0297             h0tol=max(h0)*1e-4;                                     <span class="comment">% absolute gain tolerance</span>
+0298             <span class="comment">% initialize with impulse invariance</span>
+0299             [bz,az]=impinvar(sb,sa,f);
+0300             hj=freqz(bz,az,fif);
+0301             maxj=max(abs(db(abs(hj)+h0tol)-db(h0+h0tol)));
+0302             <span class="comment">% or else with bilinear</span>
+0303             [ifb,ifa]=bilinear(sb,sa,f);
+0304             hn=freqz(ifb,ifa,fif);
+0305             maxi=max(abs(db(abs(hn+h0tol))-db(h0+h0tol)));
+0306             <span class="keyword">if</span> maxi&lt;maxj || maxj&gt;10 <span class="comment">% accept bilinear if it is better or if imp inv is bad</span>
+0307                 maxj=maxi;
+0308                 bz=ifb;
+0309                 az=ifa;
+0310                 hj=hn;
+0311             <span class="keyword">end</span>
+0312             pat0=sb(end)==0;        <span class="comment">% we have a zero at DC</span>
+0313             <span class="keyword">if</span> pat0
+0314                 fif(1)=[];          <span class="comment">% eliminate DC as a probe frequency</span>
+0315                 hz1=1-exp(-1i*fif); <span class="comment">% response of zero at z=1</span>
+0316                 h0=h0(2:end)./abs(hz1); <span class="comment">% remove a zero at z=1 from the target</span>
+0317                 hj=hj(2:end)./hz1; <span class="comment">% remove a zero at z=1 from the initial phase</span>
+0318             <span class="keyword">end</span>
+0319             upd=0;
+0320             <span class="keyword">for</span> mm=1:length(sa)     <span class="comment">% maximum number of poles</span>
+0321                 <span class="keyword">for</span> nn=1:mm         <span class="comment">% number of zeros is always less than number of poles</span>
+0322                     hn=hj;
+0323                     j=0;
+0324                     <span class="keyword">for</span> i=1:30          <span class="comment">% iterate up to 30 times (usually less)</span>
+0325                         h=h0.*exp(1i*angle(hn));
+0326                         [ifb,ifa]=invfreqz(h,fif,nn,mm,[],10);
+0327                         hn=freqz(ifb,ifa,fif);
+0328                         maxi=max(abs(db(abs(hn+h0tol))-db(h0+h0tol)));
+0329                         <span class="keyword">if</span> maxi&lt;maxj
+0330                             maxj=maxi;
+0331                             bz=ifb;
+0332                             az=ifa;
+0333                             hj=hn;
+0334                             j=i;
+0335                             upd=1;
+0336                         <span class="keyword">end</span>
+0337                         <span class="keyword">if</span> i&gt;j+5    <span class="comment">% quit if no improvement in last five iterations</span>
+0338                             <span class="keyword">break</span>
+0339                         <span class="keyword">end</span>
+0340                     <span class="keyword">end</span>
+0341                 <span class="keyword">end</span>
+0342             <span class="keyword">end</span>
+0343             <span class="keyword">if</span> upd
+0344                 bz=conv(bz,[1 -1]); <span class="comment">% restore the zero at z=0</span>
+0345             <span class="keyword">end</span>
+0346             warning on all
+0347             <span class="keyword">if</span> si&gt;0
+0348                 ient=ient+1; <span class="comment">% cache entry number</span>
+0349                 [jdum,jent]=min(fixz(:,1));     <span class="comment">% find least recently used cache entry</span>
+0350                 fixz(jent,1)=ient;  <span class="comment">% flag as recently used</span>
+0351                 fixz(jent,2)=f*nspty+si;   <span class="comment">% save frequency/spectrum code</span>
+0352                 baz{jent,1}=bz;
+0353                 baz{jent,2}=az;
+0354             <span class="keyword">end</span>
+0355         <span class="keyword">end</span>
+0356     <span class="keyword">end</span>
+0357 <span class="keyword">end</span>
+0358 <span class="keyword">switch</span> m1
+0359     <span class="keyword">case</span> <span class="string">'z'</span>
+0360         b=bz;
+0361         a=az;
+0362     <span class="keyword">case</span> <span class="string">'t'</span>
+0363         <span class="keyword">if</span> nargin&lt;5 || ~numel(zi)
+0364             [b,a]=<a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>(bz,az,n);
+0365         <span class="keyword">else</span>
+0366             [b,a]=<a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>(bz,az,n,zi);
+0367         <span class="keyword">end</span>
+0368         b=b*10*log10(fs/2); <span class="comment">% scale to compensate for bandwidth</span>
+0369     <span class="keyword">case</span> <span class="string">'i'</span>
+0370         <span class="keyword">if</span> nargin&lt;5 || ~numel(zi)
+0371             <span class="keyword">if</span> nargin&lt;4 || ~numel(n)  <span class="comment">% determine n to include 1 - 1e-8 of the energy</span>
+0372                 n=ceil(-fs*log(1e4)/max(real(sp)));
+0373             <span class="keyword">end</span>
+0374             [b,a]=filter(bz,az,[1; zeros(n-1,1)]);
+0375         <span class="keyword">else</span>
+0376             [b,a]=filter(bz,az,zeros(n,1),zi);
+0377         <span class="keyword">end</span>
+0378     <span class="keyword">case</span> <span class="string">'m'</span>
+0379         b = abs(h);
+0380     <span class="keyword">case</span> <span class="string">'f'</span>
+0381         b = h;
+0382     <span class="keyword">case</span> <span class="string">'d'</span>
+0383         b = db(abs(h));
+0384     <span class="keyword">case</span> <span class="string">'e'</span>
+0385         b=db(abs(h).*f*log(10)); <span class="comment">% convert to power per decade in dB</span>
+0386     <span class="keyword">case</span> <span class="string">'l'</span>
+0387         b=h.*conj(h).*f*log(10); <span class="comment">% convert to power per decade</span>
+0388     <span class="keyword">case</span> <span class="string">'p'</span>
+0389         b=h.*conj(h);
+0390     <span class="keyword">case</span> <span class="string">'s'</span>
+0391         b=sb;
+0392         a=sa;
+0393     <span class="keyword">otherwise</span>
+0394         error(<span class="string">'Output format %s not implemented'</span>,m1);
+0395 <span class="keyword">end</span>
+0396 
+0397 <span class="comment">% plot data</span>
+0398 <span class="keyword">if</span> ~nargout || ~strcmp(m,lower(m))
+0399     <span class="keyword">if</span> strcmp(m,lower(m)) <span class="comment">% if no upper case letters</span>
+0400         m=<span class="string">'MLT'</span>;
+0401     <span class="keyword">end</span>
+0402     <span class="keyword">if</span> ~any(m==<span class="string">'Q'</span>) &amp;&amp; ~any(m==<span class="string">'A'</span>) &amp;&amp; ~any(m==<span class="string">'E'</span>) &amp;&amp; ~any(m==<span class="string">'F'</span>) &amp;&amp; (m1~=<span class="string">'t'</span> || ~any(m==<span class="string">'W'</span>) &amp;&amp; ~any(m==<span class="string">'S'</span>))
+0403         m(end+1)=<span class="string">'M'</span>;  <span class="comment">% default plot type</span>
+0404     <span class="keyword">end</span>
+0405     nfig=0;
+0406     paz=any(m1==<span class="string">'itz'</span>);  <span class="comment">% plot discrete time result</span>
+0407     pas=~paz || any(m==<span class="string">'T'</span>); <span class="comment">% plot continuous time result</span>
+0408     <span class="keyword">if</span> any(m==<span class="string">'M'</span>) || any(m==<span class="string">'Q'</span>) || any(m==<span class="string">'E'</span>) || any(m==<span class="string">'E'</span>) <span class="comment">% draw a frequency response plot</span>
+0409         clf;
+0410         nfig=1;
+0411         pam=any(m==<span class="string">'M'</span>);                            <span class="comment">% magnitude response</span>
+0412         pae=(any(m==<span class="string">'E'</span>) || any(m==<span class="string">'F'</span>)) &amp;&amp; paz;    <span class="comment">% magnitude response error</span>
+0413         paq=any(m==<span class="string">'Q'</span>);                            <span class="comment">% phase response</span>
+0414         pat=any(m==<span class="string">'T'</span>) &amp;&amp; paz;                     <span class="comment">% include target spectrum</span>
+0415         pal=any(m==<span class="string">'L'</span>) || (~paz &amp;&amp; ~any(m==<span class="string">'U'</span>));  <span class="comment">% log frequency axis</span>
+0416         <span class="keyword">if</span> any(m1==<span class="string">'itz'</span>)
+0417             fs=f;                   <span class="comment">% save the sample frequency</span>
+0418             apz=abs([sp sz]);       <span class="comment">% and determine the frequency range</span>
+0419             apz(apz==0)=[];         <span class="comment">% ignore zero frequency poles/zeros</span>
+0420             <span class="keyword">if</span> ~numel(apz)
+0421                 apz=[100 5000];
+0422             <span class="keyword">elseif</span> length(apz)==1
+0423                 apz=[apz/10 apz*10];
+0424             <span class="keyword">end</span>
+0425             <span class="keyword">if</span> pal
+0426                 f=logspace(log10(min([fs/1000 apz*0.05/pi])),log10(fs/2),200);
+0427             <span class="keyword">else</span>
+0428                 f=linspace(min([fs/1000 apz*0.05/pi]),fs/2,200);
+0429             <span class="keyword">end</span>
+0430         <span class="keyword">end</span>
+0431         hs=freqs(sb,sa,2*pi*f);                     <span class="comment">% s domain response</span>
+0432         <span class="keyword">if</span> paz
+0433             hz=freqz(bz,az,f,fs);                   <span class="comment">% z domain response</span>
+0434         <span class="keyword">end</span>        
+0435         axh=[];
+0436         nax=pam+pae+paq;                            <span class="comment">% number of axis sets</span>
+0437         titex=<span class="string">''</span>;
+0438         <span class="keyword">if</span> pam                              <span class="comment">% plot a magnitude response</span>
+0439             nf=length(f);
+0440             df=0.5*(f([2:nf nf])-f([1 1:nf-1]))';
+0441             <span class="keyword">if</span> nax&gt;1
+0442                 subplot(nax,1,1);
+0443             <span class="keyword">end</span>
+0444             <span class="keyword">if</span> paz
+0445                 <span class="keyword">if</span> pas                      <span class="comment">% plot s domain and z domain magnitude plots</span>
+0446                     plot(f,db(abs(hs)),<span class="string">'--r'</span>,f,db(abs(hz)),<span class="string">'-b'</span>)
+0447                     ymax=max(db(abs([hs hz])))+1;
+0448                     ymin=min(db(abs([hs hz])))-1;
+0449                     titex=<span class="string">' ( : = s, - = z)'</span>;
+0450                     pwrint=sprintf(<span class="string">'\\int=%.1f, %.1f dB'</span>,db(abs(hs).^2*df)/2,db(abs(hz).^2*df)/2);
+0451                     <span class="comment">%                     legend('s-domain','z-domain','location','best');</span>
+0452                 <span class="keyword">else</span>                        <span class="comment">% plot z domain magnitude plot only</span>
+0453                     plot(f,db(abs(hz)),<span class="string">'-b'</span>)
+0454                     ymax=max(db(abs(hz)))+1;
+0455                     ymin=min(db(abs(hz)))-1;
+0456                      pwrint=sprintf(<span class="string">'\\int=%.1f dB'</span>,db(abs(hz).^2*df)/2);
+0457                 <span class="keyword">end</span>
+0458             <span class="keyword">else</span>                            <span class="comment">% plot s domain magnitude plot only</span>
+0459                 plot(f,db(abs(hs)),<span class="string">'-b'</span>)
+0460                 ymax=max(db(abs(hs)))+1;
+0461                 ymin=min(db(abs(hs)))-1;
+0462                  pwrint=sprintf(<span class="string">'\\int=%.1f dB'</span>,db(abs(hs).^2*df)/2);
+0463             <span class="keyword">end</span>
+0464             <span class="keyword">if</span> pal
+0465                 set(gca,<span class="string">'Xscale'</span>,<span class="string">'log'</span>);
+0466             <span class="keyword">end</span>
+0467             set(gca,<span class="string">'YLim'</span>,[max(ymin,ymax-60) ymax]);
+0468             <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 1.05]);
+0469             <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0.02,0.98,pwrint,<span class="string">'LTk'</span>);
+0470             xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0471             <span class="keyword">if</span> si&gt;0 &amp;&amp; ~isempty(spyax{si})
+0472                 ylabel(spyax{si});
+0473             <span class="keyword">else</span>
+0474                 ylabel(<span class="string">'Gain (dB)'</span>);
+0475             <span class="keyword">end</span>
+0476             
+0477             <span class="keyword">if</span> si&gt;0
+0478                 title(sprintf(<span class="string">'Type %d: %s%s'</span>,si,spty{si},titex));
+0479             <span class="keyword">end</span>
+0480             axh(end+1)=gca;
+0481         <span class="keyword">end</span>
+0482         <span class="keyword">if</span> pae <span class="comment">% plot magnitude response error</span>
+0483             <span class="keyword">if</span> nax&gt;1
+0484                 subplot(nax,1,1+pam);
+0485             <span class="keyword">end</span>
+0486             <span class="keyword">if</span> any(m==<span class="string">'F'</span>)
+0487                 dbflr=40;
+0488                 dbfl=max(abs(hs))*10^(-dbflr/20); <span class="comment">% make a floor 40 dB below peak</span>
+0489                 dbflt=sprintf(<span class="string">' (floor@-%.0fdB)'</span>,dbflr);
+0490             <span class="keyword">else</span>
+0491                 dbfl=0;
+0492                 dbflt=<span class="string">''</span>;
+0493             <span class="keyword">end</span>
+0494             dberr=db(abs(hz)+dbfl)-db(abs(hs)+dbfl);
+0495             plot([f(1) f(end)],[0 0],<span class="string">':k'</span>,f,dberr,<span class="string">'-b'</span>)
+0496             <span class="keyword">if</span> pal
+0497                 set(gca,<span class="string">'Xscale'</span>,<span class="string">'log'</span>);
+0498             <span class="keyword">end</span>
+0499             <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0500             <span class="comment">%             set(gca,'XLim',[min(f) max(f)]);</span>
+0501             xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0502             ylabel(<span class="string">'Gain Error (dB)'</span>);
+0503             <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(0.95,0.95,sprintf(<span class="string">'Err &lt; %.1f dB%s'</span>,max(abs(dberr)),dbflt),<span class="string">'RTk'</span>);
+0504             <span class="keyword">if</span> si&gt;0 &amp;&amp; ~pam
+0505                 title(sprintf(<span class="string">'Type %d: %s%s'</span>,si,spty{si},titex));
+0506             <span class="keyword">end</span>
+0507             axh(end+1)=gca;
+0508         <span class="keyword">end</span>
+0509         <span class="keyword">if</span> paq
+0510             <span class="keyword">if</span> nax&gt;1
+0511                 subplot(nax,1,nax);
+0512             <span class="keyword">end</span>
+0513             <span class="keyword">if</span> paz
+0514                 <span class="keyword">if</span> pas
+0515                     plot(f,angle(hs),<span class="string">'--r'</span>,f,angle(hz),<span class="string">'-b'</span>)
+0516                 <span class="keyword">else</span>
+0517                     plot(f,angle(hz),<span class="string">'-b'</span>)
+0518                 <span class="keyword">end</span>
+0519             <span class="keyword">else</span>
+0520                 plot(f,angle(hs),<span class="string">'-b'</span>)
+0521             <span class="keyword">end</span>
+0522             <span class="keyword">if</span> pal
+0523                 set(gca,<span class="string">'Xscale'</span>,<span class="string">'log'</span>);
+0524             <span class="keyword">end</span>
+0525             <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0526             <span class="comment">%             set(gca,'XLim',[min(f) max(f)]);</span>
+0527             xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0528             ylabel(<span class="string">'Phase (rad)'</span>);
+0529             <span class="keyword">if</span> si&gt;0 &amp;&amp; nax==1
+0530                 title(spty{si});
+0531             <span class="keyword">end</span>
+0532             axh(end+1)=gca;
+0533         <span class="keyword">end</span>
+0534         <span class="keyword">if</span> nax&gt;1
+0535             linkaxes(axh,<span class="string">'x'</span>);
+0536         <span class="keyword">end</span>
+0537     <span class="keyword">end</span>
+0538     <span class="keyword">if</span> any(m==<span class="string">'A'</span>) <span class="comment">% plot complex plane</span>
+0539         <span class="keyword">if</span> nfig
+0540             figure();
+0541         <span class="keyword">end</span>
+0542         clf;
+0543         nfig=1;
+0544         <span class="keyword">if</span> pas
+0545             <span class="keyword">if</span> paz
+0546                 subplot(121);
+0547             <span class="keyword">end</span>
+0548             plot(real(sp),imag(sp),<span class="string">'xb'</span>,real(sz),imag(sz),<span class="string">'ob'</span>);
+0549             axis equal;
+0550             xlim=get(gca,<span class="string">'xlim'</span>);
+0551             xlim(1)=min(xlim(1),-1000);
+0552             xlim(2)=max(xlim(2),1000);
+0553             ylim=get(gca,<span class="string">'ylim'</span>);
+0554             ylim(1)=min(ylim(1),-1000);
+0555             ylim(2)=max(ylim(2),1000);
+0556             axis([xlim ylim]);
+0557             hold on
+0558             plot(xlim,[0 0],<span class="string">':r'</span>,[0 0],ylim,<span class="string">':r'</span>);
+0559             hold off
+0560             title(<span class="string">'s-plane'</span>);
+0561         <span class="keyword">end</span>
+0562         <span class="keyword">if</span> paz
+0563             <span class="keyword">if</span> pas
+0564                 subplot(122);
+0565             <span class="keyword">end</span>
+0566             axl=max(abs([1.1; az(:);bz(:)]));
+0567             t=linspace(0,2*pi);
+0568             rtzb=roots(bz);
+0569             rtza=roots(az);
+0570             plot(cos(t),sin(t),<span class="string">':r'</span>,[-1 0; 1 0],[0 -1; 0 1],<span class="string">':r'</span>,real(rtza),imag(rtza),<span class="string">'xb'</span>,real(rtzb),imag(rtzb),<span class="string">'ob'</span>);
+0571             axis equal;
+0572             axis([-1 1 -1 1]*axl);
+0573             title(<span class="string">'z-plane'</span>);
+0574         <span class="keyword">end</span>
+0575     <span class="keyword">end</span>
+0576     <span class="keyword">if</span> any(m==<span class="string">'W'</span>) &amp;&amp; any(m1==<span class="string">'it'</span>) <span class="comment">% plot waveform</span>
+0577         <span class="keyword">if</span> nfig
+0578             figure();
+0579         <span class="keyword">end</span>
+0580         clf;
+0581         nfig=1;
+0582         plot((1:length(b))/fs,b,<span class="string">'-b'</span>);
+0583         xlabel([<span class="string">'Time ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'s)'</span>]);
+0584         <span class="keyword">if</span> si&gt;0
+0585             title(spty{si});
+0586         <span class="keyword">end</span>
+0587     <span class="keyword">end</span>
+0588     <span class="keyword">if</span> any(m==<span class="string">'S'</span>) &amp;&amp; any(m1==<span class="string">'it'</span>) &amp;&amp; numel(b)&gt;0.1*fs <span class="comment">% plot spectrogram</span>
+0589         <span class="keyword">if</span> nfig
+0590             figure();
+0591         <span class="keyword">end</span>
+0592         clf;
+0593         <span class="keyword">if</span> any(m==<span class="string">'L'</span>)
+0594             sm=<span class="string">'pJcwl'</span>;
+0595         <span class="keyword">else</span>
+0596             sm=<span class="string">'pJcw'</span>;
+0597         <span class="keyword">end</span>
+0598         <a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>(b,fs,sm);
+0599         <span class="keyword">if</span> si&gt;0
+0600             title(spty{si});
+0601         <span class="keyword">end</span>
+0602     <span class="keyword">end</span>
+0603 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

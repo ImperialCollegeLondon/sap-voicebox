@@ -42,29 +42,41 @@
         v_correlogram(y,round(10e-3*fs),round(16e-3*fs),round(12e-3*fs),'',fs);
 
  Inputs:
-        x(*,chan)  is the output of a v_filterbank
+        x(*,chan)  is the output of a filterbank (e.g. v_filterbank)
                    with one column per filter channel
         inc        frame increment in samples
         nw         window length in samples [or window function]
         nlag       number of lags to calculate
-        m          mode string
-              [d = subtract DC component]
-              [n = unnormalized]
-              [v = variable analysis window proportional to lag]
-              [p = output the peaks only]
+        m          mode string:
                'h' = Hamming window
         fs         sample freq (affects only plots)
 
  Outputs:
         y(lag,chan,frame) is v_correlogram. Lags are 1:nlag samples
         ty                is time of the window energy centre for each frame
-                            x(n) is at time n</pre></div>
+                            x(n) is at time n
+
+ For each channel, the calculated correlation for frame n comprises
+       y(t+1,*,n+1)=(win.*x(n*inc+(1:nw))'*x(n*inc+t+(1:nw))/sqrt(win'*abs(x(n*inc+(1:nw))).^2 * win'*abs(x(n*inc+t+(1:nw))).^2)
+ This corresponds to the expression in (1.7) of [1] but incorporating the normalization from (1) of [2].
+
+ Future planned mode options:
+       'd' = subtract DC component
+       'n' = unnormalized
+       'v' = variable analysis window proportional to lag
+       'p' = output the peaks only
+
+ Refs:
+ [1]    D. Wang and G. J. Brown. Fundamentals of computational auditory scene analysis.
+       In D. Wang and G. Brown, editors, Computational Auditory Scene Analysis: Principles,
+       Algorithms, and Applications, chapter 1. Wiley, Oct. 2006. doi: 10.1109/9780470043387.ch1
+ [2]    S. Granqvist and B. Hammarberg. The correlogram: a visual display of periodicity. J. Acoust. Soc. Amer., 114: 2934, 2003.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+<li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	V_CBLABEL add a label to a colorbar c=(l,h)</li><li><a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>	V_COLORMAP set and plot color map</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>	V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
@@ -88,134 +100,151 @@ This function is called by:
 0014 <span class="comment">%        v_correlogram(y,round(10e-3*fs),round(16e-3*fs),round(12e-3*fs),'',fs);</span>
 0015 <span class="comment">%</span>
 0016 <span class="comment">% Inputs:</span>
-0017 <span class="comment">%        x(*,chan)  is the output of a v_filterbank</span>
+0017 <span class="comment">%        x(*,chan)  is the output of a filterbank (e.g. v_filterbank)</span>
 0018 <span class="comment">%                   with one column per filter channel</span>
 0019 <span class="comment">%        inc        frame increment in samples</span>
 0020 <span class="comment">%        nw         window length in samples [or window function]</span>
 0021 <span class="comment">%        nlag       number of lags to calculate</span>
-0022 <span class="comment">%        m          mode string</span>
-0023 <span class="comment">%              [d = subtract DC component]</span>
-0024 <span class="comment">%              [n = unnormalized]</span>
-0025 <span class="comment">%              [v = variable analysis window proportional to lag]</span>
-0026 <span class="comment">%              [p = output the peaks only]</span>
-0027 <span class="comment">%               'h' = Hamming window</span>
-0028 <span class="comment">%        fs         sample freq (affects only plots)</span>
-0029 <span class="comment">%</span>
-0030 <span class="comment">% Outputs:</span>
-0031 <span class="comment">%        y(lag,chan,frame) is v_correlogram. Lags are 1:nlag samples</span>
-0032 <span class="comment">%        ty                is time of the window energy centre for each frame</span>
-0033 <span class="comment">%                            x(n) is at time n</span>
-0034 
-0035 <span class="comment">%      Copyright (C) Mike Brookes 2011-2018</span>
-0036 <span class="comment">%      Version: $Id: v_correlogram.m 10867 2018-09-21 17:35:59Z dmb $</span>
-0037 <span class="comment">%</span>
-0038 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0039 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0022 <span class="comment">%        m          mode string:</span>
+0023 <span class="comment">%               'h' = Hamming window</span>
+0024 <span class="comment">%        fs         sample freq (affects only plots)</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Outputs:</span>
+0027 <span class="comment">%        y(lag,chan,frame) is v_correlogram. Lags are 1:nlag samples</span>
+0028 <span class="comment">%        ty                is time of the window energy centre for each frame</span>
+0029 <span class="comment">%                            x(n) is at time n</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% For each channel, the calculated correlation for frame n comprises</span>
+0032 <span class="comment">%       y(t+1,*,n+1)=(win.*x(n*inc+(1:nw))'*x(n*inc+t+(1:nw))/sqrt(win'*abs(x(n*inc+(1:nw))).^2 * win'*abs(x(n*inc+t+(1:nw))).^2)</span>
+0033 <span class="comment">% This corresponds to the expression in (1.7) of [1] but incorporating the normalization from (1) of [2].</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% Future planned mode options:</span>
+0036 <span class="comment">%       'd' = subtract DC component</span>
+0037 <span class="comment">%       'n' = unnormalized</span>
+0038 <span class="comment">%       'v' = variable analysis window proportional to lag</span>
+0039 <span class="comment">%       'p' = output the peaks only</span>
 0040 <span class="comment">%</span>
-0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0042 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0043 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0044 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0045 <span class="comment">%   (at your option) any later version.</span>
-0046 <span class="comment">%</span>
-0047 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0048 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0049 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0050 <span class="comment">%   GNU General Public License for more details.</span>
-0051 <span class="comment">%</span>
-0052 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0053 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0054 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0055 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0056 memsize=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'memsize'</span>);    <span class="comment">% set memory size to use</span>
-0057 [nx,nc]=size(x);  <span class="comment">% number of sampes and channels</span>
-0058 <span class="keyword">if</span> nargin&lt;6
-0059     fs=1;
-0060     <span class="keyword">if</span> nargin&lt;5
-0061         m=<span class="string">'h'</span>;
-0062         <span class="keyword">if</span> nargin&lt;4
-0063             nlag=[];
-0064             <span class="keyword">if</span> nargin&lt;3
-0065                 nw=[];
-0066                 <span class="keyword">if</span> nargin&lt;2
-0067                     inc=[];
-0068                 <span class="keyword">end</span>
-0069             <span class="keyword">end</span>
-0070         <span class="keyword">end</span>
-0071     <span class="keyword">end</span>
-0072 <span class="keyword">end</span>
-0073 <span class="keyword">if</span> ~numel(inc)
-0074     inc=128;
-0075 <span class="keyword">end</span>
-0076 <span class="keyword">if</span> ~numel(nw)
-0077     nw=inc;
-0078 <span class="keyword">end</span>
-0079 nwin=length(nw);
-0080 <span class="keyword">if</span> nwin&gt;1
-0081     win=nw(:);
-0082 <span class="keyword">else</span>
-0083     nwin=nw;
-0084     <span class="keyword">if</span> any(m==<span class="string">'h'</span>)
-0085         win=hamming(nwin);
-0086     <span class="keyword">else</span>
-0087         win=ones(nwin,1);               <span class="comment">% window function</span>
-0088     <span class="keyword">end</span>
-0089 <span class="keyword">end</span>
-0090 <span class="keyword">if</span> ~numel(nlag)
-0091     nlag=nwin;
-0092 <span class="keyword">end</span>
-0093 nwl=nwin+nlag-1;
-0094 nt=pow2(nextpow2(nwl));  <span class="comment">% transform length</span>
-0095 nf=floor((nx-nwl+inc)/inc);  <span class="comment">% number of frames</span>
-0096 i1=repmat((1:nwl)',1,nc)+repmat(0:nx:nx*nc-1,nwl,1);
-0097 nb=min(nf,max(1,floor(memsize/(16*nwl*nc))));    <span class="comment">% chunk size for calculating</span>
-0098 nl=ceil(nf/nb);                  <span class="comment">% number of chunks</span>
-0099 jx0=nf-(nl-1)*nb;                <span class="comment">% size of first chunk in frames</span>
-0100 wincg=(1:nwin)*win.^2/(win'*win);
-0101 fwin=conj(fft(win,nt,1)); <span class="comment">% fft of window</span>
-0102 y=zeros(nlag,nc,nf);
-0103 <span class="comment">% first do partial chunk</span>
-0104 jx=jx0;
-0105 x2=zeros(nwl,nc*jx);
-0106 x2(:)=x(repmat(i1(:),1,jx)+repmat((0:jx-1)*inc,nwl*nc,1));
-0107 v=ifft(conj(fft(x2(1:nwin,:),nt,1)).*fft(x2,nt,1));
-0108 w=real(ifft(fwin(:,ones(1,nc*jx)).*fft(x2.*conj(x2),nt,1)));
-0109 w=sqrt(w(1:nlag,:).*w(ones(nlag,1),:));
-0110 <span class="keyword">if</span> isreal(x)
-0111     y(:,:,1:jx)=reshape(real(v(1:nlag,:))./w,nlag,nc,jx);
-0112 <span class="keyword">else</span>
-0113     y(:,:,1:jx)=reshape(conj(v(1:nlag,:))./w,nlag,nc,jx);
-0114 <span class="keyword">end</span>
-0115 <span class="comment">% now do remaining chunks</span>
-0116 x2=zeros(nwl,nc*nb);
-0117 <span class="keyword">for</span> il=2:nl
-0118     ix=jx+1;            <span class="comment">% first frame in this chunk</span>
-0119     jx=jx+nb;           <span class="comment">% last frame in this chunk</span>
-0120     x2(:)=x(repmat(i1(:),1,nb)+repmat((ix-1:jx-1)*inc,nwl*nc,1));
-0121     v=ifft(conj(fft(x2(1:nwin,:),nt,1)).*fft(x2,nt,1));
-0122     w=real(ifft(fwin(:,ones(1,nc*nb)).*fft(x2.*conj(x2),nt,1)));
-0123     w=sqrt(w(1:nlag,:).*w(ones(nlag,1),:));
-0124     <span class="keyword">if</span> isreal(x)
-0125         y(:,:,ix:jx)=reshape(real(v(1:nlag,:))./w,nlag,nc,nb);
-0126     <span class="keyword">else</span>
-0127         y(:,:,ix:jx)=reshape(conj(v(1:nlag,:))./w,nlag,nc,nb);
-0128     <span class="keyword">end</span>
-0129 <span class="keyword">end</span>
-0130 ty=(0:nf-1)'*inc+wincg;       <span class="comment">% calculate times of window centres</span>
-0131 <span class="keyword">if</span> ~nargout
-0132     imagesc(ty/fs,(1:nlag)/fs,squeeze(mean(y,2)));
-0133     <span class="keyword">if</span> nargin&lt;6
-0134         us=<span class="string">'samp'</span>;
-0135     <span class="keyword">else</span>
-0136         us=<span class="string">'s'</span>;
-0137     <span class="keyword">end</span>
-0138     xlabel([<span class="string">'Time ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> us <span class="string">')'</span>]);
-0139     ylabel([<span class="string">'Lag ('</span> <a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a> us <span class="string">')'</span>]);
-0140     axis <span class="string">'xy'</span>;
-0141     title(<span class="string">'Summary Correlogram'</span>);
-0142 <span class="keyword">end</span>
-0143 
-0144</pre></div>
+0041 <span class="comment">% Refs:</span>
+0042 <span class="comment">% [1]    D. Wang and G. J. Brown. Fundamentals of computational auditory scene analysis.</span>
+0043 <span class="comment">%       In D. Wang and G. Brown, editors, Computational Auditory Scene Analysis: Principles,</span>
+0044 <span class="comment">%       Algorithms, and Applications, chapter 1. Wiley, Oct. 2006. doi: 10.1109/9780470043387.ch1</span>
+0045 <span class="comment">% [2]    S. Granqvist and B. Hammarberg. The correlogram: a visual display of periodicity. J. Acoust. Soc. Amer., 114: 2934, 2003.</span>
+0046 
+0047 <span class="comment">%      Copyright (C) Mike Brookes 2011-2018</span>
+0048 <span class="comment">%      Version: $Id: v_correlogram.m 10867 2018-09-21 17:35:59Z dmb $</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0051 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0054 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0055 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0056 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0057 <span class="comment">%   (at your option) any later version.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0060 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0061 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0062 <span class="comment">%   GNU General Public License for more details.</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0065 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0066 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0067 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0068 memsize=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'memsize'</span>);     <span class="comment">% set memory size to use</span>
+0069 [nx,nc]=size(x);                <span class="comment">% number of sampes and channels</span>
+0070 <span class="keyword">if</span> nargin&lt;6
+0071     fs=1;                       <span class="comment">% default sample frequency is 1 Hz</span>
+0072     <span class="keyword">if</span> nargin&lt;5
+0073         m=<span class="string">'h'</span>;                  <span class="comment">% default analysis window is Hamming</span>
+0074         <span class="keyword">if</span> nargin&lt;4
+0075             nlag=[];
+0076             <span class="keyword">if</span> nargin&lt;3
+0077                 nw=[];
+0078                 <span class="keyword">if</span> nargin&lt;2
+0079                     inc=[];
+0080                 <span class="keyword">end</span>
+0081             <span class="keyword">end</span>
+0082         <span class="keyword">end</span>
+0083     <span class="keyword">end</span>
+0084 <span class="keyword">end</span>
+0085 <span class="keyword">if</span> ~numel(inc)
+0086     inc=128;                    <span class="comment">% default frame hop is 128 samples</span>
+0087 <span class="keyword">end</span>
+0088 <span class="keyword">if</span> ~numel(nw)
+0089     nw=inc;                     <span class="comment">% default analysis window length is the fame increment</span>
+0090 <span class="keyword">end</span>
+0091 nwin=length(nw);
+0092 <span class="keyword">if</span> nwin&gt;1                       <span class="comment">% nw specifies the window function explicitly</span>
+0093     win=nw(:);
+0094 <span class="keyword">else</span>                            <span class="comment">% nw gives the window length</span>
+0095     nwin=nw;
+0096     <span class="keyword">if</span> any(m==<span class="string">'h'</span>)
+0097         win=<a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>(3,nwin)'; <span class="comment">% Hamming window</span>
+0098     <span class="keyword">else</span>
+0099         win=ones(nwin,1);       <span class="comment">% window function</span>
+0100     <span class="keyword">end</span>
+0101 <span class="keyword">end</span>
+0102 <span class="keyword">if</span> ~numel(nlag)
+0103     nlag=nwin;
+0104 <span class="keyword">end</span>
+0105 nwl=nwin+nlag-1;
+0106 nt=pow2(nextpow2(nwl));         <span class="comment">% transform length</span>
+0107 nf=floor((nx-nwl+inc)/inc);     <span class="comment">% number of frames</span>
+0108 i1=repmat((1:nwl)',1,nc)+repmat(0:nx:nx*nc-1,nwl,1);
+0109 nb=min(nf,max(1,floor(memsize/(16*nwl*nc))));    <span class="comment">% chunk size for calculating</span>
+0110 nl=ceil(nf/nb);                  <span class="comment">% number of chunks</span>
+0111 jx0=nf-(nl-1)*nb;                <span class="comment">% size of first chunk in frames</span>
+0112 wincg=(1:nwin)*win.^2/(win'*win); <span class="comment">% determine window centre of energy</span>
+0113 fwin=conj(fft(win,nt,1));       <span class="comment">% conjugate fft of window</span>
+0114 y=zeros(nlag,nc,nf);
+0115 <span class="comment">% first do partial chunk</span>
+0116 jx=jx0;
+0117 x2=zeros(nwl,nc*jx);
+0118 x2(:)=x(repmat(i1(:),1,jx)+repmat((0:jx-1)*inc,nwl*nc,1));
+0119 <span class="comment">% the next line was previously: v=ifft(conj(fft(x2(1:nwin,:),nt,1)).*fft(x2,nt,1));</span>
+0120 v=ifft(conj(fft(x2(1:nwin,:).*repmat(win(:),1,nc*jx),nt,1)).*fft(x2,nt,1));                 <span class="comment">% v(1:nlag,:) contains second half of xcorr(x2) output</span>
+0121 w=max(real(ifft(fwin(:,ones(1,nc*jx)).*fft(x2.*conj(x2),nt,1))),0); <span class="comment">% v(1:nlag,:) contains second half of xcorr(|x2|^2,win) output</span>
+0122 w=sqrt(w(1:nlag,:).*w(ones(nlag,1),:));
+0123 <span class="keyword">if</span> isreal(x)
+0124     y(:,:,1:jx)=reshape(real(v(1:nlag,:))./w,nlag,nc,jx); <span class="comment">% note: some values may be NaN is x=0 throughout the window</span>
+0125 <span class="keyword">else</span>
+0126     y(:,:,1:jx)=reshape(conj(v(1:nlag,:))./w,nlag,nc,jx);
+0127 <span class="keyword">end</span>
+0128 <span class="comment">% now do remaining chunks</span>
+0129 x2=zeros(nwl,nc*nb);
+0130 <span class="keyword">for</span> il=2:nl
+0131     ix=jx+1;            <span class="comment">% first frame in this chunk</span>
+0132     jx=jx+nb;           <span class="comment">% last frame in this chunk</span>
+0133     x2(:)=x(repmat(i1(:),1,nb)+repmat((ix-1:jx-1)*inc,nwl*nc,1));
+0134     <span class="comment">% the next line was previously: v=ifft(conj(fft(x2(1:nwin,:),nt,1)).*fft(x2,nt,1));</span>
+0135     v=ifft(conj(fft(x2(1:nwin,:).*repmat(win(:),1,nc*nb),nt,1)).*fft(x2,nt,1));
+0136     w=max(real(ifft(fwin(:,ones(1,nc*nb)).*fft(x2.*conj(x2),nt,1))),0);
+0137     w=sqrt(w(1:nlag,:).*w(ones(nlag,1),:));
+0138     <span class="keyword">if</span> isreal(x)
+0139         y(:,:,ix:jx)=reshape(real(v(1:nlag,:))./w,nlag,nc,nb);
+0140     <span class="keyword">else</span>
+0141         y(:,:,ix:jx)=reshape(conj(v(1:nlag,:))./w,nlag,nc,nb);
+0142     <span class="keyword">end</span>
+0143 <span class="keyword">end</span>
+0144 ty=(0:nf-1)'*inc+wincg;       <span class="comment">% calculate times of window centres</span>
+0145 <span class="keyword">if</span> ~nargout
+0146     imagesc(ty/fs,(1:nlag)/fs,squeeze(mean(abs(y),2)));
+0147     <span class="keyword">if</span> nargin&lt;6
+0148         us=<span class="string">'samp'</span>;
+0149     <span class="keyword">else</span>
+0150         us=<span class="string">'s'</span>;
+0151     <span class="keyword">end</span>
+0152     xlabel([<span class="string">'Time ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> us <span class="string">')'</span>]);
+0153     ylabel([<span class="string">'Lag ('</span> <a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a> us <span class="string">')'</span>]);
+0154     axis <span class="string">'xy'</span>;
+0155     <a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>(<span class="string">'v_thermliny'</span>);
+0156     colorbar;
+0157     <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Mean Correlation'</span>);
+0158     title(<span class="string">'Summary Correlogram'</span>);
+0159 <span class="keyword">end</span>
+0160 
+0161</pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

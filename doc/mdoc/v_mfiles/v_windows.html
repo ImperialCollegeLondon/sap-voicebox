@@ -28,10 +28,12 @@
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
- Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';
-        (2) w=v_windows(2,n); % same as w=hanning(n)';
+ Usage: (1) w=v_windows(3,n)'; % same as w=hamming(n);
+        (2) w=v_windows(3,n,'l')'; % same as w=hanning(n,'periodic');
+        (3) w=v_windows(2,n)'; % same as w=hanning(n);
+        (4) w=v_windows(2,n,'l')'; % same as w=hanning(n,'periodic');
 
- Inputs:   WTYPE  is a string specifying the window type (see below)
+ Inputs:   WTYPE  is a string or integer specifying the window type (see below)
            N      is the number of output points to generate (actually FLOOR(N))
                   and also determines the period of the underlying window [default 256]
            MODE   is a string specifying various options (see below)
@@ -49,6 +51,7 @@
     'cauchy'     'y'   13     1
     'cos'        'c'   10     1      cos window to the power P [default P=1]
     'dolph'      'd'   14     1      Dolph-Chebyshev window with sideband attenuation P dB [default P=50]
+                                     Note that this window has impulses at the two ends.
     'gaussian'      'g'   12     1      truncated at +-P std deviations [default P=3]
     'hamming'    'm'    3
     'hanning'    'n'    2            also called &quot;hann&quot; or &quot;von hann&quot;
@@ -181,300 +184,303 @@ This function calls:
 <li><a href="v_windinfo.html" class="code" title="function x=windinfo(w,fs)">v_windinfo</a>	V_WINDINFO window information and figures of merit X=(W,FS)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>	V_LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</li></ul>
+<li><a href="v_correlogram.html" class="code" title="function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)">v_correlogram</a>	V_CORRELOGRAM calculate correlogram [y,ty]=(x,inc,nw,nlag,m,fs)</li><li><a href="v_lpcauto.html" class="code" title="function [ar,e,k]=v_lpcauto(s,p,t,w,m)">v_lpcauto</a>	V_LPCAUTO  performs autocorrelation LPC analysis [AR,E,K]=(S,P,T)</li></ul>
 <!-- crossreference -->
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function w = v_windows(wtype,n,mode,p,ov)</a>
 0002 <span class="comment">%V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)</span>
-0003 <span class="comment">% Usage: (1) w=v_windows(3,n); % same as w=hamming(n)';</span>
-0004 <span class="comment">%        (2) w=v_windows(2,n); % same as w=hanning(n)';</span>
-0005 <span class="comment">%</span>
-0006 <span class="comment">% Inputs:   WTYPE  is a string specifying the window type (see below)</span>
-0007 <span class="comment">%           N      is the number of output points to generate (actually FLOOR(N))</span>
-0008 <span class="comment">%                  and also determines the period of the underlying window [default 256]</span>
-0009 <span class="comment">%           MODE   is a string specifying various options (see below)</span>
-0010 <span class="comment">%           P      is a vector of parameters required for some window types</span>
-0011 <span class="comment">%           OV      is the overlap in samples between succesive windows (must be H&lt;=N/2 and</span>
-0012 <span class="comment">%                  used only for the 'o' option) [default floor(N/2)]</span>
-0013 <span class="comment">%</span>
-0014 <span class="comment">% Outputs:  W(1,N)   is the output window. If no output is specified, a graph</span>
-0015 <span class="comment">%                  of the window and its frequency response will be drawn.</span>
-0016 <span class="comment">%</span>
-0017 <span class="comment">% The WTYPE input specifies one of the following window types (either name, short or code can be used):</span>
+0003 <span class="comment">% Usage: (1) w=v_windows(3,n)'; % same as w=hamming(n);</span>
+0004 <span class="comment">%        (2) w=v_windows(3,n,'l')'; % same as w=hanning(n,'periodic');</span>
+0005 <span class="comment">%        (3) w=v_windows(2,n)'; % same as w=hanning(n);</span>
+0006 <span class="comment">%        (4) w=v_windows(2,n,'l')'; % same as w=hanning(n,'periodic');</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Inputs:   WTYPE  is a string or integer specifying the window type (see below)</span>
+0009 <span class="comment">%           N      is the number of output points to generate (actually FLOOR(N))</span>
+0010 <span class="comment">%                  and also determines the period of the underlying window [default 256]</span>
+0011 <span class="comment">%           MODE   is a string specifying various options (see below)</span>
+0012 <span class="comment">%           P      is a vector of parameters required for some window types</span>
+0013 <span class="comment">%           OV      is the overlap in samples between succesive windows (must be H&lt;=N/2 and</span>
+0014 <span class="comment">%                  used only for the 'o' option) [default floor(N/2)]</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Outputs:  W(1,N)   is the output window. If no output is specified, a graph</span>
+0017 <span class="comment">%                  of the window and its frequency response will be drawn.</span>
 0018 <span class="comment">%</span>
-0019 <span class="comment">%       Name     Short Code  Params</span>
-0020 <span class="comment">%    'blackman'   'b'    6</span>
-0021 <span class="comment">%    'cauchy'     'y'   13     1</span>
-0022 <span class="comment">%    'cos'        'c'   10     1      cos window to the power P [default P=1]</span>
-0023 <span class="comment">%    'dolph'      'd'   14     1      Dolph-Chebyshev window with sideband attenuation P dB [default P=50]</span>
-0024 <span class="comment">%    'gaussian'      'g'   12     1      truncated at +-P std deviations [default P=3]</span>
-0025 <span class="comment">%    'hamming'    'm'    3</span>
-0026 <span class="comment">%    'hanning'    'n'    2            also called &quot;hann&quot; or &quot;von hann&quot;</span>
-0027 <span class="comment">%    'harris3'      '3'    4            3-term blackman-harris with 67dB sidelobes</span>
-0028 <span class="comment">%    'harris4'      '4'    5            4-term blackman-harris with 92dB sidelobes</span>
-0029 <span class="comment">%    'kaiser'      'k'   11     1      with parameter P (often called beta) [default P=8]</span>
-0030 <span class="comment">%    'rectangle'  'r'    1</span>
-0031 <span class="comment">%    'triangle'   't'    9     1      triangle to the power P [default P=1]</span>
-0032 <span class="comment">%    'tukey'      'u'   15     1      cosine tapered 0&lt;P&lt;1 [default P=0.5]</span>
-0033 <span class="comment">%    'vorbis'     'v'    7            perfect reconstruction window from [2] (use mode='sE2')</span>
-0034 <span class="comment">%    'rsqvorbis'  'w'    8            raised squared vorbis with lower sidelobes (use mode='sdD2')</span>
-0035 <span class="comment">%</span>
-0036 <span class="comment">% Window equivalences:</span>
-0037 <span class="comment">%</span>
-0038 <span class="comment">%    'hanning'   =    cos(2) = tukey(1)</span>
-0039 <span class="comment">%    'rectangle' =    tukey(0)</span>
-0040 <span class="comment">%    'reisz'     =    triangle(2)</span>
-0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0042 <span class="comment">%</span>
-0043 <span class="comment">% The MODE input determines the scaling and sampling of the window function and</span>
-0044 <span class="comment">%     is a text string with characters whose meanings are given below. The</span>
-0045 <span class="comment">%     default is 'ubw' for window functions whose end points are non-zero and 'unw'</span>
-0046 <span class="comment">%     for window functions whose end points are zero (e.g. hanning window)</span>
-0047 <span class="comment">%</span>
-0048 <span class="comment">%         scaling:</span>
-0049 <span class="comment">%                1-9 = set target gain to G = 1/n in scaling options [default n=1 so G=1]</span>
-0050 <span class="comment">%                  u = unscaled  with the peak of the underlying continuous</span>
-0051 <span class="comment">%                      window equalling G. [default]</span>
-0052 <span class="comment">%                  p = scaled to make the actual peak G</span>
-0053 <span class="comment">%                  d = scaled to make DC gain equal to G (summed sample values).</span>
-0054 <span class="comment">%                  D = scaled to make average value equal G</span>
-0055 <span class="comment">%                  e = scaled to make energy = G (summed squared sample values).</span>
-0056 <span class="comment">%                  E = scaled to make mean energy = G (mean squared sample values).</span>
-0057 <span class="comment">%                  q = take square root of the window after scaling</span>
-0058 <span class="comment">%</span>
-0059 <span class="comment">%         first and last samples (see note on periodicity below):</span>
-0060 <span class="comment">%                  b [both]    = The first and last samples are at the extreme ends of</span>
-0061 <span class="comment">%                                the window [default for most windows].</span>
-0062 <span class="comment">%                  n [neither] = The first and last samples are one sample away from the ends</span>
-0063 <span class="comment">%                                of the window [default for windows having zero end points].</span>
-0064 <span class="comment">%                  s [shifted] = The first and last samples are half a sample away from the</span>
-0065 <span class="comment">%                                ends of the window .</span>
-0066 <span class="comment">%                  l [left]    = The first sample is at the end of the window while the last</span>
-0067 <span class="comment">%                                is one sample away from the end .</span>
-0068 <span class="comment">%                  r [right]   = The first sample is one sample away from the end while the</span>
-0069 <span class="comment">%                                last is at the end of the window .</span>
-0070 <span class="comment">%</span>
-0071 <span class="comment">%         whole/half window (see note on periodicity below):</span>
-0072 <span class="comment">%                  w = The whole window is included [default]</span>
-0073 <span class="comment">%                  c = The first sample starts in the centre of the window</span>
-0074 <span class="comment">%                  h = The first sample starts half a sample beyond the centre</span>
-0075 <span class="comment">%</span>
-0076 <span class="comment">%         convolve with rectangle</span>
-0077 <span class="comment">%                  o = convolve w(n) with a rectangle of length N-H [default floor(N/2)]</span>
-0078 <span class="comment">%                      This can be used to force w(n) to satisfy the Princen-Bradley condition</span>
-0079 <span class="comment">%</span>
-0080 <span class="comment">% Periodicity:</span>
-0081 <span class="comment">%     The underlying period of the window function depends on the chosen mode combinations and</span>
-0082 <span class="comment">%     is given in the table below. For overlapping windows with perfect reconstruction choose</span>
-0083 <span class="comment">%     N to be an integer and modes 'ws', 'wl' or 'wr'.</span>
-0084 <span class="comment">%</span>
-0085 <span class="comment">%        Whole/half window --&gt;     w         h         c</span>
-0086 <span class="comment">%</span>
-0087 <span class="comment">%        End points:       b      N-1      2N-1      2N-2</span>
-0088 <span class="comment">%                          n      N+1      2N+1       2N</span>
-0089 <span class="comment">%                          s       N        2N       2N-1</span>
-0090 <span class="comment">%                          l       N       2N+1       2N</span>
-0091 <span class="comment">%                          r       N       2N-1      2N-2</span>
-0092 <span class="comment">%</span>
-0093 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0094 <span class="comment">% To obtain unity gain for windowed overlap-add processing you can use</span>
-0095 <span class="comment">% the following. Bandwidths have been multiplied by the window length.</span>
-0096 <span class="comment">% For perfect reconstruction, you can use any multiple of the overlap factors</span>
-0097 <span class="comment">% shown assuming the same window is used for both analysis and synthesis.</span>
-0098 <span class="comment">% These are the Princen-Bradley conditions: fliplr(w)=w, w(i)^2+w(i+n/2)^2=1</span>
-0099 <span class="comment">% Any symmetric window will satisfy the conditions with mode 'boqD2' [3].</span>
-0100 <span class="comment">%</span>
-0101 <span class="comment">%   Window     Mode Overlap-Factor Sidelobe  3dB-BW  6dB-BW Equiv-noise-BW</span>
-0102 <span class="comment">%   rsqvorbis  sqD2     2           -26dB     1.1      1.5      1.1</span>
-0103 <span class="comment">%   hamming    sqD2     2,3,5       -24dB     1.1      1.5      1.1</span>
-0104 <span class="comment">%   hanning    sqD2     2,3,5       -23dB     1.2      1.6      1.2 =cos('sE2')</span>
-0105 <span class="comment">%   cos        sE2      2,3,5       -23dB     1.2      1.6      1.2 used in MP3</span>
-0106 <span class="comment">%   kaiser(5)  boqD2    2           -23dB     1.2      1.7      1.3 used in AAC [4]</span>
-0107 <span class="comment">%   vorbis     sE2      2,9,15      -21dB     1.3      1.8      1.4 used in Vorbis</span>
-0108 <span class="comment">%   hamming    sE4      3,4,5       -43dB     1.3      1.8      1.4</span>
-0109 <span class="comment">%   hanning    sE4      3,4,5       -31dB     1.4      2.0      1.5</span>
-0110 <span class="comment">% The integer following D or E in the mod string should match the overlap factor</span>
-0111 <span class="comment">%</span>
-0112 <span class="comment">% References:</span>
-0113 <span class="comment">%  [1]  F. J. Harris. On the use of windows for harmonic analysis with the</span>
-0114 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51-83, Jan. 1978.</span>
-0115 <span class="comment">%  [2]    L. D. Fielder, M. Bosi, G. Davidson, M. Davis, C. Todd, and S. Vernon.</span>
-0116 <span class="comment">%       AC-2 and AC-3: Low-complexity transform-based audio coding.</span>
-0117 <span class="comment">%       In Audio Engineering Society Conference: Collected Papers on Digital Audio Bit-Rate Reduction, May 1996.</span>
-0118 <span class="comment">%  [3]    J. Princen, A. Johnson, and A. Bradley. Subband/transform coding using filter</span>
-0119 <span class="comment">%       bank designs based on time domain aliasing cancellation.</span>
-0120 <span class="comment">%       In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 12,</span>
-0121 <span class="comment">%       pages 2161-2164, 1987. doi: 10.1109/ICASSP.1987.1169405.</span>
-0122 <span class="comment">%  [4]    T. Sporer, K. Brandenburg, and B. Edler.</span>
-0123 <span class="comment">%       The use of multirate filter banks for coding of high quality digital audio.</span>
-0124 <span class="comment">%       In Proc EUSIPCO, volume 1, pages 211-214, 1992.</span>
-0125 <span class="comment">%</span>
-0126 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0127 <span class="comment">%      Copyright (C) Mike Brookes 2002-2015</span>
-0128 <span class="comment">%      Version: $Id: v_windows.m 10477 2018-06-03 16:16:45Z dmb $</span>
-0129 <span class="comment">%</span>
-0130 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0131 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0019 <span class="comment">% The WTYPE input specifies one of the following window types (either name, short or code can be used):</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%       Name     Short Code  Params</span>
+0022 <span class="comment">%    'blackman'   'b'    6</span>
+0023 <span class="comment">%    'cauchy'     'y'   13     1</span>
+0024 <span class="comment">%    'cos'        'c'   10     1      cos window to the power P [default P=1]</span>
+0025 <span class="comment">%    'dolph'      'd'   14     1      Dolph-Chebyshev window with sideband attenuation P dB [default P=50]</span>
+0026 <span class="comment">%                                     Note that this window has impulses at the two ends.</span>
+0027 <span class="comment">%    'gaussian'      'g'   12     1      truncated at +-P std deviations [default P=3]</span>
+0028 <span class="comment">%    'hamming'    'm'    3</span>
+0029 <span class="comment">%    'hanning'    'n'    2            also called &quot;hann&quot; or &quot;von hann&quot;</span>
+0030 <span class="comment">%    'harris3'      '3'    4            3-term blackman-harris with 67dB sidelobes</span>
+0031 <span class="comment">%    'harris4'      '4'    5            4-term blackman-harris with 92dB sidelobes</span>
+0032 <span class="comment">%    'kaiser'      'k'   11     1      with parameter P (often called beta) [default P=8]</span>
+0033 <span class="comment">%    'rectangle'  'r'    1</span>
+0034 <span class="comment">%    'triangle'   't'    9     1      triangle to the power P [default P=1]</span>
+0035 <span class="comment">%    'tukey'      'u'   15     1      cosine tapered 0&lt;P&lt;1 [default P=0.5]</span>
+0036 <span class="comment">%    'vorbis'     'v'    7            perfect reconstruction window from [2] (use mode='sE2')</span>
+0037 <span class="comment">%    'rsqvorbis'  'w'    8            raised squared vorbis with lower sidelobes (use mode='sdD2')</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% Window equivalences:</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%    'hanning'   =    cos(2) = tukey(1)</span>
+0042 <span class="comment">%    'rectangle' =    tukey(0)</span>
+0043 <span class="comment">%    'reisz'     =    triangle(2)</span>
+0044 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">% The MODE input determines the scaling and sampling of the window function and</span>
+0047 <span class="comment">%     is a text string with characters whose meanings are given below. The</span>
+0048 <span class="comment">%     default is 'ubw' for window functions whose end points are non-zero and 'unw'</span>
+0049 <span class="comment">%     for window functions whose end points are zero (e.g. hanning window)</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%         scaling:</span>
+0052 <span class="comment">%                1-9 = set target gain to G = 1/n in scaling options [default n=1 so G=1]</span>
+0053 <span class="comment">%                  u = unscaled  with the peak of the underlying continuous</span>
+0054 <span class="comment">%                      window equalling G. [default]</span>
+0055 <span class="comment">%                  p = scaled to make the actual peak G</span>
+0056 <span class="comment">%                  d = scaled to make DC gain equal to G (summed sample values).</span>
+0057 <span class="comment">%                  D = scaled to make average value equal G</span>
+0058 <span class="comment">%                  e = scaled to make energy = G (summed squared sample values).</span>
+0059 <span class="comment">%                  E = scaled to make mean energy = G (mean squared sample values).</span>
+0060 <span class="comment">%                  q = take square root of the window after scaling</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%         first and last samples (see note on periodicity below):</span>
+0063 <span class="comment">%                  b [both]    = The first and last samples are at the extreme ends of</span>
+0064 <span class="comment">%                                the window [default for most windows].</span>
+0065 <span class="comment">%                  n [neither] = The first and last samples are one sample away from the ends</span>
+0066 <span class="comment">%                                of the window [default for windows having zero end points].</span>
+0067 <span class="comment">%                  s [shifted] = The first and last samples are half a sample away from the</span>
+0068 <span class="comment">%                                ends of the window .</span>
+0069 <span class="comment">%                  l [left]    = The first sample is at the end of the window while the last</span>
+0070 <span class="comment">%                                is one sample away from the end .</span>
+0071 <span class="comment">%                  r [right]   = The first sample is one sample away from the end while the</span>
+0072 <span class="comment">%                                last is at the end of the window .</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">%         whole/half window (see note on periodicity below):</span>
+0075 <span class="comment">%                  w = The whole window is included [default]</span>
+0076 <span class="comment">%                  c = The first sample starts in the centre of the window</span>
+0077 <span class="comment">%                  h = The first sample starts half a sample beyond the centre</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">%         convolve with rectangle</span>
+0080 <span class="comment">%                  o = convolve w(n) with a rectangle of length N-H [default floor(N/2)]</span>
+0081 <span class="comment">%                      This can be used to force w(n) to satisfy the Princen-Bradley condition</span>
+0082 <span class="comment">%</span>
+0083 <span class="comment">% Periodicity:</span>
+0084 <span class="comment">%     The underlying period of the window function depends on the chosen mode combinations and</span>
+0085 <span class="comment">%     is given in the table below. For overlapping windows with perfect reconstruction choose</span>
+0086 <span class="comment">%     N to be an integer and modes 'ws', 'wl' or 'wr'.</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">%        Whole/half window --&gt;     w         h         c</span>
+0089 <span class="comment">%</span>
+0090 <span class="comment">%        End points:       b      N-1      2N-1      2N-2</span>
+0091 <span class="comment">%                          n      N+1      2N+1       2N</span>
+0092 <span class="comment">%                          s       N        2N       2N-1</span>
+0093 <span class="comment">%                          l       N       2N+1       2N</span>
+0094 <span class="comment">%                          r       N       2N-1      2N-2</span>
+0095 <span class="comment">%</span>
+0096 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0097 <span class="comment">% To obtain unity gain for windowed overlap-add processing you can use</span>
+0098 <span class="comment">% the following. Bandwidths have been multiplied by the window length.</span>
+0099 <span class="comment">% For perfect reconstruction, you can use any multiple of the overlap factors</span>
+0100 <span class="comment">% shown assuming the same window is used for both analysis and synthesis.</span>
+0101 <span class="comment">% These are the Princen-Bradley conditions: fliplr(w)=w, w(i)^2+w(i+n/2)^2=1</span>
+0102 <span class="comment">% Any symmetric window will satisfy the conditions with mode 'boqD2' [3].</span>
+0103 <span class="comment">%</span>
+0104 <span class="comment">%   Window     Mode Overlap-Factor Sidelobe  3dB-BW  6dB-BW Equiv-noise-BW</span>
+0105 <span class="comment">%   rsqvorbis  sqD2     2           -26dB     1.1      1.5      1.1</span>
+0106 <span class="comment">%   hamming    sqD2     2,3,5       -24dB     1.1      1.5      1.1</span>
+0107 <span class="comment">%   hanning    sqD2     2,3,5       -23dB     1.2      1.6      1.2 =cos('sE2')</span>
+0108 <span class="comment">%   cos        sE2      2,3,5       -23dB     1.2      1.6      1.2 used in MP3</span>
+0109 <span class="comment">%   kaiser(5)  boqD2    2           -23dB     1.2      1.7      1.3 used in AAC [4]</span>
+0110 <span class="comment">%   vorbis     sE2      2,9,15      -21dB     1.3      1.8      1.4 used in Vorbis</span>
+0111 <span class="comment">%   hamming    sE4      3,4,5       -43dB     1.3      1.8      1.4</span>
+0112 <span class="comment">%   hanning    sE4      3,4,5       -31dB     1.4      2.0      1.5</span>
+0113 <span class="comment">% The integer following D or E in the mod string should match the overlap factor</span>
+0114 <span class="comment">%</span>
+0115 <span class="comment">% References:</span>
+0116 <span class="comment">%  [1]  F. J. Harris. On the use of windows for harmonic analysis with the</span>
+0117 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51-83, Jan. 1978.</span>
+0118 <span class="comment">%  [2]    L. D. Fielder, M. Bosi, G. Davidson, M. Davis, C. Todd, and S. Vernon.</span>
+0119 <span class="comment">%       AC-2 and AC-3: Low-complexity transform-based audio coding.</span>
+0120 <span class="comment">%       In Audio Engineering Society Conference: Collected Papers on Digital Audio Bit-Rate Reduction, May 1996.</span>
+0121 <span class="comment">%  [3]    J. Princen, A. Johnson, and A. Bradley. Subband/transform coding using filter</span>
+0122 <span class="comment">%       bank designs based on time domain aliasing cancellation.</span>
+0123 <span class="comment">%       In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 12,</span>
+0124 <span class="comment">%       pages 2161-2164, 1987. doi: 10.1109/ICASSP.1987.1169405.</span>
+0125 <span class="comment">%  [4]    T. Sporer, K. Brandenburg, and B. Edler.</span>
+0126 <span class="comment">%       The use of multirate filter banks for coding of high quality digital audio.</span>
+0127 <span class="comment">%       In Proc EUSIPCO, volume 1, pages 211-214, 1992.</span>
+0128 <span class="comment">%</span>
+0129 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0130 <span class="comment">%      Copyright (C) Mike Brookes 2002-2015</span>
+0131 <span class="comment">%      Version: $Id: v_windows.m 10477 2018-06-03 16:16:45Z dmb $</span>
 0132 <span class="comment">%</span>
-0133 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0134 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0135 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0136 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0137 <span class="comment">%   (at your option) any later version.</span>
-0138 <span class="comment">%</span>
-0139 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0140 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0141 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0142 <span class="comment">%   GNU General Public License for more details.</span>
-0143 <span class="comment">%</span>
-0144 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0145 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0146 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0147 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0148 <span class="keyword">persistent</span> wnam wnami wnamp
-0149 <span class="keyword">if</span> isempty(wnam)
-0150     wnam={<span class="string">'rectangle'</span>,<span class="string">'hanning'</span>,<span class="string">'hamming'</span>,<span class="string">'harris3'</span>,<span class="string">'harris4'</span>,<span class="string">'blackman'</span>,<span class="keyword">...</span>
-0151         <span class="string">'vorbis'</span>,<span class="string">'rsqvorbis'</span>,<span class="string">'triangle'</span>,<span class="string">'cos'</span>,<span class="string">'kaiser'</span>,<span class="string">'gaussian'</span>,<span class="keyword">...</span>
-0152         <span class="string">'cauchy'</span>,<span class="string">'dolph'</span>,<span class="string">'tukey'</span>,<span class="string">'r'</span>,<span class="string">'n'</span>,<span class="string">'m'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'b'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'t'</span>,<span class="string">'c'</span>,<span class="string">'k'</span>,<span class="string">'g'</span>,<span class="string">'y'</span>,<span class="string">'d'</span>,<span class="string">'u'</span>};
-0153     wnami=[1:15 1:15];
-0154     wnamp=[0 0 0 0 0 0 0 0 1 1 1 1 1 1 1]; <span class="comment">% parameters required</span>
-0155 <span class="keyword">end</span>
-0156 kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    <span class="comment">% mode  w,  h,  c  [normal windows]</span>
-0157     -1 0 1 0; 0 0 2 0; 0 1 2 1;       <span class="comment">% modes lw, lh, lc</span>
-0158     -1 2 1 0; 0 0 2 -2; 0 1 2 -1;     <span class="comment">% modes rw, rh, rc</span>
-0159     -1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    <span class="comment">% modes bw, bh, bc</span>
-0160     -1 1 1 1; 0 0 2 0; 0 1 2 1;       <span class="comment">% modes nw, nh, nc</span>
-0161     -1 1 1 0; 0 0 2 -1; 0 1 2 0;];    <span class="comment">% modes sw, sh, sc</span>
-0162 
-0163 <span class="keyword">if</span> nargin&lt;2 || isempty(n)
-0164     n=2520; <span class="comment">% 2^3 * 3^2 * 5 * 7</span>
-0165 <span class="keyword">end</span>
-0166 <span class="keyword">if</span> nargin&lt;3 || isempty(mode) || ~ischar(mode)
-0167     mode=<span class="string">'uw'</span>;
+0133 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0134 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0135 <span class="comment">%</span>
+0136 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0137 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0138 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0139 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0140 <span class="comment">%   (at your option) any later version.</span>
+0141 <span class="comment">%</span>
+0142 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0143 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0144 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0145 <span class="comment">%   GNU General Public License for more details.</span>
+0146 <span class="comment">%</span>
+0147 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0148 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0149 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0150 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0151 <span class="keyword">persistent</span> wnam wnami wnamp
+0152 <span class="keyword">if</span> isempty(wnam)
+0153     wnam={<span class="string">'rectangle'</span>,<span class="string">'hanning'</span>,<span class="string">'hamming'</span>,<span class="string">'harris3'</span>,<span class="string">'harris4'</span>,<span class="string">'blackman'</span>,<span class="keyword">...</span>
+0154         <span class="string">'vorbis'</span>,<span class="string">'rsqvorbis'</span>,<span class="string">'triangle'</span>,<span class="string">'cos'</span>,<span class="string">'kaiser'</span>,<span class="string">'gaussian'</span>,<span class="keyword">...</span>
+0155         <span class="string">'cauchy'</span>,<span class="string">'dolph'</span>,<span class="string">'tukey'</span>,<span class="string">'r'</span>,<span class="string">'n'</span>,<span class="string">'m'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'b'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'t'</span>,<span class="string">'c'</span>,<span class="string">'k'</span>,<span class="string">'g'</span>,<span class="string">'y'</span>,<span class="string">'d'</span>,<span class="string">'u'</span>};
+0156     wnami=[1:15 1:15];
+0157     wnamp=[0 0 0 0 0 0 0 0 1 1 1 1 1 1 1]; <span class="comment">% parameters required</span>
+0158 <span class="keyword">end</span>
+0159 kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    <span class="comment">% mode  w,  h,  c  [normal windows]</span>
+0160     -1 0 1 0; 0 0 2 0; 0 1 2 1;       <span class="comment">% modes lw, lh, lc</span>
+0161     -1 2 1 0; 0 0 2 -2; 0 1 2 -1;     <span class="comment">% modes rw, rh, rc</span>
+0162     -1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    <span class="comment">% modes bw, bh, bc</span>
+0163     -1 1 1 1; 0 0 2 0; 0 1 2 1;       <span class="comment">% modes nw, nh, nc</span>
+0164     -1 1 1 0; 0 0 2 -1; 0 1 2 0;];    <span class="comment">% modes sw, sh, sc</span>
+0165 
+0166 <span class="keyword">if</span> nargin&lt;2 || isempty(n)
+0167     n=2520; <span class="comment">% 2^3 * 3^2 * 5 * 7</span>
 0168 <span class="keyword">end</span>
-0169 mm=zeros(1,length(mode)+1);
-0170 ll=<span class="string">'hc lrbns'</span>;
-0171 <span class="keyword">for</span> i=1:8
-0172     mm(mode==ll(i))=i-3;
-0173 <span class="keyword">end</span>
-0174 wtype=lower(wtype);
-0175 k=1+3*max(mm)-min(mm);
-0176 <span class="keyword">if</span> k&lt;4
-0177     k=k+12*any(wtype==[2 6 7 9 10 15]);
-0178 <span class="keyword">end</span>
-0179 <span class="keyword">if</span> any(mode==<span class="string">'o'</span>) <span class="comment">% need to convolve with rectangle</span>
-0180     <span class="keyword">if</span> nargin&lt;5 || ~numel(h)
-0181         ov=floor(n/2);
-0182     <span class="keyword">end</span>
-0183     n=n-ov+1; <span class="comment">% shorten baseline window</span>
-0184 <span class="keyword">else</span>
-0185     ov=0;
-0186 <span class="keyword">end</span>
-0187 
-0188 <span class="comment">% determine the sample points</span>
-0189 <span class="comment">% the number of points corresponding to a full period is (kk(k,3)*n+kk(k,4))</span>
-0190 fn=floor(n);
-0191 kp=(kk(k,3)*n+kk(k,4));
-0192 ks=kk(k,1)*fn+kk(k,2);
-0193 v=((0:2:2*fn-2)+ks)/kp;
-0194 
-0195 <span class="comment">% now make the window</span>
-0196 <span class="keyword">if</span> ischar(wtype)
-0197     wtype=wnami(find(strcmp(wtype,wnam),1));
-0198 <span class="keyword">end</span>
-0199 <span class="keyword">switch</span> wtype
-0200     <span class="keyword">case</span> 1 <span class="comment">% 'rectangle'</span>
-0201         w = ones(size(v));     
-0202     <span class="keyword">case</span> 2 <span class="comment">% 'hanning'</span>
-0203         w = 0.5+0.5*cos(pi*v);             
-0204     <span class="keyword">case</span> 3 <span class="comment">% 'hamming'</span>
-0205         w = 0.54+0.46*cos(pi*v);        
-0206     <span class="keyword">case</span> 4 <span class="comment">% 'harris3'</span>
-0207         w = 0.42323 + 0.49755*cos(pi*v) + 0.07922*cos(2*pi*v);        
-0208     <span class="keyword">case</span> 5 <span class="comment">% 'harris4'</span>
-0209         w = 0.35875 + 0.48829*cos(pi*v) + 0.14128*cos(2*pi*v) + 0.01168*cos(3*pi*v);        
-0210     <span class="keyword">case</span> 6 <span class="comment">% 'blackman'</span>
-0211         w = 0.42+0.5*cos(pi*v) + 0.08*cos(2*pi*v);        
-0212     <span class="keyword">case</span> 7 <span class="comment">% 'vorbis'</span>
-0213         w = sin(0.25*pi*(1+cos(pi*v)));        
-0214     <span class="keyword">case</span> 8 <span class="comment">% 'rsqvorbis'</span>
-0215         w = 0.571-0.429*cos(0.5*pi*(1+cos(pi*v)));        
-0216     <span class="keyword">case</span> 9 <span class="comment">% 'triangle'</span>
-0217         <span class="keyword">if</span> nargin&lt;4, p=1; <span class="keyword">end</span>;
-0218         w = 1-abs(v).^p(1);
-0219     <span class="keyword">case</span> 10 <span class="comment">% 'cos'</span>
+0169 <span class="keyword">if</span> nargin&lt;3 || isempty(mode) || ~ischar(mode)
+0170     mode=<span class="string">'uw'</span>;
+0171 <span class="keyword">end</span>
+0172 mm=zeros(1,length(mode)+1);
+0173 ll=<span class="string">'hc lrbns'</span>;
+0174 <span class="keyword">for</span> i=1:8
+0175     mm(mode==ll(i))=i-3;
+0176 <span class="keyword">end</span>
+0177 wtype=lower(wtype);
+0178 k=1+3*max(mm)-min(mm);
+0179 <span class="keyword">if</span> k&lt;4
+0180     k=k+12*any(wtype==[2 6 7 9 10 15]);
+0181 <span class="keyword">end</span>
+0182 <span class="keyword">if</span> any(mode==<span class="string">'o'</span>) <span class="comment">% need to convolve with rectangle</span>
+0183     <span class="keyword">if</span> nargin&lt;5 || ~numel(h)
+0184         ov=floor(n/2);
+0185     <span class="keyword">end</span>
+0186     n=n-ov+1; <span class="comment">% shorten baseline window</span>
+0187 <span class="keyword">else</span>
+0188     ov=0;
+0189 <span class="keyword">end</span>
+0190 
+0191 <span class="comment">% determine the sample points</span>
+0192 <span class="comment">% the number of points corresponding to a full period is (kk(k,3)*n+kk(k,4))</span>
+0193 fn=floor(n);
+0194 kp=(kk(k,3)*n+kk(k,4)); <span class="comment">% number of points corresponding to a full period</span>
+0195 ks=kk(k,1)*fn+kk(k,2);
+0196 v=((0:2:2*fn-2)+ks)/kp;
+0197 
+0198 <span class="comment">% now make the window</span>
+0199 <span class="keyword">if</span> ischar(wtype)
+0200     wtype=wnami(find(strcmp(wtype,wnam),1));
+0201 <span class="keyword">end</span>
+0202 <span class="keyword">switch</span> wtype
+0203     <span class="keyword">case</span> 1 <span class="comment">% 'rectangle'</span>
+0204         w = ones(size(v));     
+0205     <span class="keyword">case</span> 2 <span class="comment">% 'hanning'</span>
+0206         w = 0.5+0.5*cos(pi*v);             
+0207     <span class="keyword">case</span> 3 <span class="comment">% 'hamming'</span>
+0208         w = 0.54+0.46*cos(pi*v);        
+0209     <span class="keyword">case</span> 4 <span class="comment">% 'harris3'</span>
+0210         w = 0.42323 + 0.49755*cos(pi*v) + 0.07922*cos(2*pi*v);        
+0211     <span class="keyword">case</span> 5 <span class="comment">% 'harris4'</span>
+0212         w = 0.35875 + 0.48829*cos(pi*v) + 0.14128*cos(2*pi*v) + 0.01168*cos(3*pi*v);        
+0213     <span class="keyword">case</span> 6 <span class="comment">% 'blackman'</span>
+0214         w = 0.42+0.5*cos(pi*v) + 0.08*cos(2*pi*v);        
+0215     <span class="keyword">case</span> 7 <span class="comment">% 'vorbis'</span>
+0216         w = sin(0.25*pi*(1+cos(pi*v)));        
+0217     <span class="keyword">case</span> 8 <span class="comment">% 'rsqvorbis'</span>
+0218         w = 0.571-0.429*cos(0.5*pi*(1+cos(pi*v)));        
+0219     <span class="keyword">case</span> 9 <span class="comment">% 'triangle'</span>
 0220         <span class="keyword">if</span> nargin&lt;4, p=1; <span class="keyword">end</span>;
-0221         w = cos(0.5*pi*v).^p(1);        
-0222     <span class="keyword">case</span> 11 <span class="comment">% 'kaiser'</span>
-0223         <span class="keyword">if</span> nargin&lt;4, p=8; <span class="keyword">end</span>;
-0224         w=besseli(0,p*sqrt(1-v.^2))/besseli(0,p(1));        
-0225     <span class="keyword">case</span> 12 <span class="comment">% 'gaussian'</span>
-0226         <span class="keyword">if</span> nargin&lt;4, p=3; <span class="keyword">end</span>;
-0227         w=exp(-0.5*p(1)^2*(v.*v));     
-0228     <span class="keyword">case</span> 13 <span class="comment">% 'cauchy'</span>
-0229         <span class="keyword">if</span> nargin&lt;4, p=1; <span class="keyword">end</span>;
-0230         w = (1+(p(1)*v).^2).^-1;
-0231     <span class="keyword">case</span> 14 <span class="comment">% 'dolph'</span>
-0232         <span class="keyword">if</span> nargin&lt;4, p=50; <span class="keyword">end</span>;
-0233         <span class="keyword">if</span> rem(ks+kp,2)     <span class="comment">% for shifted windows, we generate twice as many points</span>
-0234             w=chebwin(2*kp+1,abs(p(1)));
-0235             w=w((1:2:2*fn)+round(ks+kp));
-0236         <span class="keyword">else</span>
-0237             w=chebwin(kp+1,abs(p(1)));
-0238             w=w((1:fn)+round((ks+kp)/2));
-0239         <span class="keyword">end</span>        
-0240     <span class="keyword">case</span> 15 <span class="comment">% 'tukey'</span>
-0241         <span class="keyword">if</span> nargin&lt;4, p=0.5; <span class="keyword">end</span>;
-0242         <span class="keyword">if</span> p(1)&gt;0
-0243             p(1)=min(p(1),1);
-0244             w = 0.5+0.5*cos(pi*max(1+(abs(v)-1)/p(1),0));
-0245         <span class="keyword">else</span>
-0246             w = ones(size(v));
-0247         <span class="keyword">end</span>    
-0248     <span class="keyword">otherwise</span>
-0249         error(sprintf(<span class="string">'Unknown window type: %s'</span>, wtype));
-0250 <span class="keyword">end</span>;
-0251 <span class="comment">% now convolve with rectangle</span>
-0252 <span class="keyword">if</span> ov
-0253     <span class="comment">%     w=filter(ones(1,ov),1,w); % more adds but might be just as efficient as cumsum</span>
-0254     w=cumsum(w);
-0255     w(n+1:n+ov-1)=w(n)-w(n-ov+1:n-1);
-0256     w(ov+1:n)=w(ov+1:n)-w(1:n-ov);
-0257     n=n+ov-1; <span class="comment">% restore original value of n</span>
-0258 <span class="keyword">end</span>
-0259 <span class="comment">% scale if required</span>
-0260 mk=find(mode&gt;=<span class="string">'1'</span> &amp; mode&lt;=<span class="string">'9'</span>,1);
-0261 <span class="keyword">if</span> numel(mk)
-0262     g=1/(mode(mk)-<span class="string">'0'</span>);
-0263 <span class="keyword">else</span>
-0264     g=1;
-0265 <span class="keyword">end</span>
-0266 <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
-0267     w=w*(g/sum(w));
-0268 <span class="keyword">elseif</span> any(mode==<span class="string">'D'</span>) || any(mode==<span class="string">'a'</span>)
-0269     w=w*(g/mean(w));
-0270 <span class="keyword">elseif</span> any(mode==<span class="string">'e'</span>)
-0271     w=w*sqrt(g/sum(w.^2));
-0272 <span class="keyword">elseif</span> any(mode==<span class="string">'E'</span>)
-0273     w=w*sqrt(g/mean(w.^2));
-0274 <span class="keyword">elseif</span> any(mode==<span class="string">'p'</span>)
-0275     w=w*(g/max(w));
-0276 <span class="keyword">end</span>
-0277 <span class="keyword">if</span> any(mode==<span class="string">'q'</span>)
-0278     w=sqrt(w);
+0221         w = 1-abs(v).^p(1);
+0222     <span class="keyword">case</span> 10 <span class="comment">% 'cos'</span>
+0223         <span class="keyword">if</span> nargin&lt;4, p=1; <span class="keyword">end</span>;
+0224         w = cos(0.5*pi*v).^p(1);        
+0225     <span class="keyword">case</span> 11 <span class="comment">% 'kaiser'</span>
+0226         <span class="keyword">if</span> nargin&lt;4, p=8; <span class="keyword">end</span>;
+0227         w=besseli(0,p*sqrt(1-v.^2))/besseli(0,p(1));        
+0228     <span class="keyword">case</span> 12 <span class="comment">% 'gaussian'</span>
+0229         <span class="keyword">if</span> nargin&lt;4, p=3; <span class="keyword">end</span>;
+0230         w=exp(-0.5*p(1)^2*(v.*v));     
+0231     <span class="keyword">case</span> 13 <span class="comment">% 'cauchy'</span>
+0232         <span class="keyword">if</span> nargin&lt;4, p=1; <span class="keyword">end</span>;
+0233         w = (1+(p(1)*v).^2).^-1;
+0234     <span class="keyword">case</span> 14 <span class="comment">% 'dolph'</span>
+0235         <span class="keyword">if</span> nargin&lt;4, p=50; <span class="keyword">end</span>;
+0236         <span class="keyword">if</span> rem(ks+kp,2)     <span class="comment">% for shifted windows, we generate twice as many points</span>
+0237             w=chebwin(2*kp+1,abs(p(1)));
+0238             w=w((1:2:2*fn)+round(ks+kp));
+0239         <span class="keyword">else</span>
+0240             w=chebwin(kp+1,abs(p(1)));
+0241             w=w((1:fn)+round((ks+kp)/2));
+0242         <span class="keyword">end</span>        
+0243     <span class="keyword">case</span> 15 <span class="comment">% 'tukey'</span>
+0244         <span class="keyword">if</span> nargin&lt;4, p=0.5; <span class="keyword">end</span>;
+0245         <span class="keyword">if</span> p(1)&gt;0
+0246             p(1)=min(p(1),1);
+0247             w = 0.5+0.5*cos(pi*max(1+(abs(v)-1)/p(1),0));
+0248         <span class="keyword">else</span>
+0249             w = ones(size(v));
+0250         <span class="keyword">end</span>    
+0251     <span class="keyword">otherwise</span>
+0252         error(sprintf(<span class="string">'Unknown window type: %s'</span>, wtype));
+0253 <span class="keyword">end</span>;
+0254 <span class="comment">% now convolve with rectangle</span>
+0255 <span class="keyword">if</span> ov
+0256     <span class="comment">%     w=filter(ones(1,ov),1,w); % more adds but might be just as efficient as cumsum</span>
+0257     w=cumsum(w);
+0258     w(n+1:n+ov-1)=w(n)-w(n-ov+1:n-1);
+0259     w(ov+1:n)=w(ov+1:n)-w(1:n-ov);
+0260     n=n+ov-1; <span class="comment">% restore original value of n</span>
+0261 <span class="keyword">end</span>
+0262 <span class="comment">% scale if required</span>
+0263 mk=find(mode&gt;=<span class="string">'1'</span> &amp; mode&lt;=<span class="string">'9'</span>,1);
+0264 <span class="keyword">if</span> numel(mk)
+0265     g=1/(mode(mk)-<span class="string">'0'</span>);
+0266 <span class="keyword">else</span>
+0267     g=1;
+0268 <span class="keyword">end</span>
+0269 <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0270     w=w*(g/sum(w));
+0271 <span class="keyword">elseif</span> any(mode==<span class="string">'D'</span>) || any(mode==<span class="string">'a'</span>)
+0272     w=w*(g/mean(w));
+0273 <span class="keyword">elseif</span> any(mode==<span class="string">'e'</span>)
+0274     w=w*sqrt(g/sum(w.^2));
+0275 <span class="keyword">elseif</span> any(mode==<span class="string">'E'</span>)
+0276     w=w*sqrt(g/mean(w.^2));
+0277 <span class="keyword">elseif</span> any(mode==<span class="string">'p'</span>)
+0278     w=w*(g/max(w));
 0279 <span class="keyword">end</span>
-0280 <span class="keyword">if</span> ~nargout
-0281     <a href="v_windinfo.html" class="code" title="function x=windinfo(w,fs)">v_windinfo</a>(w,n);
-0282     np=wnamp(wtype); <span class="comment">% number of parameters</span>
-0283     <span class="keyword">if</span> np&gt;0
-0284         title(sprintf(<span class="string">'%s (%s ) window  - mode=''%s'''</span>,wnam{wtype},sprintf(<span class="string">' %g'</span>,p(1:np)),mode));
-0285     <span class="keyword">else</span>
-0286         title(sprintf(<span class="string">'%s window - mode=''%s'''</span>,wnam{wtype},mode));
-0287     <span class="keyword">end</span>
-0288 <span class="keyword">end</span>
-0289</pre></div>
+0280 <span class="keyword">if</span> any(mode==<span class="string">'q'</span>)
+0281     w=sqrt(w);
+0282 <span class="keyword">end</span>
+0283 <span class="keyword">if</span> ~nargout
+0284     <a href="v_windinfo.html" class="code" title="function x=windinfo(w,fs)">v_windinfo</a>(w,n);
+0285     np=wnamp(wtype); <span class="comment">% number of parameters</span>
+0286     <span class="keyword">if</span> np&gt;0
+0287         title(sprintf(<span class="string">'%s(%s) window  - mode=''%s'''</span>,wnam{wtype},sprintf(<span class="string">'%g'</span>,p(1:np)),mode));
+0288     <span class="keyword">else</span>
+0289         title(sprintf(<span class="string">'%s window - mode=''%s'''</span>,wnam{wtype},mode));
+0290     <span class="keyword">end</span>
+0291 <span class="keyword">end</span>
+0292</pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

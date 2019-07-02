@@ -124,7 +124,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>	V_SPRINTSI Print X with SI multiplier S=(X,D,W)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_zerotrim.html" class="code" title="function z=v_zerotrim(x)">v_zerotrim</a>	V_ZEROTRIM Remove zero trailing rows and columns Z=(X)</li></ul>
+<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w,u)">v_sprintsi</a>	V_SPRINTSI Print X with SI multiplier S=(X,D,W,U)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li><li><a href="v_zerotrim.html" class="code" title="function z=v_zerotrim(x)">v_zerotrim</a>	V_ZEROTRIM Remove zero trailing rows and columns Z=(X)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li></ul>
@@ -279,7 +279,7 @@ This function is called by:
 0145             [yy,fs,hd,ffx]=<a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>(ffx,lst(it,1),lst(it,2),mode,0);
 0146             nf=hd{1}(7);
 0147             fd=hd{1}(9);
-0148             fprintf(1,<span class="string">'%3d.%02d %ss @ %sHz (%d frames): %s\n'</span>,lst(it,1),lst(it,2),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(nf*fd),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(1/fd),nf,ffx{4}{it,1});
+0148             fprintf(1,<span class="string">'%3d.%02d %ss @ %sHz (%d frames): %s\n'</span>,lst(it,1),lst(it,2),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w,u)">v_sprintsi</a>(nf*fd),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w,u)">v_sprintsi</a>(1/fd),nf,ffx{4}{it,1});
 0149         <span class="keyword">end</span>
 0150     <span class="keyword">end</span>
 0151 <span class="keyword">else</span>

@@ -31,7 +31,7 @@
 
  Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]
            ovf=2;                  % overlap factor
-           f=v_rfft(v_enframe(s,hanning(ovf*ninc,'periodic'),ninc),ovf*ninc,2);
+           f=v_rfft(v_enframe(s,v_windows(2,ovf*ninc,'l'),ninc),ovf*ninc,2);  % enframe with hanning window
            f=f.*conj(f);           % convert to power spectrum
            x=v_estnoiseg(f,ninc/fs); % estimate the noise power spectrum
 
@@ -82,7 +82,7 @@ This function is called by:
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:    ninc=round(0.016*fs);   % frame increment [fs=sample frequency]</span>
 0005 <span class="comment">%           ovf=2;                  % overlap factor</span>
-0006 <span class="comment">%           f=v_rfft(v_enframe(s,hanning(ovf*ninc,'periodic'),ninc),ovf*ninc,2);</span>
+0006 <span class="comment">%           f=v_rfft(v_enframe(s,v_windows(2,ovf*ninc,'l'),ninc),ovf*ninc,2);  % enframe with hanning window</span>
 0007 <span class="comment">%           f=f.*conj(f);           % convert to power spectrum</span>
 0008 <span class="comment">%           x=v_estnoiseg(f,ninc/fs); % estimate the noise power spectrum</span>
 0009 <span class="comment">%</span>

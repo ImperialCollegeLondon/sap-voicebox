@@ -31,12 +31,12 @@
 
  Usage:
     (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances
-    (2) [m,v,w]=gaussmix(x,[],[],k,'v);    % create GMM with k mixtures and full covariances
+    (2) [m,v,w]=gaussmix(x,[],[],k,'v');    % create GMM with k mixtures and full covariances
 
  Inputs: n data values, k mixtures, p parameters, l loops
 
      X(n,p)   Input data vectors, one per row.
-     c(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)
+     C(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)
      L        The integer portion of l gives a maximum loop count. The fractional portion gives
               an optional stopping threshold. Iteration will cease if the increase in
               log likelihood density per data point is less than this value. Thus l=10.001 will
@@ -81,7 +81,7 @@
  for the mixture centres and then uses the EM (expectation-maximization) algorithm to refine
  the guess. Although the EM algorithm is deterministic, the initialization procedures use
  random numbers and so the routine will not give identical answers if you call it multiple
- times with the same input data.</pre></div>
+ times with the same input data. See v_randvec() for generating GMM data vectors.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -100,12 +100,12 @@ This function is called by:
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage:</span>
 0005 <span class="comment">%    (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances</span>
-0006 <span class="comment">%    (2) [m,v,w]=gaussmix(x,[],[],k,'v);    % create GMM with k mixtures and full covariances</span>
+0006 <span class="comment">%    (2) [m,v,w]=gaussmix(x,[],[],k,'v');    % create GMM with k mixtures and full covariances</span>
 0007 <span class="comment">%</span>
 0008 <span class="comment">% Inputs: n data values, k mixtures, p parameters, l loops</span>
 0009 <span class="comment">%</span>
 0010 <span class="comment">%     X(n,p)   Input data vectors, one per row.</span>
-0011 <span class="comment">%     c(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)</span>
+0011 <span class="comment">%     C(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)</span>
 0012 <span class="comment">%     L        The integer portion of l gives a maximum loop count. The fractional portion gives</span>
 0013 <span class="comment">%              an optional stopping threshold. Iteration will cease if the increase in</span>
 0014 <span class="comment">%              log likelihood density per data point is less than this value. Thus l=10.001 will</span>
@@ -150,7 +150,7 @@ This function is called by:
 0053 <span class="comment">% for the mixture centres and then uses the EM (expectation-maximization) algorithm to refine</span>
 0054 <span class="comment">% the guess. Although the EM algorithm is deterministic, the initialization procedures use</span>
 0055 <span class="comment">% random numbers and so the routine will not give identical answers if you call it multiple</span>
-0056 <span class="comment">% times with the same input data.</span>
+0056 <span class="comment">% times with the same input data. See v_randvec() for generating GMM data vectors.</span>
 0057 
 0058 <span class="comment">%  Bugs/Suggestions</span>
 0059 <span class="comment">%     (1) Allow processing in chunks by outputting/reinputting an array of sufficient statistics</span>

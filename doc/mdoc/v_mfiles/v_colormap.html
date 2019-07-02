@@ -88,9 +88,9 @@
            rgb  RGB color map entries; one per row.
                 All values will be in the range 0 to 1
 
-             y  column vector of luminance values
+             y  column vector of luminance values (from CIEXYZ colour space)
 
-             l  column vector of lightness values (lightness is the perceived brightness)</pre></div>
+             l  column vector of lightness values (lightness is the perceived brightness from CIELUV colour space)</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -99,7 +99,7 @@ This function calls:
 <li><a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>	V_COLORMAP set and plot color map</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>	V_COLORMAP set and plot color map</li></ul>
+<li><a href="v_colormap.html" class="code" title="function [rgb,y,l]=v_colormap(map,m,n,p)">v_colormap</a>	V_COLORMAP set and plot color map</li><li><a href="v_correlogram.html" class="code" title="function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)">v_correlogram</a>	V_CORRELOGRAM calculate correlogram [y,ty]=(x,inc,nw,nlag,m,fs)</li></ul>
 <!-- crossreference -->
 
 
@@ -166,9 +166,9 @@ This function is called by:
 0060 <span class="comment">%           rgb  RGB color map entries; one per row.</span>
 0061 <span class="comment">%                All values will be in the range 0 to 1</span>
 0062 <span class="comment">%</span>
-0063 <span class="comment">%             y  column vector of luminance values</span>
+0063 <span class="comment">%             y  column vector of luminance values (from CIEXYZ colour space)</span>
 0064 <span class="comment">%</span>
-0065 <span class="comment">%             l  column vector of lightness values (lightness is the perceived brightness)</span>
+0065 <span class="comment">%             l  column vector of lightness values (lightness is the perceived brightness from CIELUV colour space)</span>
 0066 
 0067 <span class="comment">% Bugs/Suggestions:</span>
 0068 <span class="comment">% (1) add option to exclude black from the colormap</span>

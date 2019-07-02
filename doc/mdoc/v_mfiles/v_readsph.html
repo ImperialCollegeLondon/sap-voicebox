@@ -102,7 +102,7 @@ ff
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>	V_PCMU2LIN Convert A-law PCM to linear X=(P,M,S)</li><li><a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>	V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>	V_SPRINTSI Print X with SI multiplier S=(X,D,W)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
+<li><a href="v_pcma2lin.html" class="code" title="function x=v_pcma2lin(p,m,s)">v_pcma2lin</a>	V_PCMU2LIN Convert A-law PCM to linear X=(P,M,S)</li><li><a href="v_pcmu2lin.html" class="code" title="function x=v_pcmu2lin(p,s)">v_pcmu2lin</a>	V_PCMU2LIN Convert Mu-law PCM to linear X=(P,S)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w,u)">v_sprintsi</a>	V_SPRINTSI Print X with SI multiplier S=(X,D,W,U)</li><li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li></ul>
@@ -465,7 +465,7 @@ This function is called by:
 0353     icode=info(12); <span class="comment">% could convert this into text</span>
 0354     <span class="keyword">if</span> ~isempty(ffx{1}), fprintf(1,<span class="string">'Filename: %s\n'</span>,ffx{1}); <span class="keyword">end</span>
 0355     fprintf(1,<span class="string">'Sphere file type: %s, coding %d\n'</span>,ffx{3}, icode);
-0356     fprintf(1,<span class="string">'Duration = %ss: %d channel * %d samples @ %sHz\n'</span>,<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(info(5)/info(9)),info(6),info(5),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w)">v_sprintsi</a>(info(9)));
+0356     fprintf(1,<span class="string">'Duration = %ss: %d channel * %d samples @ %sHz\n'</span>,<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w,u)">v_sprintsi</a>(info(5)/info(9)),info(6),info(5),<a href="v_sprintsi.html" class="code" title="function s=v_sprintsi(x,d,w,u)">v_sprintsi</a>(info(9)));
 0357 <span class="keyword">end</span>
 0358 
 0359 
