@@ -3,12 +3,12 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 %
 % Usage:
 %    (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances
-%    (2) [m,v,w]=gaussmix(x,[],[],k,'v);    % create GMM with k mixtures and full covariances
+%    (2) [m,v,w]=gaussmix(x,[],[],k,'v');    % create GMM with k mixtures and full covariances
 %
 % Inputs: n data values, k mixtures, p parameters, l loops
 %
 %     X(n,p)   Input data vectors, one per row.
-%     c(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)
+%     C(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)
 %     L        The integer portion of l gives a maximum loop count. The fractional portion gives
 %              an optional stopping threshold. Iteration will cease if the increase in
 %              log likelihood density per data point is less than this value. Thus l=10.001 will
@@ -53,7 +53,7 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 % for the mixture centres and then uses the EM (expectation-maximization) algorithm to refine
 % the guess. Although the EM algorithm is deterministic, the initialization procedures use
 % random numbers and so the routine will not give identical answers if you call it multiple
-% times with the same input data.
+% times with the same input data. See v_randvec() for generating GMM data vectors.
 
 %  Bugs/Suggestions
 %     (1) Allow processing in chunks by outputting/reinputting an array of sufficient statistics

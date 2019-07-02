@@ -1,7 +1,7 @@
 function x=v_randvec(n,m,c,w,mode)
 %V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
 % generates a random matrix of size (|n|,p) where p is the maximum
-% dimension of M or C (see note below about row versus column vectos)
+% dimension of M or C (see note below about row versus column vectors)
 %  Inputs:  N        is the number of points to generate
 %           M(K,P)   is the mean vectors (one row per mixture)
 %           C(K,P)   are diagonal covariances (one row per mixture)

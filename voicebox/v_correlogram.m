@@ -14,7 +14,7 @@ function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)
 %        v_correlogram(y,round(10e-3*fs),round(16e-3*fs),round(12e-3*fs),'',fs);
 %
 % Inputs:
-%        x(*,chan)  is the output of a v_filterbank
+%        x(*,chan)  is the output of a filterbank (e.g. v_filterbank)
 %                   with one column per filter channel
 %        inc        frame increment in samples
 %        nw         window length in samples [or window function]
@@ -31,6 +31,11 @@ function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)
 %        y(lag,chan,frame) is v_correlogram. Lags are 1:nlag samples
 %        ty                is time of the window energy centre for each frame
 %                            x(n) is at time n
+%
+% Refs:
+% [1]	D. Wang and G. J. Brown. Fundamentals of computational auditory scene analysis.
+%       In D. Wang and G. Brown, editors, Computational Auditory Scene Analysis: Principles,
+%       Algorithms, and Applications, chapter 1. Wiley, Oct. 2006. doi: 10.1109/9780470043387.ch1
 
 %      Copyright (C) Mike Brookes 2011-2018
 %      Version: $Id: v_correlogram.m 10867 2018-09-21 17:35:59Z dmb $
@@ -53,12 +58,12 @@ function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-memsize=v_voicebox('memsize');    % set memory size to use
-[nx,nc]=size(x);  % number of sampes and channels
+memsize=v_voicebox('memsize'); 	% set memory size to use
+[nx,nc]=size(x);                % number of sampes and channels
 if nargin<6
-    fs=1;
+    fs=1;                       % default sample frequency is 1 Hz
     if nargin<5
-        m='h';
+        m='h';                  % default analysis window is Hamming
         if nargin<4
             nlag=[];
             if nargin<3
@@ -71,15 +76,15 @@ if nargin<6
     end
 end
 if ~numel(inc)
-    inc=128;
+    inc=128;                    % default frame hop is 128 samples
 end
 if ~numel(nw)
-    nw=inc;
+    nw=inc;                     % default analysis window length is the fame increment
 end
 nwin=length(nw);
-if nwin>1
+if nwin>1                       % nw specifies the window function explicitly
     win=nw(:);
-else
+else                            % nw gives the window length
     nwin=nw;
     if any(m=='h')
         win=v_windows(3,nwin)'; % Hamming window
@@ -91,14 +96,14 @@ if ~numel(nlag)
     nlag=nwin;
 end
 nwl=nwin+nlag-1;
-nt=pow2(nextpow2(nwl));  % transform length
-nf=floor((nx-nwl+inc)/inc);  % number of frames
+nt=pow2(nextpow2(nwl));         % transform length
+nf=floor((nx-nwl+inc)/inc);     % number of frames
 i1=repmat((1:nwl)',1,nc)+repmat(0:nx:nx*nc-1,nwl,1);
 nb=min(nf,max(1,floor(memsize/(16*nwl*nc))));    % chunk size for calculating
 nl=ceil(nf/nb);                  % number of chunks
 jx0=nf-(nl-1)*nb;                % size of first chunk in frames
 wincg=(1:nwin)*win.^2/(win'*win);
-fwin=conj(fft(win,nt,1)); % fft of window
+fwin=conj(fft(win,nt,1));       % fft of window
 y=zeros(nlag,nc,nf);
 % first do partial chunk
 jx=jx0;
