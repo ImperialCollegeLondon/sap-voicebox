@@ -80,8 +80,23 @@ function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 % References:
 % [1]	ITU-T. Objective measurement of active speech level. Recommendation P.56, Mar. 1993.
 % [2]	ITU-T. Objective measurement of active speech level. Recommendation P.56, Dec. 2011.
+%
+% Revision History
+%
+% 2011-10-16   713 Initial version
+% 2012-11-02  2471 Correctd behaviour when there are zero or multiple solutions to A(l)=C(l)+M
+% 2012-11-19  2516 Modified comments
+% 2014-03-17  4346 Modified comments
+% 2014-07-09  4795 Improved plotting when no output arguments are specified
+% 2016-01-06  7336 Include wideband options from 2011 standard
+% 2017-02-07  9407 Added 'z' option and corrected output for an all-zero input signal
+% 2018-03-22 10436 Modified comments
+% 2018-09-21 10863 Renamed to start with "v_"
+% 2018-11-07 10988 Changed EOL style to native so checkout works on all machines
+% 2019-11-19 ????? Fixed error in calculating the activity factor; it now excludes the
+%                  zero-padding samples from the calculation. [thanks to Joe Begin]
 
-%      Copyright (C) Mike Brookes 2008-2016
+%      Copyright (C) Mike Brookes 2008-2019
 %      Version: $Id: v_activlev.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -246,7 +261,7 @@ if ns                       % process this speech chunk
         fso.kc=kc;
     end
 end
-if fso.ns                       % now calculate the output values
+if fso.ns>nz                       % now calculate the output values
     if fso.ssq>0
         aj=10*log10(fso.ssq*(fso.kc).^(-1));
         % equivalent to cj=20*log10(sqrt(2).^(fso.emax-(1:nbin)-1));
@@ -272,7 +287,7 @@ if fso.ns                       % now calculate the output values
         else                                % ~'d' option -> output in power
             lev=[lp fso.ssq/fso.ns];
         end
-        af=fso.ssq/(fso.ns*lp);
+        af=fso.ssq/((fso.ns-nz)*lp);
     else                        % if all samples are equal to zero
         af=0;
         if any(md=='d')         % 'd' option -> output in dB
