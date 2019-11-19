@@ -93,11 +93,11 @@ function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 % 2018-03-22 10436 Modified comments
 % 2018-09-21 10863 Renamed to start with "v_"
 % 2018-11-07 10988 Changed EOL style to native so checkout works on all machines
-% 2019-11-19 ????? Fixed error in calculating the activity factor; it now excludes the
+% 2019-11-19 11190 Fixed error in calculating the activity factor; it now excludes the
 %                  zero-padding samples from the calculation. [thanks to Joe Begin]
 
 %      Copyright (C) Mike Brookes 2008-2019
-%      Version: $Id: v_activlev.m 10865 2018-09-21 17:22:45Z dmb $
+%      Version: $Id: v_activlev.m 11190 2019-11-19 12:53:58Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
