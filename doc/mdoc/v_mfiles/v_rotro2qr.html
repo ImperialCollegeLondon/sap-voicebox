@@ -28,15 +28,15 @@
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
- Inputs: 
+ Inputs:
 
-     R(3,3)   Input rotation matrix
+     R(3,3,...)   Input rotation matrix
 
- Outputs: 
+ Outputs:
 
-     Q(4,1)   normalized real-valued quaternion
+     Q(4,...)   normalized real-valued quaternion
 
- In the quaternion representation of a rotation, and q(1) = cos(t/2) 
+ In the quaternion representation of a rotation, and q(1) = cos(t/2)
  where t is the angle of rotation in the range 0 to 2pi
  and q(2:4)/sin(t/2) is a unit vector lying along the axis of rotation
  a positive rotation about [0 0 1] takes the X axis towards the Y axis.</pre></div>
@@ -57,11 +57,11 @@ This function is called by:
 0002 <span class="comment">%V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</span>
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
-0005 <span class="comment">%     R(3,3)   Input rotation matrix</span>
+0005 <span class="comment">%     R(3,3,...)   Input rotation matrix</span>
 0006 <span class="comment">%</span>
 0007 <span class="comment">% Outputs:</span>
 0008 <span class="comment">%</span>
-0009 <span class="comment">%     Q(4,1)   normalized real-valued quaternion</span>
+0009 <span class="comment">%     Q(4,...)   normalized real-valued quaternion</span>
 0010 <span class="comment">%</span>
 0011 <span class="comment">% In the quaternion representation of a rotation, and q(1) = cos(t/2)</span>
 0012 <span class="comment">% where t is the angle of rotation in the range 0 to 2pi</span>
@@ -91,41 +91,58 @@ This function is called by:
 0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
 0037 
 0038 <span class="comment">% in the comments below, t is the rotation angle, a is the rotation axis</span>
-0039 q=zeros(4,1);
-0040 t = 1 + r(1) + r(5) + r(9);     <span class="comment">% 2(1+cos(t)) = 4(cos(t/2))^2 = 4 q(1)^2</span>
-0041 <span class="keyword">if</span> t&gt;1                       <span class="comment">% for rotation angles less than 120 degrees</span>
-0042     s = sqrt(t) * 2;            <span class="comment">% 4 cos(t/2) = 2 sin(t)/sin(t/2)</span>
-0043     q(2) = ( r(6) - r(8) ) / s;
-0044     q(3) = ( r(7) - r(3) ) / s;
-0045     q(4) = ( r(2) - r(4) ) / s;
-0046     q(1) = 0.25 * s;            <span class="comment">% cos(t/2)</span>
-0047 <span class="keyword">elseif</span> ( r(1) &gt; r(5) &amp;&amp; r(1) &gt; r(9) )            <span class="comment">% row 1</span>
-0048     s  = sqrt( 1.0 + r(1) - r(5) - r(9) ) * 2;  <span class="comment">% 4 a(1) sin(t/2) = 2 a(2) (1-cos(t))/sin(t/2)</span>
-0049     q(2) = 0.25 * s;
-0050     q(3) = (r(2) + r(4) ) / s;
-0051     q(4) = (r(7) + r(3) ) / s;
-0052     q(1) = (r(6) - r(8) ) / s;
-0053 <span class="keyword">elseif</span> ( r(5) &gt; r(9) )                           <span class="comment">% row 2</span>
-0054     s  = sqrt( 1.0 + r(5) - r(1) - r(9) ) * 2;
-0055     q(2) = (r(2) + r(4) ) / s;
-0056     q(3) = 0.25 * s;
-0057     q(4) = (r(6) + r(8) ) / s;
-0058     q(1) = (r(7) - r(3) ) / s;
-0059 <span class="keyword">else</span>                                             <span class="comment">% row 3</span>
-0060     s  = sqrt( 1.0 + r(9) - r(1) - r(5) ) * 2;
-0061     q(2) = (r(7) + r(3) ) / s;
-0062     q(3) = (r(6) + r(8) ) / s;
-0063     q(4) = 0.25 * s;
-0064     q(1) = (r(2) - r(4) ) / s;
-0065 <span class="keyword">end</span>
-0066 q=q*(2*(q(find(q~=0,1))&gt;0)-1); <span class="comment">% force leading coefficient to be positive</span>
-0067 <span class="keyword">if</span> abs(q'*q-1)&gt;1e-8
-0068     error(<span class="string">'Input to rotro2qr must be a rotation matrix with det(r)=+1'</span>);
-0069 <span class="keyword">end</span>
-0070 <span class="keyword">if</span> ~nargout
-0071     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q); <span class="comment">% plot a cube</span>
-0072 <span class="keyword">end</span>
-0073</pre></div>
+0039 sz=size(r);
+0040 r=reshape(r,9,[]); <span class="comment">% make 2-dimensional</span>
+0041 q=zeros(4,size(r,2));
+0042 d = 1+r(1,:)+r(5,:)+r(9,:);     <span class="comment">% 2(1+cos(t)) = 4(cos(t/2))^2 = 4 q(1)^2</span>
+0043 mm=d&gt;1; <span class="comment">% mask for rotation angles &lt; 120 degrees</span>
+0044 <span class="keyword">if</span> any(mm)                       <span class="comment">% for rotation angles less than 120 degrees</span>
+0045     s = sqrt(d(mm))*2;            <span class="comment">% 4 cos(t/2) = 2 sin(t)/sin(t/2)</span>
+0046     q(2,mm) = (r(6,mm)-r(8,mm))./s;
+0047     q(3,mm) = (r(7,mm)-r(3,mm))./s;
+0048     q(4,mm) = (r(2,mm)-r(4,mm))./s;
+0049     q(1,mm) = 0.25*s;            <span class="comment">% cos(t/2)</span>
+0050 <span class="keyword">end</span>
+0051 <span class="keyword">if</span> any(~mm)
+0052     m=(r(1,:)&gt;r(5,:)) &amp; (r(1,:)&gt;r(9,:)) &amp; ~mm;
+0053     <span class="keyword">if</span> any(m)
+0054         s  = sqrt( 1.0+r(1,m)-r(5,m)-r(9,m))*2;  <span class="comment">% s&gt;=2 always: s=4 a(1) sin(t/2) = 2 a(2) (1-cos(t))/sin(t/2)</span>
+0055         q(2,m) = 0.25*s;
+0056         q(3,m) = (r(2,m)+r(4,m))./s;
+0057         q(4,m) = (r(7,m)+r(3,m))./s;
+0058         q(1,m) = (r(6,m)-r(8,m))./s;
+0059         mm=mm|m;
+0060     <span class="keyword">end</span>
+0061     m=(r(5,:)&gt;r(9,:)) &amp; ~mm;
+0062     <span class="keyword">if</span> any(m)
+0063         s  = sqrt( 1.0+r(5,m)-r(1,m)-r(9,m))*2; <span class="comment">% s&gt;=2 always: s=4 a(2) sin(t/2)</span>
+0064         q(2,m) = (r(2,m)+r(4,m))./s;
+0065         q(3,m) = 0.25*s;
+0066         q(4,m) = (r(6,m)+r(8,m))./s;
+0067         q(1,m) = (r(7,m)-r(3,m))./s;
+0068         mm=mm|m;
+0069     <span class="keyword">end</span>
+0070     <span class="keyword">if</span> any(~mm)
+0071         m=~mm;
+0072         s  = sqrt( 1.0+r(9,m)-r(1,m)-r(5,m))*2;  <span class="comment">% s&gt;=2 always: s=4 a(3) sin(t/2)</span>
+0073         q(2,m) = (r(7,m)+r(3,m))./s;
+0074         q(3,m) = (r(6,m)+r(8,m))./s;
+0075         q(4,m) = 0.25*s;
+0076         q(1,m) = (r(2,m)-r(4,m))./s;
+0077     <span class="keyword">end</span>
+0078 <span class="keyword">end</span>
+0079 <span class="keyword">if</span> max(abs(sum(q.^2,1)-1))&gt;1e-8; <span class="comment">% check normalization</span>
+0080     error(<span class="string">'Input to rotro2qr must be a rotation matrix with det(r)=+1'</span>);
+0081 <span class="keyword">end</span>
+0082 <span class="keyword">if</span> length(sz)&lt;3
+0083     sz=[4 1];
+0084 <span class="keyword">else</span>
+0085     sz=[4 sz(3:end)];
+0086 <span class="keyword">end</span>
+0087 q=reshape(q.*repmat(sign([8 4 2 1]*sign(q)),4,1),sz); <span class="comment">% force leading coefficient to be positive and reshape</span>
+0088 <span class="keyword">if</span> ~nargout
+0089     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q); <span class="comment">% plot a cube</span>
+0090 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

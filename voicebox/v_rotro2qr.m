@@ -1,14 +1,14 @@
 function q=v_rotro2qr(r)
 %V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion
-% Inputs: 
+% Inputs:
 %
-%     R(3,3)   Input rotation matrix
+%     R(3,3,...)   Input rotation matrix
 %
-% Outputs: 
+% Outputs:
 %
-%     Q(4,1)   normalized real-valued quaternion
+%     Q(4,...)   normalized real-valued quaternion
 %
-% In the quaternion representation of a rotation, and q(1) = cos(t/2) 
+% In the quaternion representation of a rotation, and q(1) = cos(t/2)
 % where t is the angle of rotation in the range 0 to 2pi
 % and q(2:4)/sin(t/2) is a unit vector lying along the axis of rotation
 % a positive rotation about [0 0 1] takes the X axis towards the Y axis.
@@ -36,38 +36,55 @@ function q=v_rotro2qr(r)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % in the comments below, t is the rotation angle, a is the rotation axis
-q=zeros(4,1);
-t = 1 + r(1) + r(5) + r(9);     % 2(1+cos(t)) = 4(cos(t/2))^2 = 4 q(1)^2
-if t>1                       % for rotation angles less than 120 degrees
-    s = sqrt(t) * 2;            % 4 cos(t/2) = 2 sin(t)/sin(t/2)
-    q(2) = ( r(6) - r(8) ) / s;
-    q(3) = ( r(7) - r(3) ) / s;
-    q(4) = ( r(2) - r(4) ) / s;
-    q(1) = 0.25 * s;            % cos(t/2)
-elseif ( r(1) > r(5) && r(1) > r(9) )            % row 1
-    s  = sqrt( 1.0 + r(1) - r(5) - r(9) ) * 2;  % 4 a(1) sin(t/2) = 2 a(2) (1-cos(t))/sin(t/2)
-    q(2) = 0.25 * s;
-    q(3) = (r(2) + r(4) ) / s;
-    q(4) = (r(7) + r(3) ) / s;
-    q(1) = (r(6) - r(8) ) / s;
-elseif ( r(5) > r(9) )                           % row 2
-    s  = sqrt( 1.0 + r(5) - r(1) - r(9) ) * 2;
-    q(2) = (r(2) + r(4) ) / s;
-    q(3) = 0.25 * s;
-    q(4) = (r(6) + r(8) ) / s;
-    q(1) = (r(7) - r(3) ) / s;
-else                                             % row 3
-    s  = sqrt( 1.0 + r(9) - r(1) - r(5) ) * 2;
-    q(2) = (r(7) + r(3) ) / s;
-    q(3) = (r(6) + r(8) ) / s;
-    q(4) = 0.25 * s;
-    q(1) = (r(2) - r(4) ) / s;
+sz=size(r);
+r=reshape(r,9,[]); % make 2-dimensional
+q=zeros(4,size(r,2));
+d = 1+r(1,:)+r(5,:)+r(9,:);     % 2(1+cos(t)) = 4(cos(t/2))^2 = 4 q(1)^2
+mm=d>1; % mask for rotation angles < 120 degrees
+if any(mm)                       % for rotation angles less than 120 degrees
+    s = sqrt(d(mm))*2;            % 4 cos(t/2) = 2 sin(t)/sin(t/2)
+    q(2,mm) = (r(6,mm)-r(8,mm))./s;
+    q(3,mm) = (r(7,mm)-r(3,mm))./s;
+    q(4,mm) = (r(2,mm)-r(4,mm))./s;
+    q(1,mm) = 0.25*s;            % cos(t/2)
 end
-q=q*(2*(q(find(q~=0,1))>0)-1); % force leading coefficient to be positive
-if abs(q'*q-1)>1e-8
+if any(~mm)
+    m=(r(1,:)>r(5,:)) & (r(1,:)>r(9,:)) & ~mm;
+    if any(m)
+        s  = sqrt( 1.0+r(1,m)-r(5,m)-r(9,m))*2;  % s>=2 always: s=4 a(1) sin(t/2) = 2 a(2) (1-cos(t))/sin(t/2)
+        q(2,m) = 0.25*s;
+        q(3,m) = (r(2,m)+r(4,m))./s;
+        q(4,m) = (r(7,m)+r(3,m))./s;
+        q(1,m) = (r(6,m)-r(8,m))./s;
+        mm=mm|m;
+    end
+    m=(r(5,:)>r(9,:)) & ~mm;
+    if any(m)
+        s  = sqrt( 1.0+r(5,m)-r(1,m)-r(9,m))*2; % s>=2 always: s=4 a(2) sin(t/2)
+        q(2,m) = (r(2,m)+r(4,m))./s;
+        q(3,m) = 0.25*s;
+        q(4,m) = (r(6,m)+r(8,m))./s;
+        q(1,m) = (r(7,m)-r(3,m))./s;
+        mm=mm|m;
+    end
+    if any(~mm)
+        m=~mm;
+        s  = sqrt( 1.0+r(9,m)-r(1,m)-r(5,m))*2;  % s>=2 always: s=4 a(3) sin(t/2)
+        q(2,m) = (r(7,m)+r(3,m))./s;
+        q(3,m) = (r(6,m)+r(8,m))./s;
+        q(4,m) = 0.25*s;
+        q(1,m) = (r(2,m)-r(4,m))./s;
+    end
+end
+if max(abs(sum(q.^2,1)-1))>1e-8; % check normalization
     error('Input to rotro2qr must be a rotation matrix with det(r)=+1');
 end
+if length(sz)<3
+    sz=[4 1];
+else
+    sz=[4 sz(3:end)];
+end
+q=reshape(q.*repmat(sign([8 4 2 1]*sign(q)),4,1),sz); % force leading coefficient to be positive and reshape
 if ~nargout
     v_rotqr2ro(q); % plot a cube
 end
-     

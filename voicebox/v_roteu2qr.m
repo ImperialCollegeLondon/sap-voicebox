@@ -3,7 +3,7 @@ function q=v_roteu2qr(m,e)
 % Inputs:
 %
 %     M        a string of n characters from the set determining the order of rotation axes
-%              as listed below:
+%              as listed below. Note that the control characters 'rdoOaA' may occur anywhere in the string:
 %                'x','y','z'    rotate around the given axis by the corresponding angle
 %                               given in e()
 %                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
@@ -33,7 +33,7 @@ function q=v_roteu2qr(m,e)
 % (1) 'zxz' the most common Euler angle set (including a replicated axis, z)
 % (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
 %     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
-% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
+% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.
 %
 % Inverse conversion: If m has length 3 with adjacent characters distinct,
 %                     then v_rotqr2eu(m,v_roteu2qr(m,e))=e.
@@ -62,50 +62,28 @@ function q=v_roteu2qr(m,e)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-persistent y cb sb
+persistent y cb sb mch mvch
 if isempty(y)
     y=repmat([2 4 1 3 1 3 2 4; 3 2 1 4 1 4 3 2; 3 4 2 1 1 2 4 3],4,1);
     cb=cos([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
     sb=sin([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
+    mch=''; % cached rotation code string
+    mvch=[0;0;1;1;0;0;1];
 end
-% m consists of a sequence of axes e.g. 'zxy'
-% and e gives the rotation angles in radians or degrees
-if ischar(m)
-    m=m-'w'; % convert to integers for backwards compatibiity
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Convert the m string
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ischar(m) && strcmp(m,mch) % check if the rotation code string is cached
+    mv=mvch;
+else
+    mv=v_roteucode(m); % else decode the string
+    mch=m; % and save the result in the cache for next time.
+    mvch=mv;
 end
-mi=m>=-31 & m<=-29; % convert XYZ to xyz
-m(mi)=m(mi)+32;
-mi=m>=-70 & m<=-62; % find digits 1:9
-m(mi)=m(mi)+74; % convert to 4:12
-mi=m<=0; % select control characters
-mc=m(mi); % controls
-m=m(~mi); % rotations
-ef=0.5; % angle scale factor
-es=1; % angle sign
-fl=0; % need to flip rotation order
-for i=1:length(mc)
-    switch mc(i)
-        case -5 % 'r' = radians
-        case -19 % 'd' = degrees
-            ef=pi/360; % scale factor to convert to radians and halve
-        case -8 % 'o' = object-extrinsic
-        case -40 % 'O' = object-intrinsic
-            fl=1;
-        case -22 % 'a' = axes-extrinsic
-            fl=1;
-            es=-1;
-        case -54 % 'A' = axes-intrinsic
-            es=-1;
-        otherwise
-            error('Invalid character: %s',mc(i)+'w')
-    end
-end
-ne=sum(m<=3); % number of elements required in e per output
+ne=mv(2,end); % number of elements required in e per output
 if ne==0
-    ne=1;
-    sz=[1 1];
-    nq=1;
-    e=[]; % create a dummy e in case it wasn't specified
+    sz=[1 1]; % change sz to give a single output
+    q=zeros(4,1); % space for single output quaternion
 else
     sz=size(e);
     if sz(1)==1 && numel(e)==ne % allow legacy call with row-vector input
@@ -114,22 +92,18 @@ else
     else
         e=reshape(e,sz(1),[]); % put each set of angles in a separate column
     end
-    nq=size(e,2);
+    q=zeros(4,size(e,2)); % space for output quaternions
 end
-q=zeros(4,nq);
 q(1,:)=1; % initialize output quaternions to the value 1
 r=q; % space for temporary quaternion
-j=0; % number of angles used so far
-if fl
-    m=m(end:-1:1); % reverse the order of m
-    e=e(end:-1:1,:); % and of e
-end
-for i=1:length(m)
-    mi=m(i);
+ef=0.5*mv(end-3); % signed euler angle scale factor include 0.5 factor
+nm=size(mv,2)-1; % number of rotations to do
+for i=1:nm
+    mvi=mv(:,i);
+    mi=mvi(1);
     x=y(mi,:); % index for x,y,or z axes
     if mi<4
-        j=j+1; % next angle required
-        b=ef*e(j,:); % rotation semi-angle in radians
+        b=ef*e(mvi(2),:); % semi-rotation angle in radians
         c=cos(b);
         s=sin(b);
     else
@@ -138,8 +112,9 @@ for i=1:length(m)
     end
     r(x(1:2),:)=q(x(3:4),:);
     r(x(5:6),:)=-q(x(7:8),:);
-    q=repmat(c,4,1).*q+repmat(s*es,4,1).*r;
+    q=repmat(c,4,1).*q+repmat(s,4,1).*r;
 end
+q(1,:)=q(1,:)*mv(end); % invert rotation if necessary
 if ~nargout
     v_rotqr2ro(q(:,1)); % plot a cube
 else

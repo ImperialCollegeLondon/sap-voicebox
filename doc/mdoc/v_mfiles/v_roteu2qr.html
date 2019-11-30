@@ -31,7 +31,7 @@
  Inputs:
 
      M        a string of n characters from the set determining the order of rotation axes
-              as listed below:
+              as listed below. Note that the control characters 'rdoOaA' may occur anywhere in the string:
                 'x','y','z'    rotate around the given axis by the corresponding angle
                                given in e()
                 '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
@@ -61,7 +61,7 @@
  (1) 'zxz' the most common Euler angle set (including a replicated axis, z)
  (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to
      the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.
- (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis. 
+ (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.
 
  Inverse conversion: If m has length 3 with adjacent characters distinct,
                      then v_rotqr2eu(m,v_roteu2qr(m,e))=e.
@@ -72,7 +72,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
+<li><a href="v_roteucode.html" class="code" title="function mv=v_roteucode(m)">v_roteucode</a>	V_ROTEUCODE decodes a string specifying a rotation axis sequence</li><li><a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>	ROTQR2RO converts a real quaternion to a 3x3 rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="v_roteu2ro.html" class="code" title="function r=v_roteu2ro(varargin)">v_roteu2ro</a>	V_ROTEU2QR converts a sequence of Euler angles to a rotation matrix</li></ul>
@@ -85,7 +85,7 @@ This function is called by:
 0003 <span class="comment">% Inputs:</span>
 0004 <span class="comment">%</span>
 0005 <span class="comment">%     M        a string of n characters from the set determining the order of rotation axes</span>
-0006 <span class="comment">%              as listed below:</span>
+0006 <span class="comment">%              as listed below. Note that the control characters 'rdoOaA' may occur anywhere in the string:</span>
 0007 <span class="comment">%                'x','y','z'    rotate around the given axis by the corresponding angle</span>
 0008 <span class="comment">%                               given in e()</span>
 0009 <span class="comment">%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()</span>
@@ -144,90 +144,65 @@ This function is called by:
 0062 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
 0063 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
 0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0065 <span class="keyword">persistent</span> y cb sb
+0065 <span class="keyword">persistent</span> y cb sb mch mvch
 0066 <span class="keyword">if</span> isempty(y)
 0067     y=repmat([2 4 1 3 1 3 2 4; 3 2 1 4 1 4 3 2; 3 4 2 1 1 2 4 3],4,1);
 0068     cb=cos([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
 0069     sb=sin([0 0 0 1 1 1 2 2 2 3 3 3]*pi/4);
-0070 <span class="keyword">end</span>
-0071 <span class="comment">% m consists of a sequence of axes e.g. 'zxy'</span>
-0072 <span class="comment">% and e gives the rotation angles in radians or degrees</span>
-0073 <span class="keyword">if</span> ischar(m)
-0074     m=m-<span class="string">'w'</span>; <span class="comment">% convert to integers for backwards compatibiity</span>
-0075 <span class="keyword">end</span>
-0076 mi=m&gt;=-31 &amp; m&lt;=-29; <span class="comment">% convert XYZ to xyz</span>
-0077 m(mi)=m(mi)+32;
-0078 mi=m&gt;=-70 &amp; m&lt;=-62; <span class="comment">% find digits 1:9</span>
-0079 m(mi)=m(mi)+74; <span class="comment">% convert to 4:12</span>
-0080 mi=m&lt;=0; <span class="comment">% select control characters</span>
-0081 mc=m(mi); <span class="comment">% controls</span>
-0082 m=m(~mi); <span class="comment">% rotations</span>
-0083 ef=0.5; <span class="comment">% angle scale factor</span>
-0084 es=1; <span class="comment">% angle sign</span>
-0085 fl=0; <span class="comment">% need to flip rotation order</span>
-0086 <span class="keyword">for</span> i=1:length(mc)
-0087     <span class="keyword">switch</span> mc(i)
-0088         <span class="keyword">case</span> -5 <span class="comment">% 'r' = radians</span>
-0089         <span class="keyword">case</span> -19 <span class="comment">% 'd' = degrees</span>
-0090             ef=pi/360; <span class="comment">% scale factor to convert to radians and halve</span>
-0091         <span class="keyword">case</span> -8 <span class="comment">% 'o' = object-extrinsic</span>
-0092         <span class="keyword">case</span> -40 <span class="comment">% 'O' = object-intrinsic</span>
-0093             fl=1;
-0094         <span class="keyword">case</span> -22 <span class="comment">% 'a' = axes-extrinsic</span>
-0095             fl=1;
-0096             es=-1;
-0097         <span class="keyword">case</span> -54 <span class="comment">% 'A' = axes-intrinsic</span>
-0098             es=-1;
-0099         <span class="keyword">otherwise</span>
-0100             error(<span class="string">'Invalid character: %s'</span>,mc(i)+<span class="string">'w'</span>)
-0101     <span class="keyword">end</span>
-0102 <span class="keyword">end</span>
-0103 ne=sum(m&lt;=3); <span class="comment">% number of elements required in e per output</span>
-0104 <span class="keyword">if</span> ne==0
-0105     ne=1;
-0106     sz=[1 1];
-0107     nq=1;
-0108     e=[]; <span class="comment">% create a dummy e in case it wasn't specified</span>
-0109 <span class="keyword">else</span>
-0110     sz=size(e);
-0111     <span class="keyword">if</span> sz(1)==1 &amp;&amp; numel(e)==ne <span class="comment">% allow legacy call with row-vector input</span>
-0112         e=e(:);
-0113         sz=size(e);
-0114     <span class="keyword">else</span>
-0115         e=reshape(e,sz(1),[]); <span class="comment">% put each set of angles in a separate column</span>
-0116     <span class="keyword">end</span>
-0117     nq=size(e,2);
-0118 <span class="keyword">end</span>
-0119 q=zeros(4,nq);
-0120 q(1,:)=1; <span class="comment">% initialize output quaternions to the value 1</span>
-0121 r=q; <span class="comment">% space for temporary quaternion</span>
-0122 j=0; <span class="comment">% number of angles used so far</span>
-0123 <span class="keyword">if</span> fl
-0124     m=m(end:-1:1); <span class="comment">% reverse the order of m</span>
-0125     e=e(end:-1:1,:); <span class="comment">% and of e</span>
-0126 <span class="keyword">end</span>
-0127 <span class="keyword">for</span> i=1:length(m)
-0128     mi=m(i);
-0129     x=y(mi,:); <span class="comment">% index for x,y,or z axes</span>
-0130     <span class="keyword">if</span> mi&lt;4
-0131         j=j+1; <span class="comment">% next angle required</span>
-0132         b=ef*e(j,:); <span class="comment">% rotation semi-angle in radians</span>
-0133         c=cos(b);
-0134         s=sin(b);
-0135     <span class="keyword">else</span>
-0136         c=cb(mi);
-0137         s=sb(mi);
-0138     <span class="keyword">end</span>
-0139     r(x(1:2),:)=q(x(3:4),:);
-0140     r(x(5:6),:)=-q(x(7:8),:);
-0141     q=repmat(c,4,1).*q+repmat(s*es,4,1).*r;
-0142 <span class="keyword">end</span>
-0143 <span class="keyword">if</span> ~nargout
-0144     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q(:,1)); <span class="comment">% plot a cube</span>
-0145 <span class="keyword">else</span>
-0146     sz(1)=4; <span class="comment">% each rotation needs 4 outputs</span>
-0147     q=reshape(q.*repmat(sign([8 4 2 1]*sign(q)),4,1),sz); <span class="comment">% force leading coefficient to be positive and reshape</span>
-0148 <span class="keyword">end</span></pre></div>
+0070     mch=<span class="string">''</span>; <span class="comment">% cached rotation code string</span>
+0071     mvch=[0;0;1;1;0;0;1];
+0072 <span class="keyword">end</span>
+0073 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0074 <span class="comment">% Convert the m string</span>
+0075 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0076 <span class="keyword">if</span> ischar(m) &amp;&amp; strcmp(m,mch) <span class="comment">% check if the rotation code string is cached</span>
+0077     mv=mvch;
+0078 <span class="keyword">else</span>
+0079     mv=<a href="v_roteucode.html" class="code" title="function mv=v_roteucode(m)">v_roteucode</a>(m); <span class="comment">% else decode the string</span>
+0080     mch=m; <span class="comment">% and save the result in the cache for next time.</span>
+0081     mvch=mv;
+0082 <span class="keyword">end</span>
+0083 ne=mv(2,end); <span class="comment">% number of elements required in e per output</span>
+0084 <span class="keyword">if</span> ne==0
+0085     sz=[1 1]; <span class="comment">% change sz to give a single output</span>
+0086     q=zeros(4,1); <span class="comment">% space for single output quaternion</span>
+0087 <span class="keyword">else</span>
+0088     sz=size(e);
+0089     <span class="keyword">if</span> sz(1)==1 &amp;&amp; numel(e)==ne <span class="comment">% allow legacy call with row-vector input</span>
+0090         e=e(:);
+0091         sz=size(e);
+0092     <span class="keyword">else</span>
+0093         e=reshape(e,sz(1),[]); <span class="comment">% put each set of angles in a separate column</span>
+0094     <span class="keyword">end</span>
+0095     q=zeros(4,size(e,2)); <span class="comment">% space for output quaternions</span>
+0096 <span class="keyword">end</span>
+0097 q(1,:)=1; <span class="comment">% initialize output quaternions to the value 1</span>
+0098 r=q; <span class="comment">% space for temporary quaternion</span>
+0099 ef=0.5*mv(end-3); <span class="comment">% signed euler angle scale factor include 0.5 factor</span>
+0100 nm=size(mv,2)-1; <span class="comment">% number of rotations to do</span>
+0101 <span class="keyword">for</span> i=1:nm
+0102     mvi=mv(:,i);
+0103     mi=mvi(1);
+0104     x=y(mi,:); <span class="comment">% index for x,y,or z axes</span>
+0105     <span class="keyword">if</span> mi&lt;4
+0106         b=ef*e(mvi(2),:); <span class="comment">% semi-rotation angle in radians</span>
+0107         c=cos(b);
+0108         s=sin(b);
+0109     <span class="keyword">else</span>
+0110         c=cb(mi);
+0111         s=sb(mi);
+0112     <span class="keyword">end</span>
+0113     r(x(1:2),:)=q(x(3:4),:);
+0114     r(x(5:6),:)=-q(x(7:8),:);
+0115     q=repmat(c,4,1).*q+repmat(s,4,1).*r;
+0116 <span class="keyword">end</span>
+0117 q(1,:)=q(1,:)*mv(end); <span class="comment">% invert rotation if necessary</span>
+0118 <span class="keyword">if</span> ~nargout
+0119     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(q(:,1)); <span class="comment">% plot a cube</span>
+0120 <span class="keyword">else</span>
+0121     sz(1)=4; <span class="comment">% each rotation needs 4 outputs</span>
+0122     q=reshape(q.*repmat(sign([8 4 2 1]*sign(q)),4,1),sz); <span class="comment">% force leading coefficient to be positive and reshape</span>
+0123 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
