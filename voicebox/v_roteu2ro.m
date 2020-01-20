@@ -9,7 +9,8 @@ function r=v_roteu2ro(varargin)
 %                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
 %                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
 %                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
-%                'r','d'        all angles are given in radians or degrees  [radians]
+%                'r','d'        all angles are given in radians or degrees  [default='r']
+%                'R','D'        all angles are given in radians or degrees and are negated
 %             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
 %                               whether the rotation axes remain fixed in space for consecutive
 %                               rotations (extrinsic) or else move with each rotation (intrinsic).
@@ -18,13 +19,13 @@ function r=v_roteu2ro(varargin)
 %                                  'a' = axes-extrinsic
 %                                  'A' = axes-intrinsic
 %
-%     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
-%              A positive rotation is clockwise if looking along the +ve axis away from the origin.
-%              The x, y, z axes form a right-handed triple.
+%     E(K,...)  K Euler angles in radians (or degrees if 'd' or 'D' specified) per quaternion where K is the number of 'xyz' characters in M.
+%               A positive rotation is clockwise if looking along the +ve axis away from the origin or anti-clockwise if 'R' or 'D' is given.
+%               The x, y, z axes form a right-handed triple.
 %
 % Outputs:
 %
-%     R(3,3,...)   Input rotation matrix
+%     R(3,3,...)   Output rotation matrix
 %              Plots a diagram if no output specified
 %
 % The string M specifies the seqeunce of axes about which the rotations are performed. There are 12

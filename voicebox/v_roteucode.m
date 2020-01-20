@@ -216,7 +216,7 @@ ich=find(strcmp(m,mch),1);      % check if already in the cache
 if isempty(ich)                 % not yet in the cache
     mm=m-'w';                   % convert to integers with x -> 1
     mi=mm>=-31 & mm<=-29;       % find characters XYZ
-    mm(mi)=mm(mi)+32;           % convert XYZ to xyz
+    mm(mi)=mm(mi)+32;           % convert XYZ to xyz (for compatibility)
     mi=mm>=-70 & mm<=-62;       % find digits 1:9
     mm(mi)=mm(mi)+74;           % convert to 4:12
     mi=mm<=0;                   % select control characters
@@ -230,6 +230,10 @@ if isempty(ich)                 % not yet in the cache
             case -5             % 'r' = radians
             case -19            % 'd' = degrees
                 ef=pi/180;      % scale factor to convert to radians
+            case -37            % 'R' = negated radians
+                ef=-1;
+            case -51            % 'D' = negated degrees
+                ef=-pi/180;      % scale factor to convert to radians
             case -8             % 'o' = object-extrinsic
             case -40            % 'O' = object-intrinsic
                 fl=-1;
