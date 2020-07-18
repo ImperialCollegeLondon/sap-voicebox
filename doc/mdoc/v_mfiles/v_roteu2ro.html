@@ -37,7 +37,8 @@
                 '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
                 '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
                 '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
-                'r','d'        all angles are given in radians or degrees  [radians]
+                'r','d'        all angles are given in radians or degrees  [default='r']
+                'R','D'        all angles are given in radians or degrees and are negated
              'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
                                whether the rotation axes remain fixed in space for consecutive
                                rotations (extrinsic) or else move with each rotation (intrinsic).
@@ -46,13 +47,13 @@
                                   'a' = axes-extrinsic
                                   'A' = axes-intrinsic
 
-     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).
-              A positive rotation is clockwise if looking along the +ve axis away from the origin.
-              The x, y, z axes form a right-handed triple.
+     E(K,...)  K Euler angles in radians (or degrees if 'd' or 'D' specified) per quaternion where K is the number of 'xyz' characters in M.
+               A positive rotation is clockwise if looking along the +ve axis away from the origin or anti-clockwise if 'R' or 'D' is given.
+               The x, y, z axes form a right-handed triple.
 
  Outputs:
 
-     R(3,3,...)   Input rotation matrix
+     R(3,3,...)   Output rotation matrix
               Plots a diagram if no output specified
 
  The string M specifies the seqeunce of axes about which the rotations are performed. There are 12
@@ -92,64 +93,65 @@ This function is called by:
 0009 <span class="comment">%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()</span>
 0010 <span class="comment">%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()</span>
 0011 <span class="comment">%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()</span>
-0012 <span class="comment">%                'r','d'        all angles are given in radians or degrees  [radians]</span>
-0013 <span class="comment">%             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and</span>
-0014 <span class="comment">%                               whether the rotation axes remain fixed in space for consecutive</span>
-0015 <span class="comment">%                               rotations (extrinsic) or else move with each rotation (intrinsic).</span>
-0016 <span class="comment">%                                  'o' = object-extrinsic [default]</span>
-0017 <span class="comment">%                                  'O' = object-intrinsic</span>
-0018 <span class="comment">%                                  'a' = axes-extrinsic</span>
-0019 <span class="comment">%                                  'A' = axes-intrinsic</span>
-0020 <span class="comment">%</span>
-0021 <span class="comment">%     E(n,...) column vector of rotation angles in radians (or degrees if 'd' specified).</span>
-0022 <span class="comment">%              A positive rotation is clockwise if looking along the +ve axis away from the origin.</span>
-0023 <span class="comment">%              The x, y, z axes form a right-handed triple.</span>
-0024 <span class="comment">%</span>
-0025 <span class="comment">% Outputs:</span>
-0026 <span class="comment">%</span>
-0027 <span class="comment">%     R(3,3,...)   Input rotation matrix</span>
-0028 <span class="comment">%              Plots a diagram if no output specified</span>
-0029 <span class="comment">%</span>
-0030 <span class="comment">% The string M specifies the seqeunce of axes about which the rotations are performed. There are 12</span>
-0031 <span class="comment">% possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if</span>
-0032 <span class="comment">% there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:</span>
-0033 <span class="comment">% (1) 'zxz' the most common Euler angle set</span>
-0034 <span class="comment">% (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to</span>
-0035 <span class="comment">%     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.</span>
-0036 <span class="comment">% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.</span>
-0037 <span class="comment">%</span>
-0038 <span class="comment">% The Euler angles are not, in general, unique. In particular the following equivalences exist:</span>
-0039 <span class="comment">%  (1) v_roteu2ro('zxz',[a b c]) = v_roteu2ro('zxz',[a+pi -b c+pi])</span>
-0040 <span class="comment">%  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('zxz',[a+pi pi-b c+pi])</span>
-0041 <span class="comment">%  (3) v_roteu2ro('456',[]) = eye(3) % also true for any ordering of '456'</span>
-0042 <span class="comment">%  (4) v_roteu2ro('x',a) = v_roteu2ro('5x5',-a) = v_roteu2ro('5x6',pi-a) % also true if 5,6 are interchanged</span>
-0043 
-0044 <span class="comment">%      Copyright (C) Mike Brookes 2007-2019</span>
-0045 <span class="comment">%      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0046 <span class="comment">%</span>
-0047 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0048 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0049 <span class="comment">%</span>
-0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0051 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0052 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0053 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0054 <span class="comment">%   (at your option) any later version.</span>
-0055 <span class="comment">%</span>
-0056 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0057 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0058 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0059 <span class="comment">%   GNU General Public License for more details.</span>
-0060 <span class="comment">%</span>
-0061 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0062 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0063 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0065 <span class="keyword">if</span> nargout
-0066     r=<a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>(varargin{:}));
-0067 <span class="keyword">else</span>
-0068     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>(varargin{:})); <span class="comment">% draw a cube</span>
-0069 <span class="keyword">end</span></pre></div>
+0012 <span class="comment">%                'r','d'        all angles are given in radians or degrees  [default='r']</span>
+0013 <span class="comment">%                'R','D'        all angles are given in radians or degrees and are negated</span>
+0014 <span class="comment">%             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and</span>
+0015 <span class="comment">%                               whether the rotation axes remain fixed in space for consecutive</span>
+0016 <span class="comment">%                               rotations (extrinsic) or else move with each rotation (intrinsic).</span>
+0017 <span class="comment">%                                  'o' = object-extrinsic [default]</span>
+0018 <span class="comment">%                                  'O' = object-intrinsic</span>
+0019 <span class="comment">%                                  'a' = axes-extrinsic</span>
+0020 <span class="comment">%                                  'A' = axes-intrinsic</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%     E(K,...)  K Euler angles in radians (or degrees if 'd' or 'D' specified) per quaternion where K is the number of 'xyz' characters in M.</span>
+0023 <span class="comment">%               A positive rotation is clockwise if looking along the +ve axis away from the origin or anti-clockwise if 'R' or 'D' is given.</span>
+0024 <span class="comment">%               The x, y, z axes form a right-handed triple.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Outputs:</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%     R(3,3,...)   Output rotation matrix</span>
+0029 <span class="comment">%              Plots a diagram if no output specified</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% The string M specifies the seqeunce of axes about which the rotations are performed. There are 12</span>
+0032 <span class="comment">% possible 3-character sequences that avoid consecutive repetitions. These are 'Euler angles' if</span>
+0033 <span class="comment">% there is a repeated axis or 'Tait-Bryan angles' if not. Common choices are:</span>
+0034 <span class="comment">% (1) 'zxz' the most common Euler angle set</span>
+0035 <span class="comment">% (2) 'xyz' corresponds to 'roll, pitch, yaw' for an aeroplane heading in the x direction with y to</span>
+0036 <span class="comment">%     the right and z down. The intrinsic equivalent is 'Ozyx' corresponding to 'yaw, pitch, roll'.</span>
+0037 <span class="comment">% (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% The Euler angles are not, in general, unique. In particular the following equivalences exist:</span>
+0040 <span class="comment">%  (1) v_roteu2ro('zxz',[a b c]) = v_roteu2ro('zxz',[a+pi -b c+pi])</span>
+0041 <span class="comment">%  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('zxz',[a+pi pi-b c+pi])</span>
+0042 <span class="comment">%  (3) v_roteu2ro('456',[]) = eye(3) % also true for any ordering of '456'</span>
+0043 <span class="comment">%  (4) v_roteu2ro('x',a) = v_roteu2ro('5x5',-a) = v_roteu2ro('5x6',pi-a) % also true if 5,6 are interchanged</span>
+0044 
+0045 <span class="comment">%      Copyright (C) Mike Brookes 2007-2019</span>
+0046 <span class="comment">%      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0049 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0052 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0053 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0054 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0055 <span class="comment">%   (at your option) any later version.</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0058 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0059 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0060 <span class="comment">%   GNU General Public License for more details.</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0063 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0064 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0065 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0066 <span class="keyword">if</span> nargout
+0067     r=<a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>(varargin{:}));
+0068 <span class="keyword">else</span>
+0069     <a href="v_rotqr2ro.html" class="code" title="function r=v_rotqr2ro(q)">v_rotqr2ro</a>(<a href="v_roteu2qr.html" class="code" title="function q=v_roteu2qr(m,e)">v_roteu2qr</a>(varargin{:})); <span class="comment">% draw a cube</span>
+0070 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
