@@ -34,7 +34,7 @@ function [m,v]=v_chimv(n,l,s)
 % [3]	F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors. NIST Digital Library of Mathematical Functions. 2010-2014. URL http://dlmf.nist.gov/.
 
 %      Copyright (C) Mike Brookes 2014-2020
-%      Version: $Id: v_chimv.m 4969 2014-08-05 18:24:30Z dmb $
+%      Version: $Id: v_chimv.m 11260 2020-07-18 20:07:58Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html

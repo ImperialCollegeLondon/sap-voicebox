@@ -4,9 +4,9 @@ function mv=v_roteucode(m)
 %              as listed below. Note that the control characters 'rdoOaA' may occur anywhere in the string:
 %                'x','y','z'    rotate around the given axis by the corresponding angle
 %                               given in e()
-%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
-%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
-%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+%                '1','2','3'    90 degree rotation around x,y or z axis; doesn't use a value from e()
+%                '4','5','6'    180 degree rotation around x,y or z axis; doesn't use a value from e()
+%                '7','8','9'    270 degree rotation around x,y or z axis; doesn't use a value from e()
 %                'r','d'        all angles are given in radians or degrees  [radians]
 %             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
 %                               whether the rotation axes remain fixed in space for consecutive
@@ -40,8 +40,8 @@ function mv=v_roteucode(m)
 % (3) 'z1z1z' involves 5 rotations, in which all the non-fixed rotations are around the z axis.
 %
 
-%      Copyright (C) Mike Brookes 2007-2019
-%      Version: $Id: v_rotro2eu.m 10865 2018-09-21 17:22:45Z dmb $
+%      Copyright (C) Mike Brookes 2007-2020
+%      Version: $Id: v_roteucode.m 11260 2020-07-18 20:07:58Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
@@ -90,7 +90,7 @@ if isempty(mes)     % setup fixed arrays and initialize cache of mode strings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % trmap(i,j) gives the pattern that i is transformed into by rotation j    %
     % where j=1:3 corresponds to x,y,z and j=4:12 corresponds to the 9         %
-    % multiples of 90° rotations listed in the main comments.                  %
+    % multiples of 90 degree rotations listed in the main comments.            %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     trmap=[ 25 29 33 16 24 11  7 13 19 22 12 17;
         28 32 27 17 22 12  8 14 20 23 10 18;

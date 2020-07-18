@@ -5,9 +5,9 @@ function e=v_rotqr2eu(m,q)
 %              as listed below. Note that the control characters 'rdoOaA' may occur anywhere in the string:
 %                'x','y','z'    rotate around the given axis by the corresponding angle
 %                               given in e()
-%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
-%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
-%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+%                '1','2','3'    90 degree rotation around x,y or z axis; doesn't use a value from e()
+%                '4','5','6'    180 degree rotation around x,y or z axis; doesn't use a value from e()
+%                '7','8','9'    270 degree rotation around x,y or z axis; doesn't use a value from e()
 %                'r','d'        all angles are given in radians or degrees  [default='r']
 %                'R','D'        all angles are given in radians or degrees and are negated
 %             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
@@ -40,8 +40,8 @@ function e=v_rotqr2eu(m,q)
 %  (2) v_roteu2ro('xyz',[a b c]) = v_roteu2ro('xyz',[a+pi pi-b c+pi])
 
 % 
-%      Copyright (C) Mike Brookes 2007-2019
-%      Version: $Id: v_rotqr2eu.m 10865 2018-09-21 17:22:45Z dmb $
+%      Copyright (C) Mike Brookes 2007-2020
+%      Version: $Id: v_rotqr2eu.m 11260 2020-07-18 20:07:58Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html

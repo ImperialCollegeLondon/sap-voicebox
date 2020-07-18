@@ -6,9 +6,9 @@ function r=v_roteu2ro(varargin)
 %              as listed below:
 %                'x','y','z'    rotate around the given axis by the corresponding angle
 %                               given in e()
-%                '1','2','3'    90° rotation around x,y or z axis; doesn't use a value from e()
-%                '4','5','6'    180° rotation around x,y or z axis; doesn't use a value from e()
-%                '7','8','9'    270° rotation around x,y or z axis; doesn't use a value from e()
+%                '1','2','3'    90 degree rotation around x,y or z axis; doesn't use a value from e()
+%                '4','5','6'    180 degree rotation around x,y or z axis; doesn't use a value from e()
+%                '7','8','9'    270 degree rotation around x,y or z axis; doesn't use a value from e()
 %                'r','d'        all angles are given in radians or degrees  [default='r']
 %                'R','D'        all angles are given in radians or degrees and are negated
 %             'o','O','a','A'   selects whether to rotate the object or the coordinate axes and
@@ -42,8 +42,8 @@ function r=v_roteu2ro(varargin)
 %  (3) v_roteu2ro('456',[]) = eye(3) % also true for any ordering of '456'
 %  (4) v_roteu2ro('x',a) = v_roteu2ro('5x5',-a) = v_roteu2ro('5x6',pi-a) % also true if 5,6 are interchanged
 
-%      Copyright (C) Mike Brookes 2007-2019
-%      Version: $Id: v_roteu2ro.m 10865 2018-09-21 17:22:45Z dmb $
+%      Copyright (C) Mike Brookes 2007-2020
+%      Version: $Id: v_roteu2ro.m 11260 2020-07-18 20:07:58Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
