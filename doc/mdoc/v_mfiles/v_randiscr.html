@@ -31,23 +31,21 @@
 
  Usage: (1) v_randiscr([],10)        % generate 10 uniform random binary values
         (2) v_randiscr(2:6,10)       % generate 10 random numbers in the range 1:5
-                                     with probabilities [2 3 4 5 6]/20
+                                       with probabilities [2 3 4 5 6]/20
         (3) v_randiscr([],10,'abcd') % generate a string of 10 random
-                                     characters equiprobable from 'abcd'
+                                       characters equiprobable from 'abcd'
         (4) v_randiscr([],-3,'abcd') % generate a string of 3 distinct random
-                                     characters equiprobable from 'abcd'
+                                       characters equiprobable from 'abcd'
 
  Inputs: P  vector or n-D array of probabilities (not necessarily normalized) [default = uniform]
          N  number of random values to generate: +ve=with and -ve=without replacement [default = 1]
          A  output alphabet [default = 1:length(p) or 0:1 if p is empty]
 
  Outputs: X  vector of not necessarily distinct values taken from alphabet A
-             If P is not a vector, each row of X will contain the coordinates
-             of an element of P
+             If A is omitted and P is a matrix, each row of X(N,M) will contain the M coordinates
+             of a random element of P.
 
- The vector P is internally normalized by dividing by its sum.
- If P is an M-dimensional matrix (and A is unspecified), then X will
- have dimensions (N,M) with the corresponding indices for each dimension.</pre></div>
+ The vector P is internally normalized by dividing by its sum.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -66,123 +64,134 @@ This function is called by:
 0003 <span class="comment">%</span>
 0004 <span class="comment">% Usage: (1) v_randiscr([],10)        % generate 10 uniform random binary values</span>
 0005 <span class="comment">%        (2) v_randiscr(2:6,10)       % generate 10 random numbers in the range 1:5</span>
-0006 <span class="comment">%                                     with probabilities [2 3 4 5 6]/20</span>
+0006 <span class="comment">%                                       with probabilities [2 3 4 5 6]/20</span>
 0007 <span class="comment">%        (3) v_randiscr([],10,'abcd') % generate a string of 10 random</span>
-0008 <span class="comment">%                                     characters equiprobable from 'abcd'</span>
+0008 <span class="comment">%                                       characters equiprobable from 'abcd'</span>
 0009 <span class="comment">%        (4) v_randiscr([],-3,'abcd') % generate a string of 3 distinct random</span>
-0010 <span class="comment">%                                     characters equiprobable from 'abcd'</span>
+0010 <span class="comment">%                                       characters equiprobable from 'abcd'</span>
 0011 <span class="comment">%</span>
 0012 <span class="comment">% Inputs: P  vector or n-D array of probabilities (not necessarily normalized) [default = uniform]</span>
 0013 <span class="comment">%         N  number of random values to generate: +ve=with and -ve=without replacement [default = 1]</span>
 0014 <span class="comment">%         A  output alphabet [default = 1:length(p) or 0:1 if p is empty]</span>
 0015 <span class="comment">%</span>
 0016 <span class="comment">% Outputs: X  vector of not necessarily distinct values taken from alphabet A</span>
-0017 <span class="comment">%             If P is not a vector, each row of X will contain the coordinates</span>
-0018 <span class="comment">%             of an element of P</span>
+0017 <span class="comment">%             If A is omitted and P is a matrix, each row of X(N,M) will contain the M coordinates</span>
+0018 <span class="comment">%             of a random element of P.</span>
 0019 <span class="comment">%</span>
 0020 <span class="comment">% The vector P is internally normalized by dividing by its sum.</span>
-0021 <span class="comment">% If P is an M-dimensional matrix (and A is unspecified), then X will</span>
-0022 <span class="comment">% have dimensions (N,M) with the corresponding indices for each dimension.</span>
+0021 
+0022 <span class="comment">% Somewhat similar in function to RANDSRC in the comms toolbox</span>
 0023 
-0024 <span class="comment">% Somewhat similar in function to RANDSRC in the comms toolbox</span>
-0025 
-0026 <span class="comment">%   Copyright (c) 2005-2012 Mike Brookes,  mike.brookes@ic.ac.uk</span>
-0027 <span class="comment">%      Version: $Id: v_randiscr.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0024 <span class="comment">% Revisions:</span>
+0025 <span class="comment">%   2020-08-01 Fixed error when n=-(alphabet size)</span>
+0026 <span class="comment">%   2020-11-03 Clarified comments and speeded up non-replacement sampling</span>
+0027 <span class="comment">%              with uniform probabilities</span>
 0028 <span class="comment">%</span>
-0029 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0030 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0029 <span class="comment">%   Copyright (c) 2005-2012 Mike Brookes,  mike.brookes@ic.ac.uk</span>
+0030 <span class="comment">%      Version: $Id: v_randiscr.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0031 <span class="comment">%</span>
-0032 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0033 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0034 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0035 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0036 <span class="comment">%   (at your option) any later version.</span>
-0037 <span class="comment">%</span>
-0038 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0039 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0040 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0041 <span class="comment">%   GNU General Public License for more details.</span>
-0042 <span class="comment">%</span>
-0043 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0044 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0045 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0047 gota=nargin&gt;2;
-0048 <span class="keyword">if</span> nargin&lt;1 || ~numel(p)
-0049     <span class="keyword">if</span> gota
-0050         p=ones(1,length(a));
-0051     <span class="keyword">else</span>
-0052         p=ones(1,2);
-0053         a=(0:1)';
-0054         gota=1;
-0055     <span class="keyword">end</span>
-0056 <span class="keyword">end</span>
-0057 <span class="keyword">if</span> nargin&lt;2 || ~numel(n)
-0058     n=1;
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 gota=nargin&gt;2;
+0051 <span class="keyword">if</span> nargin&lt;1 || ~numel(p)
+0052     <span class="keyword">if</span> gota
+0053         p=ones(1,length(a));
+0054     <span class="keyword">else</span>
+0055         p=ones(1,2);
+0056         a=(0:1)';
+0057         gota=1;
+0058     <span class="keyword">end</span>
 0059 <span class="keyword">end</span>
-0060 q=p(:);
-0061 d=length(q);                    <span class="comment">% size of output alphabet</span>
-0062 <span class="keyword">if</span> n&gt;1                          <span class="comment">% sample with replacement</span>
-0063     dn=d+n-1;
-0064     z=zeros(dn,1);               <span class="comment">% array to hold random numbers</span>
-0065     z(1:d)=cumsum(q/sum(q));        <span class="comment">% last value is actually overwritten in the next line</span>
-0066     z(d:end)=rand(n,1);
-0067     [y,iy]=sort(z);
-0068     y(iy)=(1:dn)';               <span class="comment">% create inverse index</span>
-0069     m=zeros(dn,1);
-0070     m(y(1:d-1))=1;                  <span class="comment">% set original initial d-1 values to 1</span>
-0071     m(1)=m(1)+1;
-0072     m=cumsum(m);
-0073     x=m(y(d:dn));               <span class="comment">% find the positions of the random numbers</span>
-0074 <span class="keyword">else</span>                            <span class="comment">% sample without replacement</span>
-0075     n=abs(n);
-0076     f=(1:d)'; <span class="comment">% list of possible outputs</span>
-0077     <span class="keyword">if</span> n&gt;d
-0078         error(<span class="string">'Number of output samples exceeds alphabet size'</span>);
-0079     <span class="keyword">end</span>
-0080     
-0081     nn=n; <span class="comment">% number of samples remaining</span>
-0082     x=zeros(nn,1); <span class="comment">% space for the output samples</span>
-0083     <span class="keyword">while</span> nn&gt;0
-0084         dd=numel(f); <span class="comment">% alphabet size</span>
-0085         qq=q(f); <span class="comment">% alphabet probabilities</span>
-0086         <span class="keyword">if</span> dd==1 <span class="comment">% singleton alphabet</span>
-0087             x(n)=f;
-0088         <span class="keyword">else</span>
-0089             dn=dd+nn-1;
-0090             z=zeros(dn,1);               <span class="comment">% array to hold random numbers</span>
-0091             z(1:dd)=cumsum(qq/sum(qq));        <span class="comment">% last value is actually overwritten in the next line</span>
-0092             z(dd:dn)=rand(nn,1);
-0093             [y,iy]=sort(z);
-0094             y(iy)=(1:dn)';               <span class="comment">% create inverse index</span>
-0095             m=zeros(dn,1);
-0096             m(y(1:dd-1))=1;                  <span class="comment">% set original initial d-1 values to 1</span>
-0097             m(1)=m(1)+1;
-0098             m=cumsum(m);
-0099             z=m(y(dd:dn));               <span class="comment">% find the positions of the random numbers</span>
-0100             [y,iy]=sort(z);
-0101             z(iy(1+find(y(1:nn-1)==y(2:nn))))=[];          <span class="comment">% remove non-unique values</span>
-0102             k=numel(z); <span class="comment">% number of new values</span>
-0103             x(n-nn+1:n-nn+k)=f(z);
-0104             nn=nn-k;  <span class="comment">% number of remaining samples</span>
-0105             f(z)=[]; <span class="comment">% remove from alphabet</span>
-0106         <span class="keyword">end</span>
-0107     <span class="keyword">end</span>
-0108 <span class="keyword">end</span>
-0109 <span class="keyword">if</span> gota
-0110     x=a(x);                     <span class="comment">% select from output alphabet</span>
-0111 <span class="keyword">elseif</span> length(q)&gt;length(p)      <span class="comment">% need multiple dimensions</span>
-0112     v=x-1;
-0113     s=cumprod(size(p));
-0114     m=length(s);
-0115     s(2:end)=s(1:end-1);
-0116     s(1)=1;
-0117     x=zeros(n,m);
-0118     <span class="keyword">for</span> i=m:-1:1
-0119         x(:,i)=1+floor(v/s(i)); <span class="comment">% find indices starting with the last</span>
-0120         v=rem(v,s(i));
-0121     <span class="keyword">end</span>
-0122 <span class="keyword">end</span></pre></div>
+0060 <span class="keyword">if</span> nargin&lt;2 || ~numel(n)
+0061     n=1;
+0062 <span class="keyword">end</span>
+0063 q=p(:);
+0064 d=length(q);                    <span class="comment">% size of output alphabet</span>
+0065 <span class="keyword">if</span> gota &amp;&amp; d~=numel(a)
+0066     error(<span class="string">'sizes of alphabet and probability vector/matrix must match'</span>);
+0067 <span class="keyword">end</span>
+0068 <span class="keyword">if</span> n&gt;1                          <span class="comment">% sample with replacement</span>
+0069     dn=d+n-1;
+0070     z=zeros(dn,1);                <span class="comment">% array to hold random numbers</span>
+0071     z(1:d)=cumsum(q/sum(q));       <span class="comment">% last value is overwritten in the next line</span>
+0072     z(d:end)=rand(n,1);         <span class="comment">% create a random number for each sample</span>
+0073     [y,iy]=sort(z);             <span class="comment">% the original entries z(1:d-1) now divide the samples into bins for each possible value</span>
+0074     y(iy)=(1:dn)';                 <span class="comment">% create inverse index</span>
+0075     m=zeros(dn,1);
+0076     m(y(1:d-1))=1;                 <span class="comment">% set original initial d-1 values to 1</span>
+0077     m(1)=m(1)+1;                <span class="comment">% and also the first value</span>
+0078     m=cumsum(m);                <span class="comment">% label each of the random nuumbers with its corresponding value in 1:d</span>
+0079     x=m(y(d:dn));               <span class="comment">% find the partitions of the n random numbers</span>
+0080 <span class="keyword">else</span>                            <span class="comment">% sample without replacement</span>
+0081     n=abs(n);                   <span class="comment">% number of samples needed</span>
+0082     <span class="keyword">if</span> n&gt;d
+0083         error(<span class="string">'Number of output samples exceeds alphabet size'</span>);
+0084     <span class="keyword">end</span>
+0085     <span class="keyword">if</span> all(q==q(1))             <span class="comment">% if all probabilities are equal</span>
+0086         [y,iy]=sort(rand(d,1)); <span class="comment">% iy is a random permutation of 1:d</span>
+0087         x=iy(1:n);              <span class="comment">% select the first n values</span>
+0088     <span class="keyword">else</span>
+0089         f=(1:d)';               <span class="comment">% initialize the alphabet to 1:d</span>
+0090         x=zeros(n,1);           <span class="comment">% space for the output samples</span>
+0091         nn=n;                   <span class="comment">% number of samples remaining</span>
+0092         <span class="keyword">while</span> nn&gt;0              <span class="comment">% number of samples remaining</span>
+0093             dd=numel(f);        <span class="comment">% alphabet size (always &gt;=nn)</span>
+0094             <span class="keyword">if</span> dd==1            <span class="comment">% singleton alphabet</span>
+0095                 x(n)=f;         <span class="comment">% set remaining sample to the only remaining value</span>
+0096                 nn=0;           <span class="comment">% and set remaining value count to zero</span>
+0097             <span class="keyword">else</span>
+0098                 qq=q(f);                        <span class="comment">% remaiing alphabet probabilities</span>
+0099                 dn=dd+nn-1;
+0100                 z=zeros(dn,1);                  <span class="comment">% array to hold random numbers</span>
+0101                 z(1:dd)=cumsum(qq/sum(qq));     <span class="comment">% last value is overwritten in the next line</span>
+0102                 z(dd:dn)=rand(nn,1);            <span class="comment">% create a random number for each sample</span>
+0103                 [y,iy]=sort(z);                 <span class="comment">% the original entries z(1:dd-1) now divide the samples into bins for each possible value</span>
+0104                 y(iy)=(1:dn)';                  <span class="comment">% create inverse index</span>
+0105                 m=zeros(dn,1);
+0106                 m(y(1:dd-1))=1;                   <span class="comment">% set original initial dd-1 values to 1</span>
+0107                 m(1)=m(1)+1;                    <span class="comment">% and also the first value</span>
+0108                 m=cumsum(m);                    <span class="comment">% label each of the random nuumbers with its corresponding value in 1:dd</span>
+0109                 z=m(y(dd:dn));                  <span class="comment">% find the partitions of the nn random numbers</span>
+0110                 [y,iy]=sort(z);                 <span class="comment">% sorts the positions within each partition</span>
+0111                 z(iy(1+find(y(1:nn-1)==y(2:nn))))=[];          <span class="comment">% keep only the first sample from each partition</span>
+0112                 k=numel(z);                     <span class="comment">% number of new samples</span>
+0113                 x(n-nn+1:n-nn+k)=f(z);          <span class="comment">% add new samples into output array</span>
+0114                 nn=nn-k;                        <span class="comment">% number of remaining samples</span>
+0115                 f(z)=[];                        <span class="comment">% remove used entries from alphabet</span>
+0116             <span class="keyword">end</span>
+0117         <span class="keyword">end</span>
+0118     <span class="keyword">end</span>
+0119 <span class="keyword">end</span>
+0120 <span class="keyword">if</span> gota
+0121     x=a(x);                                     <span class="comment">% select from output alphabet</span>
+0122 <span class="keyword">elseif</span> length(q)&gt;length(p)                      <span class="comment">% need multiple dimensions</span>
+0123     v=x-1;
+0124     s=cumprod(size(p));
+0125     m=length(s);
+0126     s(2:end)=s(1:end-1);
+0127     s(1)=1;
+0128     x=zeros(n,m);
+0129     <span class="keyword">for</span> i=m:-1:1
+0130         x(:,i)=1+floor(v/s(i));                 <span class="comment">% find indices starting with the last</span>
+0131         v=rem(v,s(i));
+0132     <span class="keyword">end</span>
+0133 <span class="keyword">end</span></pre></div>
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

@@ -50,9 +50,9 @@ This function is called by:
 0006 <span class="comment">%     s(ns,nch)  is the input signal (ns samples, nch channels)</span>
 0007 <span class="comment">%      p          is the order (default: 12)</span>
 0008 <span class="comment">%      t(nf,3)    specifies the frames size details: each row specifies</span>
-0009 <span class="comment">%                 up to three values per frame: [len anal skip] where:</span>
-0010 <span class="comment">%                   len     is the length of the frame (default: length(s))</span>
-0011 <span class="comment">%                   anal    is the analysis length (default: len)</span>
+0009 <span class="comment">%                 up to three values per frame: [hop anal skip] where:</span>
+0010 <span class="comment">%                   hop     is the length of the frame (default: length(s))</span>
+0011 <span class="comment">%                   anal    is the analysis length (default: hop)</span>
 0012 <span class="comment">%                   skip    is the number of samples to skip at the beginning (default: 0)</span>
 0013 <span class="comment">%                 If t contains only one row, it will be used repeatedly</span>
 0014 <span class="comment">%                 until there are no more samples left in s.</span>
