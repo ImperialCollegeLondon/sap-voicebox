@@ -8,7 +8,7 @@ function [seg,glo]=v_snrseg(s,r,fs,m,tf)
 % Inputs:    s  test signal
 %            r  reference signal
 %           fs  sample frequency (Hz)
-%            m  mode [default = 'V']
+%            m  mode [default = 'Vq']
 %                 w = No VAD - use whole file
 %                 v = use sohn VAD to discard silent portions
 %                 V = use P.56-based VAD to discard silent portions [default]
