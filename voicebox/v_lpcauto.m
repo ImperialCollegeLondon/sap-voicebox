@@ -6,9 +6,9 @@ function [ar,e,k]=v_lpcauto(s,p,t,w,m)
 %     s(ns,nch)  is the input signal (ns samples, nch channels)
 %	  p          is the order (default: 12)
 %	  t(nf,3)    specifies the frames size details: each row specifies
-%	             up to three values per frame: [len anal skip] where:
-%		           len     is the length of the frame (default: length(s))
-%		           anal    is the analysis length (default: len)
+%	             up to three values per frame: [hop anal skip] where:
+%		           hop     is the length of the frame (default: length(s))
+%		           anal    is the analysis length (default: hop)
 %		           skip    is the number of samples to skip at the beginning (default: 0)
 %	             If t contains only one row, it will be used repeatedly
 %	             until there are no more samples left in s.
