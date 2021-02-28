@@ -11,12 +11,23 @@ function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)
 %          u        The state covariance matrix, <zf*zf'>, is u*u'
 %          p        Is the expected value of y(i)^2
 %
-% zf and zi are the output and optional input state as defined in filter()
+% zf and zi are the output and optional input state as defined in filter() as given below.
 % If zi is not specified, random numbers with the correct covariance will be used.
 % output u*u' is the state covariance matrix for filter(). Output p is the
 % mean power of the output signal y.
+%
+% The state space representation of filter() is z=Az+Bx, y=Cz+Dx where
+%       A=[-pa(2:k); eye(k-2) zeros(k-2,1)].'
+%       B=[pb(2:k)-pb(1)*pa(2:k)].'
+%       C=[1 zeros(1,k-2)]
+%       D=pb(1)
+% and k is the order of the filter, pa(1)=1 and pa and pb are zero-padded to length k+1.
+%
+% Refs:
+% [1]	D. M. Brookes. Coloured noise generation without filter startup transient.
+%       IEE Electronics Lett., 37 (4): 255–256, Feb. 2001. doi: 10.1049/el:20010144.
 
-%      Copyright (C) Mike Brookes 1997
+%      Copyright (C) Mike Brookes 1997-2021
 %      Version: $Id: v_randfilt.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -50,9 +61,9 @@ if nargin<4 | nargout>2
     lb=length(pb);
     la=length(pa);
 
-    k=max(la,lb)-1;
-    l=la-1;
-    ii=k+1-l:k;
+    k=max(la,lb)-1;     % filter order
+    n=la-1;             % denominator order
+    ii=k+1-n:k;
 
     % form controllability matrix
 
@@ -62,17 +73,17 @@ if nargin<4 | nargout>2
 
     % we generate m through the step-down procedure
     s=randn(k,1);
-    if l
-        m=zeros(l,l);
+    if n
+        m=zeros(n,n);
         g=pa;
-        for i=1:l
+        for i=1:n
             g=(g(1)*g(1:end-1)-g(end)*g(end:-1:2))/sqrt((g(1)-g(end))*(g(1)+g(end)));
-            m(i,i:l)=g;
+            m(i,i:n)=g;
         end
-        s(ii)=triu(toeplitz(pa(1:l)))*(m\s(ii));
+        s(ii)=triu(toeplitz(pa(1:n)))*(m\s(ii));
         if nargout>2
             u=q;
-            u(:,ii)=q(:,ii)*triu(toeplitz(pa(1:l)))/m;
+            u(:,ii)=q(:,ii)*triu(toeplitz(pa(1:n)))/m;
         end
     else
         if nargout>2
