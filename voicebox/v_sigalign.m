@@ -19,7 +19,7 @@ function [d,g,rr,ss]=v_sigalign(s,r,maxd,m,fs)
 %            d = optimum delay to apply to r
 %            g = optimal gain to apply to r
 %           rr = g*r(* -d)  [zero padded to match s if ss output is not given]
-%           ss = s truncated if necessary to martch to the length of rr
+%           ss = s truncated if necessary to match the length of rr
 
 
 %      Copyright (C) Mike Brookes 2011

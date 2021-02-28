@@ -1,5 +1,5 @@
 function [y,h]=v_resample(x,p,q,n,b)
-%V_V_RESAMPLE Resample and remove end transients [y,h]=(x,p,q,n,b)
+%V_RESAMPLE Resample and remove end transients [y,h]=(x,p,q,n,b)
 %
 % This multiplies the sample rate of x by p/q. It is identical to resample()
 % except that the initial and final filter transients are removed.
