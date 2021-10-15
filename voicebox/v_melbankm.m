@@ -1,5 +1,5 @@
 function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
-%V_MELBANKM determine matrix for a mel/erb/bark-spaced v_filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)
+%V_MELBANKM determine matrix for a mel/erb/bark-spaced filterbank [X,MN,MX]=(P,N,FS,FL,FH,W)
 %
 % Inputs:
 %       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb [ceil(4.6*log10(fs))]
@@ -22,19 +22,14 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 %		      'm' = hamming shaped filters in mel/erb/bark domain
 %
 %		      'z' = highest and lowest filters taper down to zero [default]
-%		      'y' = lowest filter remains at 1 down to 0 frequency and
-%			        highest filter remains at 1 up to nyquist freqency
+%		      'y' = lowest filter remains at 1 down to 0 frequency and highest filter
+%                   remains at 1 up to nyquist freqency. See note (1) below.
 %
 %             'u' = scale filters to sum to unity
 %
 %             's' = single-sided: do not double filters to account for negative frequencies
 %
 %             'g' = plot idealized filters [default if no output arguments present]
-%
-% Note that the filter shape (triangular, hamming etc) is defined in the mel (or erb etc) domain.
-% Some people instead define an asymmetric triangular filter in the frequency domain.
-%
-%		       If 'ty' or 'ny' is specified, the total power in the fft is preserved.
 %
 % Outputs:	x     a sparse matrix containing the v_filterbank amplitudes
 %		          If the mn and mx outputs are given then size(x)=[p,mx-mn+1]
@@ -45,6 +40,13 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 %		    mn    the lowest fft bin with a non-zero coefficient
 %		    mx    the highest fft bin with a non-zero coefficient
 %                 Note: you must specify both or neither of mn and mx.
+%
+% Notes: (1) If 'ty' or 'ny' is specified, the total power in the fft is preserved.
+%        (2) The filter shape (triangular, hamming etc) is defined in the mel (or erb etc) domain
+%            rather than in the linear frequency domain which is more common (e.g. [2]).
+%        (3) A mel-filterbank can also be created using v_filtbank() which uses triangular
+%            filters in the linear frequency domain and copes better with the narrow filters
+%            that arise when p is large on n is small. 
 %
 % Examples of use:
 %
