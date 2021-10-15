@@ -30,9 +30,9 @@ function [u,v,w]=v_sphrharm(m,a,b,c,d)
 %               'i' inverse transform
 %               'c' calculate the coordinates of the sampling grid [default if f or i omitted]
 %               'r' real spherical harmonics instead of complex
-%               'u' uniform inclination grid:  e=(0.5:ne-0.5)*pi/ne [default]
+%               'u' uniform inclination grid:  e=(0.5:ne-0.5)*pi/ne (includes neither pole) [default]
 %                      for invertibility, ne>=2N+1 for order N
-%               'U' uniform inclination grid:  e=(0:ne-1)*pi/ne
+%               'U' uniform inclination grid:  e=(0:ne-1)*pi/ne (includes North pole only) 
 %                      for invertibility, ne>=2N+1 for order N
 %               'g' gaussian inclination grid (non-uniform but fewer samples needed)
 %                      for invertibility, ne>=N+1 for order N
@@ -415,7 +415,7 @@ elseif gr~=gr0 || ne~=ne0
         xx(1:ah)=(1:2:ne).^(-1);
         we=-4*sin(ue).*imag(fft(xx).*exp(-1i*ue))/ne;
     else % default is m='u'
-        ue=(1:2:2*ne)*pi*0.5/ne;
+        ue=(1:2:2*ne)*pi*0.5/ne; % vector of elevations
         vq=(ne-abs(ne+1-2*(1:ne))).^(-1).*exp(-1i*(ue+0.5*pi));
         we=(-2*sin(ue).*real(fft(vq).*exp(-1i*(0:ne-1)*pi/ne))/ne);
     end
