@@ -39,7 +39,10 @@ function [erb,bnd] = v_frq2erb(frq)
 %		  IEEE Trans on Speech & Audio Processing, Vol 2,
 %		  pp 115-132, Jan 1994
 %     [3] R. D. Patterson. Auditory filter shapes derived with noise
-%         stimuli. J. Acoust. Soc. Amer., 59: 640ï¿½654, 1976.
+%         stimuli. J. Acoust. Soc. Amer., 59:640-654, 1976.
+%     [4] B. Glasberg and B. Moore. Derivation of auditory filter shapes from
+%         notched-noise data. Hearing Research, 47(1-2):103–138, 1990.
+%         doi: 10.1016/0378-5955(90)90170-T.
 
 %      Copyright (C) Mike Brookes 1998-2015
 %      Version: $Id: v_frq2erb.m 10865 2018-09-21 17:22:45Z dmb $
@@ -64,7 +67,7 @@ function [erb,bnd] = v_frq2erb(frq)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent u a h k c
 if ~numel(u)
-    u=[6.23e-6 93.39e-3 28.52];
+    u=[6.23e-6 93.39e-3 28.52];     % from equation (3) in [1] (an simpler formula is (3) in [4])
     p=sort(roots(u));               % p=[-14678.5 -311.9]
     a=1e6/(6.23*(p(2)-p(1)));       % a=11.17
     c=p(1);                         % c=-14678.5
