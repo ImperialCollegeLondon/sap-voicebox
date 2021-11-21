@@ -77,7 +77,7 @@ function [b,a,fx,bx,gd,ph]=v_gammabank(n,fs,w,fc,bw,ph,k)
 
 % For k>1, the impulse response of filter i is proportional to:
 %       h[n]=(((n+1)/fs).^(k-1))*cos(2*pi*fx(i)*(n+1)/fs+ph(i))*exp(-2*pi*bx(i)*(n+1)/fs)
-% where n>=0. For k=1 replace "(n+1)" by "n". If the 'c' option is used, replace "cos(�)" by "exp(1i*�)".
+% where n>=0. For k=1 replace "(n+1)" by "n". If the 'c' option is used, replace "cos(x)" by "exp(1i*x)".
 % Note that the DC gain is only equal to zero for two particular value of ph(i) that differ by pi.
 % Each filter is normalized to have unity gain at the centre frequency, fx(i).
 %
