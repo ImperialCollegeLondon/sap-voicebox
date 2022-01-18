@@ -1,13 +1,21 @@
 function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 %V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)
 %
-%Usage: (1) lev=v_activlev(s,fs);     % speech level in units of power
-%       (2) db=v_activlev(s,fs,'d');  % speech level in dB
-%       (3) s=v_activlev(s,fs,'n');   % normalize active level to 0 dB
+%Usage: (1) lev=v_activlev(s,fs);           % speech level in units of power
+%       (2) db=v_activlev(s,fs,'d');        % speech level in dB
+%       (3) s=v_activlev(s,fs,'n');         % normalize active level to 0 dB
+%       (4) inc=10000;                      % you can process a long signal in chunks of length inc
+%           fso=fs;                         % initialize fso to the sample frequency
+%           for i=1:inc:ns                  % loop for each chunk
+%               [lev,af,fso]=v_activlev(s(i:min(i+inc-1,length(s))),fso,'dz'); % include the 'z' option
+%           end
+%           lev=v_activlev([],fso);         % finally omit the 'z' option to obtain the active level
+%                                           % all other options, e.g. 'd', are preserved from the very first call
 %
-%Inputs: sp     is the speech signal (with better than 20dB SNR)
+% Inputs:
+%        SP     is the speech signal (with better than 20dB SNR)
 %        FS     is the sample frequency in Hz (see also FSO below)
-%        MODE   is a combination of the following:
+%        MODE   is a string containing a combination of the following:
 %               0 - omit high pass filter completely (i.e. include DC)
 %               3 - high pass filter at 30 Hz instead of 200 Hz (but allows mains hum to pass)
 %               4 - high pass filter at 40 Hz instead of 200 Hz (but allows mains hum to pass)
@@ -25,28 +33,22 @@ function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 %               i - include ITU-R-BS.468/ITU-T-J.16 weighting filter
 %               z - do NOT zero-pad the signal by 0.35 s
 %
-%Outputs:
+% Outputs:
 %    If the "n" option is specified, a speech signal normalized to 0dB will be given as
 %    the first output followed by the other outputs.
 %        LEV    gives the speech level in units of power (or dB if mode='d')
 %               if mode='l' is specified, LEV is a row vector with the "long term
 %               level" as its second element (this is just the mean power)
 %        AF     is the activity factor (or duty cycle) in the range 0 to 1
-%        FSO    is a column vector of intermediate information that allows
-%               you to process a speech signal in chunks. Thus:
-%                       fso=fs;
-%                       for i=1:inc:nsamp
-%                           [lev,af,fso]=v_activlev(sp(i:min(i+inc-1,nsamp)),fso,['z' mode]);
-%                       end
-%                       lev=v_activlev([],fso)
-%               is equivalent to:
-%                       lev=v_activlev(sp(1:nsamp),fs,mode)
-%               but is much slower. The two methods will not give identical results
-%               because they will use slightly different thresholds. Note you need
-%               the 'z' option for all calls except the last.
+%        FSO    is a structure of intermediate information that allows
+%               you to process a speech signal in chunks (see usage example 4 above).
+%               Processing a signal in chunks is slower and may not give identical results
+%               because it will use slightly different thresholds. Note that you must use
+%               the 'z' option for all calls except the last. When the FS input is a structure, all
+%               options other than 'z' are taken from the FS structure rather than from the MODE input.
 %        VAD    is a boolean vector the same length as sp that acts as an approximate voice activity detector
 
-%For completeness we list here the contents of the FSO structure:
+% For completeness we list here the contents of the FSO structure:
 %
 %   ffs : sample frequency
 %   fmd : mode string
@@ -95,6 +97,9 @@ function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 % 2018-11-07 10988 Changed EOL style to native so checkout works on all machines
 % 2019-11-19 11190 Fixed error in calculating the activity factor; it now excludes the
 %                  zero-padding samples from the calculation. [thanks to Joe Begin]
+% 2022-01-18       Using the 'n' option now gives a signal with exactly 0dB active level (thanks
+%                  to Alastair Moore and Becky Vos). Fixed anomalous behavior when FS is a
+%                  structure and MODE input is omitted.
 
 %      Copyright (C) Mike Brookes 2008-2019
 %      Version: $Id: v_activlev.m 11190 2019-11-19 12:53:58Z dmb $
@@ -138,12 +143,11 @@ if isempty(nbin)
     %    figure(2); plot(w,20*log10(abs(freqs(real(poly(c25zp(1,:))),real(poly(c25zp(2,:))),w)))); title('Chebyshev 2');
     %    figure(3); plot(w,20*log10(abs(freqs(real(poly(e5zp(1,:))),real(poly(e5zp(2,:))),w)))); title('Elliptic');
 end
-
+if nargin<3
+    mode=' ';
+end
 if ~isstruct(fs)                        % no state vector given
-    if nargin<3
-        mode=' ';
-    end
-    fso.ffs=fs;                       	% sample frequency   
+    fso.ffs=fs;                       	% sample frequency
     ti=1/fs;
     g=exp(-ti/0.03);                    % pole position for envelope filter
     fso.ae=[1 -2*g g^2]/(1-g)^2;        % envelope filter coefficients (DC gain = 1)
@@ -154,6 +158,8 @@ if ~isstruct(fs)                        % no state vector given
     fso.ns=0;
     fso.ssq=0;
     fso.ss=0;
+    fso.sf=1;                           % scale factor when forming energy histogram
+    fso.sfdb=0;                         % scale factor in dB
     fso.kc=zeros(nbin,1);               % cumulative occupancy counts
     % s-plane zeros and poles of high pass 5'th order filter -0.25dB at w=1 and -50dB stopband
     if any(mode=='1')
@@ -208,11 +214,8 @@ if ~isstruct(fs)                        % no state vector given
 else
     fso=fs;             % use existing structure
 end
-md=fso.fmd;
-if nargin<3
-    mode=fso.fmd;
-end
-nsp=length(sp); % original length of speech
+md=fso.fmd;             % md is used to determine all options except 'z' which uses mode
+nsp=length(sp);         % original length of speech
 if all(mode~='z')
     nz=ceil(0.35*fso.ffs); % number of zeros to append
     sp=[sp(:);zeros(nz,1)];
@@ -236,18 +239,25 @@ if ns                       % process this speech chunk
         [sq,fso.zw]=filter(fso.bw,fso.aw,sq(:),fso.zw);     % weighting filter
     end
     fso.ns=fso.ns+ns;                               % count the number of speech samples
-    fso.ss=fso.ss+sum(sq);                          % sum of speech samples
-    fso.ssq=fso.ssq+sum(sq.*sq);                    % sum of squared speech samples
+    fso.ss=fso.ss+sum(sq);                          % sum of speech samples (not used internally but available in fso output)
+    ssq=sum(sq.*sq);                                % sum of squared new speech samples
+    if ssq>0 && fso.ssq==0 % if these are the first non-zero speech samples
+        fso.sf=ns/ssq;                              % scale factor to normalize the mean power of this chunk to 1
+        fso.sfdb=10*log10(fso.sf);                  % scale factor in dB
+    end
+    fso.ssq=fso.ssq+ssq;                            % sum of all squared speech samples
     [s,fso.ze]=filter(1,fso.ae,abs(sq(:)),fso.ze); 	% envelope filter
-    [qf,qe]=log2(s.^2);                             % take efficient log2 function, 2^qe is upper limit of bin
+    % we use the scale factor fso.sf in the following line to ensure that
+    % the histogram binning is unchanged when sp is multiplied by a constant
+    [qf,qe]=log2(fso.sf*s.^2);                      % take efficient log2 function, 2^qe is upper limit of bin
     qe(qf==0)=-Inf;                                 % fix zero values
-    [qe,qk,fso.zx]=v_maxfilt(qe,1,fso.nh,1,fso.zx);  	% apply the 0.2 second hangover
-    oemax=fso.emax;
-    fso.emax=max(oemax,max(qe)+1);
-    if fso.emax==-Inf
+    [qe,qk,fso.zx]=v_maxfilt(qe,1,fso.nh,1,fso.zx);	% apply the 0.2 second hangover
+    oemax=fso.emax;                                 % previous max value of qe+1
+    fso.emax=max(oemax,max(qe)+1);                  % update the max value of qe+1
+    if fso.emax==-Inf                               % if all samples so far are zero
         fso.kc(1)=fso.kc(1)+ns;
-    else
-        qe=min(fso.emax-qe,nbin);   % force in the range 1:nbin. Bin k has 2^(emax-k-1)<=s^2<=2^(emax-k)
+    else                                            % we have had some non-zero samples
+        qe=min(fso.emax-qe,nbin);   % force in the range 1:nbin. Bin k has 2^(emax-k-1) <= s^2 < 2^(emax-k)
         wqe=ones(length(qe),1);
         % below: could use kc=cumsum(accumarray(qe,wqe,nbin)) but unsure about backwards compatibility
         kc=cumsum(full(sparse(qe,wqe,wqe,nbin,1)));     % cumulative occupancy counts
@@ -263,11 +273,10 @@ if ns                       % process this speech chunk
 end
 if fso.ns>nz                       % now calculate the output values
     if fso.ssq>0
-        aj=10*log10(fso.ssq*(fso.kc).^(-1));
-        % equivalent to cj=20*log10(sqrt(2).^(fso.emax-(1:nbin)-1));
-        cj=10*log10(2)*(fso.emax-(1:nbin)-1);               % lower limit of bin j in dB
+        aj=10*log10(fso.ssq*(fso.kc).^(-1)); % aj(jj) = active level if all power is in first jj bins
+        % following line is equivalent to cj=20*log10(sqrt(2).^(fso.emax-(1:nbin)-1));
+        cj=10*log10(2)*(fso.emax-(1:nbin)-1)-fso.sfdb;      % lower limit of bin j in dB correcting for scale factor
         mj=aj'-cj-thresh;
-        %  jj=find(mj*sign(mj(1))<=0); % Find threshold
         jj=find(mj(1:end-1)<0 &  mj(2:end)>=0,1);           % find +ve transition through threshold
         if isempty(jj)                                      % if we never cross the threshold
             if mj(end)<=0                                   % if we end up below if
