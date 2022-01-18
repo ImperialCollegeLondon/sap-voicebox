@@ -12,12 +12,10 @@
 </head>
 <body>
 <a name="_top"></a>
-<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_randfilt.m</div>
 
-<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
-<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
-
+<!-- index.html v_mfiles -->
 <h1>v_randfilt
+
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -39,20 +37,37 @@
           u        The state covariance matrix, &lt;zf*zf'&gt;, is u*u'
           p        Is the expected value of y(i)^2
 
- zf and zi are the output and optional input state as defined in filter()
+ zf and zi are the output and optional input state as defined in filter() as given below.
  If zi is not specified, random numbers with the correct covariance will be used.
  output u*u' is the state covariance matrix for filter(). Output p is the
- mean power of the output signal y.</pre></div>
+ mean power of the output signal y.
+
+ The state space representation of filter() is z=Az+Bx, y=Cz+Dx where
+       A=[-pa(2:k); eye(k-2) zeros(k-2,1)].'
+       B=[pb(2:k)-pb(1)*pa(2:k)].'
+       C=[1 zeros(1,k-2)]
+       D=pb(1)
+ and k is the order of the filter, pa(1)=1 and pa and pb are zero-padded to length k+1.
+
+ Refs:
+ [1]    D. M. Brookes. Coloured noise generation without filter startup transient.
+       IEE Electronics Lett., 37 (4): 255–256, Feb. 2001. doi: 10.1049/el:20010144.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
+
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li><li><a href="v_usasi.html" class="code" title="function x=v_usasi(n,fs)">v_usasi</a>	V_USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)</li></ul>
+
+<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li>
+<li><a href="v_usasi.html" class="code" title="function x=v_usasi(n,fs)">v_usasi</a>	V_USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)</li>
+</ul>
 <!-- crossreference -->
+
+
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -69,95 +84,107 @@ This function is called by:
 0011 <span class="comment">%          u        The state covariance matrix, &lt;zf*zf'&gt;, is u*u'</span>
 0012 <span class="comment">%          p        Is the expected value of y(i)^2</span>
 0013 <span class="comment">%</span>
-0014 <span class="comment">% zf and zi are the output and optional input state as defined in filter()</span>
+0014 <span class="comment">% zf and zi are the output and optional input state as defined in filter() as given below.</span>
 0015 <span class="comment">% If zi is not specified, random numbers with the correct covariance will be used.</span>
 0016 <span class="comment">% output u*u' is the state covariance matrix for filter(). Output p is the</span>
 0017 <span class="comment">% mean power of the output signal y.</span>
-0018 
-0019 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
-0020 <span class="comment">%      Version: $Id: v_randfilt.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0021 <span class="comment">%</span>
-0022 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0023 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0024 <span class="comment">%</span>
-0025 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0026 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0027 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0028 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0029 <span class="comment">%   (at your option) any later version.</span>
-0030 <span class="comment">%</span>
-0031 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0032 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0033 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0034 <span class="comment">%   GNU General Public License for more details.</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% The state space representation of filter() is z=Az+Bx, y=Cz+Dx where</span>
+0020 <span class="comment">%       A=[-pa(2:k); eye(k-2) zeros(k-2,1)].'</span>
+0021 <span class="comment">%       B=[pb(2:k)-pb(1)*pa(2:k)].'</span>
+0022 <span class="comment">%       C=[1 zeros(1,k-2)]</span>
+0023 <span class="comment">%       D=pb(1)</span>
+0024 <span class="comment">% and k is the order of the filter, pa(1)=1 and pa and pb are zero-padded to length k+1.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Refs:</span>
+0027 <span class="comment">% [1]    D. M. Brookes. Coloured noise generation without filter startup transient.</span>
+0028 <span class="comment">%       IEE Electronics Lett., 37 (4): 255–256, Feb. 2001. doi: 10.1049/el:20010144.</span>
+0029 
+0030 <span class="comment">%      Copyright (C) Mike Brookes 1997-2021</span>
+0031 <span class="comment">%      Version: $Id: v_randfilt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0034 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
 0035 <span class="comment">%</span>
-0036 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0037 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0038 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0039 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0040 
-0041 <span class="comment">% first normalize the denominator polynomial if necessary</span>
-0042 
-0043 <span class="keyword">if</span> pa(1)~=1
-0044     pb=pb/pa(1); pa=pa/pa(1);
-0045 <span class="keyword">end</span>
-0046 
-0047 <span class="comment">% check to see if we must generate zi</span>
-0048 
-0049 <span class="keyword">if</span> nargin&lt;4 | nargout&gt;2
-0050     lb=length(pb);
-0051     la=length(pa);
-0052 
-0053     k=max(la,lb)-1;
-0054     l=la-1;
-0055     ii=k+1-l:k;
-0056 
-0057     <span class="comment">% form controllability matrix</span>
-0058 
-0059     q=zeros(k,k);
-0060     [z,q(:,1)]=filter(pb,pa,1);
-0061     <span class="keyword">for</span> i=2:k [z,q(:,i)]=filter(pb,pa,0,q(:,i-1)); <span class="keyword">end</span>
-0062 
-0063     <span class="comment">% we generate m through the step-down procedure</span>
-0064     s=randn(k,1);
-0065     <span class="keyword">if</span> l
-0066         m=zeros(l,l);
-0067         g=pa;
-0068         <span class="keyword">for</span> i=1:l
-0069             g=(g(1)*g(1:end-1)-g(end)*g(end:-1:2))/sqrt((g(1)-g(end))*(g(1)+g(end)));
-0070             m(i,i:l)=g;
-0071         <span class="keyword">end</span>
-0072         s(ii)=triu(toeplitz(pa(1:l)))*(m\s(ii));
-0073         <span class="keyword">if</span> nargout&gt;2
-0074             u=q;
-0075             u(:,ii)=q(:,ii)*triu(toeplitz(pa(1:l)))/m;
-0076         <span class="keyword">end</span>
-0077     <span class="keyword">else</span>
-0078         <span class="keyword">if</span> nargout&gt;2
-0079             u=q;
-0080         <span class="keyword">end</span>
-0081     <span class="keyword">end</span>
-0082     <span class="keyword">if</span> nargin &lt; 4
-0083         <span class="keyword">if</span> k
-0084             zi=q*s;
-0085         <span class="keyword">else</span>
-0086             zi=[];
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0038 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0039 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0040 <span class="comment">%   (at your option) any later version.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0043 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0044 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0045 <span class="comment">%   GNU General Public License for more details.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0048 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0049 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 <span class="comment">% first normalize the denominator polynomial if necessary</span>
+0053 
+0054 <span class="keyword">if</span> pa(1)~=1
+0055     pb=pb/pa(1); pa=pa/pa(1);
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="comment">% check to see if we must generate zi</span>
+0059 
+0060 <span class="keyword">if</span> nargin&lt;4 | nargout&gt;2
+0061     lb=length(pb);
+0062     la=length(pa);
+0063 
+0064     k=max(la,lb)-1;     <span class="comment">% filter order</span>
+0065     n=la-1;             <span class="comment">% denominator order</span>
+0066     ii=k+1-n:k;
+0067 
+0068     <span class="comment">% form controllability matrix</span>
+0069 
+0070     q=zeros(k,k);
+0071     [z,q(:,1)]=filter(pb,pa,1);
+0072     <span class="keyword">for</span> i=2:k [z,q(:,i)]=filter(pb,pa,0,q(:,i-1)); <span class="keyword">end</span>
+0073 
+0074     <span class="comment">% we generate m through the step-down procedure</span>
+0075     s=randn(k,1);
+0076     <span class="keyword">if</span> n
+0077         m=zeros(n,n);
+0078         g=pa;
+0079         <span class="keyword">for</span> i=1:n
+0080             g=(g(1)*g(1:end-1)-g(end)*g(end:-1:2))/sqrt((g(1)-g(end))*(g(1)+g(end)));
+0081             m(i,i:n)=g;
+0082         <span class="keyword">end</span>
+0083         s(ii)=triu(toeplitz(pa(1:n)))*(m\s(ii));
+0084         <span class="keyword">if</span> nargout&gt;2
+0085             u=q;
+0086             u(:,ii)=q(:,ii)*triu(toeplitz(pa(1:n)))/m;
 0087         <span class="keyword">end</span>
-0088     <span class="keyword">end</span>
-0089 <span class="keyword">end</span>
-0090 <span class="keyword">if</span> nargout&gt;2
-0091     <span class="keyword">if</span> ~numel(u)
-0092         p=pb(1).^2;
-0093     <span class="keyword">else</span>
-0094         p=u(1,:)*u(1,:)'+pb(1).^2;
-0095     <span class="keyword">end</span>
-0096 <span class="keyword">end</span>
-0097 <span class="keyword">if</span> nargin&gt;2 &amp;&amp; ny&gt;0
-0098     [y,zf]=filter(pb,pa,randn(ny,1),zi);
-0099 <span class="keyword">else</span>
-0100     zf=zi;
-0101     y=[];
-0102 <span class="keyword">end</span></pre></div>
-<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+0088     <span class="keyword">else</span>
+0089         <span class="keyword">if</span> nargout&gt;2
+0090             u=q;
+0091         <span class="keyword">end</span>
+0092     <span class="keyword">end</span>
+0093     <span class="keyword">if</span> nargin &lt; 4
+0094         <span class="keyword">if</span> k
+0095             zi=q*s;
+0096         <span class="keyword">else</span>
+0097             zi=[];
+0098         <span class="keyword">end</span>
+0099     <span class="keyword">end</span>
+0100 <span class="keyword">end</span>
+0101 <span class="keyword">if</span> nargout&gt;2
+0102     <span class="keyword">if</span> ~numel(u)
+0103         p=pb(1).^2;
+0104     <span class="keyword">else</span>
+0105         p=u(1,:)*u(1,:)'+pb(1).^2;
+0106     <span class="keyword">end</span>
+0107 <span class="keyword">end</span>
+0108 <span class="keyword">if</span> nargin&gt;2 &amp;&amp; ny&gt;0
+0109     [y,zf]=filter(pb,pa,randn(ny,1),zi);
+0110 <span class="keyword">else</span>
+0111     zf=zi;
+0112     y=[];
+0113 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

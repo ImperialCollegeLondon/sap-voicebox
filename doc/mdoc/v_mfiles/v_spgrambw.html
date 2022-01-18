@@ -12,12 +12,10 @@
 </head>
 <body>
 <a name="_top"></a>
-<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_spgrambw.m</div>
 
-<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
-<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
-
+<!-- index.html v_mfiles -->
 <h1>v_spgrambw
+
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -46,7 +44,7 @@
              v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array
 
          For examples of the many options available see:
-         http://www.ee.ic.ac.uk/hp/staff/dmb/v_voicebox/tutorial/v_spgrambw/spgram_tut.pdf
+         http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/tutorial/spgrambw/spgram_tut.pdf
 
   Inputs:  S         speech signal, or single-sided power spectrum array, S(NT,NF), in power per Hz
            FS        sample fequency (Hz) or [FS T1] where T1 is the time of the first sample
@@ -118,15 +116,37 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li><li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	V_CBLABEL add a label to a colorbar c=(l,h)</li><li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li><li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li><li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	V_FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li><li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	V_FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li><li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li><li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	V_MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li><li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li><li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li><li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li></ul>
+
+<li><a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>	V_BARK2FRQ  Convert the BARK frequency scale to Hertz FRQ=(BARK)</li>
+<li><a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>	V_CBLABEL add a label to a colorbar c=(l,h)</li>
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li>
+<li><a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>	V_ERB2FRQ  Convert ERB frequency scale to Hertz FRQ=(ERB)</li>
+<li><a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>	V_FRQ2BARK  Convert Hertz to BARK frequency scale BARK=(FRQ)</li>
+<li><a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>	V_FRQ2ERB  Convert Hertz to ERB frequency scale ERB=(FRQ)</li>
+<li><a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>	V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)</li>
+<li><a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>	V_MEL2FRQ  Convert Mel frequency scale to Hertz FRQ=(MEL)</li>
+<li><a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>	V_RFFT     Calculate the DFT of real data Y=(X,N,D)</li>
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li>
+<li><a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a>	V_YTIXKSI labels the y-axis of a plot using SI multipliers S=(AH)</li>
+</ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li><li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li><li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li><li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li></ul>
+
+<li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li>
+<li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li>
+<li><a href="v_readwav.html" class="code" title="function [y,fs,wmode,fidx]=v_readwav(filename,mode,nmax,nskip)">v_readwav</a>	V_READWAV  Read a .WAV format sound file [Y,FS,WMODE,FIDX]=(FILENAME,MODE,NMAX,NSKIP)</li>
+<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li>
+</ul>
 <!-- crossreference -->
+
 
 <h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="#_sub1" class="code">function ytickhz(frq2y,y2frq)</a></li></ul>
+
+<li><a href="#_sub1" class="code">function ytickhz(frq2y,y2frq)</a></li>
+</ul>
+
+
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [t,f,b]=v_spgrambw(s,fs,varargin)</a>
 0002 <span class="comment">%V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</span>
@@ -148,7 +168,7 @@ This function is called by:
 0018 <span class="comment">%             v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array</span>
 0019 <span class="comment">%</span>
 0020 <span class="comment">%         For examples of the many options available see:</span>
-0021 <span class="comment">%         http://www.ee.ic.ac.uk/hp/staff/dmb/v_voicebox/tutorial/v_spgrambw/spgram_tut.pdf</span>
+0021 <span class="comment">%         http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/tutorial/spgrambw/spgram_tut.pdf</span>
 0022 <span class="comment">%</span>
 0023 <span class="comment">%  Inputs:  S         speech signal, or single-sided power spectrum array, S(NT,NF), in power per Hz</span>
 0024 <span class="comment">%           FS        sample fequency (Hz) or [FS T1] where T1 is the time of the first sample</span>
@@ -823,6 +843,7 @@ This function is called by:
 0693 
 0694 set(ah,<span class="string">'YTick'</span>,tickpos',<span class="string">'YTickLabel'</span>,ticklab);
 0695</pre></div>
-<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

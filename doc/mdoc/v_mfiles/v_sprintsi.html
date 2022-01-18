@@ -12,12 +12,10 @@
 </head>
 <body>
 <a name="_top"></a>
-<div><a href="../index.html">Home</a> &gt;  <a href="index.html">v_mfiles</a> &gt; v_sprintsi.m</div>
 
-<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
-<td align="right"><a href="index.html">Index for v_mfiles&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
-
+<!-- index.html v_mfiles -->
 <h1>v_sprintsi
+
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -37,14 +35,14 @@
 V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)
 
   Usage: (1) v_sprintsi(2345,-2) -&gt; '2.3 k'
-         (2) v_sprintsi(2345,-2,8,' ') -&gt; '   2.3 k' 
-         (3) v_sprintsi(2345,-2,[],'Hz') -&gt; '2.3kHz' 
+         (2) v_sprintsi(2345,-2,8,' ') -&gt; '   2.3 k'
+         (3) v_sprintsi(2345,-2,[],'Hz') -&gt; '2.3kHz'
 
   Inputs:  X        the value to print
            D        number of decimal places (+ve) or significant digits (-ve) [default=-3]
            W        add leading spaces so that |W| is total width including multiplier.
                     If W&lt;=0 then trailing 0's will be eliminated.
-           U        string giving the unit (any initial space will be placed before the multiplier)
+           U        string giving the unit (if present, an initial space will be placed before the multiplier)
 
  Outputs:  S        output string</pre></div>
 
@@ -52,11 +50,17 @@ V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
+
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li><li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li></ul>
+
+<li><a href="v_readsfs.html" class="code" title="function [y,fs,hd,ffx]=v_readsfs(ff,ty,sub,mode,nmax,nskip,xpath)">v_readsfs</a>	V_READSFS  Read a .SFS format sound file [Y,FS,HD,FFX]=(FF,TY,SUB,MODE,NMAX,NSKIP,XPATH)</li>
+<li><a href="v_readsph.html" class="code" title="function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)">v_readsph</a>	V_READSPH  Read a SPHERE/TIMIT format sound file [Y,FS,WRD,PHN,FFX]=(FILENAME,MODE,NMAX,NSKIP)</li>
+</ul>
 <!-- crossreference -->
+
+
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -78,7 +82,7 @@ This function is called by:
 0016 <span class="comment">%           D        number of decimal places (+ve) or significant digits (-ve) [default=-3]</span>
 0017 <span class="comment">%           W        add leading spaces so that |W| is total width including multiplier.</span>
 0018 <span class="comment">%                    If W&lt;=0 then trailing 0's will be eliminated.</span>
-0019 <span class="comment">%           U        string giving the unit (any initial space will be placed before the multiplier)</span>
+0019 <span class="comment">%           U        string giving the unit (if present, an initial space will be placed before the multiplier)</span>
 0020 <span class="comment">%</span>
 0021 <span class="comment">% Outputs:  S        output string</span>
 0022 
@@ -103,37 +107,43 @@ This function is called by:
 0041 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
 0042 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
 0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0044 
-0045 <span class="keyword">if</span> nargin&lt;4
-0046     u=<span class="string">' '</span>;
-0047 <span class="keyword">end</span>
-0048 <span class="keyword">if</span> nargin&lt;3 || isempty(w)
-0049     w=0;
+0044 <span class="keyword">persistent</span> f f0 emin emax
+0045 <span class="keyword">if</span> isempty(f)
+0046     f=<span class="string">'yzafpnum kMGTPEZY'</span>;
+0047     f0=find(f==<span class="string">' '</span>);    <span class="comment">% position of space</span>
+0048     emin=3-3*f0;        <span class="comment">% lowest power of 10 in f</span>
+0049     emax=3*(length(f)-f0); <span class="comment">% highest power of 10 in f</span>
 0050 <span class="keyword">end</span>
-0051 <span class="keyword">if</span> nargin&lt;2 || isempty(d)
-0052     d=-3;
+0051 <span class="keyword">if</span> nargin&lt;4
+0052     u=<span class="string">' '</span>;
 0053 <span class="keyword">end</span>
-0054 f=<span class="string">'afpnum kMGT'</span>;
-0055 e=max(-18,min(12,floor(log10(abs(x)))));
-0056 k=floor(e/3);
-0057 dp=max([0 d 3*k-d-e-1]);
-0058 <span class="keyword">if</span> w&lt;=0 &amp; dp
-0059    w=abs(w);
-0060    dp=max(find([1 mod(mod(round(x*10^(dp-3*k)),10^dp),10.^(dp:-1:1))]))-1;
-0061 <span class="keyword">end</span>
-0062 <span class="keyword">if</span> length(u)&gt;0 &amp;&amp; u(1)==<span class="string">' '</span>
-0063 <span class="keyword">if</span>(k)
-0064    s=sprintf(sprintf(<span class="string">'%%%d.%df %c%s'</span>,max(w-2,0),dp,f(k+7),u(2:end)),x*1e-3^k);
-0065 <span class="keyword">else</span>
-0066    s=sprintf(sprintf(<span class="string">'%%%d.%df %s'</span>,max(w-1,0),dp,u(2:end)),x*1e-3^k);
-0067 <span class="keyword">end</span>
-0068 <span class="keyword">else</span>
-0069     <span class="keyword">if</span>(k)
-0070    s=sprintf(sprintf(<span class="string">'%%%d.%df%c%s'</span>,max(w-2,0),dp,f(k+7),u),x*1e-3^k);
-0071 <span class="keyword">else</span>
-0072    s=sprintf(sprintf(<span class="string">'%%%d.%df%s'</span>,max(w-1,0),dp,u),x*1e-3^k);
-0073 <span class="keyword">end</span>
-0074 <span class="keyword">end</span></pre></div>
-<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+0054 <span class="keyword">if</span> nargin&lt;3 || isempty(w)
+0055     w=0;
+0056 <span class="keyword">end</span>
+0057 <span class="keyword">if</span> nargin&lt;2 || isempty(d)
+0058     d=-3;
+0059 <span class="keyword">end</span>
+0060 e=max(emin,min(emax,floor(log10(abs(x)))));
+0061 k=floor(e/3);
+0062 dp=max([0 d 3*k-d-e-1]);
+0063 <span class="keyword">if</span> w&lt;=0 &amp; dp
+0064     w=abs(w);
+0065     dp=max(find([1 mod(mod(round(x*10^(dp-3*k)),10^dp),10.^(dp:-1:1))]))-1;
+0066 <span class="keyword">end</span>
+0067 <span class="keyword">if</span> length(u)&gt;0 &amp;&amp; u(1)==<span class="string">' '</span> <span class="comment">% unit string starts with a space</span>
+0068     <span class="keyword">if</span>(k) <span class="comment">% mutliplier needed</span>
+0069         s=sprintf(sprintf(<span class="string">'%%%d.%df %c%s'</span>,max(w-2,0),dp,f(k+f0),u(2:end)),x*1e-3^k);
+0070     <span class="keyword">else</span> <span class="comment">% no mutliplier needed</span>
+0071         s=sprintf(sprintf(<span class="string">'%%%d.%df %s'</span>,max(w-1,0),dp,u(2:end)),x*1e-3^k);
+0072     <span class="keyword">end</span>
+0073 <span class="keyword">else</span>
+0074     <span class="keyword">if</span>(k)  <span class="comment">% mutliplier needed</span>
+0075         s=sprintf(sprintf(<span class="string">'%%%d.%df%c%s'</span>,max(w-2,0),dp,f(k+f0),u),x*1e-3^k);
+0076     <span class="keyword">else</span>  <span class="comment">% no mutliplier needed</span>
+0077         s=sprintf(sprintf(<span class="string">'%%%d.%df%s'</span>,max(w-1,0),dp,u),x*1e-3^k);
+0078     <span class="keyword">end</span>
+0079 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
