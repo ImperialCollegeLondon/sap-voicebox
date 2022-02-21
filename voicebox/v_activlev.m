@@ -100,6 +100,8 @@ function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 % 2022-01-18       Using the 'n' option now gives a signal with exactly 0dB active level (thanks
 %                  to Alastair Moore and Becky Vos). Fixed anomalous behavior when FS is a
 %                  structure and MODE input is omitted.
+% 2022-02-21       Fixed error in plot of power histogram that meant that the threshold and active
+%                  level lines were in the wrong position
 
 %      Copyright (C) Mike Brookes 2008-2019
 %      Version: $Id: v_activlev.m 11190 2019-11-19 12:53:58Z dmb $
@@ -332,6 +334,7 @@ if ~nargout
     end
     ylabel('Amplitude');
     legend('Signal','Smoothed envelope','VAD * Active-Level','Location','SouthEast');
+    % lower right plot: diagram of threshold and active level calculation
     subplot(2,2,4);
     plot(cj,repmat(levdb,nbin,1),'k:',cj,aj(:),'-b',cj,cj,'-r',levdb-thresh*ones(1,2),[levdb-thresh levdb],'-r');
     xlabel('Threshold (dB)');
@@ -342,15 +345,16 @@ if ~nargout
     ylim=get(gca,'ylim');
     set(gca,'ylim',[levdb-1.2*thresh max(ylim(2),levdb+1.9*thresh)]);
     kch=filter([1 -1],1,kc);
+    % lower left plot: power histogram
     subplot(2,2,3);
     bar(5*log10(2)+cj(end:-1:1),kch(end:-1:1)*100/kc(end));
     set(gca,'xlim',[cj(end) cj(1)+10*log10(2)]);
     ylim=get(gca,'ylim');
     hold on
-    plot(lev([1 1]),ylim,'k:',lev([1 1])-thresh,ylim,'r:');
+    plot(levdb([1 1]),ylim,'k:',levdb([1 1])-thresh,ylim,'r:');
     hold off
-    v_texthvc(lev(1),ylim(2),sprintf(' Act\n Lev'),'ltk');
-    v_texthvc(lev(1)-thresh,ylim(2),sprintf('Threshold '),'rtr');
+    v_texthvc(levdb(1),ylim(2),sprintf(' Act\n Lev'),'ltk');
+    v_texthvc(levdb(1)-thresh,ylim(2),sprintf('Threshold '),'rtr');
     xlabel('Frame power (dB)')
     ylabel('% frames');
 elseif any(md=='n') || any(md=='N') % output normalized speech waveform
