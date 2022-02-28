@@ -353,8 +353,8 @@ if ~nargout
     hold on
     plot(levdb([1 1]),ylim,'k:',levdb([1 1])-thresh,ylim,'r:');
     hold off
-    v_texthvc(levdb(1),ylim(2),sprintf(' Act\n Lev'),'ltk');
-    v_texthvc(levdb(1)-thresh,ylim(2),sprintf('Threshold '),'rtr');
+    v_texthvc(levdb(1),ylim(2),sprintf('Active\nLev'),'ctk');
+    v_texthvc(levdb(1)-thresh,ylim(2),sprintf('Threshold'),'rtr');
     xlabel('Frame power (dB)')
     ylabel('% frames');
 elseif any(md=='n') || any(md=='N') % output normalized speech waveform
