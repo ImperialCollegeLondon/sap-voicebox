@@ -229,6 +229,7 @@ if strcmp(getgca.(axfield{5,ax}),'log')   % log axis
         end% try next panic level
     end    % check if within SI range
     if ntick
+        tickint(tickint==0)=0; % get rid of negative zeros
         tickexp=gi+ticksi-tickdp;
         tickpos=tickint .* 10.^tickexp;
         ratthresh=10^(minsubsp/width10);   % min subtick ratio
@@ -339,6 +340,7 @@ else                    % linear axis
         end
     end
     if ntick
+        tickint(tickint==0)=0; % get rid of negative zeros
         tickexp=gi+ticksi-tickdp;
         tickpos=tickint .* 10.^tickexp;
         [tps,ix]=sort([tickpos subtick*10^gi]);
