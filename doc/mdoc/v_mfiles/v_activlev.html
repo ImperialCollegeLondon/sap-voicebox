@@ -200,272 +200,277 @@ This function is called by:
 0100 <span class="comment">% 2022-01-18       Using the 'n' option now gives a signal with exactly 0dB active level (thanks</span>
 0101 <span class="comment">%                  to Alastair Moore and Becky Vos). Fixed anomalous behavior when FS is a</span>
 0102 <span class="comment">%                  structure and MODE input is omitted.</span>
-0103 
-0104 <span class="comment">%      Copyright (C) Mike Brookes 2008-2019</span>
-0105 <span class="comment">%      Version: $Id: v_activlev.m 11190 2019-11-19 12:53:58Z dmb $</span>
-0106 <span class="comment">%</span>
-0107 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0108 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0103 <span class="comment">% 2022-02-21       Fixed error in plot of power histogram that meant that the threshold and active</span>
+0104 <span class="comment">%                  level lines were in the wrong position</span>
+0105 <span class="comment">% 2022-02-28       Tidied up the labelling on the power histogram plot</span>
+0106 
+0107 <span class="comment">%      Copyright (C) Mike Brookes 2008-2019</span>
+0108 <span class="comment">%      Version: $Id: v_activlev.m 11190 2019-11-19 12:53:58Z dmb $</span>
 0109 <span class="comment">%</span>
-0110 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0111 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0112 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0113 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0114 <span class="comment">%   (at your option) any later version.</span>
-0115 <span class="comment">%</span>
-0116 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0117 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0118 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0119 <span class="comment">%   GNU General Public License for more details.</span>
-0120 <span class="comment">%</span>
-0121 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0122 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0123 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0124 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0125 
-0126 <span class="keyword">persistent</span> nbin thresh c25zp c15zp e5zp
-0127 <span class="keyword">if</span> isempty(nbin)
-0128     nbin=20;    <span class="comment">% 60 dB range at 3dB per bin</span>
-0129     thresh=15.9;    <span class="comment">% threshold in dB</span>
-0130     <span class="comment">% High pass s-domain zeros and poles of filters with passband ripple&lt;0.25dB, stopband&lt;-50dB, w0=1</span>
-0131     <span class="comment">%    w0=fzero(@ch2,0.5); [c2z,c2p,k]=cheby2(5,50,w0,'high','s');</span>
-0132     <span class="comment">%    function v=ch2(w); [c2z,c2p,k]=cheby2(5,50,w,'high','s'); v= 20*log10(prod(abs(1i-c2z))/prod(abs(1i-c2p)))+0.25;</span>
-0133     c25zp=[0.37843443673309i 0.23388534441447i; -0.20640255179496+0.73942185906851i -0.54036889596392+0.45698784092898i];
-0134     c25zp=[[0; -0.66793268833792] c25zp conj(c25zp)];
-0135     <span class="comment">%       [c1z,c1p,c1k] = cheby1(5,0.25,1,'high','s');</span>
-0136     c15zp=[-0.659002835294875+1.195798636925079i -0.123261821596263+0.947463030958881i];
-0137     c15zp=[zeros(1,5); -2.288586431066945 c15zp conj(c15zp)];
-0138     <span class="comment">%      [ez,ep,ek] = ellip(5,0.25,50,1,'high','s')</span>
-0139     e5zp=[0.406667680649209i 0.613849362744881i; -0.538736390607201+1.130245082677107i -0.092723126159100+0.958193646330194i];
-0140     e5zp=[[0; -1.964538608244084]  e5zp conj(e5zp)];
-0141     <span class="comment">%    w=linspace(0.2,2,100);</span>
-0142     <span class="comment">%    figure(1); plot(w,20*log10(abs(freqs(real(poly(c15zp(1,:))),real(poly(c15zp(2,:))),w)))); title('Chebyshev 1');</span>
-0143     <span class="comment">%    figure(2); plot(w,20*log10(abs(freqs(real(poly(c25zp(1,:))),real(poly(c25zp(2,:))),w)))); title('Chebyshev 2');</span>
-0144     <span class="comment">%    figure(3); plot(w,20*log10(abs(freqs(real(poly(e5zp(1,:))),real(poly(e5zp(2,:))),w)))); title('Elliptic');</span>
-0145 <span class="keyword">end</span>
-0146 <span class="keyword">if</span> nargin&lt;3
-0147     mode=<span class="string">' '</span>;
+0110 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0111 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0112 <span class="comment">%</span>
+0113 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0114 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0115 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0116 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0117 <span class="comment">%   (at your option) any later version.</span>
+0118 <span class="comment">%</span>
+0119 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0120 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0121 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0122 <span class="comment">%   GNU General Public License for more details.</span>
+0123 <span class="comment">%</span>
+0124 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0125 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0126 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0127 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0128 
+0129 <span class="keyword">persistent</span> nbin thresh c25zp c15zp e5zp
+0130 <span class="keyword">if</span> isempty(nbin)
+0131     nbin=20;    <span class="comment">% 60 dB range at 3dB per bin</span>
+0132     thresh=15.9;    <span class="comment">% threshold in dB</span>
+0133     <span class="comment">% High pass s-domain zeros and poles of filters with passband ripple&lt;0.25dB, stopband&lt;-50dB, w0=1</span>
+0134     <span class="comment">%    w0=fzero(@ch2,0.5); [c2z,c2p,k]=cheby2(5,50,w0,'high','s');</span>
+0135     <span class="comment">%    function v=ch2(w); [c2z,c2p,k]=cheby2(5,50,w,'high','s'); v= 20*log10(prod(abs(1i-c2z))/prod(abs(1i-c2p)))+0.25;</span>
+0136     c25zp=[0.37843443673309i 0.23388534441447i; -0.20640255179496+0.73942185906851i -0.54036889596392+0.45698784092898i];
+0137     c25zp=[[0; -0.66793268833792] c25zp conj(c25zp)];
+0138     <span class="comment">%       [c1z,c1p,c1k] = cheby1(5,0.25,1,'high','s');</span>
+0139     c15zp=[-0.659002835294875+1.195798636925079i -0.123261821596263+0.947463030958881i];
+0140     c15zp=[zeros(1,5); -2.288586431066945 c15zp conj(c15zp)];
+0141     <span class="comment">%      [ez,ep,ek] = ellip(5,0.25,50,1,'high','s')</span>
+0142     e5zp=[0.406667680649209i 0.613849362744881i; -0.538736390607201+1.130245082677107i -0.092723126159100+0.958193646330194i];
+0143     e5zp=[[0; -1.964538608244084]  e5zp conj(e5zp)];
+0144     <span class="comment">%    w=linspace(0.2,2,100);</span>
+0145     <span class="comment">%    figure(1); plot(w,20*log10(abs(freqs(real(poly(c15zp(1,:))),real(poly(c15zp(2,:))),w)))); title('Chebyshev 1');</span>
+0146     <span class="comment">%    figure(2); plot(w,20*log10(abs(freqs(real(poly(c25zp(1,:))),real(poly(c25zp(2,:))),w)))); title('Chebyshev 2');</span>
+0147     <span class="comment">%    figure(3); plot(w,20*log10(abs(freqs(real(poly(e5zp(1,:))),real(poly(e5zp(2,:))),w)))); title('Elliptic');</span>
 0148 <span class="keyword">end</span>
-0149 <span class="keyword">if</span> ~isstruct(fs)                        <span class="comment">% no state vector given</span>
-0150     fso.ffs=fs;                           <span class="comment">% sample frequency</span>
-0151     ti=1/fs;
-0152     g=exp(-ti/0.03);                    <span class="comment">% pole position for envelope filter</span>
-0153     fso.ae=[1 -2*g g^2]/(1-g)^2;        <span class="comment">% envelope filter coefficients (DC gain = 1)</span>
-0154     fso.ze=zeros(2,1);
-0155     fso.nh=ceil(0.2/ti)+1;              <span class="comment">% hangover time in samples</span>
-0156     fso.zx=-Inf;                        <span class="comment">% initial value for v_maxfilt()</span>
-0157     fso.emax=-Inf;                      <span class="comment">% maximum exponent</span>
-0158     fso.ns=0;
-0159     fso.ssq=0;
-0160     fso.ss=0;
-0161     fso.sf=1;                           <span class="comment">% scale factor when forming energy histogram</span>
-0162     fso.sfdb=0;                         <span class="comment">% scale factor in dB</span>
-0163     fso.kc=zeros(nbin,1);               <span class="comment">% cumulative occupancy counts</span>
-0164     <span class="comment">% s-plane zeros and poles of high pass 5'th order filter -0.25dB at w=1 and -50dB stopband</span>
-0165     <span class="keyword">if</span> any(mode==<span class="string">'1'</span>)
-0166         szp=c15zp;              <span class="comment">% Chebyshev 1</span>
-0167     <span class="keyword">elseif</span> any(mode==<span class="string">'e'</span>)
-0168         szp=e5zp;               <span class="comment">% Elliptic</span>
-0169     <span class="keyword">else</span>
-0170         szp=c25zp;              <span class="comment">% Chebyshev 2</span>
-0171     <span class="keyword">end</span>
-0172     flh=[200 5500];             <span class="comment">% default frequency range +- 0.25 dB</span>
-0173     <span class="keyword">if</span> any(mode==<span class="string">'w'</span>)
-0174         flh=[70 12000];         <span class="comment">% super-wideband (Annex B of [2])</span>
-0175     <span class="keyword">elseif</span> any(mode==<span class="string">'W'</span>)
-0176         flh=[30 18000];         <span class="comment">% full band (Annex C of [2])</span>
-0177     <span class="keyword">end</span>
-0178     <span class="keyword">if</span> any(mode==<span class="string">'3'</span>)
-0179         flh(1)=30;              <span class="comment">% force a 30 Hz HPF cutoff</span>
+0149 <span class="keyword">if</span> nargin&lt;3
+0150     mode=<span class="string">' '</span>;
+0151 <span class="keyword">end</span>
+0152 <span class="keyword">if</span> ~isstruct(fs)                        <span class="comment">% no state vector given</span>
+0153     fso.ffs=fs;                           <span class="comment">% sample frequency</span>
+0154     ti=1/fs;
+0155     g=exp(-ti/0.03);                    <span class="comment">% pole position for envelope filter</span>
+0156     fso.ae=[1 -2*g g^2]/(1-g)^2;        <span class="comment">% envelope filter coefficients (DC gain = 1)</span>
+0157     fso.ze=zeros(2,1);
+0158     fso.nh=ceil(0.2/ti)+1;              <span class="comment">% hangover time in samples</span>
+0159     fso.zx=-Inf;                        <span class="comment">% initial value for v_maxfilt()</span>
+0160     fso.emax=-Inf;                      <span class="comment">% maximum exponent</span>
+0161     fso.ns=0;
+0162     fso.ssq=0;
+0163     fso.ss=0;
+0164     fso.sf=1;                           <span class="comment">% scale factor when forming energy histogram</span>
+0165     fso.sfdb=0;                         <span class="comment">% scale factor in dB</span>
+0166     fso.kc=zeros(nbin,1);               <span class="comment">% cumulative occupancy counts</span>
+0167     <span class="comment">% s-plane zeros and poles of high pass 5'th order filter -0.25dB at w=1 and -50dB stopband</span>
+0168     <span class="keyword">if</span> any(mode==<span class="string">'1'</span>)
+0169         szp=c15zp;              <span class="comment">% Chebyshev 1</span>
+0170     <span class="keyword">elseif</span> any(mode==<span class="string">'e'</span>)
+0171         szp=e5zp;               <span class="comment">% Elliptic</span>
+0172     <span class="keyword">else</span>
+0173         szp=c25zp;              <span class="comment">% Chebyshev 2</span>
+0174     <span class="keyword">end</span>
+0175     flh=[200 5500];             <span class="comment">% default frequency range +- 0.25 dB</span>
+0176     <span class="keyword">if</span> any(mode==<span class="string">'w'</span>)
+0177         flh=[70 12000];         <span class="comment">% super-wideband (Annex B of [2])</span>
+0178     <span class="keyword">elseif</span> any(mode==<span class="string">'W'</span>)
+0179         flh=[30 18000];         <span class="comment">% full band (Annex C of [2])</span>
 0180     <span class="keyword">end</span>
-0181     <span class="keyword">if</span> any(mode==<span class="string">'4'</span>)
-0182         flh(1)=40;              <span class="comment">% force a 40 Hz HPF cutoff</span>
+0181     <span class="keyword">if</span> any(mode==<span class="string">'3'</span>)
+0182         flh(1)=30;              <span class="comment">% force a 30 Hz HPF cutoff</span>
 0183     <span class="keyword">end</span>
-0184     <span class="keyword">if</span> any(mode==<span class="string">'r'</span>)              <span class="comment">% included for backward compatibility</span>
-0185         mode=[<span class="string">'0h'</span> mode];        <span class="comment">% abolish both filters</span>
-0186     <span class="keyword">elseif</span> fs&lt;flh(2)*2.2
-0187         mode=[<span class="string">'h'</span> mode];           <span class="comment">% abolish lowpass filter at low sample rates</span>
-0188     <span class="keyword">end</span>
-0189     fso.fmd=mode;                <span class="comment">% save mode flags</span>
-0190     <span class="keyword">if</span> all(mode~=<span class="string">'0'</span>)           <span class="comment">% implement the HPF as biquads to avoid rounding errors</span>
-0191         zl=2./(1-szp*tan(flh(1)*pi/fs))-1;      <span class="comment">% Transform s-domain poles/zeros with bilinear transform</span>
-0192         abl=[ones(2,1) -zl(:,1) -2*real(zl(:,2:3))  abs(zl(:,2:3)).^2];     <span class="comment">% biquad coefficients</span>
-0193         hfg=(abl*[1 -1 0 0 0 0]').*(abl*[1 0 -1 0 1 0]').*(abl*[1 0 0 -1 0 1]');
-0194         abl=abl(:,[1 2 1 3 5 1 4 6]);               <span class="comment">% reorder into biquads</span>
-0195         abl(1,1:2)= abl(1,1:2)*hfg(2)/hfg(1);       <span class="comment">% force Nyquist gain to equal 1</span>
-0196         fso.abl=abl;
-0197         fso.zl=zeros(5,1);                          <span class="comment">% space for HPF filter state</span>
-0198     <span class="keyword">end</span>
-0199     <span class="keyword">if</span> all(mode~=<span class="string">'h'</span>)
-0200         zh=2./(szp/tan(flh(2)*pi/fs)-1)+1;     <span class="comment">% Transform s-domain poles/zeros with bilinear transform</span>
-0201         ah=real(poly(zh(2,:)));
-0202         bh=real(poly(zh(1,:)));
-0203         fso.bh=bh*sum(ah)/sum(bh);
-0204         fso.ah=ah;
-0205         fso.zh=zeros(5,1);
-0206     <span class="keyword">end</span>
-0207     <span class="keyword">if</span> any(mode==<span class="string">'a'</span>)
-0208         [fso.bw,fso.aw]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(2,<span class="string">'z'</span>,fs);
-0209         fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
-0210     <span class="keyword">elseif</span> any(mode==<span class="string">'i'</span>)
-0211         [fso.bw,fso.aw]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(8,<span class="string">'z'</span>,fs);
+0184     <span class="keyword">if</span> any(mode==<span class="string">'4'</span>)
+0185         flh(1)=40;              <span class="comment">% force a 40 Hz HPF cutoff</span>
+0186     <span class="keyword">end</span>
+0187     <span class="keyword">if</span> any(mode==<span class="string">'r'</span>)              <span class="comment">% included for backward compatibility</span>
+0188         mode=[<span class="string">'0h'</span> mode];        <span class="comment">% abolish both filters</span>
+0189     <span class="keyword">elseif</span> fs&lt;flh(2)*2.2
+0190         mode=[<span class="string">'h'</span> mode];           <span class="comment">% abolish lowpass filter at low sample rates</span>
+0191     <span class="keyword">end</span>
+0192     fso.fmd=mode;                <span class="comment">% save mode flags</span>
+0193     <span class="keyword">if</span> all(mode~=<span class="string">'0'</span>)           <span class="comment">% implement the HPF as biquads to avoid rounding errors</span>
+0194         zl=2./(1-szp*tan(flh(1)*pi/fs))-1;      <span class="comment">% Transform s-domain poles/zeros with bilinear transform</span>
+0195         abl=[ones(2,1) -zl(:,1) -2*real(zl(:,2:3))  abs(zl(:,2:3)).^2];     <span class="comment">% biquad coefficients</span>
+0196         hfg=(abl*[1 -1 0 0 0 0]').*(abl*[1 0 -1 0 1 0]').*(abl*[1 0 0 -1 0 1]');
+0197         abl=abl(:,[1 2 1 3 5 1 4 6]);               <span class="comment">% reorder into biquads</span>
+0198         abl(1,1:2)= abl(1,1:2)*hfg(2)/hfg(1);       <span class="comment">% force Nyquist gain to equal 1</span>
+0199         fso.abl=abl;
+0200         fso.zl=zeros(5,1);                          <span class="comment">% space for HPF filter state</span>
+0201     <span class="keyword">end</span>
+0202     <span class="keyword">if</span> all(mode~=<span class="string">'h'</span>)
+0203         zh=2./(szp/tan(flh(2)*pi/fs)-1)+1;     <span class="comment">% Transform s-domain poles/zeros with bilinear transform</span>
+0204         ah=real(poly(zh(2,:)));
+0205         bh=real(poly(zh(1,:)));
+0206         fso.bh=bh*sum(ah)/sum(bh);
+0207         fso.ah=ah;
+0208         fso.zh=zeros(5,1);
+0209     <span class="keyword">end</span>
+0210     <span class="keyword">if</span> any(mode==<span class="string">'a'</span>)
+0211         [fso.bw,fso.aw]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(2,<span class="string">'z'</span>,fs);
 0212         fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
-0213     <span class="keyword">end</span>
-0214 <span class="keyword">else</span>
-0215     fso=fs;             <span class="comment">% use existing structure</span>
-0216 <span class="keyword">end</span>
-0217 md=fso.fmd;             <span class="comment">% md is used to determine all options except 'z' which uses mode</span>
-0218 nsp=length(sp);         <span class="comment">% original length of speech</span>
-0219 <span class="keyword">if</span> all(mode~=<span class="string">'z'</span>)
-0220     nz=ceil(0.35*fso.ffs); <span class="comment">% number of zeros to append</span>
-0221     sp=[sp(:);zeros(nz,1)];
-0222 <span class="keyword">else</span>
-0223     nz=0;
-0224 <span class="keyword">end</span>
-0225 ns=length(sp);
-0226 <span class="keyword">if</span> ns                       <span class="comment">% process this speech chunk</span>
-0227     <span class="comment">% apply the input filters to the speech</span>
-0228     <span class="keyword">if</span> all(md~=<span class="string">'0'</span>)         <span class="comment">% implement the HPF as biquads to avoid rounding errors</span>
-0229         [sq,fso.zl(1)]=filter(fso.abl(1,1:2),fso.abl(2,1:2),sp(:),fso.zl(1));       <span class="comment">% highpass filter: real pole/zero</span>
-0230         [sq,fso.zl(2:3)]=filter(fso.abl(1,3:5),fso.abl(2,3:5),sq(:),fso.zl(2:3));      <span class="comment">% highpass filter: biquad 1</span>
-0231         [sq,fso.zl(4:5)]=filter(fso.abl(1,6:8),fso.abl(2,6:8),sq(:),fso.zl(4:5));      <span class="comment">% highpass filter: biquad 2</span>
-0232     <span class="keyword">else</span>
-0233         sq=sp(:);
-0234     <span class="keyword">end</span>
-0235     <span class="keyword">if</span> all(md~=<span class="string">'h'</span>)
-0236         [sq,fso.zh]=filter(fso.bh,fso.ah,sq(:),fso.zh);     <span class="comment">% lowpass filter</span>
+0213     <span class="keyword">elseif</span> any(mode==<span class="string">'i'</span>)
+0214         [fso.bw,fso.aw]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(8,<span class="string">'z'</span>,fs);
+0215         fso.zw=zeros(max(length(fso.bw),length(fso.aw))-1,1);
+0216     <span class="keyword">end</span>
+0217 <span class="keyword">else</span>
+0218     fso=fs;             <span class="comment">% use existing structure</span>
+0219 <span class="keyword">end</span>
+0220 md=fso.fmd;             <span class="comment">% md is used to determine all options except 'z' which uses mode</span>
+0221 nsp=length(sp);         <span class="comment">% original length of speech</span>
+0222 <span class="keyword">if</span> all(mode~=<span class="string">'z'</span>)
+0223     nz=ceil(0.35*fso.ffs); <span class="comment">% number of zeros to append</span>
+0224     sp=[sp(:);zeros(nz,1)];
+0225 <span class="keyword">else</span>
+0226     nz=0;
+0227 <span class="keyword">end</span>
+0228 ns=length(sp);
+0229 <span class="keyword">if</span> ns                       <span class="comment">% process this speech chunk</span>
+0230     <span class="comment">% apply the input filters to the speech</span>
+0231     <span class="keyword">if</span> all(md~=<span class="string">'0'</span>)         <span class="comment">% implement the HPF as biquads to avoid rounding errors</span>
+0232         [sq,fso.zl(1)]=filter(fso.abl(1,1:2),fso.abl(2,1:2),sp(:),fso.zl(1));       <span class="comment">% highpass filter: real pole/zero</span>
+0233         [sq,fso.zl(2:3)]=filter(fso.abl(1,3:5),fso.abl(2,3:5),sq(:),fso.zl(2:3));      <span class="comment">% highpass filter: biquad 1</span>
+0234         [sq,fso.zl(4:5)]=filter(fso.abl(1,6:8),fso.abl(2,6:8),sq(:),fso.zl(4:5));      <span class="comment">% highpass filter: biquad 2</span>
+0235     <span class="keyword">else</span>
+0236         sq=sp(:);
 0237     <span class="keyword">end</span>
-0238     <span class="keyword">if</span> any(md==<span class="string">'a'</span>) || any(md==<span class="string">'i'</span>)
-0239         [sq,fso.zw]=filter(fso.bw,fso.aw,sq(:),fso.zw);     <span class="comment">% weighting filter</span>
+0238     <span class="keyword">if</span> all(md~=<span class="string">'h'</span>)
+0239         [sq,fso.zh]=filter(fso.bh,fso.ah,sq(:),fso.zh);     <span class="comment">% lowpass filter</span>
 0240     <span class="keyword">end</span>
-0241     fso.ns=fso.ns+ns;                               <span class="comment">% count the number of speech samples</span>
-0242     fso.ss=fso.ss+sum(sq);                          <span class="comment">% sum of speech samples (not used internally but available in fso output)</span>
-0243     ssq=sum(sq.*sq);                                <span class="comment">% sum of squared new speech samples</span>
-0244     <span class="keyword">if</span> ssq&gt;0 &amp;&amp; fso.ssq==0 <span class="comment">% if these are the first non-zero speech samples</span>
-0245         fso.sf=ns/ssq;                              <span class="comment">% scale factor to normalize the mean power of this chunk to 1</span>
-0246         fso.sfdb=10*log10(fso.sf);                  <span class="comment">% scale factor in dB</span>
-0247     <span class="keyword">end</span>
-0248     fso.ssq=fso.ssq+ssq;                            <span class="comment">% sum of all squared speech samples</span>
-0249     [s,fso.ze]=filter(1,fso.ae,abs(sq(:)),fso.ze);     <span class="comment">% envelope filter</span>
-0250     <span class="comment">% we use the scale factor fso.sf in the following line to ensure that</span>
-0251     <span class="comment">% the histogram binning is unchanged when sp is multiplied by a constant</span>
-0252     [qf,qe]=log2(fso.sf*s.^2);                      <span class="comment">% take efficient log2 function, 2^qe is upper limit of bin</span>
-0253     qe(qf==0)=-Inf;                                 <span class="comment">% fix zero values</span>
-0254     [qe,qk,fso.zx]=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(qe,1,fso.nh,1,fso.zx);    <span class="comment">% apply the 0.2 second hangover</span>
-0255     oemax=fso.emax;                                 <span class="comment">% previous max value of qe+1</span>
-0256     fso.emax=max(oemax,max(qe)+1);                  <span class="comment">% update the max value of qe+1</span>
-0257     <span class="keyword">if</span> fso.emax==-Inf                               <span class="comment">% if all samples so far are zero</span>
-0258         fso.kc(1)=fso.kc(1)+ns;
-0259     <span class="keyword">else</span>                                            <span class="comment">% we have had some non-zero samples</span>
-0260         qe=min(fso.emax-qe,nbin);   <span class="comment">% force in the range 1:nbin. Bin k has 2^(emax-k-1) &lt;= s^2 &lt; 2^(emax-k)</span>
-0261         wqe=ones(length(qe),1);
-0262         <span class="comment">% below: could use kc=cumsum(accumarray(qe,wqe,nbin)) but unsure about backwards compatibility</span>
-0263         kc=cumsum(full(sparse(qe,wqe,wqe,nbin,1)));     <span class="comment">% cumulative occupancy counts</span>
-0264         esh=fso.emax-oemax;                             <span class="comment">% amount to shift down previous bin counts</span>
-0265         <span class="keyword">if</span> esh&lt;nbin-1                                   <span class="comment">% if any of the previous bins are worth keeping</span>
-0266             kc(esh+1:nbin-1)=kc(esh+1:nbin-1)+fso.kc(1:nbin-esh-1);
-0267             kc(nbin)=kc(nbin)+sum(fso.kc(nbin-esh:nbin));
-0268         <span class="keyword">else</span>
-0269             kc(nbin)=kc(nbin)+sum(fso.kc); <span class="comment">% otherwise just add all old counts into the last (lowest) bin</span>
-0270         <span class="keyword">end</span>
-0271         fso.kc=kc;
-0272     <span class="keyword">end</span>
-0273 <span class="keyword">end</span>
-0274 <span class="keyword">if</span> fso.ns&gt;nz                       <span class="comment">% now calculate the output values</span>
-0275     <span class="keyword">if</span> fso.ssq&gt;0
-0276         aj=10*log10(fso.ssq*(fso.kc).^(-1)); <span class="comment">% aj(jj) = active level if all power is in first jj bins</span>
-0277         <span class="comment">% following line is equivalent to cj=20*log10(sqrt(2).^(fso.emax-(1:nbin)-1));</span>
-0278         cj=10*log10(2)*(fso.emax-(1:nbin)-1)-fso.sfdb;      <span class="comment">% lower limit of bin j in dB correcting for scale factor</span>
-0279         mj=aj'-cj-thresh;
-0280         jj=find(mj(1:end-1)&lt;0 &amp;  mj(2:end)&gt;=0,1);           <span class="comment">% find +ve transition through threshold</span>
-0281         <span class="keyword">if</span> isempty(jj)                                      <span class="comment">% if we never cross the threshold</span>
-0282             <span class="keyword">if</span> mj(end)&lt;=0                                   <span class="comment">% if we end up below if</span>
-0283                 jj=length(mj)-1;            <span class="comment">% take the threshold to be the bottom of the last (lowest) bin</span>
-0284                 jf=1;
-0285             <span class="keyword">else</span>                            <span class="comment">% if we are always above it</span>
-0286                 jj=1;                       <span class="comment">% take the threshold to be the bottom of the first (highest) bin</span>
-0287                 jf=0;
-0288             <span class="keyword">end</span>
-0289         <span class="keyword">else</span>
-0290             jf=1/(1-mj(jj+1)/mj(jj));       <span class="comment">% fractional part of j using linear interpolation</span>
-0291         <span class="keyword">end</span>
-0292         lev=aj(jj)+jf*(aj(jj+1)-aj(jj));    <span class="comment">% active level in decibels</span>
-0293         lp=10.^(lev/10);                    <span class="comment">% active level in power</span>
-0294         <span class="keyword">if</span> any(md==<span class="string">'d'</span>)                     <span class="comment">% 'd' option -&gt; output in dB</span>
-0295             lev=[lev 10*log10(fso.ssq/fso.ns)];
-0296         <span class="keyword">else</span>                                <span class="comment">% ~'d' option -&gt; output in power</span>
-0297             lev=[lp fso.ssq/fso.ns];
-0298         <span class="keyword">end</span>
-0299         af=fso.ssq/((fso.ns-nz)*lp);
-0300     <span class="keyword">else</span>                        <span class="comment">% if all samples are equal to zero</span>
-0301         af=0;
-0302         <span class="keyword">if</span> any(md==<span class="string">'d'</span>)         <span class="comment">% 'd' option -&gt; output in dB</span>
-0303             lev=[-Inf -Inf];    <span class="comment">% active level is 0 dB</span>
-0304         <span class="keyword">else</span>                    <span class="comment">% ~'d' option -&gt; output in power</span>
-0305             lev=[0 0];          <span class="comment">% active level is 0 power</span>
-0306         <span class="keyword">end</span>
-0307     <span class="keyword">end</span>
-0308     <span class="keyword">if</span> all(md~=<span class="string">'l'</span>)
-0309         lev=lev(1);         <span class="comment">% only output the first element of lev unless 'l' option</span>
+0241     <span class="keyword">if</span> any(md==<span class="string">'a'</span>) || any(md==<span class="string">'i'</span>)
+0242         [sq,fso.zw]=filter(fso.bw,fso.aw,sq(:),fso.zw);     <span class="comment">% weighting filter</span>
+0243     <span class="keyword">end</span>
+0244     fso.ns=fso.ns+ns;                               <span class="comment">% count the number of speech samples</span>
+0245     fso.ss=fso.ss+sum(sq);                          <span class="comment">% sum of speech samples (not used internally but available in fso output)</span>
+0246     ssq=sum(sq.*sq);                                <span class="comment">% sum of squared new speech samples</span>
+0247     <span class="keyword">if</span> ssq&gt;0 &amp;&amp; fso.ssq==0 <span class="comment">% if these are the first non-zero speech samples</span>
+0248         fso.sf=ns/ssq;                              <span class="comment">% scale factor to normalize the mean power of this chunk to 1</span>
+0249         fso.sfdb=10*log10(fso.sf);                  <span class="comment">% scale factor in dB</span>
+0250     <span class="keyword">end</span>
+0251     fso.ssq=fso.ssq+ssq;                            <span class="comment">% sum of all squared speech samples</span>
+0252     [s,fso.ze]=filter(1,fso.ae,abs(sq(:)),fso.ze);     <span class="comment">% envelope filter</span>
+0253     <span class="comment">% we use the scale factor fso.sf in the following line to ensure that</span>
+0254     <span class="comment">% the histogram binning is unchanged when sp is multiplied by a constant</span>
+0255     [qf,qe]=log2(fso.sf*s.^2);                      <span class="comment">% take efficient log2 function, 2^qe is upper limit of bin</span>
+0256     qe(qf==0)=-Inf;                                 <span class="comment">% fix zero values</span>
+0257     [qe,qk,fso.zx]=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(qe,1,fso.nh,1,fso.zx);    <span class="comment">% apply the 0.2 second hangover</span>
+0258     oemax=fso.emax;                                 <span class="comment">% previous max value of qe+1</span>
+0259     fso.emax=max(oemax,max(qe)+1);                  <span class="comment">% update the max value of qe+1</span>
+0260     <span class="keyword">if</span> fso.emax==-Inf                               <span class="comment">% if all samples so far are zero</span>
+0261         fso.kc(1)=fso.kc(1)+ns;
+0262     <span class="keyword">else</span>                                            <span class="comment">% we have had some non-zero samples</span>
+0263         qe=min(fso.emax-qe,nbin);   <span class="comment">% force in the range 1:nbin. Bin k has 2^(emax-k-1) &lt;= s^2 &lt; 2^(emax-k)</span>
+0264         wqe=ones(length(qe),1);
+0265         <span class="comment">% below: could use kc=cumsum(accumarray(qe,wqe,nbin)) but unsure about backwards compatibility</span>
+0266         kc=cumsum(full(sparse(qe,wqe,wqe,nbin,1)));     <span class="comment">% cumulative occupancy counts</span>
+0267         esh=fso.emax-oemax;                             <span class="comment">% amount to shift down previous bin counts</span>
+0268         <span class="keyword">if</span> esh&lt;nbin-1                                   <span class="comment">% if any of the previous bins are worth keeping</span>
+0269             kc(esh+1:nbin-1)=kc(esh+1:nbin-1)+fso.kc(1:nbin-esh-1);
+0270             kc(nbin)=kc(nbin)+sum(fso.kc(nbin-esh:nbin));
+0271         <span class="keyword">else</span>
+0272             kc(nbin)=kc(nbin)+sum(fso.kc); <span class="comment">% otherwise just add all old counts into the last (lowest) bin</span>
+0273         <span class="keyword">end</span>
+0274         fso.kc=kc;
+0275     <span class="keyword">end</span>
+0276 <span class="keyword">end</span>
+0277 <span class="keyword">if</span> fso.ns&gt;nz                       <span class="comment">% now calculate the output values</span>
+0278     <span class="keyword">if</span> fso.ssq&gt;0
+0279         aj=10*log10(fso.ssq*(fso.kc).^(-1)); <span class="comment">% aj(jj) = active level if all power is in first jj bins</span>
+0280         <span class="comment">% following line is equivalent to cj=20*log10(sqrt(2).^(fso.emax-(1:nbin)-1));</span>
+0281         cj=10*log10(2)*(fso.emax-(1:nbin)-1)-fso.sfdb;      <span class="comment">% lower limit of bin j in dB correcting for scale factor</span>
+0282         mj=aj'-cj-thresh;
+0283         jj=find(mj(1:end-1)&lt;0 &amp;  mj(2:end)&gt;=0,1);           <span class="comment">% find +ve transition through threshold</span>
+0284         <span class="keyword">if</span> isempty(jj)                                      <span class="comment">% if we never cross the threshold</span>
+0285             <span class="keyword">if</span> mj(end)&lt;=0                                   <span class="comment">% if we end up below if</span>
+0286                 jj=length(mj)-1;            <span class="comment">% take the threshold to be the bottom of the last (lowest) bin</span>
+0287                 jf=1;
+0288             <span class="keyword">else</span>                            <span class="comment">% if we are always above it</span>
+0289                 jj=1;                       <span class="comment">% take the threshold to be the bottom of the first (highest) bin</span>
+0290                 jf=0;
+0291             <span class="keyword">end</span>
+0292         <span class="keyword">else</span>
+0293             jf=1/(1-mj(jj+1)/mj(jj));       <span class="comment">% fractional part of j using linear interpolation</span>
+0294         <span class="keyword">end</span>
+0295         lev=aj(jj)+jf*(aj(jj+1)-aj(jj));    <span class="comment">% active level in decibels</span>
+0296         lp=10.^(lev/10);                    <span class="comment">% active level in power</span>
+0297         <span class="keyword">if</span> any(md==<span class="string">'d'</span>)                     <span class="comment">% 'd' option -&gt; output in dB</span>
+0298             lev=[lev 10*log10(fso.ssq/fso.ns)];
+0299         <span class="keyword">else</span>                                <span class="comment">% ~'d' option -&gt; output in power</span>
+0300             lev=[lp fso.ssq/fso.ns];
+0301         <span class="keyword">end</span>
+0302         af=fso.ssq/((fso.ns-nz)*lp);
+0303     <span class="keyword">else</span>                        <span class="comment">% if all samples are equal to zero</span>
+0304         af=0;
+0305         <span class="keyword">if</span> any(md==<span class="string">'d'</span>)         <span class="comment">% 'd' option -&gt; output in dB</span>
+0306             lev=[-Inf -Inf];    <span class="comment">% active level is 0 dB</span>
+0307         <span class="keyword">else</span>                    <span class="comment">% ~'d' option -&gt; output in power</span>
+0308             lev=[0 0];          <span class="comment">% active level is 0 power</span>
+0309         <span class="keyword">end</span>
 0310     <span class="keyword">end</span>
-0311 <span class="keyword">end</span>
-0312 <span class="keyword">if</span> nargout&gt;3
-0313     vad=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(s(1:nsp),1,fso.nh,1);
-0314     vad=vad&gt;(sqrt(lp)/10^(thresh/20));
-0315 <span class="keyword">end</span>
-0316 <span class="keyword">if</span> ~nargout
-0317     vad=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(s,1,fso.nh,1);
-0318     vad=vad&gt;(sqrt(lp)/10^(thresh/20));
-0319     levdb=10*log10(lp);
-0320     clf;
-0321     subplot(2,2,[1 2]);
-0322     tax=(1:ns)/fso.ffs;
-0323     plot(tax,sp,<span class="string">'-y'</span>,tax,s,<span class="string">'-r'</span>,tax,(vad&gt;0)*sqrt(lp),<span class="string">'-b'</span>);
-0324     xlabel(<span class="string">'Time (s)'</span>);
-0325     title(sprintf(<span class="string">'Active Level = %.2g dB, Activity = %.0f%% (ITU-T P.56)'</span>,levdb,100*af));
-0326     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1 -1.4 -1.05]);
-0327     <span class="keyword">if</span> nz&gt;0
-0328         hold on
-0329         ylim=get(gca,<span class="string">'ylim'</span>);
-0330         plot(tax(end-nz)*[1 1],ylim,<span class="string">':k'</span>);
-0331         hold off
-0332     <span class="keyword">end</span>
-0333     ylabel(<span class="string">'Amplitude'</span>);
-0334     legend(<span class="string">'Signal'</span>,<span class="string">'Smoothed envelope'</span>,<span class="string">'VAD * Active-Level'</span>,<span class="string">'Location'</span>,<span class="string">'SouthEast'</span>);
-0335     subplot(2,2,4);
-0336     plot(cj,repmat(levdb,nbin,1),<span class="string">'k:'</span>,cj,aj(:),<span class="string">'-b'</span>,cj,cj,<span class="string">'-r'</span>,levdb-thresh*ones(1,2),[levdb-thresh levdb],<span class="string">'-r'</span>);
-0337     xlabel(<span class="string">'Threshold (dB)'</span>);
-0338     ylabel(<span class="string">'Active Level (dB)'</span>);
-0339     legend(<span class="string">'Active Level'</span>,<span class="string">'Speech&gt;Thresh'</span>,<span class="string">'Threshold'</span>,<span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
-0340     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb-thresh,levdb-0.5*thresh,sprintf(<span class="string">'%.1f dB '</span>,thresh),<span class="string">'rmr'</span>);
-0341     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0342     ylim=get(gca,<span class="string">'ylim'</span>);
-0343     set(gca,<span class="string">'ylim'</span>,[levdb-1.2*thresh max(ylim(2),levdb+1.9*thresh)]);
-0344     kch=filter([1 -1],1,kc);
-0345     subplot(2,2,3);
-0346     bar(5*log10(2)+cj(end:-1:1),kch(end:-1:1)*100/kc(end));
-0347     set(gca,<span class="string">'xlim'</span>,[cj(end) cj(1)+10*log10(2)]);
-0348     ylim=get(gca,<span class="string">'ylim'</span>);
-0349     hold on
-0350     plot(lev([1 1]),ylim,<span class="string">'k:'</span>,lev([1 1])-thresh,ylim,<span class="string">'r:'</span>);
-0351     hold off
-0352     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(lev(1),ylim(2),sprintf(<span class="string">' Act\n Lev'</span>),<span class="string">'ltk'</span>);
-0353     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(lev(1)-thresh,ylim(2),sprintf(<span class="string">'Threshold '</span>),<span class="string">'rtr'</span>);
-0354     xlabel(<span class="string">'Frame power (dB)'</span>)
-0355     ylabel(<span class="string">'% frames'</span>);
-0356 <span class="keyword">elseif</span> any(md==<span class="string">'n'</span>) || any(md==<span class="string">'N'</span>) <span class="comment">% output normalized speech waveform</span>
-0357     fsx=fso; <span class="comment">% shift along other outputs</span>
-0358     fso=af;
-0359     af=lev;
-0360     <span class="keyword">if</span> any(md==<span class="string">'n'</span>)
-0361         sq=sp; <span class="comment">% 'n' -&gt; use unfiltered speech</span>
-0362     <span class="keyword">end</span>
-0363     <span class="keyword">if</span> fsx.ns&gt;0 &amp;&amp; fsx.ssq&gt;0 <span class="comment">% if there has been any non-zero speech</span>
-0364         lev=sq(1:nsp)/sqrt(lp);
-0365     <span class="keyword">else</span>
-0366         lev=sq(1:nsp);
+0311     <span class="keyword">if</span> all(md~=<span class="string">'l'</span>)
+0312         lev=lev(1);         <span class="comment">% only output the first element of lev unless 'l' option</span>
+0313     <span class="keyword">end</span>
+0314 <span class="keyword">end</span>
+0315 <span class="keyword">if</span> nargout&gt;3
+0316     vad=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(s(1:nsp),1,fso.nh,1);
+0317     vad=vad&gt;(sqrt(lp)/10^(thresh/20));
+0318 <span class="keyword">end</span>
+0319 <span class="keyword">if</span> ~nargout
+0320     vad=<a href="v_maxfilt.html" class="code" title="function [y,k,y0]=v_maxfilt(x,f,n,d,x0)">v_maxfilt</a>(s,1,fso.nh,1);
+0321     vad=vad&gt;(sqrt(lp)/10^(thresh/20));
+0322     levdb=10*log10(lp);
+0323     clf;
+0324     subplot(2,2,[1 2]);
+0325     tax=(1:ns)/fso.ffs;
+0326     plot(tax,sp,<span class="string">'-y'</span>,tax,s,<span class="string">'-r'</span>,tax,(vad&gt;0)*sqrt(lp),<span class="string">'-b'</span>);
+0327     xlabel(<span class="string">'Time (s)'</span>);
+0328     title(sprintf(<span class="string">'Active Level = %.2g dB, Activity = %.0f%% (ITU-T P.56)'</span>,levdb,100*af));
+0329     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1 -1.4 -1.05]);
+0330     <span class="keyword">if</span> nz&gt;0
+0331         hold on
+0332         ylim=get(gca,<span class="string">'ylim'</span>);
+0333         plot(tax(end-nz)*[1 1],ylim,<span class="string">':k'</span>);
+0334         hold off
+0335     <span class="keyword">end</span>
+0336     ylabel(<span class="string">'Amplitude'</span>);
+0337     legend(<span class="string">'Signal'</span>,<span class="string">'Smoothed envelope'</span>,<span class="string">'VAD * Active-Level'</span>,<span class="string">'Location'</span>,<span class="string">'SouthEast'</span>);
+0338     <span class="comment">% lower right plot: diagram of threshold and active level calculation</span>
+0339     subplot(2,2,4);
+0340     plot(cj,repmat(levdb,nbin,1),<span class="string">'k:'</span>,cj,aj(:),<span class="string">'-b'</span>,cj,cj,<span class="string">'-r'</span>,levdb-thresh*ones(1,2),[levdb-thresh levdb],<span class="string">'-r'</span>);
+0341     xlabel(<span class="string">'Threshold (dB)'</span>);
+0342     ylabel(<span class="string">'Active Level (dB)'</span>);
+0343     legend(<span class="string">'Active Level'</span>,<span class="string">'Speech&gt;Thresh'</span>,<span class="string">'Threshold'</span>,<span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
+0344     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb-thresh,levdb-0.5*thresh,sprintf(<span class="string">'%.1f dB '</span>,thresh),<span class="string">'rmr'</span>);
+0345     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0346     ylim=get(gca,<span class="string">'ylim'</span>);
+0347     set(gca,<span class="string">'ylim'</span>,[levdb-1.2*thresh max(ylim(2),levdb+1.9*thresh)]);
+0348     kch=filter([1 -1],1,kc);
+0349     <span class="comment">% lower left plot: power histogram</span>
+0350     subplot(2,2,3);
+0351     bar(5*log10(2)+cj(end:-1:1),kch(end:-1:1)*100/kc(end));
+0352     set(gca,<span class="string">'xlim'</span>,[cj(end) cj(1)+10*log10(2)]);
+0353     ylim=get(gca,<span class="string">'ylim'</span>);
+0354     hold on
+0355     plot(levdb([1 1]),ylim,<span class="string">'k:'</span>,levdb([1 1])-thresh,ylim,<span class="string">'r:'</span>);
+0356     hold off
+0357     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1),ylim(2),sprintf(<span class="string">'Active\nLev'</span>),<span class="string">'ctk'</span>);
+0358     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1)-thresh,ylim(2),sprintf(<span class="string">'Threshold'</span>),<span class="string">'rtr'</span>);
+0359     xlabel(<span class="string">'Frame power (dB)'</span>)
+0360     ylabel(<span class="string">'% frames'</span>);
+0361 <span class="keyword">elseif</span> any(md==<span class="string">'n'</span>) || any(md==<span class="string">'N'</span>) <span class="comment">% output normalized speech waveform</span>
+0362     fsx=fso; <span class="comment">% shift along other outputs</span>
+0363     fso=af;
+0364     af=lev;
+0365     <span class="keyword">if</span> any(md==<span class="string">'n'</span>)
+0366         sq=sp; <span class="comment">% 'n' -&gt; use unfiltered speech</span>
 0367     <span class="keyword">end</span>
-0368 <span class="keyword">end</span></pre></div>
+0368     <span class="keyword">if</span> fsx.ns&gt;0 &amp;&amp; fsx.ssq&gt;0 <span class="comment">% if there has been any non-zero speech</span>
+0369         lev=sq(1:nsp)/sqrt(lp);
+0370     <span class="keyword">else</span>
+0371         lev=sq(1:nsp);
+0372     <span class="keyword">end</span>
+0373 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
