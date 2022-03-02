@@ -102,6 +102,7 @@ function [lev,af,fso,vad]=v_activlev(sp,fs,mode)
 %                  structure and MODE input is omitted.
 % 2022-02-21       Fixed error in plot of power histogram that meant that the threshold and active
 %                  level lines were in the wrong position
+% 2022-02-28       Tidied up the labelling on the power histogram plot
 
 %      Copyright (C) Mike Brookes 2008-2019
 %      Version: $Id: v_activlev.m 11190 2019-11-19 12:53:58Z dmb $
