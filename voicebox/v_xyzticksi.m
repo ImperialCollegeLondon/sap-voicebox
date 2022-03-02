@@ -3,6 +3,11 @@ function s=v_xyzticksi(ax,ah)
 %
 % This routine is not intended to be called directly. See XTICKSI and YTICKSI.
 
+% Revision History
+%
+% 2018-09-21       Initial version
+% 2022-02-28       Fixed bug that could result in negative zero values as tick labels
+
 %	   Copyright (C) Mike Brookes 2009
 %      Version: $Id: v_xyzticksi.m 10865 2018-09-21 17:22:45Z dmb $
 %
