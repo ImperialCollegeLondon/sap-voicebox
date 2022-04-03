@@ -22,7 +22,7 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 %                'p'    Initialize with centroids and variances of random partitions
 %                'k'    k-means algorithm ('kf' and 'kp' determine initialization)
 %                'h'    k-harmonic means algorithm ('hf' and 'hp' determine initialization) [default]
-%                's'    do not scale data during initialization to have equal variances
+%                's'    use unscaled data during initialization phase instead of scaling it first
 %                'm'    M0 contains the initial centres
 %                'v'    full covariance matrices
 %              Mode 'hf' [the default] generally gives the best results but 'f' is faster and often OK
