@@ -1,22 +1,26 @@
 function y=v_besselratio(x,v,p)
 %V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)
 %
-%  Inputs: x Bessel function argument (scalar or matrix)
-%          v denominator Bessel function order [0]
-%          p digits precision <=14 [5]
+%  Inputs: x    Bessel function argument (scalar or matrix)
+%          v    denominator Bessel function order [0]
+%          p    digits precision <=14 [5]
 %
-% Outputs: y value of the Bessel function ratio besseli(v+1,x)./besseli(v,x)
+% Outputs: y    value of the Bessel function ratio besseli(v+1,x)./besseli(v,x)
 %
-% Uses an algorithm from [1] of which a pseudocode version is given in [2] but which
-% has an misprint in the first line: "min" instead of "max".
-% The iteration count and minimum initial order are made dependent on the
-% required precision to improve efficiency.
+% Uses an algorithm from [1] of which a pseudocode version is given in [2] but which has an misprint
+% in the first line: "min" instead of "max". The iteration count and minimum initial order are made
+% dependent on the required precision to improve efficiency.
+% The inverse of r=v_besselratio(k,0) is available as the function k=v_besratinv0(r).
 %
 % [1]	D. E. Amos. Computation of modified bessel functions and their ratios.
 %       Mathematics of Computation, 28 (125): 239�251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.
 % [2]	G. Kurz, I. Gilitschenski, and U. D. Hanebeck.
 %       Recursive nonlinear filtering for angular data based on circular distributions.
 %       In Proc American Control Conf, Washington, June 2013.
+%
+% Revision History:
+% 2018/09/21    Original Version
+% 2022/04/21    Corrected error for x=Inf. Revised comments.
 
 %      Copyright (C) Mike Brookes 2016-2017
 %      Version: $Id: v_besselratio.m 10865 2018-09-21 17:22:45Z dmb $
@@ -50,7 +54,7 @@ n=nm(p);                            % number of iterations
 if nargin<2 || isempty(v)
     v=0;                            % default to I1/I0
 end
-u=max(v,wm(p));                        % minimum value of v for first stage
+u=max(v,wm(p));                     % minimum value of v for first stage
 s=size(x);
 x=x(:);
 r=zeros(numel(x),n+1);              % intermediate estimates: one row per value of x
@@ -67,6 +71,7 @@ for i=u:-1:v+1
     y=1./(y+2*i./x);                % backward recursion on v using Eqn (2) from [1]
 end
 y(x==0)=0;                          % fix up special case of x=0
+y(x==Inf)=1;                       % fix up special case of x=Inf
 y=reshape(y,s);
 if ~nargout
     plot(x,y);
