@@ -73,6 +73,7 @@ p=f.*conj(f);
 % sidelobe attenuation is maximum peak (note DC peak at p(1) is not found)
 [kp,vp]=v_findpeaks(p,'q');
 [kt,vt]=v_findpeaks(-p,'q');
+% dbpo=10*log10(vp(2:end)./vp(1:end-1))./log2((kp(2:end)-1)./(kp(1:end-1)-1)); % slope in dB/octave
 if ~numel(kp)
     x.sidelobe=10*log10(min(p)/p(1));
 else
