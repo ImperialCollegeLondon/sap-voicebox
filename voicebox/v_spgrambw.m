@@ -89,7 +89,6 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %%%% BUGS %%%%%%
 % * allow ANN rows to be a mixture of intervals and instants
 % * allow multiple ANN rows
-% * frequency axis labels ofter start at -0 instead of 0.
 % * Do not use triangular interpolation if the output frequencies are the same as an FFT
 % * Place as many subticks as will fit beyond the last tick with the 'f' option
 % * Use a special subtick pattern between ticks that are powers of 10 using the 'f' option
