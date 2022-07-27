@@ -89,6 +89,7 @@
 %   v_fxrapt        - RAPT pitch tracker
 %   v_gammabank     - Calculate a bank of IIR gammatone filters
 %   v_importsii     - Calculate the SII importance function (ANSI S3.5-1997)
+%   v_istftw        - Inverse Short-time Fourier Transform
 %   v_modspect      - Caluclate the modulation specrogram
 %   v_mos2pesq      - Convert MOS values to equivalent PESQ scores
 %   v_overlapadd    - Reconstitute an output waveform after frame-based processing
@@ -103,6 +104,7 @@
 %   v_sone2phon     - Convert signal levels from sones to phons
 %   v_soundspeed    - Returns the speed of sound in air as a function of temperature
 %   v_spgrambw      - Spectrogram with many options
+%   v_stftw         - Short-time Fourier Transform
 %   v_stoi2prob     - Convert STOI intelligibility measure to probability of correct recognition
 %   v_txalign       - Align two sets of time markers
 %   v_vadsohn       - Voice activity detector
@@ -204,7 +206,7 @@
 %   v_sprintcpx     - Print a complex number with real and imaginary parts
 %   v_texthvc       - write text on a plot with specified alignment and colour
 %   v_tilefigs      - Arrange all figures on the screen
-%   v_colormap    - Set and plot colormap information
+%   v_colormap      - Set and plot colormap information
 %   v_xticksi       - Label x-axis tick marks using SI multipliers
 %   v_yticksi       - Label y-axis tick marks using SI multipliers
 %   v_xyzticksi     - Helper function for v_xticksi and v_yticksi
@@ -219,6 +221,7 @@
 %
 % Utility Functions
 %   v_atan2sc       - arctangent function that returns the sin and cos of the angle
+%   v_besratinv0    - Inverse function of the Modified Bessel Ratio I1(k)/I0(k)
 %   v_besselratio   - calculate the Bessel function ratio: besseli(v+1,x)./besseli(v,x)
 %   v_besselratioi  - calculate the inverse of v_besselratio [only for v=0]
 %   v_bitsprec      - Rounds values to a precision of n bits

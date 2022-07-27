@@ -1,5 +1,5 @@
 function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
-%V_STFT converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)
+%V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)
 %  Usage:  (1) [y,so]=v_stftw(x,nw); % default parameters: m='rM', ov=2
 %              % ...                 % time-frequency domain processing goes here
 %              z=v_istftw(y,so);     % z is the same as x except for the first and last half-frames

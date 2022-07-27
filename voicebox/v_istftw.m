@@ -1,5 +1,5 @@
 function [x,io]=v_istftw(y,so,iop)
-%V_ISTFT converts a time-frequency domain signal back into the time domain with the inverse Short-time Fourier Transform [X,IO]=(Y,SO,IOP)
+%V_ISTFTW converts a time-frequency domain signal back into the time domain with the inverse Short-time Fourier Transform [X,IO]=(Y,SO,IOP)
 %
 % For usage information, see v_stftw().
 %

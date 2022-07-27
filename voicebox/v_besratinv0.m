@@ -1,5 +1,5 @@
 function k=v_besratinv0(r)
-% BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)
+% V_BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)
 %
 %  Inputs: r    Input argument in range [0,1] (scalar or matrix)
 %

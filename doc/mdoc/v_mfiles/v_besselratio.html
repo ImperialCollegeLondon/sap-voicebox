@@ -27,22 +27,26 @@
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)
 
-  Inputs: x Bessel function argument (scalar or matrix)
-          v denominator Bessel function order [0]
-          p digits precision &lt;=14 [5]
+  Inputs: x    Bessel function argument (scalar or matrix)
+          v    denominator Bessel function order [0]
+          p    digits precision &lt;=14 [5]
 
- Outputs: y value of the Bessel function ratio besseli(v+1,x)./besseli(v,x)
+ Outputs: y    value of the Bessel function ratio besseli(v+1,x)./besseli(v,x)
 
- Uses an algorithm from [1] of which a pseudocode version is given in [2] but which
- has an misprint in the first line: &quot;min&quot; instead of &quot;max&quot;.
- The iteration count and minimum initial order are made dependent on the
- required precision to improve efficiency.
+ Uses an algorithm from [1] of which a pseudocode version is given in [2] but which has an misprint
+ in the first line: &quot;min&quot; instead of &quot;max&quot;. The iteration count and minimum initial order are made
+ dependent on the required precision to improve efficiency.
+ The inverse of r=v_besselratio(k,0) is available as the function k=v_besratinv0(r).
 
  [1]    D. E. Amos. Computation of modified bessel functions and their ratios.
        Mathematics of Computation, 28 (125): 239�251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.
  [2]    G. Kurz, I. Gilitschenski, and U. D. Hanebeck.
        Recursive nonlinear filtering for angular data based on circular distributions.
-       In Proc American Control Conf, Washington, June 2013.</pre></div>
+       In Proc American Control Conf, Washington, June 2013.
+
+ Revision History:
+ 2018/09/21    Original Version
+ 2022/04/21    Corrected error for x=Inf. Revised comments.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -53,6 +57,7 @@ This function calls:
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 
+<li><a href="v_besratinv0.html" class="code" title="function k=v_besratinv0(r)">v_besratinv0</a>	V_BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)</li>
 <li><a href="v_besselratioi.html" class="code" title="function s=v_besselratioi(r,v,p)">v_besselratioi</a>	V_BESSELRATIOI calculate the inverse Bessel function ratio</li>
 </ul>
 <!-- crossreference -->
@@ -64,78 +69,83 @@ This function is called by:
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_besselratio(x,v,p)</a>
 0002 <span class="comment">%V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</span>
 0003 <span class="comment">%</span>
-0004 <span class="comment">%  Inputs: x Bessel function argument (scalar or matrix)</span>
-0005 <span class="comment">%          v denominator Bessel function order [0]</span>
-0006 <span class="comment">%          p digits precision &lt;=14 [5]</span>
+0004 <span class="comment">%  Inputs: x    Bessel function argument (scalar or matrix)</span>
+0005 <span class="comment">%          v    denominator Bessel function order [0]</span>
+0006 <span class="comment">%          p    digits precision &lt;=14 [5]</span>
 0007 <span class="comment">%</span>
-0008 <span class="comment">% Outputs: y value of the Bessel function ratio besseli(v+1,x)./besseli(v,x)</span>
+0008 <span class="comment">% Outputs: y    value of the Bessel function ratio besseli(v+1,x)./besseli(v,x)</span>
 0009 <span class="comment">%</span>
-0010 <span class="comment">% Uses an algorithm from [1] of which a pseudocode version is given in [2] but which</span>
-0011 <span class="comment">% has an misprint in the first line: &quot;min&quot; instead of &quot;max&quot;.</span>
-0012 <span class="comment">% The iteration count and minimum initial order are made dependent on the</span>
-0013 <span class="comment">% required precision to improve efficiency.</span>
+0010 <span class="comment">% Uses an algorithm from [1] of which a pseudocode version is given in [2] but which has an misprint</span>
+0011 <span class="comment">% in the first line: &quot;min&quot; instead of &quot;max&quot;. The iteration count and minimum initial order are made</span>
+0012 <span class="comment">% dependent on the required precision to improve efficiency.</span>
+0013 <span class="comment">% The inverse of r=v_besselratio(k,0) is available as the function k=v_besratinv0(r).</span>
 0014 <span class="comment">%</span>
 0015 <span class="comment">% [1]    D. E. Amos. Computation of modified bessel functions and their ratios.</span>
 0016 <span class="comment">%       Mathematics of Computation, 28 (125): 239�251, jan 1974. doi: 10.1090/S0025-5718-1974-0333287-7.</span>
 0017 <span class="comment">% [2]    G. Kurz, I. Gilitschenski, and U. D. Hanebeck.</span>
 0018 <span class="comment">%       Recursive nonlinear filtering for angular data based on circular distributions.</span>
 0019 <span class="comment">%       In Proc American Control Conf, Washington, June 2013.</span>
-0020 
-0021 <span class="comment">%      Copyright (C) Mike Brookes 2016-2017</span>
-0022 <span class="comment">%      Version: $Id: v_besselratio.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0023 <span class="comment">%</span>
-0024 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0025 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0026 <span class="comment">%</span>
-0027 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0028 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0029 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0030 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0031 <span class="comment">%   (at your option) any later version.</span>
-0032 <span class="comment">%</span>
-0033 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0034 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0035 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0036 <span class="comment">%   GNU General Public License for more details.</span>
-0037 <span class="comment">%</span>
-0038 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0039 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0040 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0042 wm=[1 1 2 4 10 20 14 21 16 22 18 23 20 25];  <span class="comment">% lower bound for initial v as a function of p</span>
-0043 nm=[1 1 1 1 1 1 2 2 3 3 4 4 5 5];            <span class="comment">% number of iterations as a function of p</span>
-0044 <span class="keyword">if</span> nargin&lt;3 || isempty(p)
-0045     p=5;                            <span class="comment">% default precision is 5 digits</span>
-0046 <span class="keyword">else</span>
-0047     p=min(max(ceil(p),1),14);       <span class="comment">% digits precision required</span>
-0048 <span class="keyword">end</span>                       
-0049 n=nm(p);                            <span class="comment">% number of iterations</span>
-0050 <span class="keyword">if</span> nargin&lt;2 || isempty(v)
-0051     v=0;                            <span class="comment">% default to I1/I0</span>
-0052 <span class="keyword">end</span>
-0053 u=max(v,wm(p));                        <span class="comment">% minimum value of v for first stage</span>
-0054 s=size(x);
-0055 x=x(:);
-0056 r=zeros(numel(x),n+1);              <span class="comment">% intermediate estimates: one row per value of x</span>
-0057 <span class="keyword">for</span> i=1:n+1
-0058     r(:,i)=x./(u+i-0.5+sqrt((u+i+0.5)^2+x.^2)); <span class="comment">% lower bound for ratio: Eqn (20a) from [1]</span>
-0059 <span class="keyword">end</span>
-0060 <span class="keyword">for</span> i=1:n
-0061     <span class="keyword">for</span> k=1:n-i+1                   <span class="comment">% k is actually k+1 in (20b) of [1]</span>
-0062         r(:,k)=x./(u+k+sqrt((u+k)^2+x.^2.*r(:,k+1)./r(:,k)));  <span class="comment">% Eqn (20b) from [1]</span>
-0063     <span class="keyword">end</span>
-0064 <span class="keyword">end</span>
-0065 y=r(:,1);
-0066 <span class="keyword">for</span> i=u:-1:v+1
-0067     y=1./(y+2*i./x);                <span class="comment">% backward recursion on v using Eqn (2) from [1]</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Revision History:</span>
+0022 <span class="comment">% 2018/09/21    Original Version</span>
+0023 <span class="comment">% 2022/04/21    Corrected error for x=Inf. Revised comments.</span>
+0024 
+0025 <span class="comment">%      Copyright (C) Mike Brookes 2016-2017</span>
+0026 <span class="comment">%      Version: $Id: v_besselratio.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0029 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0032 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0033 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0034 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0035 <span class="comment">%   (at your option) any later version.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0038 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0039 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0040 <span class="comment">%   GNU General Public License for more details.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0043 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0044 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0045 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0046 wm=[1 1 2 4 10 20 14 21 16 22 18 23 20 25];  <span class="comment">% lower bound for initial v as a function of p</span>
+0047 nm=[1 1 1 1 1 1 2 2 3 3 4 4 5 5];            <span class="comment">% number of iterations as a function of p</span>
+0048 <span class="keyword">if</span> nargin&lt;3 || isempty(p)
+0049     p=5;                            <span class="comment">% default precision is 5 digits</span>
+0050 <span class="keyword">else</span>
+0051     p=min(max(ceil(p),1),14);       <span class="comment">% digits precision required</span>
+0052 <span class="keyword">end</span>                       
+0053 n=nm(p);                            <span class="comment">% number of iterations</span>
+0054 <span class="keyword">if</span> nargin&lt;2 || isempty(v)
+0055     v=0;                            <span class="comment">% default to I1/I0</span>
+0056 <span class="keyword">end</span>
+0057 u=max(v,wm(p));                     <span class="comment">% minimum value of v for first stage</span>
+0058 s=size(x);
+0059 x=x(:);
+0060 r=zeros(numel(x),n+1);              <span class="comment">% intermediate estimates: one row per value of x</span>
+0061 <span class="keyword">for</span> i=1:n+1
+0062     r(:,i)=x./(u+i-0.5+sqrt((u+i+0.5)^2+x.^2)); <span class="comment">% lower bound for ratio: Eqn (20a) from [1]</span>
+0063 <span class="keyword">end</span>
+0064 <span class="keyword">for</span> i=1:n
+0065     <span class="keyword">for</span> k=1:n-i+1                   <span class="comment">% k is actually k+1 in (20b) of [1]</span>
+0066         r(:,k)=x./(u+k+sqrt((u+k)^2+x.^2.*r(:,k+1)./r(:,k)));  <span class="comment">% Eqn (20b) from [1]</span>
+0067     <span class="keyword">end</span>
 0068 <span class="keyword">end</span>
-0069 y(x==0)=0;                          <span class="comment">% fix up special case of x=0</span>
-0070 y=reshape(y,s);
-0071 <span class="keyword">if</span> ~nargout
-0072     plot(x,y);
-0073     xlabel(<span class="string">'x'</span>);
-0074     ylabel(sprintf(<span class="string">'I_{%d}(x)/I_{%d}(x)'</span>,v+1,v));
-0075 <span class="keyword">end</span></pre></div>
+0069 y=r(:,1);
+0070 <span class="keyword">for</span> i=u:-1:v+1
+0071     y=1./(y+2*i./x);                <span class="comment">% backward recursion on v using Eqn (2) from [1]</span>
+0072 <span class="keyword">end</span>
+0073 y(x==0)=0;                          <span class="comment">% fix up special case of x=0</span>
+0074 y(x==Inf)=1;                       <span class="comment">% fix up special case of x=Inf</span>
+0075 y=reshape(y,s);
+0076 <span class="keyword">if</span> ~nargout
+0077     plot(x,y);
+0078     xlabel(<span class="string">'x'</span>);
+0079     ylabel(sprintf(<span class="string">'I_{%d}(x)/I_{%d}(x)'</span>,v+1,v));
+0080 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

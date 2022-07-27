@@ -48,7 +48,7 @@
                 'p'    Initialize with centroids and variances of random partitions
                 'k'    k-means algorithm ('kf' and 'kp' determine initialization)
                 'h'    k-harmonic means algorithm ('hf' and 'hp' determine initialization) [default]
-                's'    do not scale data during initialization to have equal variances
+                's'    use unscaled data during initialization phase instead of scaling it first
                 'm'    M0 contains the initial centres
                 'v'    full covariance matrices
               Mode 'hf' [the default] generally gives the best results but 'f' is faster and often OK
@@ -125,7 +125,7 @@ This function is called by:
 0022 <span class="comment">%                'p'    Initialize with centroids and variances of random partitions</span>
 0023 <span class="comment">%                'k'    k-means algorithm ('kf' and 'kp' determine initialization)</span>
 0024 <span class="comment">%                'h'    k-harmonic means algorithm ('hf' and 'hp' determine initialization) [default]</span>
-0025 <span class="comment">%                's'    do not scale data during initialization to have equal variances</span>
+0025 <span class="comment">%                's'    use unscaled data during initialization phase instead of scaling it first</span>
 0026 <span class="comment">%                'm'    M0 contains the initial centres</span>
 0027 <span class="comment">%                'v'    full covariance matrices</span>
 0028 <span class="comment">%              Mode 'hf' [the default] generally gives the best results but 'f' is faster and often OK</span>
