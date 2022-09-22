@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_istftw</title>
+  <meta name="keywords" content="v_istftw">
+  <meta name="description" content="V_ISTFTW converts a time-frequency domain signal back into the time domain with the inverse Short-time Fourier Transform [X,IO]=(Y,SO,IOP)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_istftw
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_ISTFTW converts a time-frequency domain signal back into the time domain with the inverse Short-time Fourier Transform [X,IO]=(Y,SO,IOP)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,io]=v_istftw(y,so,iop) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_ISTFTW converts a time-frequency domain signal back into the time domain with the inverse Short-time Fourier Transform [X,IO]=(Y,SO,IOP)
+
+ For usage information, see v_stftw().
+
+  Inputs: y(f,k,...)    STFT (frame=f, freq=k)
+          so           The 'so' output from the call to v_stftw.
+                       If processing the signal in chunks, this should come from
+                       the v_stftw call corresponding to the most recent
+                       chunk.
+          iop          The 'io' output from the previous chunk's call to v_istftw.
+                       Omit for the first chunk or else use iop=[].
+
+ Outputs: x(t,...)     Output signal
+          io           structure used in subsequent call as the iop argument to
+                       alllow processing in chunks. Omit this argument for
+                       the final chunk.
+
+ Revision History
+    2022-04-10 First version</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>	V_IRFFT    Inverse fft of a conjugate symmetric spectrum X=(Y,N,D)</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x,io]=v_istftw(y,so,iop)</a>
+0002 <span class="comment">%V_ISTFTW converts a time-frequency domain signal back into the time domain with the inverse Short-time Fourier Transform [X,IO]=(Y,SO,IOP)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% For usage information, see v_stftw().</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%  Inputs: y(f,k,...)    STFT (frame=f, freq=k)</span>
+0007 <span class="comment">%          so           The 'so' output from the call to v_stftw.</span>
+0008 <span class="comment">%                       If processing the signal in chunks, this should come from</span>
+0009 <span class="comment">%                       the v_stftw call corresponding to the most recent</span>
+0010 <span class="comment">%                       chunk.</span>
+0011 <span class="comment">%          iop          The 'io' output from the previous chunk's call to v_istftw.</span>
+0012 <span class="comment">%                       Omit for the first chunk or else use iop=[].</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Outputs: x(t,...)     Output signal</span>
+0015 <span class="comment">%          io           structure used in subsequent call as the iop argument to</span>
+0016 <span class="comment">%                       alllow processing in chunks. Omit this argument for</span>
+0017 <span class="comment">%                       the final chunk.</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Revision History</span>
+0020 <span class="comment">%    2022-04-10 First version</span>
+0021 sy=size(y);
+0022 nf=sy(1);
+0023 nc=prod(sy(3:end));
+0024 <span class="comment">% extract quantities from so structure</span>
+0025 nh=so.nh;                       <span class="comment">% frame hop</span>
+0026 nt=so.nt;                       <span class="comment">% length of transform</span>
+0027 ws=nh*nt*so.wa;                 <span class="comment">% synthesis window for perfect reconstruction</span>
+0028 nw=length(ws);                  <span class="comment">% length of window</span>
+0029 ov=nw/nh;                       <span class="comment">% overlap factor (always an integer)</span>
+0030 <span class="keyword">if</span> nargin&gt;2 &amp;&amp; isstruct(iop)
+0031     md=iop.md;                     <span class="comment">% remaining samples to delete at the start</span>
+0032     xx=iop.xx;                     <span class="comment">% tail from previous call</span>
+0033     mx=iop.mx;                     <span class="comment">% cumulative number of output samples</span>
+0034 <span class="keyword">else</span>                            <span class="comment">% first chunk if iop input is missing</span>
+0035     md=nh*(ov-1)*so.me;         <span class="comment">% number of samples to delete at the start of the signal</span>
+0036     xx=zeros(0,nc,1);           <span class="comment">% no tail from previous call</span>
+0037     mx=0;                       <span class="comment">% cumulative number of output samples</span>
+0038 <span class="keyword">end</span>
+0039 <span class="keyword">if</span> nf&gt;0
+0040     y=<a href="v_irfft.html" class="code" title="function x=v_irfft(y,n,d)">v_irfft</a>(reshape(y,[sy(1:2) nc]),nt,2);    <span class="comment">% inverse dft</span>
+0041     y=y(:,1:nw,:).*repmat(ws,nf,1,nc);          <span class="comment">% truncate to nw and apply output window</span>
+0042     om=min(ov,nf);                              <span class="comment">% number of occupied overlap sets</span>
+0043     <span class="keyword">if</span> numel(xx)&gt;0
+0044         x=zeros(nw+nh*(nf-1),nc,min(ov,nf+1));    <span class="comment">% space for output including saved data</span>
+0045         x(1:size(xx,1),:,end)=xx;               <span class="comment">% insert output speech tail (already overlap-added)</span>
+0046     <span class="keyword">else</span>
+0047         x=zeros(nw+nh*(nf-1),nc,om);            <span class="comment">% space for output</span>
+0048     <span class="keyword">end</span>
+0049     <span class="keyword">for</span> i=1:om
+0050         nm=nw*(1+floor((nf-i)/ov));             <span class="comment">% number of samples in this column</span>
+0051         x(1+(i-1)*nh:nm+(i-1)*nh,:,i)=reshape(permute(y(i:ov:nf,:,:),[2 1 3]),nm,nc); <span class="comment">% concatenate every ov'th frame</span>
+0052     <span class="keyword">end</span>
+0053     x=sum(x,3);                                 <span class="comment">% perform the overlap-add</span>
+0054     <span class="keyword">if</span> nargout&gt;1
+0055         t0=nw-nh-1;
+0056         io.xx=x(end-t0:<span class="keyword">end</span>,:);                  <span class="comment">% save tail for overlap-adding next chunk</span>
+0057         x(end-t0:<span class="keyword">end</span>,:)=[];                     <span class="comment">% ... and remove it</span>
+0058     <span class="keyword">end</span>
+0059     <span class="keyword">if</span> md&gt;0
+0060         mdd=min(md,size(x,1));
+0061         x(1:mdd,:)=[];                          <span class="comment">% delete initial samples</span>
+0062         md=md-mdd;
+0063     <span class="keyword">end</span>
+0064     <span class="keyword">if</span> so.mp==0 &amp;&amp; size(x,1)&gt;0 &amp;&amp; mx+size(x,1)&gt;so.mx
+0065         x(end+so.mx-mx-size(x,1)+1:<span class="keyword">end</span>,:)=[];   <span class="comment">% delete unwanted samples at the end</span>
+0066     <span class="keyword">end</span>
+0067     <span class="keyword">if</span> nargout&gt;1
+0068         io.md=md;                               <span class="comment">% save number of sampes to delete at start</span>
+0069         io.mx=mx+size(x,1);                     <span class="comment">% cumulative number of output samples</span>
+0070     <span class="keyword">end</span>
+0071     <span class="keyword">if</span> nc&gt;1
+0072         x=reshape(x,[size(x,1) sy(3:end)]);
+0073     <span class="keyword">end</span>
+0074 <span class="keyword">else</span>                                            <span class="comment">% no input frames</span>
+0075     <span class="keyword">if</span> nargout&gt;1                                <span class="comment">% io output required</span>
+0076         <span class="keyword">if</span> nargin&gt;2
+0077             io=iop;                             <span class="comment">% copy from input structure if available</span>
+0078         <span class="keyword">else</span>
+0079         <span class="keyword">end</span>
+0080     <span class="keyword">end</span>
+0081     <span class="keyword">if</span> nc&gt;1
+0082         x=zeros([0 sy(3:end)]);
+0083     <span class="keyword">else</span>
+0084         x=[];
+0085     <span class="keyword">end</span>
+0086 <span class="keyword">end</span>
+0087 
+0088 
+0089 
+0090 
+0091</pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
