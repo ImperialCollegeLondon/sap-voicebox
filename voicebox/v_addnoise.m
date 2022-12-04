@@ -11,7 +11,7 @@ function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa)
 % Inputs:  s    input signal (column vector)
 %        fsx    sampling frequency (Hz) or fso output from previous call
 %        snr    target SNR in dB (or power ratio if 'D' option given) [default: Inf]
-%          m    mode string [default = 'dxopEk']
+%          m    mode string [omit or use '' to get default of 'dxopEk']
 %                (1) 'A'  use A-weighting when calculating SNR
 %                (2) 'd'  SNR input and p output given in dB [default]
 %                    'D'  SNR input and p output given as power ratio

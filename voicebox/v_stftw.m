@@ -4,8 +4,8 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 %              % ...                 % time-frequency domain processing goes here
 %              z=v_istftw(y,so);     % z is the same as x except for the first and last half-frames
 %
-%          (2) [y,so]=v_stftw(x,nw,'en',4); % Hanning window with ov=4
-%              z=v_istftw(y,so);     % z is the same as x everywhere due to 'e' option
+%          (2) [y,so]=v_stftw(x,nw,'en',4);         % Hanning window with ov=4
+%              z=v_istftw(y,so);                    % z is the same as x everywhere due to 'e' option
 %
 %          (3) [y,so]=v_stftw([],nw,'pn',4);      	% initialise v_stftw state variable, so
 %              io=[];                               % initialise v_istftw state variable, io
@@ -30,7 +30,7 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 %
 %  Inputs: x(tax,...)	input signal (one signal per column)
 %          nw       DFT length (will be rounded up to a multiple of ov)
-%                       alternatively so output from the previous chunk's call to v_stftw
+%                       alternatively, the so output from the previous chunk's call to v_stftw
 %          m        mode string including window code
 %          ov       integer overlap factor; the frame hop is nw/ov. [2]
 %

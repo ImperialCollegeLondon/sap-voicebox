@@ -244,7 +244,7 @@ if ns                       % process this speech chunk
     fso.ns=fso.ns+ns;                               % count the number of speech samples
     fso.ss=fso.ss+sum(sq);                          % sum of speech samples (not used internally but available in fso output)
     ssq=sum(sq.*sq);                                % sum of squared new speech samples
-    if ssq>0 && fso.ssq==0 % if these are the first non-zero speech samples
+    if ssq>0 && fso.ssq==0                          % if these are the first non-zero speech samples
         fso.sf=ns/ssq;                              % scale factor to normalize the mean power of this chunk to 1
         fso.sfdb=10*log10(fso.sf);                  % scale factor in dB
     end
@@ -260,7 +260,7 @@ if ns                       % process this speech chunk
     if fso.emax==-Inf                               % if all samples so far are zero
         fso.kc(1)=fso.kc(1)+ns;
     else                                            % we have had some non-zero samples
-        qe=min(fso.emax-qe,nbin);   % force in the range 1:nbin. Bin k has 2^(emax-k-1) <= s^2 < 2^(emax-k)
+        qe=min(fso.emax-qe,nbin);                   % force in the range 1:nbin. Bin k has 2^(emax-k-1) <= s^2 < 2^(emax-k)
         wqe=ones(length(qe),1);
         % below: could use kc=cumsum(accumarray(qe,wqe,nbin)) but unsure about backwards compatibility
         kc=cumsum(full(sparse(qe,wqe,wqe,nbin,1)));     % cumulative occupancy counts
@@ -269,7 +269,7 @@ if ns                       % process this speech chunk
             kc(esh+1:nbin-1)=kc(esh+1:nbin-1)+fso.kc(1:nbin-esh-1);
             kc(nbin)=kc(nbin)+sum(fso.kc(nbin-esh:nbin));
         else
-            kc(nbin)=kc(nbin)+sum(fso.kc); % otherwise just add all old counts into the last (lowest) bin
+            kc(nbin)=kc(nbin)+sum(fso.kc);              % otherwise just add all old counts into the last (lowest) bin
         end
         fso.kc=kc;
     end
@@ -309,7 +309,7 @@ if fso.ns>nz                       % now calculate the output values
         end
     end
     if all(md~='l')
-        lev=lev(1);         % only output the first element of lev unless 'l' option
+        lev=lev(1);             % only output the first element of lev unless 'l' option
     end
 end
 if nargout>3
@@ -358,14 +358,14 @@ if ~nargout
     v_texthvc(levdb(1)-thresh,ylim(2),sprintf('Threshold'),'rtr');
     xlabel('Frame power (dB)')
     ylabel('% frames');
-elseif any(md=='n') || any(md=='N') % output normalized speech waveform
-    fsx=fso; % shift along other outputs
+elseif any(md=='n') || any(md=='N')             % output normalized speech waveform
+    fsx=fso;                                    % shift along other outputs
     fso=af;
     af=lev;
     if any(md=='n')
-        sq=sp; % 'n' -> use unfiltered speech
+        sq=sp;                                  % 'n' -> use unfiltered speech
     end
-    if fsx.ns>0 && fsx.ssq>0 % if there has been any non-zero speech
+    if fsx.ns>0 && fsx.ssq>0                    % if there has been any non-zero speech
         lev=sq(1:nsp)/sqrt(lp);
     else
         lev=sq(1:nsp);
