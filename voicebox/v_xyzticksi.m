@@ -8,7 +8,7 @@ function s=v_xyzticksi(ax,ah)
 % 2018-09-21       Initial version
 % 2022-02-28       Fixed bug that could result in negative zero values as tick labels
 
-%	   Copyright (C) Mike Brookes 2009
+%	   Copyright (C) Mike Brookes 2009-2022
 %      Version: $Id: v_xyzticksi.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -36,6 +36,7 @@ function s=v_xyzticksi(ax,ah)
 %   (2) axis lengths incorrect for 3D graphs
 %   (3) should take account of axis shortening due to long labels at the ends
 %   (4) should calculate axis orentation from CameraPosition, CameraTarget and CameraUpVector
+%   (5) should allow a scale factor or, better, a mapping function converting from plot to axis coordinates
 if nargin<2
     ah=gca;
     if nargin<1
@@ -116,7 +117,6 @@ if strcmp(getgca.(axfield{5,ax}),'log')   % log axis
             gi=0;
             globalsi=0;                % disable global multiplier
             s='';
-
         end
         g=10^gi;
         ag=a/g;
