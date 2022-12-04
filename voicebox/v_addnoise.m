@@ -6,7 +6,7 @@ function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa)
 %                                            % sample and wrapping around as required with a vorbis cross-fade
 %        (3) z=v_addnoise(s,fs,snr,'AD');    % use A-weighting when calculating the SNR which is specified as a power ratio
 %        (4) z=v_addnoise(s,fs,snr,'f',b,a); % generate noise using filter(b,a,randn(*,1)) but avoiding startup transient
-%        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from stdspectrum.m)and plot a graph
+%        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from v_stdspectrum.m)and plot a graph
 %
 % Inputs:  s    input signal (column vector)
 %        fsx    sampling frequency (Hz) or fso output from previous call
@@ -35,7 +35,7 @@ function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa)
 %                (8) 'x'  the output z contains input and noise as separate columns
 %                (8) 'f'  Inputs nb and fsa specify a z-domain filter nb(z)/fsa(z) applied to Gaussian noise
 %                (9) 'g'  plot graph [default if no output arguments]
-%         nb    noise signal or stdspectrum type or numerator of noise filter if 'f' option (default: white noise)
+%         nb    noise signal or v_stdspectrum type or numerator of noise filter if 'f' option (default: white noise)
 %        fsa    noise sample frequency [default fsx] or denominator of noise filter if 'f' option
 %
 % Outputs: z    noisy signal (single column unless 'x' option given
@@ -101,7 +101,7 @@ else
         nb=1;   % default is white noise
     end
     if any(m=='A') && (~any(m=='z') || ~any(m=='Z'))
-        [awb,awa]=stdspectrum(2,'z',fs); % create an A-weighting filter
+        [awb,awa]=v_stdspectrum(2,'z',fs); % create an A-weighting filter
     end
     if any(m=='z')
         se=1;                       % speech power given as 0 dB
@@ -123,11 +123,11 @@ else
     genf=any(m=='f') || ischar(nb) || numel(nb)==1;     % generate noise locally
     if genf   % generate noise locally
         if ~any(m=='f') % specify standard spectrum
-            [nb,fsa]=stdspectrum(nb,'z',fs);
+            [nb,fsa]=v_stdspectrum(nb,'z',fs);
         end
-        [dum1,zof,dum2,ne]=randfilt(nb,fsa,0);
+        [dum1,zof,dum2,ne]=v_randfilt(nb,fsa,0);
         if any(m=='A')                                  % convolve with A-weighting to find power
-            [dum1,dum2,dum3,ne]=randfilt(conv(nb,awb),conv(fsa,awa),0);
+            [dum1,dum2,dum3,ne]=v_randfilt(conv(nb,awb),conv(fsa,awa),0);
         end
         %% use the supplied noise signal
     else                                    % noise signal supplied
