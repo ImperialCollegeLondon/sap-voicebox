@@ -8,7 +8,7 @@ function [u,q]=v_glotlf(d,t,p)
 %
 %  Inputs:  d selects which derivative of the flow waveform to calculate; 0<=d<=3 [0]
 %           t is a vector of time instants at which to calculate the
-%             waveform. Time units are in fractions of a cycle.
+%             waveform. Time units are in fractions of a cycle (the integer part is ignored).
 %           p is a vector, [te, E0/Ee, 1-tp/te], defining the waveform [0.6 0.1 0.2]
 %             See below for the parameter meanings.
 %             The peak negative value of the flow derivative is Ug'(te) = -Ee
@@ -67,7 +67,7 @@ end
 if nargin < 2 || isempty(t)
     tt=(0:99)'/100;             % default time axis
 else
-    tt=t-floor(t);              % only interested in th fractional part of t
+    tt=t-floor(t);              % only interested in the fractional part of t
 end
 u=zeros(size(tt));              % space for output
 de=[0.6 0.1 0.2]';              % default parameters
