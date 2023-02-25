@@ -1,5 +1,6 @@
 function x=windinfo(w,fs)
 %V_WINDINFO window information and figures of merit X=(W,FS)
+% Usage: (1) v_windinfo(v_windows('hamming',720,'ds'),720);         % plot hamming window info
 %
 %  Inputs:  W        is a vector containing the window
 %           FS       is the sampling frequency (default=1)
@@ -24,14 +25,14 @@ function x=windinfo(w,fs)
 %           X.cola2       as X.cola but for squared window
 %
 % If no output argument is given, the window and frequency response
-% will be plotted e.g. windinfo(windows('hamming',256,'ds'),256);
+% will be plotted e.g. v_windinfo(v_windows('hamming',720,'ds'),720);
 %
 % To obtain the figures of merit listed in Table 1 of [1] set
 % fs = length(W), multiply X.olc50 and X.olc75 by 100%. The "coherent gain
 % listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).
 %
 %  [1]  F. J. Harris. On the use of windows for harmonic analysis with the
-%       discrete fourier transform. Proc IEEE, 66 (1): 51�83, Jan. 1978.
+%       discrete fourier transform. Proc IEEE, 66 (1): 51-83, Jan. 1978.
 
 %	   Copyright (C) Mike Brookes 2009-2014
 %      Version: $Id: v_windinfo.m 6801 2015-09-12 09:30:42Z dmb $
