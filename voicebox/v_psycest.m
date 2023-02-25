@@ -1,12 +1,12 @@
 function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)
 %V_PSYCEST estimate multiple psychometric functions
 %
-% Usage: [xx,ii,m,v]=v_psycest(-n,p,q,xp,lf) % initialize n models
-%        [xx,ii,m,v]=v_psycest(i,x,r)     % supply a trial result to v_psycest
-%        [xx,ii,m,v]=v_psycest(i,x,r,o)   % supply a trial result to v_psycest and plot
-%                    v_psycest(i,o)       % plot pdf of model i with plot options o
-%        [xx,ii,m,v,mr,vr]=v_psycest(i,o) % Determine robust outputs in addition expcluding outliers [takes longer]
-%              [p,q,msr]=psychest(0)    % output model parameters (or print them if no outputs)
+% Usage: [xx,ii,m,v]=v_psycest(-n,p,q,xp,lf)    % initialize n models
+%        [xx,ii,m,v]=v_psycest(i,x,r)           % supply a trial result to v_psycest
+%        [xx,ii,m,v]=v_psycest(i,x,r,o)         % supply a trial result to v_psycest and plot
+%                    v_psycest(i,o)             % plot pdf of model i with plot options o
+%        [xx,ii,m,v,mr,vr]=v_psycest(i,o)       % Also determine robust outputs which exclude outliers [takes longer]
+%              [p,q,msr]=psycest(0)            % output model parameters (or print them if no outputs)
 %
 % Inputs (see usage examples for argument positions):
 %         -n        minus the number of models
@@ -57,11 +57,11 @@ function [xx,ii,m,v,mr,vr]=v_psycest(iq,x,r,xp,lf)
 %                   m(:,:,1:3) are respectively the mean, mode (MAP) and marginal mode estimates
 %          v(3,n)   estimated covariance matrix entries:
 %                   [var(srt) cov(srt,slope) var(slope)]'
-%          mr(2,n,3)robust estimated srt and slope of all models
+%          mr(2,n,3)robust estimated srt and slope of all models (exclusing outliers)
 %                   m(:,:,1:3) are respectively the mean, mode (MAP) and marginal mode estimates
-%          vr(3,n)  robust estimated covariance matrix entries:
+%          vr(3,n)  robust estimated covariance matrix entries  (exclusing outliers):
 %                   [var(srt) cov(srt,slope) var(slope)]'
-%          msr(:,3)  List probe snrs and results: [model probe-snr result]
+%          msr(:,7)  List probe snrs and results: [model probe-snr result xe se xv sv]
 %
 % Algorithm parameters:
 %
@@ -877,9 +877,9 @@ elseif iq>0
                             plot([1;nresi],[1;1]*xlim(2,iq),'-r');
                             v_texthvc(nresi,xlim(2,iq),'max o','rtr');
                         end
-                        if nr(19)>guess && xlim(1,iq)>gcaylim(1) % plot upper outlier bound
+                        if nr(19)>guess && xlim(1,iq)>gcaylim(1) % plot lower outlier bound
                             plot([1;nresi],[1;1]*xlim(1,iq),'-r');
-                            v_texthvc(nresi,xlim(1,iq),'min+','rbr');
+                            v_texthvc(nresi,xlim(1,iq),'min +','rbr');
                         end
                         hold off;
                         xlabel('Trial Number');
