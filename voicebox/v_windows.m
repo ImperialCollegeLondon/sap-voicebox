@@ -1,9 +1,10 @@
 function w = v_windows(wtype,n,mode,p,ov)
 %V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
-% Usage: (1) w=v_windows(3,n)'; % same as w=hamming(n);
-%        (2) w=v_windows(3,n,'l')'; % same as w=hanning(n,'periodic');
-%        (3) w=v_windows(2,n)'; % same as w=hanning(n);
-%        (4) w=v_windows(2,n,'l')'; % same as w=hanning(n,'periodic');
+% Usage: (1) w=v_windows(3,n)';         % same as w=hamming(n);
+%        (2) w=v_windows(3,n,'l')';     % same as w=hanning(n,'periodic');
+%        (3) w=v_windows(2,n)';         % same as w=hanning(n);
+%        (4) w=v_windows(2,n,'l')';     % same as w=hanning(n,'periodic');
+%        (5) v_windows('hamming');      % plot window information
 %
 % Inputs:   WTYPE  is a string or integer specifying the window type (see below)
 %           N      is the number of output points to generate (actually FLOOR(N))
@@ -102,6 +103,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 % Any symmetric window will satisfy the conditions with mode 'boqD2' [3].
 %
 %   Window     Mode Overlap-Factor Sidelobe  3dB-BW  6dB-BW Equiv-noise-BW
+%   rectangle  E        1           -13dB     0.9      1.2      1.0
 %   rsqvorbis  sqD2     2           -26dB     1.1      1.5      1.1
 %   hamming    sqD2     2,3,5       -24dB     1.1      1.5      1.1
 %   hanning    sqD2     2,3,5       -23dB     1.2      1.6      1.2 =cos('sE2')
@@ -110,7 +112,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 %   vorbis     sE2      2,9,15      -21dB     1.3      1.8      1.4 used in Vorbis
 %   hamming    sE4      3,4,5       -43dB     1.3      1.8      1.4
 %   hanning    sE4      3,4,5       -31dB     1.4      2.0      1.5
-% The integer following D or E in the mod string should match the overlap factor
+% The integer following D or E in the mode string should match the overlap factor
 %
 % References:
 %  [1]  F. J. Harris. On the use of windows for harmonic analysis with the
@@ -164,26 +166,28 @@ kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    % mode  w,  h,  c  [normal windows]
     -1 1 1 0; 0 0 2 -1; 0 1 2 0;];    % modes sw, sh, sc
 
 if nargin<2 || isempty(n)
-    n=2520; % 2^3 * 3^2 * 5 * 7
+    n=2520;                         % 2^3 * 3^2 * 5 * 7
 end
 if nargin<3 || isempty(mode) || ~ischar(mode)
-    mode='uw';
+    mode='uw';                      % default to unscaled full window
 end
 mm=zeros(1,length(mode)+1);
 ll='hc lrbns';
 for i=1:8
     mm(mode==ll(i))=i-3;
 end
-wtype=lower(wtype);
-k=1+3*max(mm)-min(mm);
-if k<4
-    k=k+12*any(wtype==[2 6 7 9 10 15]);
+if ischar(wtype)
+    wtype=wnami(find(strcmpi(lower(wtype),wnam),1)); % convert window type to integer
 end
-if any(mode=='o') % need to convolve with rectangle
+k=1+3*max(mm)-min(mm);              % min(mm) gives whole/half window, max(mm) gives window positioning
+if k<4
+    k=k+12*any(wtype==[2 6 7 9 10 15]); % if window is zero at ends add 12 to default to the 'n' option
+end
+if any(mode=='o')                   % need to convolve with rectangle
     if nargin<5 || ~numel(h)
         ov=floor(n/2);
     end
-    n=n-ov+1; % shorten baseline window
+    n=n-ov+1;                       % shorten baseline window
 else
     ov=0;
 end
@@ -196,9 +200,7 @@ ks=kk(k,1)*fn+kk(k,2);
 v=((0:2:2*fn-2)+ks)/kp;
 
 % now make the window
-if ischar(wtype)
-    wtype=wnami(find(strcmp(wtype,wnam),1));
-end
+
 switch wtype
     case 1 % 'rectangle'
         w = ones(size(v));     
