@@ -62,6 +62,7 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 %       f=fft(s);                        % n is the fft length, p is the number of filters wanted
 %       [x,mc,na,nb]=v_melbankm(p,n,fs);   % na:nb gives the fft bins that are needed
 %       z=log(x*(f(na:nb)).*conj(f(na:nb)));
+%		c=dct(z);                   % take the DCT
 %
 % (c) Plot the calculated filterbanks
 %
