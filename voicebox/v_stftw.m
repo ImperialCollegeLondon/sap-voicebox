@@ -1,4 +1,4 @@
-function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
+function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt)
 %V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)
 %  Usage:  (1) [y,so]=v_stftw(x,nw); % default parameters: m='rM', ov=2
 %              % ...                 % time-frequency domain processing goes here
@@ -29,10 +29,11 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 %              z=[z1; z2; z3];                       % z is the same as x everywhere due to 'e' option
 %
 %  Inputs: x(tax,...)	input signal (one signal per column)
-%          nw       DFT length (will be rounded up to a multiple of ov)
+%          nw       Window length (will be rounded up to a multiple of ov)
 %                       alternatively, the so output from the previous chunk's call to v_stftw
 %          m        mode string including window code
 %          ov       integer overlap factor; the frame hop is nw/ov. [2]
+%          nt       Optional DFT length (normally >=nw). [Default is nw as modified by 'i','I','u' options]
 %
 % Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally 1+nw/2 from DC to Nyquist
 %          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times
@@ -40,7 +41,7 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 %          so           structure used in subsequent call as the nw argument to
 %                       alllow processing in chunks. Also used in v_istftw
 %
-% The mode string, m, is a character string containing a combination of the following options:
+% The mode string, m, is a character string containing a combination of the following options and a window code (see below):
 %
 %             'p'   x is a partial signal which will be followed by another chunk (prevents paddding of the final frame)
 
@@ -56,16 +57,18 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 %             's'   plot spectrogram of first channel (default if no outputs)
 %             'S'   plot mean spectra and mean power waveforms of all channels
 %
-%            Code Window      mode   ov   Sidelobe  3dB-BW  6dB-BW  Falloff    Comment
+%            Code Window      wmode  ov   Sidelobe  3dB-BW  6dB-BW  Falloff    Comment
 %
 %             'c'   cos(1)     s   2,3,5   -23dB     1.2     1.6  -12dB/oct   used in MP3
 %             'k'   kaiser(5)  boq   2     -23dB     1.2     1.7   -6dB/oct   used in AAC
 %             'm'   hamming    s   3,4,5   -43dB     1.3     1.8   -6dB/oct   low sidelobes [default if ov>2]
 %             'M'   hamming    sq  2,3,5   -24dB     1.1     1.5   -6dB/oct   sqrt Hamming  [default if ov=2]
 %             'n'   hanning    s   3,4,5   -31dB     1.4     2.0  -18dB/oct   rapid falloff
+%             'R'   rectangle        1     -13dB     0.9     1.2   -6dB/oct   narrow bandwidth [default if ov=1]
 %             'v'   vorbis     s    2,15   -21dB     1.3     1.8  -18dB/oct   used in Vorbis
 %             'V'   rsqvorbis  sq    2     -26dB     1.1     1.5   -6dB/oct   sqrt Vorbis
 %
+%             where wmode is the mode string for the v_windows call.
 % Notes:
 %
 %  (1) The scaling preserves power in a 2-sided transform so that
@@ -75,7 +78,7 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 %      where yy is the double-sided spectrum. This equivalence is stochastic rather than exact.
 %  (2) For perfect reconstruction (see [3]), the overlap factor, ov, must be a multiple of one of
 %      the values listed above in the ov column for the selected window.
-%  (3) Using the default parameters, perfect reconstruction will not be obtained for the first and 
+%  (3) Using the default parameters, perfect reconstruction will not be obtained for the first and
 %      the last frames of the signal. Using the 'e' option will add padding frames to the start and
 %      end of the signal so that the entire signal will be reconstructed perfectly.
 %  (4) By default, padding at the start and end of the signal will avoid introducing a discontinuity
@@ -97,9 +100,9 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov)
 persistent nw0 nt0 wi0 w0 wt wm wp
 if isempty(nw0)
     nw0=0;
-    wt={'hamming','hamming','cos','kaiser','hanning','rsqvorbis','vorbis'};
-    wm={'sq','s','s','boq','s','sq','s'};
-    wp=[0 0 1 5 0 0 0];
+    wt={'rectangle','hamming','hamming','cos','kaiser','hanning','rsqvorbis','vorbis'};
+    wm={'','sq','s','s','boq','s','sq','s'};
+    wp=[0 0 0 1 5 0 0 0];
 end
 sx=size(x);
 if sx(1)==1 && length(sx)==2 % transpose x if it is a row vector
@@ -117,7 +120,7 @@ if isstruct(nw)             % nw is structure from previous call to v_stftw
     wa=nw.wa;               % analysis window
     nh=nw.nh;               % frame hop (samples)
     po=nw.po;               % padding option
-    nt=nw.nt;               % overwrite nw with length of transform
+    nt=nw.nt;               % overwrite nt with length of transform
     me=nw.me;               % 'e' option given
     ff=nw.ff;               % first frame flag
     mf=nw.mf;
@@ -136,21 +139,23 @@ else
     end
     nh=ceil(nw/ov);         % force integer hop length
     nw=ov*nh;               % recalculate DFT length
-    wi=find(sum(repmat(m(:),1,7)==repmat('MmcknVv',length(m),1),1),1); % check if m specifies the window
+    wi=find(sum(repmat(m(:),1,8)==repmat('RMmcknVv',length(m),1),1),1); % check if m specifies the window
     if isempty(wi)          % if no window specified
-        wi=1+(ov>2);    	% use 's' or 'm'
+        wi=1+(ov>1)+(ov>2); % use 'R', 'M' or 'm'
     end
     % sort out zero-padding
-    nt=nw;                  % default transform length
-    if any(m=='i')          % 'p' = multiply nt by 2 for increased frequency resolution
-        nt=2*nt;
-    end
-    if any(m=='I')          % 'u' = multiply nt by 4 for increased frequency resolution
-        nt=4*nt;
-    end
-    if any(m=='u')          % 'u' = round up nt to a power of 2 for increased frequency resolution
-        [fw,pw]=log2(nt);
-        nt=pow2(pw-(fw==0.5));
+    if nargin<5             % DFT length is not explicitly specified
+        nt=nw;                  % default transform length
+        if any(m=='i')          % 'i' = multiply nt by 2 for increased frequency resolution
+            nt=2*nt;
+        end
+        if any(m=='I')          % 'I' = multiply nt by 4 for increased frequency resolution
+            nt=4*nt;
+        end
+        if any(m=='u')          % 'u' = round up nt to a power of 2 for increased frequency resolution
+            [fw,pw]=log2(nt);
+            nt=pow2(pw-(fw==0.5));
+        end
     end
     me=any(m=='e');
     if nw==nw0 && wi==wi0 && nt==nt0    % check if window already cached
