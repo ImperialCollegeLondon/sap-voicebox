@@ -92,7 +92,7 @@ if ax==1
     axdir=[1 0];        % unit vector in axis direction
 else
     widthc=2*getgcac.Position(4)/getgcac.FontSize;     % y axis length in font units
-        axdir=[0 1];        % unit vector in axis direction
+    axdir=[0 1];        % unit vector in axis direction
 end
 axdir=max(abs(axdir),1e-10);        % avoid infinity problems
 a=getgca.(axfield{1,ax})(1);
@@ -356,7 +356,11 @@ else                    % linear axis
             if i>ntick
                 ticklab{j}='';
             else
-                ticklab{j}=sprintf(sprintf('%%.%df%%s',tickdp(i)),tickint(i)*10^(-tickdp(i)),prefix{(ticksi(i)/3)*(tickint(i)~=0)+9});
+                if tickint(i)==0
+                    ticklab{j}=sprintf(sprintf('%%.%df%%s',tickdp(i)),0,prefix{(ticksi(i)/3)*(tickint(i)~=0)+9});
+                else
+                    ticklab{j}=sprintf(sprintf('%%.%df%%s',tickdp(i)),tickint(i)*10^(-tickdp(i)),prefix{(ticksi(i)/3)*(tickint(i)~=0)+9});
+                end
             end
         end
         set(ah,axfield{2,ax},tps);
