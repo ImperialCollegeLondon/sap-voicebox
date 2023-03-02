@@ -287,7 +287,7 @@ if ~fulliv          % initializing with diagonal covariance
         end
         g=lpx*wx;                       % total log probability summed over all data points
         gg(j)=g;                        % save log prob at each iteration
-        w=pk;                       % normalize to get the weights
+        w=pk;                           % normalize to get the weights
         if pk                           % if all elements of pk are non-zero
             m=sx./pk(:,wp);             % calculate mixture means
             v=sx2./pk(:,wp);            % and variances
