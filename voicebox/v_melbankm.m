@@ -46,7 +46,7 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 %            rather than in the linear frequency domain which is more common (e.g. [2]).
 %        (3) A mel-filterbank can also be created using v_filtbank() which uses triangular
 %            filters in the linear frequency domain and copes better with the narrow filters
-%            that arise when p is large on n is small. 
+%            that arise when p is large on n is small.
 %
 % Examples of use:
 %
@@ -129,7 +129,7 @@ else
 end
 if ~any(w=='H')
     switch wr
-                    case 'f'       % no transformation
+        case 'f'       % no transformation
         case 'l'
             if fl<=0
                 error('Low frequency limit must be >0 for l option');
@@ -149,23 +149,23 @@ if isempty(p)
     p=ceil(4.6*log10(fs));         % default number of filters
 end
 if any(w=='c')              % c option: specify fiter centres not edges
-if p<1
-    p=round(melrng/(p*1000))+1;
-end
-melinc=melrng/(p-1);
-mflh=mflh+(-1:2:1)*melinc;
+    if p<1
+        p=round(melrng/(p*1000))+1;
+    end
+    melinc=melrng/(p-1);
+    mflh=mflh+(-1:2:1)*melinc;
 else
     if p<1
-    p=round(melrng/(p*1000))-1;
-end
-melinc=melrng/(p+1);
+        p=round(melrng/(p*1000))-1;
+    end
+    melinc=melrng/(p+1);
 end
 
 %
 % Calculate the FFT bins corresponding to [filter#1-low filter#1-mid filter#p-mid filter#p-high]
 %
 switch wr
-        case 'f'
+    case 'f'
         blim=(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
     case 'l'
         blim=10.^(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
@@ -176,14 +176,14 @@ switch wr
     otherwise
         blim=v_mel2frq(mflh(1)+[0 1 p p+1]*melinc)*n/fs;
 end
-mc=mflh(1)+(1:p)*melinc;    % mel centre frequencies
-b1=floor(blim(1))+1;            % lowest FFT bin_0 required might be negative)
+mc=mflh(1)+(1:p)*melinc;        % mel centre frequencies
+b1=floor(blim(1))+1;            % lowest FFT bin_0 required (might be negative)
 b4=min(fn2,ceil(blim(4))-1);    % highest FFT bin_0 required
 %
-% now map all the useful FFT bins_0 to filter1 centres
+% now map all the useful FFT bins_0 to filter_1 centres
 %
 switch wr
-        case 'f'
+    case 'f'
         pf=((b1:b4)*fs/n-mflh(1))/melinc;
     case 'l'
         pf=(log10((b1:b4)*fs/n)-mflh(1))/melinc;
@@ -205,40 +205,40 @@ if pf(end)>=p+1
     pf(end)=[];
     b4=b4-1;
 end
-fp=floor(pf);                  % FFT bin_0 i contributes to filters_1 fp(1+i-b1)+[0 1]
+fp=floor(pf);                   % FFT bin_0 i contributes to filters_1 fp(1+i-b1)+[0 1]
 pm=pf-fp;                       % multiplier for upper filter
-k2=find(fp>0,1);   % FFT bin_1 k2+b1 is the first to contribute to both upper and lower filters
-k3=find(fp<p,1,'last');  % FFT bin_1 k3+b1 is the last to contribute to both upper and lower filters
-k4=numel(fp); % FFT bin_1 k4+b1 is the last to contribute to any filters
+k2=find(fp>0,1);                % FFT bin_1 k2+b1 is the first to contribute to both upper and lower filters
+k3=find(fp<p,1,'last');         % FFT bin_1 k3+b1 is the last to contribute to both upper and lower filters
+k4=numel(fp);                   % FFT bin_1 k4+b1 is the last to contribute to any filters
 if isempty(k2)
     k2=k4+1;
 end
 if isempty(k3)
     k3=0;
 end
-if any(w=='y')          % preserve power in FFT
-    mn=1; % lowest fft bin required (1 = DC)
-    mx=fn2+1; % highest fft bin required (1 = DC)
-    r=[ones(1,k2+b1-1) 1+fp(k2:k3) fp(k2:k3) repmat(p,1,fn2-k3-b1+1)]; % filter number_1
-    c=[1:k2+b1-1 k2+b1:k3+b1 k2+b1:k3+b1 k3+b1+1:fn2+1]; % FFT bin1
+if any(w=='y')                  % preserve power in FFT
+    mn=1;                       % lowest fft bin required (1 = DC)
+    mx=fn2+1;                   % highest fft bin required (1 = DC)
+    r=[ones(1,k2+b1-1) 1+fp(k2:k3) fp(k2:k3) repmat(p,1,fn2-k3-b1+1)];  % filter number_1
+    c=[1:k2+b1-1 k2+b1:k3+b1 k2+b1:k3+b1 k3+b1+1:fn2+1];                % FFT bin1
     v=[ones(1,k2+b1-1) pm(k2:k3) 1-pm(k2:k3) ones(1,fn2-k3-b1+1)];
 else
-    r=[1+fp(1:k3) fp(k2:k4)]; % filter number_1
-    c=[1:k3 k2:k4]; % FFT bin_1 - b1
+    r=[1+fp(1:k3) fp(k2:k4)];       % filter number_1
+    c=[1:k3 k2:k4];                 % FFT bin_1 - b1
     v=[pm(1:k3) 1-pm(k2:k4)];
-    mn=b1+1; % lowest fft bin_1
-    mx=b4+1;  % highest fft bin_1
+    mn=b1+1;                        % lowest fft bin_1
+    mx=b4+1;                        % highest fft bin_1
 end
 if b1<0
-    c=abs(c+b1-1)-b1+1;     % convert negative frequencies into positive
+    c=abs(c+b1-1)-b1+1;             % convert negative frequencies into positive
 end
 % end
 if any(w=='n')
-    v=0.5-0.5*cos(v*pi);      % convert triangles to Hanning
+    v=0.5-0.5*cos(v*pi);            % convert triangles to Hanning
 elseif any(w=='m')
-    v=0.5-0.46/1.08*cos(v*pi);  % convert triangles to Hamming
+    v=0.5-0.46/1.08*cos(v*pi);      % convert triangles to Hamming
 end
-if sfact==2  % double all except the DC and Nyquist (if any) terms
+if sfact==2                         % double all except the DC and Nyquist (if any) terms
     msk=(c+mn>2) & (c+mn<n-fn2+2);  % there is no Nyquist term if n is odd
     v(msk)=2*v(msk);
 end
@@ -247,8 +247,8 @@ end
 %
 if nargout > 2
     x=sparse(r,c,v);
-    if nargout == 3     % if exactly three output arguments, then
-        mc=mn;          % delete mc output for legacy code compatibility
+    if nargout == 3                 % if exactly three output arguments, then
+        mc=mn;                      % delete mc output for legacy code compatibility
         mn=mx;
     end
 else
@@ -261,40 +261,40 @@ end
 %
 % plot results if no output arguments or g option given
 %
-if ~nargout || any(w=='g') % plot idealized filters
-    ng=201;     % 201 points
+if ~nargout || any(w=='g')          % plot idealized filters
+    ng=201;                         % 201 points
     me=mflh(1)+(0:p+1)'*melinc;
     switch wr
-                case 'f'
-            fe=me; % defining frequencies
+        case 'f'
+            fe=me;                  % defining frequencies
             xg=repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng);
         case 'l'
-            fe=10.^me; % defining frequencies
+            fe=10.^me;              % defining frequencies
             xg=10.^(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
         case 'e'
-            fe=v_erb2frq(me); % defining frequencies
+            fe=v_erb2frq(me);       % defining frequencies
             xg=v_erb2frq(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
         case 'b'
-            fe=v_bark2frq(me); % defining frequencies
+            fe=v_bark2frq(me);      % defining frequencies
             xg=v_bark2frq(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
         otherwise
-            fe=v_mel2frq(me); % defining frequencies
+            fe=v_mel2frq(me);       % defining frequencies
             xg=v_mel2frq(repmat(linspace(0,1,ng),p,1).*repmat(me(3:end)-me(1:end-2),1,ng)+repmat(me(1:end-2),1,ng));
     end
 
     v=1-abs(linspace(-1,1,ng));
     if any(w=='n')
-        v=0.5-0.5*cos(v*pi);      % convert triangles to Hanning
+        v=0.5-0.5*cos(v*pi);        % convert triangles to Hanning
     elseif any(w=='m')
         v=0.5-0.46/1.08*cos(v*pi);  % convert triangles to Hamming
     end
-    v=v*sfact;  % multiply by 2 if double sided
+    v=v*sfact;                      % multiply by 2 if double sided
     v=repmat(v,p,1);
-    if any(w=='y')  % extend first and last filters
+    if any(w=='y')                  % extend first and last filters
         v(1,xg(1,:)<fe(2))=sfact;
         v(end,xg(end,:)>fe(p+1))=sfact;
     end
-    if any(w=='u') % scale to unity sum
+    if any(w=='u')                  % scale to unity sum
         dx=(xg(:,3:end)-xg(:,1:end-2))/2;
         dx=dx(:,[1 1:ng-2 ng-2]);
         vs=sum(v.*dx,2);
