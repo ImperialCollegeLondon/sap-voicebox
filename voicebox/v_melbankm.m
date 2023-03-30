@@ -34,12 +34,11 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 % Outputs:	x     a sparse matrix containing the v_filterbank amplitudes
 %		          If the mn and mx outputs are given then size(x)=[p,mx-mn+1]
 %                 otherwise size(x)=[p,1+floor(n/2)]
-%                 Note that the peak filter values equal 2 to account for the power
-%                 in the negative FFT frequencies.
+%                 Note that the peak filter values equal 2 to account for the power in the negative FFT frequencies.
 %           mc    the v_filterbank centre frequencies in mel/erb/bark
 %		    mn    the lowest fft bin with a non-zero coefficient
 %		    mx    the highest fft bin with a non-zero coefficient
-%                 Note: you must specify both or neither of mn and mx.
+%                 NOTE: For legacy compatibility reasons, you must specify both or neither of mn and mx.
 %
 % Notes: (1) If 'ty' or 'ny' is specified, the total power in the fft is preserved.
 %        (2) The filter shape (triangular, hamming etc) is defined in the mel (or erb etc) domain
@@ -103,7 +102,7 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Note "FFT bin_0" assumes DC = bin 0 whereas "FFT bin_1" means DC = bin 1
+% Note, in the comments, "FFT bin_0" assumes DC = bin 0 whereas "FFT bin_1" assumes DC = bin 1
 
 if nargin < 6
     w='tz'; % default options
@@ -118,7 +117,7 @@ end
 sfact=2-any(w=='s');   % 1 if single sided else 2
 wr=' ';   % default warping is mel
 for i=1:length(w)
-    if any(w(i)=='lebf');
+    if any(w(i)=='lebf')
         wr=w(i);
     end
 end
@@ -129,26 +128,26 @@ else
 end
 if ~any(w=='H')
     switch wr
-        case 'f'       % no transformation
+        case 'f'                        % no transformation
         case 'l'
             if fl<=0
-                error('Low frequency limit must be >0 for l option');
+                error('Low frequency limit must be >0 for ''l'' option');
             end
-            mflh=log10(mflh);       % convert frequency limits into log10 Hz
+            mflh=log10(mflh);           % convert frequency limits into log10 Hz
         case 'e'
             mflh=v_frq2erb(mflh);       % convert frequency limits into erb-rate
         case 'b'
-            mflh=v_frq2bark(mflh);       % convert frequency limits into bark
+            mflh=v_frq2bark(mflh);      % convert frequency limits into bark
         otherwise
             mflh=v_frq2mel(mflh);       % convert frequency limits into mel
     end
 end
-melrng=mflh*(-1:2:1)';          % mel range
-fn2=floor(n/2);     % bin index of highest positive frequency (Nyquist if n is even)
+melrng=mflh*(-1:2:1)';                  % mel range
+fn2=floor(n/2);                         % bin index of highest positive frequency (Nyquist if n is even)
 if isempty(p)
-    p=ceil(4.6*log10(fs));         % default number of filters
+    p=ceil(4.6*log10(fs));              % default number of filters
 end
-if any(w=='c')              % c option: specify fiter centres not edges
+if any(w=='c')                          % c option: specify filter centres not edges
     if p<1
         p=round(melrng/(p*1000))+1;
     end
@@ -160,7 +159,6 @@ else
     end
     melinc=melrng/(p+1);
 end
-
 %
 % Calculate the FFT bins corresponding to [filter#1-low filter#1-mid filter#p-mid filter#p-high]
 %
