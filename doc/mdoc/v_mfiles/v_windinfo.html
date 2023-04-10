@@ -26,6 +26,7 @@
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_WINDINFO window information and figures of merit X=(W,FS)
+ Usage: (1) v_windinfo(v_windows('hamming',720,'ds'),720);         % plot hamming window info
 
   Inputs:  W        is a vector containing the window
            FS       is the sampling frequency (default=1)
@@ -50,14 +51,14 @@
            X.cola2       as X.cola but for squared window
 
  If no output argument is given, the window and frequency response
- will be plotted e.g. windinfo(windows('hamming',256,'ds'),256);
+ will be plotted e.g. v_windinfo(v_windows('hamming',720,'ds'),720);
 
  To obtain the figures of merit listed in Table 1 of [1] set
  fs = length(W), multiply X.olc50 and X.olc75 by 100%. The &quot;coherent gain
  listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).
 
   [1]  F. J. Harris. On the use of windows for harmonic analysis with the
-       discrete fourier transform. Proc IEEE, 66 (1): 51�83, Jan. 1978.</pre></div>
+       discrete fourier transform. Proc IEEE, 66 (1): 51-83, Jan. 1978.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -79,222 +80,223 @@ This function is called by:
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=windinfo(w,fs)</a>
 0002 <span class="comment">%V_WINDINFO window information and figures of merit X=(W,FS)</span>
-0003 <span class="comment">%</span>
-0004 <span class="comment">%  Inputs:  W        is a vector containing the window</span>
-0005 <span class="comment">%           FS       is the sampling frequency (default=1)</span>
-0006 <span class="comment">%</span>
-0007 <span class="comment">% Outputs:  X.len         length of the window (samples)</span>
-0008 <span class="comment">%           X.nw          length of the window (samples)</span>
-0009 <span class="comment">%           X.ewgdelay    energy centroid delay from first sample (samples)</span>
-0010 <span class="comment">%           X.dcgain      DC gain (dB)</span>
-0011 <span class="comment">%           X.sidelobe    maximum sdelobe level in dB relative to DC gain</span>
-0012 <span class="comment">%           X.falloff     rate at which sidelobes decay (dB/octave)</span>
-0013 <span class="comment">%           X.enbw        equivalent noise bandwidth (*fs/len Hz)</span>
-0014 <span class="comment">%           X.scallop     scalloping loss (dB)</span>
-0015 <span class="comment">%           X.ploss       processing loss (dB)</span>
-0016 <span class="comment">%           X.wcploss     worst case processing loss (dB)</span>
-0017 <span class="comment">%           X.band3       3dB bandwidth (Hz)</span>
-0018 <span class="comment">%           X.band6       6 dB bandwidth (Hz)</span>
-0019 <span class="comment">%           X.band0       essential bandwidth (to first minimum) (Hz)</span>
-0020 <span class="comment">%           X.gain0       gain at first minimum (Hz)</span>
-0021 <span class="comment">%           X.olc50       50% overlap correction</span>
-0022 <span class="comment">%           X.olc75       75% overlap correction</span>
-0023 <span class="comment">%           X.cola        overlap factors giving constant overlap add (exlcuding multiples)</span>
-0024 <span class="comment">%           X.cola2       as X.cola but for squared window</span>
-0025 <span class="comment">%</span>
-0026 <span class="comment">% If no output argument is given, the window and frequency response</span>
-0027 <span class="comment">% will be plotted e.g. windinfo(windows('hamming',256,'ds'),256);</span>
-0028 <span class="comment">%</span>
-0029 <span class="comment">% To obtain the figures of merit listed in Table 1 of [1] set</span>
-0030 <span class="comment">% fs = length(W), multiply X.olc50 and X.olc75 by 100%. The &quot;coherent gain</span>
-0031 <span class="comment">% listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).</span>
-0032 <span class="comment">%</span>
-0033 <span class="comment">%  [1]  F. J. Harris. On the use of windows for harmonic analysis with the</span>
-0034 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51�83, Jan. 1978.</span>
-0035 
-0036 <span class="comment">%       Copyright (C) Mike Brookes 2009-2014</span>
-0037 <span class="comment">%      Version: $Id: v_windinfo.m 6801 2015-09-12 09:30:42Z dmb $</span>
-0038 <span class="comment">%</span>
-0039 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0040 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0041 <span class="comment">%</span>
-0042 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0043 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0044 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0045 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0046 <span class="comment">%   (at your option) any later version.</span>
-0047 <span class="comment">%</span>
-0048 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0049 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0050 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0051 <span class="comment">%   GNU General Public License for more details.</span>
-0052 <span class="comment">%</span>
-0053 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0054 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0055 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0056 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0057 <span class="comment">%</span>
-0058 
-0059 <span class="keyword">if</span> nargin&lt;2
-0060     fs=1;
-0061 <span class="keyword">end</span>
-0062 w=w(:);
-0063 nw=length(w);
-0064 x.len=nw/fs;
-0065 x.nw=nw;
-0066 <span class="comment">% energy weighted group delay = centre of energy</span>
-0067 x.ewgdelay=((1:nw)*w.^2/sum(w.^2)-1)/fs;
-0068 <span class="comment">% now calculate spectrum</span>
-0069 of=16;      <span class="comment">% spectrum oversample factor must be even</span>
-0070 nwo=of*nw;
-0071 f=rfft(w,nwo);
-0072 p=f.*conj(f);
-0073 <span class="comment">% sidelobe attenuation is maximum peak (note DC peak at p(1) is not found)</span>
-0074 [kp,vp]=<a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>(p,<span class="string">'q'</span>);
-0075 [kt,vt]=<a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>(-p,<span class="string">'q'</span>);
-0076 <span class="comment">% dbpo=10*log10(vp(2:end)./vp(1:end-1))./log2((kp(2:end)-1)./(kp(1:end-1)-1)); % slope in dB/octave</span>
-0077 <span class="keyword">if</span> ~numel(kp)
-0078     x.sidelobe=10*log10(min(p)/p(1));
-0079 <span class="keyword">else</span>
-0080     x.sidelobe=10*log10(max(vp)/p(1));
-0081 <span class="keyword">end</span>
-0082 np=length(kp);
-0083 ipa=floor(np/4);
-0084 <span class="keyword">if</span> ~ipa
-0085     x.falloff=0;
-0086 <span class="keyword">else</span>
-0087     ipb=floor(np/2);
-0088     x.falloff=10*log10(vp(ipb)/vp(ipa))/log2((ipb-1)/(ipa-1));
-0089 <span class="keyword">end</span>
-0090 sumw2=sum(w.^2);
-0091 sumw=sum(w);
-0092 enbwbin=nw*sumw2/sumw^2;
-0093 x.enbw=enbwbin*fs/nw;
-0094 x.dcgain=20*log10(sumw);
-0095 <span class="comment">% do linear interpolation in p() to find 3dB and 6dB points</span>
-0096 p3=0.5*p(1);
-0097 i3=find(p&lt;p3,1);
-0098 <span class="keyword">if</span> ~numel(i3)
-0099     x.band3=Inf;
-0100     x.band6=Inf;
-0101 <span class="keyword">else</span>
-0102     x.band3=2*(i3-(p3-p(i3))/(p(i3-1)-p(i3))-1)/of*fs/nw;
-0103     p6=0.25*p(1);
-0104     i6=find(p&lt;p6,1);
-0105     x.band6=2*(i6-(p6-p(i6))/(p(i6-1)-p(i6))-1)/of*fs/nw;
-0106 <span class="keyword">end</span>
-0107 <span class="comment">% do linear interpolation in f() to find closest approach to the origin</span>
-0108 <span class="keyword">if</span>~numel(kt)
-0109     x.band0=Inf;
-0110     x.gain0=0;
-0111 <span class="keyword">else</span>
-0112     i0=floor(kt(1));
-0113     df=f(i0+1)-f(i0);
-0114     j0=-real(f(i0)*conj(df))/abs(df)^2;
-0115     x.band0=2*(i0+j0-1)/of*fs/nw;
-0116     p0=abs(f(i0)+j0*df)^2;
-0117     <span class="keyword">if</span> p0&gt;0
-0118         x.gain0=10*log10(p0/p(1));
-0119     <span class="keyword">else</span>
-0120         x.gain0=-Inf;
-0121     <span class="keyword">end</span>
-0122 <span class="keyword">end</span>
-0123 <span class="comment">% overlap factors</span>
-0124 i50=round(nw*0.5);
-0125 x.olc50=sum(w(1:nw-i50).*w(1+i50:nw))/sumw2;
-0126 i75=round(nw*0.25);
-0127 x.olc75=sum(w(1:nw-i75).*w(1+i75:nw))/sumw2;
-0128 <span class="comment">% processing loss and scalloping loss</span>
-0129 x.scallop=10*log10(p(1)/p(1+of/2));
-0130 x.ploss=10*log10(enbwbin);
-0131 x.wcploss=x.ploss+x.scallop;
-0132 co=zeros(1,nw);
-0133 co2=co;
-0134 w2=w.^2;
-0135 <span class="keyword">for</span> i=1:nw
-0136     <span class="keyword">if</span> i*fix(nw/i)==nw  <span class="comment">% check i is a factor of the window length</span>
-0137         <span class="keyword">if</span> co(i)==0
-0138             co(i)=all(abs(sum(reshape(w',nw/i,i),2)-i*mean(w))&lt;max(abs(w))*1e-4);
-0139             <span class="keyword">if</span> co(i)
-0140                 co(2*i:i:nw)=-1; <span class="comment">% ignore multiples</span>
-0141             <span class="keyword">end</span>
-0142         <span class="keyword">end</span>
-0143         <span class="keyword">if</span> co2(i)==0
-0144             co2(i)=all(abs(sum(reshape(w2',nw/i,i),2)-i*mean(w2))&lt;max(w2)*1e-4);
-0145             <span class="keyword">if</span> co2(i)
-0146                 co2(2*i:i:nw)=-1; <span class="comment">% ignore multiples</span>
-0147             <span class="keyword">end</span>
-0148         <span class="keyword">end</span>
-0149     <span class="keyword">end</span>
-0150 <span class="keyword">end</span>
-0151 co(co&lt;0)=0;
-0152 co2(co2&lt;0)=0;
-0153 x.cola=find(co);
-0154 x.cola2=find(co2);
-0155 <span class="comment">%</span>
-0156 <span class="comment">% now plot it if no output arguments given</span>
-0157 <span class="comment">%</span>
-0158 <span class="keyword">if</span> ~nargout
-0159     clf;
-0160     subplot(212);
-0161     nf=min(max(floor(2*max(x.band6,x.band0)*of*nw/fs)+1,of*8),length(p));
-0162     ff=(0:nf-1)*fs/(of*nw);
-0163     fqi=[x.enbw x.band3 x.band6]/2;
-0164     <span class="keyword">if</span> ff(end)&gt;2000
-0165         ff=ff/1000;
-0166         fqi=fqi/1000;
-0167         xlab=<span class="string">'kcyc/L'</span>;
-0168     <span class="keyword">else</span>
-0169         xlab=<span class="string">'cyc/L'</span>;
-0170     <span class="keyword">end</span>
-0171     dbn=20*log10(x.nw); <span class="comment">% window width in dB</span>
-0172     dbrange=min(100,-1.5*x.sidelobe);
-0173     dd=10*log10(max(p(1:nf),p(1)*0.1^(dbrange/10)));
-0174     ffs=[0 ff(end)];
-0175     dbs=repmat(x.dcgain+x.sidelobe,1,2);
-0176     ffb=[0 fqi(1) fqi(1)];
-0177     dbb=[dd(1) dd(1) dd(1)-dbrange];
-0178     ff3=[0 fqi(2) fqi(2)];
-0179     db3=[dd(1)+db(0.5)/2 dd(1)+db(0.5)/2 dd(1)-dbrange];
-0180     ff6=[0 fqi(3) fqi(3)];
-0181     db6=[dd(1)+db(0.5) dd(1)+db(0.5) dd(1)-dbrange];
-0182     area(ffb,dbb-dbn,max(dd)-dbrange-dbn,<span class="string">'facecolor'</span>,[1 0.7 0.7]);
-0183     hold on
-0184     plot(ffs,dbs-dbn,<span class="string">':k'</span>,ff3,db3-dbn,<span class="string">':k'</span>,ff6,db6-dbn,<span class="string">':k'</span>,ffb,dbb-dbn,<span class="string">'r'</span>,ff,dd-dbn,<span class="string">'b'</span>);
-0185     legend([<span class="string">'Equiv Noise BW = '</span> sprintsi(x.enbw,-2) <span class="string">'cyc/L'</span>],[<span class="string">'Max sidelobe = '</span> sprintf(<span class="string">'%.0f'</span>,x.sidelobe) <span class="string">' dB'</span>],[<span class="string">'-3 &amp; -6dB BW = '</span> sprintf(<span class="string">'%.2g'</span>,(x.band3)) <span class="string">' &amp; '</span> sprintf(<span class="string">'%.2g'</span>,(x.band6)) <span class="string">' cyc/L'</span>]);
-0186     hold off
-0187     axis([0 ff(end) max(dd)-dbrange-dbn max(dd)+2-dbn]);
-0188     ylabel(<span class="string">'Gain/N (dB)'</span>);
-0189     xlabel(sprintf(<span class="string">'Freq (%s)'</span>,xlab));
-0190     <span class="comment">%</span>
-0191     <span class="comment">% Now plot the window itself</span>
-0192     <span class="comment">%</span>
-0193     subplot(211);
-0194     tax=(0:nw-1)/fs-x.ewgdelay;
-0195     area(tax,w,<span class="string">'FaceColor'</span>,[0.7 0.7 1]);
-0196     ylabel(<span class="string">'Window'</span>);
-0197     xlabel(<span class="string">'Time/L'</span>);
-0198     dtax=(tax(end)-tax(1))*0.02;
-0199     axv=[tax(1)-dtax tax(end)+dtax min(0,min(w)) max(w)*1.05];
-0200     texthvc(tax(end),max(w),sprintf(<span class="string">'N=%d'</span>,nw),<span class="string">'rtk'</span>);
-0201     <span class="keyword">if</span> length(x.cola)&gt;3
-0202         tcola=sprintf(<span class="string">',%d'</span>,x.cola(1:3));
-0203         tcola=[tcola <span class="string">',...'</span>];
-0204     <span class="keyword">else</span>
-0205         tcola=sprintf(<span class="string">',%d'</span>,x.cola);
-0206     <span class="keyword">end</span>
-0207     <span class="keyword">if</span> length(x.cola2)&gt;3
-0208         tcola2=sprintf(<span class="string">',%d'</span>,x.cola2(1:3));
-0209         tcola2=[tcola2 <span class="string">',...'</span>];
-0210     <span class="keyword">else</span>
-0211         tcola2=sprintf(<span class="string">',%d'</span>,x.cola2);
-0212     <span class="keyword">end</span>
-0213     texthvc(tax(1),max(w),sprintf(<span class="string">'COLA=%s\nCOLA^2=%s'</span>,tcola(2:end),tcola2(2:end)),<span class="string">'ltk'</span>);
-0214     axis(axv);
-0215 <span class="keyword">end</span>
-0216 
+0003 <span class="comment">% Usage: (1) v_windinfo(v_windows('hamming',720,'ds'),720);         % plot hamming window info</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%  Inputs:  W        is a vector containing the window</span>
+0006 <span class="comment">%           FS       is the sampling frequency (default=1)</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Outputs:  X.len         length of the window (samples)</span>
+0009 <span class="comment">%           X.nw          length of the window (samples)</span>
+0010 <span class="comment">%           X.ewgdelay    energy centroid delay from first sample (samples)</span>
+0011 <span class="comment">%           X.dcgain      DC gain (dB)</span>
+0012 <span class="comment">%           X.sidelobe    maximum sdelobe level in dB relative to DC gain</span>
+0013 <span class="comment">%           X.falloff     rate at which sidelobes decay (dB/octave)</span>
+0014 <span class="comment">%           X.enbw        equivalent noise bandwidth (*fs/len Hz)</span>
+0015 <span class="comment">%           X.scallop     scalloping loss (dB)</span>
+0016 <span class="comment">%           X.ploss       processing loss (dB)</span>
+0017 <span class="comment">%           X.wcploss     worst case processing loss (dB)</span>
+0018 <span class="comment">%           X.band3       3dB bandwidth (Hz)</span>
+0019 <span class="comment">%           X.band6       6 dB bandwidth (Hz)</span>
+0020 <span class="comment">%           X.band0       essential bandwidth (to first minimum) (Hz)</span>
+0021 <span class="comment">%           X.gain0       gain at first minimum (Hz)</span>
+0022 <span class="comment">%           X.olc50       50% overlap correction</span>
+0023 <span class="comment">%           X.olc75       75% overlap correction</span>
+0024 <span class="comment">%           X.cola        overlap factors giving constant overlap add (exlcuding multiples)</span>
+0025 <span class="comment">%           X.cola2       as X.cola but for squared window</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% If no output argument is given, the window and frequency response</span>
+0028 <span class="comment">% will be plotted e.g. v_windinfo(v_windows('hamming',720,'ds'),720);</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% To obtain the figures of merit listed in Table 1 of [1] set</span>
+0031 <span class="comment">% fs = length(W), multiply X.olc50 and X.olc75 by 100%. The &quot;coherent gain</span>
+0032 <span class="comment">% listed in the table is 10^(x.dcgain/20)/(max(w)*length(w)).</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%  [1]  F. J. Harris. On the use of windows for harmonic analysis with the</span>
+0035 <span class="comment">%       discrete fourier transform. Proc IEEE, 66 (1): 51-83, Jan. 1978.</span>
+0036 
+0037 <span class="comment">%       Copyright (C) Mike Brookes 2009-2014</span>
+0038 <span class="comment">%      Version: $Id: v_windinfo.m 6801 2015-09-12 09:30:42Z dmb $</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0041 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0045 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0046 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0047 <span class="comment">%   (at your option) any later version.</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0050 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0051 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0052 <span class="comment">%   GNU General Public License for more details.</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0055 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0056 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0057 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0058 <span class="comment">%</span>
+0059 
+0060 <span class="keyword">if</span> nargin&lt;2
+0061     fs=1;
+0062 <span class="keyword">end</span>
+0063 w=w(:);
+0064 nw=length(w);
+0065 x.len=nw/fs;
+0066 x.nw=nw;
+0067 <span class="comment">% energy weighted group delay = centre of energy</span>
+0068 x.ewgdelay=((1:nw)*w.^2/sum(w.^2)-1)/fs;
+0069 <span class="comment">% now calculate spectrum</span>
+0070 of=16;      <span class="comment">% spectrum oversample factor must be even</span>
+0071 nwo=of*nw;
+0072 f=rfft(w,nwo);
+0073 p=f.*conj(f);
+0074 <span class="comment">% sidelobe attenuation is maximum peak (note DC peak at p(1) is not found)</span>
+0075 [kp,vp]=<a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>(p,<span class="string">'q'</span>);
+0076 [kt,vt]=<a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>(-p,<span class="string">'q'</span>);
+0077 <span class="comment">% dbpo=10*log10(vp(2:end)./vp(1:end-1))./log2((kp(2:end)-1)./(kp(1:end-1)-1)); % slope in dB/octave</span>
+0078 <span class="keyword">if</span> ~numel(kp)
+0079     x.sidelobe=10*log10(min(p)/p(1));
+0080 <span class="keyword">else</span>
+0081     x.sidelobe=10*log10(max(vp)/p(1));
+0082 <span class="keyword">end</span>
+0083 np=length(kp);
+0084 ipa=floor(np/4);
+0085 <span class="keyword">if</span> ~ipa
+0086     x.falloff=0;
+0087 <span class="keyword">else</span>
+0088     ipb=floor(np/2);
+0089     x.falloff=10*log10(vp(ipb)/vp(ipa))/log2((ipb-1)/(ipa-1));
+0090 <span class="keyword">end</span>
+0091 sumw2=sum(w.^2);
+0092 sumw=sum(w);
+0093 enbwbin=nw*sumw2/sumw^2;
+0094 x.enbw=enbwbin*fs/nw;
+0095 x.dcgain=20*log10(sumw);
+0096 <span class="comment">% do linear interpolation in p() to find 3dB and 6dB points</span>
+0097 p3=0.5*p(1);
+0098 i3=find(p&lt;p3,1);
+0099 <span class="keyword">if</span> ~numel(i3)
+0100     x.band3=Inf;
+0101     x.band6=Inf;
+0102 <span class="keyword">else</span>
+0103     x.band3=2*(i3-(p3-p(i3))/(p(i3-1)-p(i3))-1)/of*fs/nw;
+0104     p6=0.25*p(1);
+0105     i6=find(p&lt;p6,1);
+0106     x.band6=2*(i6-(p6-p(i6))/(p(i6-1)-p(i6))-1)/of*fs/nw;
+0107 <span class="keyword">end</span>
+0108 <span class="comment">% do linear interpolation in f() to find closest approach to the origin</span>
+0109 <span class="keyword">if</span>~numel(kt)
+0110     x.band0=Inf;
+0111     x.gain0=0;
+0112 <span class="keyword">else</span>
+0113     i0=floor(kt(1));
+0114     df=f(i0+1)-f(i0);
+0115     j0=-real(f(i0)*conj(df))/abs(df)^2;
+0116     x.band0=2*(i0+j0-1)/of*fs/nw;
+0117     p0=abs(f(i0)+j0*df)^2;
+0118     <span class="keyword">if</span> p0&gt;0
+0119         x.gain0=10*log10(p0/p(1));
+0120     <span class="keyword">else</span>
+0121         x.gain0=-Inf;
+0122     <span class="keyword">end</span>
+0123 <span class="keyword">end</span>
+0124 <span class="comment">% overlap factors</span>
+0125 i50=round(nw*0.5);
+0126 x.olc50=sum(w(1:nw-i50).*w(1+i50:nw))/sumw2;
+0127 i75=round(nw*0.25);
+0128 x.olc75=sum(w(1:nw-i75).*w(1+i75:nw))/sumw2;
+0129 <span class="comment">% processing loss and scalloping loss</span>
+0130 x.scallop=10*log10(p(1)/p(1+of/2));
+0131 x.ploss=10*log10(enbwbin);
+0132 x.wcploss=x.ploss+x.scallop;
+0133 co=zeros(1,nw);
+0134 co2=co;
+0135 w2=w.^2;
+0136 <span class="keyword">for</span> i=1:nw
+0137     <span class="keyword">if</span> i*fix(nw/i)==nw  <span class="comment">% check i is a factor of the window length</span>
+0138         <span class="keyword">if</span> co(i)==0
+0139             co(i)=all(abs(sum(reshape(w',nw/i,i),2)-i*mean(w))&lt;max(abs(w))*1e-4);
+0140             <span class="keyword">if</span> co(i)
+0141                 co(2*i:i:nw)=-1; <span class="comment">% ignore multiples</span>
+0142             <span class="keyword">end</span>
+0143         <span class="keyword">end</span>
+0144         <span class="keyword">if</span> co2(i)==0
+0145             co2(i)=all(abs(sum(reshape(w2',nw/i,i),2)-i*mean(w2))&lt;max(w2)*1e-4);
+0146             <span class="keyword">if</span> co2(i)
+0147                 co2(2*i:i:nw)=-1; <span class="comment">% ignore multiples</span>
+0148             <span class="keyword">end</span>
+0149         <span class="keyword">end</span>
+0150     <span class="keyword">end</span>
+0151 <span class="keyword">end</span>
+0152 co(co&lt;0)=0;
+0153 co2(co2&lt;0)=0;
+0154 x.cola=find(co);
+0155 x.cola2=find(co2);
+0156 <span class="comment">%</span>
+0157 <span class="comment">% now plot it if no output arguments given</span>
+0158 <span class="comment">%</span>
+0159 <span class="keyword">if</span> ~nargout
+0160     clf;
+0161     subplot(212);
+0162     nf=min(max(floor(2*max(x.band6,x.band0)*of*nw/fs)+1,of*8),length(p));
+0163     ff=(0:nf-1)*fs/(of*nw);
+0164     fqi=[x.enbw x.band3 x.band6]/2;
+0165     <span class="keyword">if</span> ff(end)&gt;2000
+0166         ff=ff/1000;
+0167         fqi=fqi/1000;
+0168         xlab=<span class="string">'kcyc/L'</span>;
+0169     <span class="keyword">else</span>
+0170         xlab=<span class="string">'cyc/L'</span>;
+0171     <span class="keyword">end</span>
+0172     dbn=20*log10(x.nw); <span class="comment">% window width in dB</span>
+0173     dbrange=min(100,-1.5*x.sidelobe);
+0174     dd=10*log10(max(p(1:nf),p(1)*0.1^(dbrange/10)));
+0175     ffs=[0 ff(end)];
+0176     dbs=repmat(x.dcgain+x.sidelobe,1,2);
+0177     ffb=[0 fqi(1) fqi(1)];
+0178     dbb=[dd(1) dd(1) dd(1)-dbrange];
+0179     ff3=[0 fqi(2) fqi(2)];
+0180     db3=[dd(1)+db(0.5)/2 dd(1)+db(0.5)/2 dd(1)-dbrange];
+0181     ff6=[0 fqi(3) fqi(3)];
+0182     db6=[dd(1)+db(0.5) dd(1)+db(0.5) dd(1)-dbrange];
+0183     area(ffb,dbb-dbn,max(dd)-dbrange-dbn,<span class="string">'facecolor'</span>,[1 0.7 0.7]);
+0184     hold on
+0185     plot(ffs,dbs-dbn,<span class="string">':k'</span>,ff3,db3-dbn,<span class="string">':k'</span>,ff6,db6-dbn,<span class="string">':k'</span>,ffb,dbb-dbn,<span class="string">'r'</span>,ff,dd-dbn,<span class="string">'b'</span>);
+0186     legend([<span class="string">'Equiv Noise BW = '</span> sprintsi(x.enbw,-2) <span class="string">'cyc/L'</span>],[<span class="string">'Max sidelobe = '</span> sprintf(<span class="string">'%.0f'</span>,x.sidelobe) <span class="string">' dB'</span>],[<span class="string">'-3 &amp; -6dB BW = '</span> sprintf(<span class="string">'%.2g'</span>,(x.band3)) <span class="string">' &amp; '</span> sprintf(<span class="string">'%.2g'</span>,(x.band6)) <span class="string">' cyc/L'</span>]);
+0187     hold off
+0188     axis([0 ff(end) max(dd)-dbrange-dbn max(dd)+2-dbn]);
+0189     ylabel(<span class="string">'Gain/N (dB)'</span>);
+0190     xlabel(sprintf(<span class="string">'Freq (%s)'</span>,xlab));
+0191     <span class="comment">%</span>
+0192     <span class="comment">% Now plot the window itself</span>
+0193     <span class="comment">%</span>
+0194     subplot(211);
+0195     tax=(0:nw-1)/fs-x.ewgdelay;
+0196     area(tax,w,<span class="string">'FaceColor'</span>,[0.7 0.7 1]);
+0197     ylabel(<span class="string">'Window'</span>);
+0198     xlabel(<span class="string">'Time/L'</span>);
+0199     dtax=(tax(end)-tax(1))*0.02;
+0200     axv=[tax(1)-dtax tax(end)+dtax min(0,min(w)) max(w)*1.05];
+0201     texthvc(tax(end),max(w),sprintf(<span class="string">'N=%d'</span>,nw),<span class="string">'rtk'</span>);
+0202     <span class="keyword">if</span> length(x.cola)&gt;3
+0203         tcola=sprintf(<span class="string">',%d'</span>,x.cola(1:3));
+0204         tcola=[tcola <span class="string">',...'</span>];
+0205     <span class="keyword">else</span>
+0206         tcola=sprintf(<span class="string">',%d'</span>,x.cola);
+0207     <span class="keyword">end</span>
+0208     <span class="keyword">if</span> length(x.cola2)&gt;3
+0209         tcola2=sprintf(<span class="string">',%d'</span>,x.cola2(1:3));
+0210         tcola2=[tcola2 <span class="string">',...'</span>];
+0211     <span class="keyword">else</span>
+0212         tcola2=sprintf(<span class="string">',%d'</span>,x.cola2);
+0213     <span class="keyword">end</span>
+0214     texthvc(tax(1),max(w),sprintf(<span class="string">'COLA=%s\nCOLA^2=%s'</span>,tcola(2:end),tcola2(2:end)),<span class="string">'ltk'</span>);
+0215     axis(axv);
+0216 <span class="keyword">end</span>
 0217 
-0218</pre></div>
+0218 
+0219</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

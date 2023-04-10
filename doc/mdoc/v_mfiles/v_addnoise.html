@@ -32,12 +32,12 @@
                                             % sample and wrapping around as required with a vorbis cross-fade
         (3) z=v_addnoise(s,fs,snr,'AD');    % use A-weighting when calculating the SNR which is specified as a power ratio
         (4) z=v_addnoise(s,fs,snr,'f',b,a); % generate noise using filter(b,a,randn(*,1)) but avoiding startup transient
-        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from stdspectrum.m)and plot a graph
+        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from v_stdspectrum.m)and plot a graph
 
  Inputs:  s    input signal (column vector)
         fsx    sampling frequency (Hz) or fso output from previous call
         snr    target SNR in dB (or power ratio if 'D' option given) [default: Inf]
-          m    mode string [default = 'dxopEk']
+          m    mode string [omit or use '' to get default of 'dxopEk']
                 (1) 'A'  use A-weighting when calculating SNR
                 (2) 'd'  SNR input and p output given in dB [default]
                     'D'  SNR input and p output given as power ratio
@@ -61,7 +61,7 @@
                 (8) 'x'  the output z contains input and noise as separate columns
                 (8) 'f'  Inputs nb and fsa specify a z-domain filter nb(z)/fsa(z) applied to Gaussian noise
                 (9) 'g'  plot graph [default if no output arguments]
-         nb    noise signal or stdspectrum type or numerator of noise filter if 'f' option (default: white noise)
+         nb    noise signal or v_stdspectrum type or numerator of noise filter if 'f' option (default: white noise)
         fsa    noise sample frequency [default fsx] or denominator of noise filter if 'f' option
 
  Outputs: z    noisy signal (single column unless 'x' option given
@@ -82,6 +82,8 @@
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
 
+<li><a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>	V_RANDFILT Generate filtered gaussian noise without initial transient</li>
+<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li>
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
@@ -101,12 +103,12 @@ This function is called by:
 0006 <span class="comment">%                                            % sample and wrapping around as required with a vorbis cross-fade</span>
 0007 <span class="comment">%        (3) z=v_addnoise(s,fs,snr,'AD');    % use A-weighting when calculating the SNR which is specified as a power ratio</span>
 0008 <span class="comment">%        (4) z=v_addnoise(s,fs,snr,'f',b,a); % generate noise using filter(b,a,randn(*,1)) but avoiding startup transient</span>
-0009 <span class="comment">%        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from stdspectrum.m)and plot a graph</span>
+0009 <span class="comment">%        (5) z=v_addnoise(s,fs,snr,'g',11);    % add speech-shaped noise (noise 11 from v_stdspectrum.m)and plot a graph</span>
 0010 <span class="comment">%</span>
 0011 <span class="comment">% Inputs:  s    input signal (column vector)</span>
 0012 <span class="comment">%        fsx    sampling frequency (Hz) or fso output from previous call</span>
 0013 <span class="comment">%        snr    target SNR in dB (or power ratio if 'D' option given) [default: Inf]</span>
-0014 <span class="comment">%          m    mode string [default = 'dxopEk']</span>
+0014 <span class="comment">%          m    mode string [omit or use '' to get default of 'dxopEk']</span>
 0015 <span class="comment">%                (1) 'A'  use A-weighting when calculating SNR</span>
 0016 <span class="comment">%                (2) 'd'  SNR input and p output given in dB [default]</span>
 0017 <span class="comment">%                    'D'  SNR input and p output given as power ratio</span>
@@ -130,7 +132,7 @@ This function is called by:
 0035 <span class="comment">%                (8) 'x'  the output z contains input and noise as separate columns</span>
 0036 <span class="comment">%                (8) 'f'  Inputs nb and fsa specify a z-domain filter nb(z)/fsa(z) applied to Gaussian noise</span>
 0037 <span class="comment">%                (9) 'g'  plot graph [default if no output arguments]</span>
-0038 <span class="comment">%         nb    noise signal or stdspectrum type or numerator of noise filter if 'f' option (default: white noise)</span>
+0038 <span class="comment">%         nb    noise signal or v_stdspectrum type or numerator of noise filter if 'f' option (default: white noise)</span>
 0039 <span class="comment">%        fsa    noise sample frequency [default fsx] or denominator of noise filter if 'f' option</span>
 0040 <span class="comment">%</span>
 0041 <span class="comment">% Outputs: z    noisy signal (single column unless 'x' option given</span>
@@ -196,7 +198,7 @@ This function is called by:
 0101         nb=1;   <span class="comment">% default is white noise</span>
 0102     <span class="keyword">end</span>
 0103     <span class="keyword">if</span> any(m==<span class="string">'A'</span>) &amp;&amp; (~any(m==<span class="string">'z'</span>) || ~any(m==<span class="string">'Z'</span>))
-0104         [awb,awa]=stdspectrum(2,<span class="string">'z'</span>,fs); <span class="comment">% create an A-weighting filter</span>
+0104         [awb,awa]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(2,<span class="string">'z'</span>,fs); <span class="comment">% create an A-weighting filter</span>
 0105     <span class="keyword">end</span>
 0106     <span class="keyword">if</span> any(m==<span class="string">'z'</span>)
 0107         se=1;                       <span class="comment">% speech power given as 0 dB</span>
@@ -218,11 +220,11 @@ This function is called by:
 0123     genf=any(m==<span class="string">'f'</span>) || ischar(nb) || numel(nb)==1;     <span class="comment">% generate noise locally</span>
 0124     <span class="keyword">if</span> genf   <span class="comment">% generate noise locally</span>
 0125         <span class="keyword">if</span> ~any(m==<span class="string">'f'</span>) <span class="comment">% specify standard spectrum</span>
-0126             [nb,fsa]=stdspectrum(nb,<span class="string">'z'</span>,fs);
+0126             [nb,fsa]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(nb,<span class="string">'z'</span>,fs);
 0127         <span class="keyword">end</span>
-0128         [dum1,zof,dum2,ne]=randfilt(nb,fsa,0);
+0128         [dum1,zof,dum2,ne]=<a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>(nb,fsa,0);
 0129         <span class="keyword">if</span> any(m==<span class="string">'A'</span>)                                  <span class="comment">% convolve with A-weighting to find power</span>
-0130             [dum1,dum2,dum3,ne]=randfilt(conv(nb,awb),conv(fsa,awa),0);
+0130             [dum1,dum2,dum3,ne]=<a href="v_randfilt.html" class="code" title="function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)">v_randfilt</a>(conv(nb,awb),conv(fsa,awa),0);
 0131         <span class="keyword">end</span>
 0132         <span class="comment">%% use the supplied noise signal</span>
 0133     <span class="keyword">else</span>                                    <span class="comment">% noise signal supplied</span>

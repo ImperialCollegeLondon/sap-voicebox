@@ -344,7 +344,7 @@ This function is called by:
 0244     fso.ns=fso.ns+ns;                               <span class="comment">% count the number of speech samples</span>
 0245     fso.ss=fso.ss+sum(sq);                          <span class="comment">% sum of speech samples (not used internally but available in fso output)</span>
 0246     ssq=sum(sq.*sq);                                <span class="comment">% sum of squared new speech samples</span>
-0247     <span class="keyword">if</span> ssq&gt;0 &amp;&amp; fso.ssq==0 <span class="comment">% if these are the first non-zero speech samples</span>
+0247     <span class="keyword">if</span> ssq&gt;0 &amp;&amp; fso.ssq==0                          <span class="comment">% if these are the first non-zero speech samples</span>
 0248         fso.sf=ns/ssq;                              <span class="comment">% scale factor to normalize the mean power of this chunk to 1</span>
 0249         fso.sfdb=10*log10(fso.sf);                  <span class="comment">% scale factor in dB</span>
 0250     <span class="keyword">end</span>
@@ -360,7 +360,7 @@ This function is called by:
 0260     <span class="keyword">if</span> fso.emax==-Inf                               <span class="comment">% if all samples so far are zero</span>
 0261         fso.kc(1)=fso.kc(1)+ns;
 0262     <span class="keyword">else</span>                                            <span class="comment">% we have had some non-zero samples</span>
-0263         qe=min(fso.emax-qe,nbin);   <span class="comment">% force in the range 1:nbin. Bin k has 2^(emax-k-1) &lt;= s^2 &lt; 2^(emax-k)</span>
+0263         qe=min(fso.emax-qe,nbin);                   <span class="comment">% force in the range 1:nbin. Bin k has 2^(emax-k-1) &lt;= s^2 &lt; 2^(emax-k)</span>
 0264         wqe=ones(length(qe),1);
 0265         <span class="comment">% below: could use kc=cumsum(accumarray(qe,wqe,nbin)) but unsure about backwards compatibility</span>
 0266         kc=cumsum(full(sparse(qe,wqe,wqe,nbin,1)));     <span class="comment">% cumulative occupancy counts</span>
@@ -369,7 +369,7 @@ This function is called by:
 0269             kc(esh+1:nbin-1)=kc(esh+1:nbin-1)+fso.kc(1:nbin-esh-1);
 0270             kc(nbin)=kc(nbin)+sum(fso.kc(nbin-esh:nbin));
 0271         <span class="keyword">else</span>
-0272             kc(nbin)=kc(nbin)+sum(fso.kc); <span class="comment">% otherwise just add all old counts into the last (lowest) bin</span>
+0272             kc(nbin)=kc(nbin)+sum(fso.kc);              <span class="comment">% otherwise just add all old counts into the last (lowest) bin</span>
 0273         <span class="keyword">end</span>
 0274         fso.kc=kc;
 0275     <span class="keyword">end</span>
@@ -409,7 +409,7 @@ This function is called by:
 0309         <span class="keyword">end</span>
 0310     <span class="keyword">end</span>
 0311     <span class="keyword">if</span> all(md~=<span class="string">'l'</span>)
-0312         lev=lev(1);         <span class="comment">% only output the first element of lev unless 'l' option</span>
+0312         lev=lev(1);             <span class="comment">% only output the first element of lev unless 'l' option</span>
 0313     <span class="keyword">end</span>
 0314 <span class="keyword">end</span>
 0315 <span class="keyword">if</span> nargout&gt;3
@@ -458,14 +458,14 @@ This function is called by:
 0358     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1)-thresh,ylim(2),sprintf(<span class="string">'Threshold'</span>),<span class="string">'rtr'</span>);
 0359     xlabel(<span class="string">'Frame power (dB)'</span>)
 0360     ylabel(<span class="string">'% frames'</span>);
-0361 <span class="keyword">elseif</span> any(md==<span class="string">'n'</span>) || any(md==<span class="string">'N'</span>) <span class="comment">% output normalized speech waveform</span>
-0362     fsx=fso; <span class="comment">% shift along other outputs</span>
+0361 <span class="keyword">elseif</span> any(md==<span class="string">'n'</span>) || any(md==<span class="string">'N'</span>)             <span class="comment">% output normalized speech waveform</span>
+0362     fsx=fso;                                    <span class="comment">% shift along other outputs</span>
 0363     fso=af;
 0364     af=lev;
 0365     <span class="keyword">if</span> any(md==<span class="string">'n'</span>)
-0366         sq=sp; <span class="comment">% 'n' -&gt; use unfiltered speech</span>
+0366         sq=sp;                                  <span class="comment">% 'n' -&gt; use unfiltered speech</span>
 0367     <span class="keyword">end</span>
-0368     <span class="keyword">if</span> fsx.ns&gt;0 &amp;&amp; fsx.ssq&gt;0 <span class="comment">% if there has been any non-zero speech</span>
+0368     <span class="keyword">if</span> fsx.ns&gt;0 &amp;&amp; fsx.ssq&gt;0                    <span class="comment">% if there has been any non-zero speech</span>
 0369         lev=sq(1:nsp)/sqrt(lp);
 0370     <span class="keyword">else</span>
 0371         lev=sq(1:nsp);

@@ -390,7 +390,7 @@ This function is called by:
 0287         <span class="keyword">end</span>
 0288         g=lpx*wx;                       <span class="comment">% total log probability summed over all data points</span>
 0289         gg(j)=g;                        <span class="comment">% save log prob at each iteration</span>
-0290         w=pk;                       <span class="comment">% normalize to get the weights</span>
+0290         w=pk;                           <span class="comment">% normalize to get the weights</span>
 0291         <span class="keyword">if</span> pk                           <span class="comment">% if all elements of pk are non-zero</span>
 0292             m=sx./pk(:,wp);             <span class="comment">% calculate mixture means</span>
 0293             v=sx2./pk(:,wp);            <span class="comment">% and variances</span>
