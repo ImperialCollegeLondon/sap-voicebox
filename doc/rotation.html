@@ -90,13 +90,13 @@ matrix properties</a>]</td>
 </tr>
 <tr>
 <td valign="top" width="50">eu</td>
-<td valign="top" width="70">m,<b>t</b><sub>3</sub></td>
+<td valign="top" width="70"><em>m</em>,<b>t</b><sub>3</sub></td>
 <td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotqr2eu.html">qr</a>,
 <a href="mdoc/v_mfiles/v_rotro2eu.html">ro</a></td>
 <td valign="top" width="120"><a href="mdoc/v_mfiles/v_roteu2qr.html">qr</a>,
 <a href="mdoc/v_mfiles/v_roteu2ro.html">ro</a></td>
 <td valign="top"><b>Euler Angles: t</b> contains a sequence of &quot;euler angles&quot; 
-while m contains the sequence of axes around which the rotations should be 
+while <em>m</em> contains the sequence of axes around which the rotations should be 
 performed (e.g. 'xzy' means rotate around <i>x</i> first). The axes are fixed in 
 space and do not rotate with the object.</td>
 </tr>
@@ -117,6 +117,18 @@ while <i>t</i> gives the rotation angle in radians.</td>
 containing <b>u</b> and <b>v</b> while <i>t</i> gives the rotation angle in 
 radians. If t is omitted, the rotation moves direction <b>u</b> to direction <b>
 v</b>.</td>
+</tr>
+<tr>
+<td valign="top" width="50">lu</td>
+<td valign="top" width="70"><b>l</b><sub>3</sub>,<b>u</b><sub>3</sub>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotro2lu.html">ro</a></td>
+<td valign="top" width="120"><a href="mdoc/v_mfiles/v_rotlu2ro.html">ro</a></td>
+<td valign="top"><b>Look and Up directions:</b> The rotation moves direction
+<strong>l</strong> to the negative <em>z</em>-axis and direction <strong>u</strong> 
+onto the <em>y</em>-<em>z</em> plane with a positive <em>y</em> component. This 
+corresponds to a camera looking in direction <strong>l</strong> that has been 
+rotated around its optical axis to make direction <strong>u</strong> upwards in 
+the image.</td>
 </tr>
 <tr>
 <td valign="top" width="50">qr</td>
