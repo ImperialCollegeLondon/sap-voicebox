@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_rotro2lu</title>
+  <meta name="keywords" content="v_rotro2lu">
+  <meta name="description" content="V_ROTRO2QR converts a 3x3 rotation matrix to look and up directions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_rotro2lu
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_ROTRO2QR converts a 3x3 rotation matrix to look and up directions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [l,u]=v_rotro2lu(r) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_ROTRO2QR converts a 3x3 rotation matrix to look and up directions
+  Inputs:  R(3,3,...)  Input rotation matrix
+
+ Outputs:  L(3,...)    Unit vector specifying look direction
+           U(3,...)    Unit vector specifying up direction
+
+ The rotation maps the look direction to the negative z-axis and the up direction
+ to lie in the y-z plane with a positive y component. That is, R*L=a*[0 0 -1]' and
+ R*U=b*[0 1 c] for postive constants a and b. After applying this rotation to an object,
+ the 2-D data obtained by omitting the z-component represents an orthographic projection
+ performed by a camera looking in the direction L.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>	V_ROTRO2QR converts a 3x3 rotation matrix to a real quaternion</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [l,u]=v_rotro2lu(r)</a>
+0002 <span class="comment">%V_ROTRO2QR converts a 3x3 rotation matrix to look and up directions</span>
+0003 <span class="comment">%  Inputs:  R(3,3,...)  Input rotation matrix</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Outputs:  L(3,...)    Unit vector specifying look direction</span>
+0006 <span class="comment">%           U(3,...)    Unit vector specifying up direction</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% The rotation maps the look direction to the negative z-axis and the up direction</span>
+0009 <span class="comment">% to lie in the y-z plane with a positive y component. That is, R*L=a*[0 0 -1]' and</span>
+0010 <span class="comment">% R*U=b*[0 1 c] for postive constants a and b. After applying this rotation to an object,</span>
+0011 <span class="comment">% the 2-D data obtained by omitting the z-component represents an orthographic projection</span>
+0012 <span class="comment">% performed by a camera looking in the direction L.</span>
+0013 
+0014 <span class="comment">%      Copyright (C) Mike Brookes 2023</span>
+0015 <span class="comment">%      Version: $Id: v_rotro2lu.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0018 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0021 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0022 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0023 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0024 <span class="comment">%   (at your option) any later version.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0027 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0028 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0029 <span class="comment">%   GNU General Public License for more details.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0032 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0033 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 
+0036 sz=size(r);
+0037 r=reshape(r,9,[]);                  <span class="comment">% make 2-dimensional</span>
+0038 <span class="keyword">if</span> size(r,2)&gt;1                      <span class="comment">% multiple rotation matrices</span>
+0039     l=reshape(-r([3 6 9],:),[3 sz(3:end)]);
+0040     u=reshape(r([2 5 8],:),[3 sz(3:end)]);
+0041 <span class="keyword">else</span>                                <span class="comment">% only one rotation matrix</span>
+0042     l=-r([3 6 9],:);
+0043     u=r([2 5 8],:);
+0044 <span class="keyword">end</span>
+0045 <span class="keyword">if</span> ~nargout
+0046     <a href="v_rotro2qr.html" class="code" title="function q=v_rotro2qr(r)">v_rotro2qr</a>(reshape(r(:,1),3,3));           <span class="comment">% plot a cube</span>
+0047     set(gca,<span class="string">'CameraPosition'</span>,[0 0 1]);
+0048 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
