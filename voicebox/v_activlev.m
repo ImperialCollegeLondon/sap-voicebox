@@ -325,22 +325,24 @@ if ~nargout
     tax=(1:ns)/fso.ffs;
     plot(tax,sp,'-y',tax,s,'-r',tax,(vad>0)*sqrt(lp),'-b');
     xlabel('Time (s)');
-    title(sprintf('Active Level = %.2g dB, Activity = %.0f%% (ITU-T P.56)',levdb,100*af));
+    title(sprintf('Active Level = %.1f dB, Activity = %.0f%% (ITU-T P.56)',levdb,100*af));
     v_axisenlarge([-1 -1 -1.4 -1.05]);
     if nz>0
         hold on
         ylim=get(gca,'ylim');
         plot(tax(end-nz)*[1 1],ylim,':k');
         hold off
+        legend('Signal','Smoothed envelope','VAD * Active-Level','Zero-padding','Location','SouthEast');
+    else
+        legend('Signal','Smoothed envelope','VAD * Active-Level','Location','SouthEast');
     end
     ylabel('Amplitude');
-    legend('Signal','Smoothed envelope','VAD * Active-Level','Location','SouthEast');
     % lower right plot: diagram of threshold and active level calculation
     subplot(2,2,4);
     plot(cj,repmat(levdb,nbin,1),'k:',cj,aj(:),'-b',cj,cj,'-r',levdb-thresh*ones(1,2),[levdb-thresh levdb],'-r');
     xlabel('Threshold (dB)');
     ylabel('Active Level (dB)');
-    legend('Active Level','Speech>Thresh','Threshold','Location','NorthWest');
+    legend('Active Level (AL)','Speech>Thresh','Threshold','Location','NorthWest');
     v_texthvc(levdb-thresh,levdb-0.5*thresh,sprintf('%.1f dB ',thresh),'rmr');
     v_axisenlarge([-1 -1.05]);
     ylim=get(gca,'ylim');
@@ -354,7 +356,7 @@ if ~nargout
     hold on
     plot(levdb([1 1]),ylim,'k:',levdb([1 1])-thresh,ylim,'r:');
     hold off
-    v_texthvc(levdb(1),ylim(2),sprintf('Active\nLev'),'ctk');
+    v_texthvc(levdb(1),ylim(2),'AL','rtk');
     v_texthvc(levdb(1)-thresh,ylim(2),sprintf('Threshold'),'rtr');
     xlabel('Frame power (dB)')
     ylabel('% frames');
