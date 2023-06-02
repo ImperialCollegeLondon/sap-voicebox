@@ -86,7 +86,7 @@ else
     if nargin<2 || ~numel(tol)
         tol=max(0.1*(newt-nw)*1440,1);
     end
-    if ~exist('oldt','var') || oldt==0 || (abs(newt-oldt)>tol/1440 && (nw-oldnw)>10/86400) || (nw-oldnw)>10/1440 || nargout>0
+    if ~exist('oldt','var') || length(oldt)~=1 || oldt==0 || (abs(newt-oldt)>tol/1440 && (nw-oldnw)>10/86400) || (nw-oldnw)>10/1440 || nargout>0
         oldt=newt;
         if floor(oldt)==floor(nw)
             df='HH:MM';
