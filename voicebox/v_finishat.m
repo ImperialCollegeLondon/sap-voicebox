@@ -5,33 +5,38 @@ function [eta,etaf]=v_finishat(frac,tol,fmt)
 %                  ... computation ...
 %              end
 %
-%         (2)  for i=1:many
-%                  v_finishat([i-1 many]);  % alternative argument format
-%                  ... computation ...
-%              end
-%
-%         (3)  v_finishat(0);               % explicit initialization before loop             
+%         (3)  v_finishat(0);               % explicit initialization before loop
 %              for i=1:many
 %                  ... computation ...
 %                  v_finishat(i/many);      % calculate fraction completed
 %              end
 %
-%         (4)  for i=1:NI
-%                  for j=1:NJ
-%                      for k=1:NK
-%                          v_finishat([i NI; j NJ; k-1 NK]); % one row per nested loop
+%         (5)  for i=MI:NI
+%                  for j=MJ:NJ
+%                      for k=MK:NK
+%                          v_finishat([i MI NI; j MJ NJ; k MK NK]); % one row per nested loop
 %                          ... computation ...
 %                      end
 %                  end
 %              end
-%          
+%
+%         (6)  for i=MI:DI:NI
+%                  for j=MJ:DJ:NJ
+%                      for k=MK:DK:NK
+%                          v_finishat([i MI DI NI; j MJ DJ NJ; k MK DK NK]); % one row per nested loop
+%                          ... computation ...
+%                      end
+%                  end
+%              end
+%
 % Inputs: FRAC = fraction of total comutation that has been completed
-%                Alternatively at start of inner loop: [i NI; j NJ; k-1 NK ...] where i, j, k are
-%                loop indices and NI, NJ, NK their limits. Use k instead of k-1 if placed at
-%                the end of the inner loop. As a special case, FRAC=0 initializes the routine.
+%                Alternatively at start of inner loop: [i MI DI NI; j MJ DJ NJ; k MK DK NK; ...] where i, j, k are
+%                nested loop indices and MI:DI:NI, MJ:DJ:NJ, MK:DK:NK their limits. If the DI, DJ, DK, ... all equal 1
+%                The may be omitted. Use k+1 instead of k if placed at the end of the inner loop.
+%                As a special case, FRAC=0 initializes the routine.
 %         TOL  = Tolerance in minutes. If the estimated time has changed by less
 %                than this, then nothing will be printed. [default 10% of remaining time]
-%         FMT  = Format string which should include %s for estimated finish time, %d for remaining minutes and %f for fraction complete
+%         FMT  = Format string which should include %s for estimated finish time, %d for remaining minutes, %t for remaining hr:min:sec, %f for fraction complete and %p for % complete
 %
 % Output: ETA  = string containing the expected finish time
 %                specifying this will suppress printing message to std err (fid=2)
@@ -43,7 +48,7 @@ function [eta,etaf]=v_finishat(frac,tol,fmt)
 %                    v_finishat(i/many);
 %                end
 
-%      Copyright (C) Mike Brookes 1998
+%      Copyright (C) Mike Brookes 1998-2023
 %      Version: $Id: v_finishat.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -65,23 +70,28 @@ function [eta,etaf]=v_finishat(frac,tol,fmt)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-persistent oldt oldnw
+persistent oldt oldnw tstart
+[nf,nv]=size(frac);
 if nargin<3
-    fmt='Estimated finish at %s (%.2f done, %d min remaining)\n';
-
+    fmt='Estimated finish at %s (%.0p done, %t remaining)\n';
 end
-nf=size(frac,1);
-if all(frac(:,1)<=[ones(nf-1,1); 0]) % initialize if fraction done is <=0
+if nv<3 && all(frac(:,1)<=[ones(nf-1,1); 0]) || nv>=3 && all(frac(:,1)==frac(:,2)) % initialize if fraction done is <=0
     oldt=0;
     eta='Unknown';
-    tic;
+    tstart=tic;
 else
-    if size(frac,2)==2
+    if nv==2 % obsolete format that assumes all loop indices start at 1
         fp=cumprod(frac(:,2));
         frac=sum((frac(:,1)-1)./fp)+1/fp(end);
+    elseif nv==3
+        fp=cumprod(frac(:,3)-frac(:,2)+1);
+        frac=sum((frac(:,1)-frac(:,2))./fp);
+    else
+        fp=cumprod(floor((frac(:,4)-frac(:,2))./frac(:,3))+1);
+        frac=sum(round((frac(:,1)-frac(:,2))./frac(:,3))./fp);
     end
     nw=now;                             % current time as serial number
-    sectogo=(1/frac-1)*toc;      % seconds to go
+    sectogo=(1/frac-1)*toc(tstart);      % seconds to go
     newt=nw+sectogo/86400;       % add estimated time in days
     if nargin<2 || ~numel(tol)
         tol=max(0.1*(newt-nw)*1440,1);
@@ -107,6 +117,19 @@ else
                         fprintf(2,fmt(1:ix),round(sectogo/60));
                     case 'f'
                         fprintf(2,fmt(1:ix),frac);
+                    case 'p'
+                        fprintf(2,[fmt(1:ix-1) 'f%%'],frac*100);
+                    case 't'
+                        rsectogo=round(sectogo); % round to a whole number of seconds
+                        if sectogo>=3600
+                            fprintf(2,'%d:%02d hr:min',floor(rsectogo/3600),round(mod(sectogo,3600)/60));
+                        elseif sectogo>=180
+                            fprintf(2,'%d min',round(sectogo/60));
+                        elseif sectogo>=60
+                            fprintf(2,'%d:%02d min:sec',floor(rsectogo/60),round(mod(sectogo,60)));
+                        else
+                            fprintf(2,'%d sec',rsectogo);
+                        end
                 end
                 fmt=fmt(ix+1:end);
                 ix=find(fmt=='%',1);
