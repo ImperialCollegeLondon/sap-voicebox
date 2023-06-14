@@ -36,7 +36,13 @@ function [eta,etaf]=v_finishat(frac,tol,fmt)
 %                As a special case, FRAC=0 initializes the routine.
 %         TOL  = Tolerance in minutes. If the estimated time has changed by less
 %                than this, then nothing will be printed. [default 10% of remaining time]
-%         FMT  = Format string which should include %s for estimated finish time, %d for remaining minutes, %t for remaining hr:min:sec, %f for fraction complete and %p for % complete
+%         FMT  = Format string which should include:
+%                   %s for estimated finish time
+%                   %d for remaining minutes
+%                   %t for remaining hr:min:sec
+%                   %f for fraction complete
+%                   %p for % complete
+%                The %t, %f and %p options can include optional width and/or decimal-place dimensions (e.g. %.2f)
 %
 % Output: ETA  = string containing the expected finish time
 %                specifying this will suppress printing message to std err (fid=2)
@@ -75,7 +81,7 @@ persistent oldt oldnw tstart
 if nargin<3
     fmt='Estimated finish at %s (%.0p done, %t remaining)\n';
 end
-if nv<3 && all(frac(:,1)<=[ones(nf-1,1); 0]) || nv>=3 && all(frac(:,1)==frac(:,2)) % initialize if fraction done is <=0
+if isempty(tstart) || nv<3 && all(frac(:,1)<=[ones(nf-1,1); 0]) || nv>=3 && all(frac(:,1)==frac(:,2)) % initialize if fraction done is <=0
     oldt=0;
     eta='Unknown';
     tstart=tic;
@@ -116,19 +122,38 @@ else
                     case 'd'
                         fprintf(2,fmt(1:ix),round(sectogo/60));
                     case 'f'
-                        fprintf(2,fmt(1:ix),frac);
-                    case 'p'
-                        fprintf(2,[fmt(1:ix-1) 'f%%'],frac*100);
-                    case 't'
-                        rsectogo=round(sectogo); % round to a whole number of seconds
-                        if sectogo>=3600
-                            fprintf(2,'%d:%02d hr:min',floor(rsectogo/3600),round(mod(sectogo,3600)/60));
-                        elseif sectogo>=180
-                            fprintf(2,'%d min',round(sectogo/60));
-                        elseif sectogo>=60
-                            fprintf(2,'%d:%02d min:sec',floor(rsectogo/60),round(mod(sectogo,60)));
+                        if ix>2
+                            fprintf(2,fmt(1:ix),frac);
                         else
-                            fprintf(2,'%d sec',rsectogo);
+                            fprintf(2,'%.2f',frac);
+                        end
+                    case 'p'
+                        if ix>2
+                        fprintf(2,[fmt(1:ix-1) 'f%%'],frac*100);
+                        else
+                            fprintf(2,'%.0f%%',frac*100);
+                        end
+                    case 't'
+                        if ix>2
+                            if sectogo>=3600
+                                fprintf(2,[fmt(1:ix-1) 'f hr'],sectogo/3600);
+                            elseif sectogo>=60
+                                fprintf(2,[fmt(1:ix-1) 'f min'],sectogo/60);
+                            else
+                                fprintf(2,[fmt(1:ix-1) 'f sec'],sectogo);
+                            end
+                        else
+                            if sectogo>=36000
+                                fprintf(2,'%.0f hr',sectogo/3600);
+                            elseif sectogo>=3600
+                                fprintf(2,'%.1f hr',sectogo/3600);
+                            elseif sectogo>=600
+                                fprintf(2,'%.0f min',sectogo/60);
+                            elseif sectogo>=60
+                                fprintf(2,'%.1f min',sectogo/60);
+                            else
+                                fprintf(2,'%.0f sec',sectogo);
+                            end
                         end
                 end
                 fmt=fmt(ix+1:end);
