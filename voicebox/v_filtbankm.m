@@ -57,7 +57,7 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %             'u' = input and output are power per Hz instead of power.
 %             'U' = input is power but output is power per Hz.
 %
-%             's' = single-sided input: do not include symmetric negative frequencies (i.e. non-DC inputs have been doubled)
+%             's' = single-sided input: do not include symmetric negative frequencies (i.e. non-DC inputs have already been doubled)
 %             'S' = single-sided output: do not mirror the non-DC filter characteristics (i.e. double non-DC outputs)
 %
 %             'g' = plot filter coefficients as graph
