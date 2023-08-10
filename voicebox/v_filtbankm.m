@@ -145,7 +145,6 @@ else
     df=fs/n;  % input frequency bin spacing
 end
 fin0=fa+(0:nf-1)*df;  % input frequency bins
-
 mflh=[fl fh];
 if ~any(w=='h')             % convert Hz to mel/erb/...
     switch wr
