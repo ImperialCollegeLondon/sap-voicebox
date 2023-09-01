@@ -4,17 +4,17 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 % Usage:
 % (1) Calcuate the Mel-frequency Cepstral Coefficients
 %
-%        f=v_rfft(s);			              % v_rfft() returns only 1+floor(n/2) coefficients
-%		 x=v_filtbankm(p,n,fs,0,fs/2,'m');  % n is the fft length, p is the number of filters wanted
-%		 z=log(x*abs(f).^2);              % multiply x by the power spectrum
-%		 c=dct(z);                        % take the DCT
+%        f=v_rfft(s);			                        % v_rfft() returns only 1+floor(n/2) coefficients
+%		 x=v_filtbankm(p,n,fs,0,fs/2,'m');              % n is the fft length, p is the number of filters wanted
+%		 z=log(x*abs(f).^2);                            % multiply x by the power spectrum
+%		 c=dct(z);                                      % take the DCT
 %
 % (2) Calcuate the Mel-frequency Cepstral Coefficients efficiently
 %
-%        f=fft(s);                                   % n is the fft length, p is the number of filters wanted
-%        [x,cf,na,nb]=v_filtbankm(p,n,fs,0,fs/2,'m');  % na:nb gives the fft bins that are needed
-%        z=log(x*(f(na:nb)).*conj(f(na:nb)));        % multiply x by the power spectrum
-%		 c=dct(z);                                   % take the DCT
+%        f=fft(s);                                      % n is the fft length, p is the number of filters wanted
+%        [x,cf,na,nb]=v_filtbankm(p,n,fs,0,fs/2,'m');   % na:nb gives the fft bins that are needed
+%        z=log(x*(f(na:nb)).*conj(f(na:nb)));           % multiply x by the power spectrum
+%		 c=dct(z);                                      % take the DCT
 %
 % (3) Plot the calculated filterbanks as a graph
 %
@@ -25,12 +25,12 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %        v_filtbankm(p,n,fs,0,fs/2,'m');
 %
 % Inputs:
-%       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb [ceil(4.6*log10(fs))]
-%		n   length of fft
-%           or [nfrq dfrq frq1] nfrq=number of input frequency bins, frequency increment (Hz), first bin freq (Hz)
+%       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]
+%		n   length of dft
+%           or [nfrq dfrq frq1] nfrq=number of input frequency bins, dfrq=frequency increment (Hz), frq1=first bin freq (Hz)
 %		fs  sample rate in Hz
-%		fl  low end of the lowest filter in Hz (see 'h' option) [default = 0 or 30Hz for 'l' option]
-%		fh  high end of highest filter in Hz [default = fs/2]
+%		fl  low end of the lowest filter in Hz (or in mel/erb/bark/log10 with 'h' option) [default = 0 or 30Hz for 'l' option]
+%		fh  high end of highest filter in Hz (or in mel/erb/bark/log10 with 'h' option) [default = fs/2]
 %		w   any sensible combination of the following:
 %
 %             'b' = bark scale instead of mel
@@ -43,12 +43,10 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %
 %             'c' = fl & fh specify centre of low and high filters instead of edges
 %             'h' = fl & fh are in mel/erb/bark/log10 instead of Hz
-%             'H' = cf outputs are in mel/erb/bark/log10 instead of Hz
+%             'H' = give cf outputs in mel/erb/bark/log10 instead of Hz
 %
-%		      'y' = lowest filter remains at 1 down to 0 frequency and
-%			        highest filter remains at 1 up to nyquist freqency
-%		            The total power in the fft is preserved (unless 'u' is
-%		            specified).
+%		      'y' = lowest filter remains at 1 down to 0 frequency and highest filter remains at 1 up to nyquist freqency
+%		            The total power in the fft is preserved (unless 'u' is specified).
 %             'Y' = extend only at low frequency end (or high end if 'y' also specified)
 %
 %             'p' = input P specifies the number of filters [default if P>=1]
@@ -61,17 +59,15 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %             'S' = single-sided output: do not mirror the non-DC filter characteristics (i.e. double non-DC outputs)
 %
 %             'g' = plot filter coefficients as graph
-%             'G' = plot filter coefficients as image [default if no output arguments present]
+%             'G' = plot filter coefficients as spectrogram image [default if no output arguments present]
 %
 %
-% Outputs:	x     a sparse matrix containing the v_filterbank amplitudes
-%		          If the il and ih outputs are given then size(x)=[p,ih-il+1]
-%                 otherwise size(x)=[p,1+floor(n/2)]
-%                 Note that the peak filter values equal 2 to account for the power
-%                 in the negative FFT frequencies.
-%           cf    the v_filterbank centre frequencies in Hz (see 'H' option)
-%		    il    the lowest fft bin with a non-zero coefficient
-%		    ih    the highest fft bin with a non-zero coefficient
+% Outputs:	x(p,k)  a sparse matrix containing the v_filterbank amplitudes
+%		            If the il and ih outputs are included then k=ih-il+1 otherwise k=1+floor(n/2)
+%                   Note that the peak filter values equal 2 to account for the power in the negative FFT frequencies.
+%           cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)
+%		    il      the lowest fft bin with a non-zero coefficient
+%		    ih      the highest fft bin with a non-zero coefficient
 %
 % The routine performs interpolation of the input spectrum by convolving the power spectrum
 % with a triangular filter and then simulates a v_filterbank with asymetric triangular filters.
@@ -80,14 +76,17 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 % References:
 %
 % [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement
-%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185�19, 1937.
+%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185-190, 1937.
 % [2] S. Davis and P. Mermelstein. Comparison of parametric representations for
 %     monosyllabic word recognition in continuously spoken sentences.
-%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357�366, Aug. 1980.
+%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357-366, Aug. 1980.
 
 % Bugs/Suggestions
 % (1) default frequencies won't work if the h option is specified
 % (2) low default frequency is invalid if the 'l' option is specified
+% (3) Add 'z' option to include a DC output as the first coefficient
+% (4) Add 'Z' option to ignore the DC input component
+% (5) Add 'i' option to calculate the inverse of x instead
 
 %      Copyright (C) Mike Brookes 1997-2009
 %      Version: $Id: v_filtbankm.m 10865 2018-09-21 17:22:45Z dmb $
@@ -111,97 +110,89 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Note "FFT bin_0" assumes DC = bin 0 whereas "FFT bin_1" means DC = bin 1
+% Notes:
+% (1) In the comments, "FFT bin_0" assumes DC = bin 0 whereas "FFT bin_1" means DC = bin 1
+% (2) "input" and "output" need to be interchanged if the 'i' option is given
 
-if nargin < 6
-    w='f'; % default option: linear frequency scale
+if nargin < 6                                       % if no mode option, w, is specified
+    w='f';                                          % default mode option: 'f' = linear output frequency scale
+elseif isempty(w)
+    w=' ';                                          % ensure mode, w, is not empty
 end
-wr=' ';   % default warping is linear frequency
-for i=1:length(w)
-    if any(w(i)=='lebm');
-        wr=w(i);
-    end
-end
+wr=max(any(repmat('lebm',length(w),1)==repmat(w',1,4),1).*(1:4)); % output warping: 0=linear,1=log,2=erbrate,3=bark,4=mel
 if nargin < 5 || ~numel(fh)
-    fh=0.5*fs; % max freq is the nyquist
+    fh=0.5*fs;                                      % max freq is the nyquist
 end
 if nargin < 4 || ~numel(fl)
-    if wr=='l'
-        fl=30;  % min freq is 30 Hz for log scale
-    else
-        fl=0; % min freq is DC
-    end
+    fl=30*(wr==1);                                  % lower limit is 0 Hz unless 'l' option specified, in which case it is 30 Hz
 end
-
-fa=0;
+fa=0;                                               % first input frequency bin defaults to 0
 if numel(n)>1
-    nf=n(1);  % number of input frequency bins
-    df=n(2);  % input frequency bin spacing
+    nf=n(1);                                        % number of input frequency bins
+    df=n(2);                                        % input frequency bin spacing
     if numel(n)>2
-        fa=n(3); % frequency of first bin
+        fa=n(3);                                    % frequency of first bin
     end
-else
-    nf=1+floor(n/2); % number of input frequency bins
-    df=fs/n;  % input frequency bin spacing
+else                                                % n gives dft length
+    nf=1+floor(n/2);                                % number of input frequency bins
+    df=fs/n;                                        % input frequency bin spacing
 end
-fin0=fa+(0:nf-1)*df;  % input frequency bins
-
-mflh=[fl fh];
-if ~any(w=='h')             % convert Hz to mel/erb/...
+fin0=fa+(0:nf-1)*df;                                % nf input frequency bins linearly spaced from fa to fa+(nf-1)*df
+mflh=[fl fh];                                       % low and high limits of filterbank triangular filters
+if ~any(w=='h')                                     % convert mflh from Hz to mel/erb/... unless already converted via 'h' option
     switch wr
-        case 'm'
-            mflh=v_frq2mel(mflh);       % convert frequency limits into mel
-        case 'l'
+        case 1                                      % 'l' = log scaled
             if fl<=0
-                error('Low frequency limit must be >0 for l option');
+                error('Low frequency limit must be >0 for ''l'' option');
             end
-            mflh=log10(mflh);       % convert frequency limits into log10 Hz
-        case 'e'
-            mflh=v_frq2erb(mflh);       % convert frequency limits into erb-rate
-        case 'b'
-            mflh=v_frq2bark(mflh);       % convert frequency limits into bark
+            mflh=log10(mflh);                       % convert frequency limits into log10 Hz
+        case 2                                      % 'e' = erb-rate scaled
+            mflh=v_frq2erb(mflh);                   % convert frequency limits into erb-rate
+        case 3                                      % 'b' = bark scaled
+            mflh=v_frq2bark(mflh);                  % convert frequency limits into bark
+        case 4                                      % 'm' = mel scaled
+            mflh=v_frq2mel(mflh);                   % convert frequency limits into mel
     end
 end
-melrng=mflh*(-1:2:1)';          % mel/erb/... range
-% fn2=floor(n/2);     % bin index of highest positive frequency (Nyquist if n is even)
+melrng=mflh(2)-mflh(1);                             % mel/erb/... range
 if isempty(p)
-    p=ceil(4.6*log10(2*(fa+(nf-1)*df)));         % default number of output filters
+    p=ceil(4.6*log10(2*(fa+(nf-1)*df)));            % default number of output filters
 end
-puc=any(w=='P') || (p<1) && ~any(w=='p');
-if any(w=='c')              % c option: specify fiter centres not edges
-    if puc
-        p=round(melrng/(p*1000))+1;
+puc=any(w=='P') || (p<1) && ~any(w=='p');           % input p specifies the filter spacing rather than the number of filters
+if any(w=='c')                                      % 'c' option: melrng excludes outer halves of the first and last filters
+    if puc                                          % the p input specifies the filter spacing
+        p=round(melrng/(p*1000))+1;                 % p now gives the number of filters
     end
-    melinc=melrng/(p-1);
-    mflh=mflh+(-1:2:1)*melinc;
-else
-    if puc
-        p=round(melrng/(p*1000))-1;
+    melinc=melrng/(p-1);                            % inter-filter increment in mel
+    mflh=mflh+(-1:2:1)*melinc;                      % update mflh to include the full width of all filters
+else                                                % melrng includes full width of all filters
+    if puc                                          % the p input specifies the filter spacing
+        p=round(melrng/(p*1000))-1;                 % p now gives the number of filters
     end
-    melinc=melrng/(p+1);
+    melinc=melrng/(p+1);                            % inter-filter increment in mel
 end
 %
 % Calculate the FFT bins0 corresponding to the filters
 %
-cf=mflh(1)+(0:p+1)*melinc; % centre frequencies in mel/erb/... including dummy ends
-cf(2:end)=max(cf(2:end),0); % only the first point can be negative
-switch wr    % convert centre frequencies from mel/erb/... to Hz
-    case 'l'
+cf=mflh(1)+(0:p+1)*melinc;                          % centre frequencies in mel/erb/... including dummy ends
+cf(2:end)=max(cf(2:end),0);                         % only the first point can be negative
+switch wr                                           % convert centre frequencies from mel/erb/... to Hz
+    case 1                                          % 'l' = log scaled
         mb=10.^(cf);
-    case 'e'
+    case 2                                          % 'e' = erb-rate scaled
         mb=v_erb2frq(cf);
-    case 'b'
+    case 3                                          % 'b' = bark scaled
         mb=v_bark2frq(cf);
-    case 'm'
+    case 4                                          % 'm' = mel scaled
         mb=v_mel2frq(cf);
-    otherwise
+    otherwise                                       % [default] = linear scaled
         mb=cf;
 end
-
+%
 % first sort out 2-sided input frequencies
-
-fin=fin0;
-fin(nf+1)=fin(nf)+df; % add on a dummy point at the high end
+%
+fin=fin0;                                           % input frequency bin values
+fin(nf+1)=fin(nf)+df;                               % add on a dummy point at the high end
 if fin(1)==0
     fin=[-fin(nf+1:-1:2) fin];
 elseif fin(1)<=df/2
@@ -213,13 +204,13 @@ elseif fin(1)==df
 else
     fin=[-fin(nf+1:-1:1) df-fin(1) fin(1)-df fin];
 end
-nfin=length(fin);  % length of extended input frequency list
-
+nfin=length(fin);                                   % length of extended input frequency list
+%
 % now sort out the interleaving
-
-fout=mb;  % output frequencies in Hz
-lowex=any(w=='y')~=any(w=='Y');   % extend to 0 Hz
-highex=any(w=='y') && (fout(end-1)<fin(end));  % extend at high end
+%
+fout=mb;                                            % output frequencies in Hz
+lowex=any(w=='y')~=any(w=='Y');                     % extend to 0 Hz
+highex=any(w=='y') && (fout(end-1)<fin(end));       % extend at high end
 if lowex
     fout=[0 0 fout(2:end)];
 end
@@ -229,89 +220,88 @@ end
 mfout=length(fout);
 if any(w=='u') || any(w=='U')
     gout=fout(3:mfout)-fout(1:mfout-2);
-    gout=2*(gout+(gout==0)).^(-1); % Gain of output triangles
+    gout=2*(gout+(gout==0)).^(-1);                  % Gain of output triangles
 else
     gout=ones(1,mfout-2);
 end
 if any(w=='S')
     msk=fout(2:mfout-1)~=0;
-    gout(msk)=2*gout(msk); % double non-DC outputs for a 1-sided output spectrum
+    gout(msk)=2*gout(msk);                          % double non-DC outputs for a 1-sided output spectrum
 end
 if any(w=='u')
     gin=ones(1,nfin-2);
 else
     gin=fin(3:nfin)-fin(1:nfin-2);
-    gin=2*(gin+(gin==0)).^(-1); % Gain of input triangles
+    gin=2*(gin+(gin==0)).^(-1);                     % Gain of input triangles
 end
 msk=fin(2:end-1)==0;
 if any(w=='s')
-    gin(~msk)=0.5*gin(~msk); % halve non-DC inputs to change back to a 2-sided spectrum
+    gin(~msk)=0.5*gin(~msk);                        % halve non-DC inputs to change back to a 2-sided spectrum
 end
 if lowex
-    gin(msk)=2*gin(msk);  % double DC input to preserve its power
+    gin(msk)=2*gin(msk);                            % double DC input to preserve its power
 end
 foutin=[fout fin];
 nfall=length(foutin);
 wleft=[0 fout(2:mfout)-fout(1:mfout-1) 0 fin(2:nfin)-fin(1:nfin-1)]; % left width
-wright=[wleft(2:end) 0]; % right width
+wright=[wleft(2:end) 0];                            % right width
 ffact=[0 gout 0 0 gin(1:min(nf,nfin-nf-2)) zeros(1,max(nfin-2*nf-2,0)) gin(nfin-nf-1:nfin-2) 0]; % gain of triangle posts
-% ffact(wleft+wright==0)=0; % disable null width triangles shouldn't need this if all frequencies are distinct
+% ffact(wleft+wright==0)=0;                         % disable null width triangles shouldn't need this if all frequencies are distinct
 [fall,ifall]=sort(foutin);
 jfall=zeros(1,nfall);
 infall=1:nfall;
-jfall(ifall)=infall; % unsort->sort index
+jfall(ifall)=infall;                                % unsort->sort index
 ffact(ifall([1:max(jfall(1),jfall(mfout+1))-2 min(jfall(mfout),jfall(nfall))+2:nfall]))=0;  % zap nodes that are much too small/big
-
 nxto=cumsum(ifall<=mfout);
 nxti=cumsum(ifall>mfout);
-nxtr=min(nxti+1+mfout,nfall);  % next input node to the right of each value (or nfall if none)
-nxtr(ifall>mfout)=1+nxto(ifall>mfout); % next post to the right of opposite type (unsorted indexes)
-nxtr=nxtr(jfall);  % next post to the right of opposite type (converted to unsorted indices) or if none: nfall/(mfout+1)
-
-% each triangle is "attached" to the node at its extreme right end
-% the general result for integrating the product of two trapesiums with
-% heights (a,b) and (c,d) over a width x is (ad+bc+2bd+2ac)*w/6
+nxtr=min(nxti+1+mfout,nfall);                       % next input node to the right of each value (or nfall if none)
+nxtr(ifall>mfout)=1+nxto(ifall>mfout);              % next post to the right of opposite type (unsorted indexes)
+nxtr=nxtr(jfall);                                   % next post to the right of opposite type (converted to unsorted indices) or if none: nfall/(mfout+1)
+%
+% Each triangle is "attached" to the node at its extreme right end.
+% The general result for integrating the product of two trapesiums with
+% heights (a,b) and (c,d) over a width x is (ad+bc+2bd+2ac)*x/6
 %
 % integrate product of lower triangles
-
+%
 msk0=(ffact>0);
-msk=msk0 & (ffact(nxtr)>0); % select appropriate triangle pairs (unsorted indices)
-ix1=infall(msk); % unsorted indices of leftmost post of pair
-jx1=nxtr(msk);  % unsorted indices of rightmost post of pair
-vfgx=foutin(ix1)-foutin(jx1-1); % length of right triangle to the left of the left post
-yx=min(wleft(ix1),vfgx); % integration length
+msk=msk0 & (ffact(nxtr)>0);                         % select appropriate triangle pairs (unsorted indices)
+ix1=infall(msk);                                    % unsorted indices of leftmost post of pair
+jx1=nxtr(msk);                                      % unsorted indices of rightmost post of pair
+vfgx=foutin(ix1)-foutin(jx1-1);                     % length of right triangle to the left of the left post
+yx=min(wleft(ix1),vfgx);                            % integration length
 wx1=ffact(ix1).*ffact(jx1).*yx.*(wleft(ix1).*vfgx-yx.*(0.5*(wleft(ix1)+vfgx)-yx/3))./(wleft(ix1).*wleft(jx1)+(yx==0));
 
 % integrate product of upper triangles
 
 nxtu=max([nxtr(2:end)-1 0],1);
 msk=msk0 & (ffact(nxtu)>0);
-ix2=infall(msk); % unsorted indices of leftmost post of pair
-jx2=nxtu(msk);  % unsorted indices of rightmost post of pair
-vfgx=foutin(ix2+1)-foutin(jx2); % length of left triangle to the right of the right post
-yx=min(wright(ix2),vfgx); % integration length
-yx(foutin(jx2+1)<foutin(ix2+1))=0; % zap invalid triangles
+ix2=infall(msk);                                    % unsorted indices of leftmost post of pair
+jx2=nxtu(msk);                                      % unsorted indices of rightmost post of pair
+vfgx=foutin(ix2+1)-foutin(jx2);                     % length of left triangle to the right of the right post
+yx=min(wright(ix2),vfgx);                           % integration length
+yx(foutin(jx2+1)<foutin(ix2+1))=0;                  % zap invalid triangles
 wx2=ffact(ix2).*ffact(jx2).*yx.^2.*((0.5*(wright(jx2)-vfgx)+yx/3))./(wright(ix2).*wright(jx2)+(yx==0));
 
 % integrate lower triangle and upper triangle that ends to its right
 
 nxtu=max(nxtr-1,1);
 msk=msk0 & (ffact(nxtu)>0);
-ix3=infall(msk); % unsorted indices of leftmost post of pair
-jx3=nxtu(msk);  % unsorted indices of rightmost post of pair
-vfgx=foutin(ix3)-foutin(jx3); % length of upper triangle to the left of the lower post
-yx=min(wleft(ix3),vfgx); % integration length
-yx(foutin(jx3+1)<foutin(ix3))=0; % zap invalid triangles
+ix3=infall(msk);                                    % unsorted indices of leftmost post of pair
+jx3=nxtu(msk);                                      % unsorted indices of rightmost post of pair
+vfgx=foutin(ix3)-foutin(jx3);                       % length of upper triangle to the left of the lower post
+yx=min(wleft(ix3),vfgx);                            % integration length
+yx(foutin(jx3+1)<foutin(ix3))=0;                    % zap invalid triangles
 wx3=ffact(ix3).*ffact(jx3).*yx.*(wleft(ix3).*(wright(jx3)-vfgx)+yx.*(0.5*(wleft(ix3)-wright(jx3)+vfgx)-yx/3))./(wleft(ix3).*wright(jx3)+(yx==0));
 
 % integrate upper triangle and lower triangle that starts to its right
 
 nxtu=[nxtr(2:end) 1];
 msk=msk0 & (ffact(nxtu)>0);
-ix4=infall(msk); % unsorted indices of leftmost post of pair
-jx4=nxtu(msk);  % unsorted indices of rightmost post of pair
-vfgx=foutin(ix4+1)-foutin(jx4-1); % length of upper triangle to the left of the lower post
-yx=min(wright(ix4),vfgx); % integration length
+ix4=infall(msk);                                    % unsorted indices of leftmost post of pair
+jx4=nxtu(msk);                                      % unsorted indices of rightmost post of pair
+vfgx=foutin(ix4+1)-foutin(jx4-1);                   % length of upper triangle to the left of the lower post
+yx=min(wright(ix4),vfgx);                           % integration length
 wx4=ffact(ix4).*ffact(jx4).*yx.^2.*(0.5*vfgx-yx/3)./(wright(ix4).*wleft(jx4)+(yx==0));
 
 % now create the matrix
@@ -373,7 +363,7 @@ if ~nargout || any(w=='g') || any(w=='G') % plot idealized filters
         ylabel('Weight');
         newfig=1;
     end
-    
+
     if  any(w=='G')
         if newfig
             figure;
@@ -383,13 +373,13 @@ if ~nargout || any(w=='g') || any(w=='G') % plot idealized filters
         colorbar;
         v_cblabel('Weight');
         switch wr
-            case 'l'
+            case 1
                 type='Log-spaced';
-            case 'e'
+            case 2
                 type='Erb-spaced';
-            case 'b'
+            case 3
                 type='Bark-spaced';
-            case 'm'
+            case 4
                 type='Mel-spaced';
             otherwise
                 type='Linear-spaced';
@@ -398,5 +388,5 @@ if ~nargout || any(w=='g') || any(w=='G') % plot idealized filters
         xlabel(['Frequency (' v_xticksi 'Hz)']);
         title(['filtbankm: mode = ' w]);
     end
-    
+
 end
