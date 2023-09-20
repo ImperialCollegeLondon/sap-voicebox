@@ -1,10 +1,10 @@
 function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
 %V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)
 %
-% Usage: (1) [b,a]=v_stdspectrum(2,'z',fs)  % create A-weighting z-domain filter for sample frequency fs
-%        (2) [b,a]=v_stdspectrum(2,'zMLT',fs) % as above but also plot both s- and z-domain responses with log freq axis
-%        (3) x=v_stdspectrum(11,'t',fs,n) % generate n samples of speech-shaped noise
-%        (4) [b,a]=v_stdspectrum(0,'zEMLT',fs,[],[],bs,as) % convert s-domain filter bs(s)/as(s) to z-domain and plot approximation error
+% Usage: (1) [b,a]=v_stdspectrum(2,'z',fs)                  % create A-weighting z-domain filter for sample frequency fs
+%        (2) [b,a]=v_stdspectrum(2,'zMLT',fs)               % as above but also plot both s- and z-domain responses with log freq axis
+%        (3) x=v_stdspectrum(11,'t',fs,n)                   % generate n samples of speech-shaped noise
+%        (4) [b,a]=v_stdspectrum(0,'zEMLT',fs,[],[],bs,as)  % convert s-domain filter bs(s)/as(s) to z-domain and plot approximation error
 %        (5) for i=1:10; figure(i); v_stdspectrum(i,'z',3e4); end; v_tilefigs; % plot all the spectra for fs=30kHz
 %
 %Inputs:  s  Spectrum type (either text or number - see below) or 0 to use bs/as
@@ -139,6 +139,7 @@ function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)
 %   the s-domain transfer function and sampling the impulse response
 % * better calculation of impulse response length based on its total power
 % * ensure that the number of z-domain zeros at z=1 is correct.
+% * have option to return the filter as biquads for better stability at high sample rates
 
 persistent spty nspty spz ient fixz baz bazps spyax
 % spty contains the name of the spectrum
@@ -188,7 +189,7 @@ if isempty(spz)
     ient=0; % cache entry number
     fixz=repmat(-1,nz,2);
     baz=cell(nz,2);
-    
+
 end
 if nargin<2 || ~numel(m)
     m=' ';
@@ -431,35 +432,35 @@ if ~nargout || ~strcmp(m,lower(m))
         hs=freqs(sb,sa,2*pi*f);                     % s domain response
         if paz
             hz=freqz(bz,az,f,fs);                   % z domain response
-        end        
+        end
         axh=[];
         nax=pam+pae+paq;                            % number of axis sets
         titex='';
-        if pam                              % plot a magnitude response
+        if pam                                      % plot a magnitude response
             nf=length(f);
             df=0.5*(f([2:nf nf])-f([1 1:nf-1]))';
             if nax>1
                 subplot(nax,1,1);
             end
             if paz
-                if pas                      % plot s domain and z domain magnitude plots
+                if pas                              % plot both s domain and z domain magnitude plots
                     plot(f,db(abs(hs)),'--r',f,db(abs(hz)),'-b')
                     ymax=max(db(abs([hs hz])))+1;
                     ymin=min(db(abs([hs hz])))-1;
                     titex=' ( : = s, - = z)';
-                    pwrint=sprintf('\\int=%.1f, %.1f dB',db(abs(hs).^2*df)/2,db(abs(hz).^2*df)/2);
-                    %                     legend('s-domain','z-domain','location','best');
-                else                        % plot z domain magnitude plot only
+                    pwrint=sprintf('\\int df = %.1f, %.1f dB',db(abs(hs).^2*df)/2,db(abs(hz).^2*df)/2);
+%                   legend('s-domain','z-domain','location','best');
+                else                                % plot z domain magnitude plot only
                     plot(f,db(abs(hz)),'-b')
                     ymax=max(db(abs(hz)))+1;
                     ymin=min(db(abs(hz)))-1;
-                     pwrint=sprintf('\\int=%.1f dB',db(abs(hz).^2*df)/2);
+                    pwrint=sprintf('\\int df = %.1f dB',db(abs(hz).^2*df)/2);
                 end
-            else                            % plot s domain magnitude plot only
+            else                                    % plot s domain magnitude plot only
                 plot(f,db(abs(hs)),'-b')
                 ymax=max(db(abs(hs)))+1;
                 ymin=min(db(abs(hs)))-1;
-                 pwrint=sprintf('\\int=%.1f dB',db(abs(hs).^2*df)/2);
+                pwrint=sprintf('\\int df = %.1f dB',db(abs(hs).^2*df)/2);
             end
             if pal
                 set(gca,'Xscale','log');
@@ -473,7 +474,7 @@ if ~nargout || ~strcmp(m,lower(m))
             else
                 ylabel('Gain (dB)');
             end
-            
+
             if si>0
                 title(sprintf('Type %d: %s%s',si,spty{si},titex));
             end
