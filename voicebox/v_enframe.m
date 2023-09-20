@@ -32,8 +32,8 @@ function [f,t,w]=v_enframe(x,win,hop,m,fs)
 %                  'P'  calculate the 2-sided power/energy spectrum of each frame
 %                  'a'  scale window to give unity gain with overlap-add
 %                  's'  scale window so that power is preserved: sum(mean(v_enframe(x,win,hop,'sp'),1))=mean(x.^2)
-%                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp')))=sum(x.^2)
-%                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'sp'),1))*fs/length(win)=mean(x.^2)
+%                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp'),2),1)=sum(x.^2)
+%                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'spd'),1))*fs/length(win)=mean(x.^2)
 %           fs    sample frequency (only needed for 'd' option) [1]
 %
 % Outputs:   f    enframed data - one frame per row
@@ -94,18 +94,18 @@ else
     w = win(:).';
 end
 if (nargin < 3) || isempty(hop)
-    hop = lw; % if no hop given, make non-overlapping
+    hop = lw;                   % if no hop given, make non-overlapping
 elseif hop<1
-    hop=lw*hop;
+    hop=round(lw*hop);          % if hop<1 then it is a fraction of lw
 end
 if any(m=='a')
-    w=w*sqrt(hop/sum(w.^2)); % scale to give unity gain for overlap-add
+    w=w*sqrt(hop/sum(w.^2));    % scale to give unity gain for overlap-add
 elseif any(m=='s')
     w=w/sqrt(w*w'*lw);
 elseif any(m=='S')
     w=w/sqrt(w*w'*lw/hop);
 end
-if any(m=='d') % scale to give power/energy densities
+if any(m=='d')                  % scale to give power/energy densities
     if nargin<5 || isempty(fs)
         w=w*sqrt(lw);
     else
@@ -131,18 +131,18 @@ if fx
 else
     f(:) = x(indf(:,ones(1,lw))+inds(ones(nf,1),:));
 end
-if (nwin > 1)   % if we have a non-unity window
+if (nwin > 1) || w(1)~=1   % if we have a non-unity window
     f = f .* w(ones(nf,1),:);
 end
-if any(lower(m)=='p') % 'pP' = calculate the power spectrum
-    f=fft(f,[],2);
-    f=real(f.*conj(f));
-    if any(m=='p')
-        imx=fix((lw+1)/2); % highest replicated frequency
-        f(:,2:imx)=f(:,2:imx)+f(:,lw:-1:lw-imx+2);
-        f=f(:,1:fix(lw/2)+1);
+if any(lower(m)=='p')               % 'pP' = calculate the power spectrum
+    f=fft(f,[],2);                  % complex spectrum
+    f=real(f.*conj(f));             % power spectrum
+    if any(m=='p')                  % if need a 1-sided spectrum
+        imx=fix((lw+1)/2);          % highest replicated frequency
+        f(:,2:imx)=f(:,2:imx)+f(:,lw:-1:lw-imx+2); % double all except DC and Nyquist
+        f=f(:,1:fix(lw/2)+1);       % keep only the positive frequencies
     end
-elseif any(lower(m)=='f') % 'fF' = take the DFT
+elseif any(lower(m)=='f')           % 'fF' = take the DFT
     f=fft(f,[],2);
     if any(m=='f')
         f=f(:,1:fix(lw/2)+1);
