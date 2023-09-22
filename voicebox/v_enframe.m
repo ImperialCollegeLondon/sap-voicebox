@@ -33,19 +33,28 @@ function [f,t,w]=v_enframe(x,win,hop,m,fs)
 %                  'a'  scale window to give unity gain with overlap-add
 %                  's'  scale window so that power is preserved: sum(mean(v_enframe(x,win,hop,'sp'),1))=mean(x.^2)
 %                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp'),2),1)=sum(x.^2)
-%                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'spd'),1))*fs/length(win)=mean(x.^2)
+%                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'spd',fs),1))*fs/length(win)=mean(x.^2)
 %           fs    sample frequency (only needed for 'd' option) [1]
 %
 % Outputs:   f    enframed data - one frame per row
 %            t    fractional time in samples at the centre of each frame
 %                 with the first sample being 1.
-%            w    window function used
+%            w    window function used including scaling
 %
 % By default, the number of frames will be rounded down to the nearest
 % integer and the last few samples of x() will be ignored unless its length
 % is lw more than a multiple of hop. If the 'z' or 'r' options are given,
 % the number of frame will instead be rounded up and no samples will be ignored.
 %
+% The scaling options available in the 'm' input imply the follwoing approximate
+% constraints which are only exact if the window is rectangular with no overlap
+% and the input length is an exact number of frames.
+% In the expressions below, ff=sum(f,2), lw=frame length, win is the unscaled window
+%       'P','P'         mean(ff)            = mean(x.^2) * lw*sum(win.^2)
+%       'ps','Ps'       mean(ff)            = mean(x.^2)
+%       'pS','PS'       sum(ff)             = sum(x.^2)
+%       'psd','Psd'     mean(ff) * fs/lw    = mean(x.^2)
+%       'pSd','PSd'     sum(ff) * fs/lw     = sum(x.^2) / fs
 
 % Bugs/Suggestions:
 %  (1) Possible additional mode options:
@@ -91,25 +100,30 @@ if nwin == 1
     w = ones(1,lw);
 else
     lw = nwin;
-    w = win(:).';
+    w = win(:).'; % force w to be a row vector
 end
 if (nargin < 3) || isempty(hop)
     hop = lw;                   % if no hop given, make non-overlapping
 elseif hop<1
     hop=round(lw*hop);          % if hop<1 then it is a fraction of lw
 end
+wsc=1;                          % window scale factor
 if any(m=='a')
-    w=w*sqrt(hop/sum(w.^2));    % scale to give unity gain for overlap-add
-elseif any(m=='s')
-    w=w/sqrt(w*w'*lw);
-elseif any(m=='S')
-    w=w/sqrt(w*w'*lw/hop);
-end
-if any(m=='d')                  % scale to give power/energy densities
+    wsc=sqrt(hop/(w*w'));       % scale to give unity gain for overlap-add
+elseif any(m=='d')
     if nargin<5 || isempty(fs)
-        w=w*sqrt(lw);
-    else
-        w=w*sqrt(lw/fs);
+        fs=1;                   % default is fs=1
+    end
+    if any(m=='s')
+        wsc=sqrt(1/(w*w'*fs));
+    elseif any(m=='S')
+        wsc=sqrt(hop/(w*w'))/fs;
+    end
+else
+    if any(m=='s')
+        wsc=sqrt(1/(w*w'*lw));
+    elseif any(m=='S')
+        wsc=sqrt(hop/(w*w'*lw));
     end
 end
 nli=nx-lw+hop;
@@ -131,8 +145,11 @@ if fx
 else
     f(:) = x(indf(:,ones(1,lw))+inds(ones(nf,1),:));
 end
-if (nwin > 1) || w(1)~=1   % if we have a non-unity window
-    f = f .* w(ones(nf,1),:);
+w=wsc*w;                           % scale the window
+if (nwin > 1)                       % if we have a non-unity window
+    f = f .* repmat(w,nf,1);        % ... multiply by the scaled window
+else                                % else if the unscaled window is unit-rectangular
+    f = wsc*f;                      % ... just multiply by the scale factor
 end
 if any(lower(m)=='p')               % 'pP' = calculate the power spectrum
     f=fft(f,[],2);                  % complex spectrum
