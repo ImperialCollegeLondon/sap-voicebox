@@ -37,7 +37,7 @@ function [y,x,v]=v_earnoise(s,fs,m,spl)
 %
 % This function assumes normal hearing; to account for hearing loss, use the 'u' option (as in usage
 % example 2 above) and apply a filter to x that reduces the signal level by the hearing loss at each
-% frequency. For example, if the hearing loss if 20 dB at all frequencies, then x should be multiplied by 0.1.
+% frequency. For example, if the hearing loss is 20 dB at all frequencies, then x should be multiplied by 0.1.
 %
 % Refs: [1]	ANSI. Methods for the calculation of the speech intelligibility index.
 %               ANSI Standard S3.5-1997 (R2007), American National Standards Institute, 1997.
