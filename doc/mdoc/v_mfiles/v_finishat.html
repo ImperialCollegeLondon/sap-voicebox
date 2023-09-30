@@ -31,33 +31,44 @@
                   ... computation ...
               end
 
-         (2)  for i=1:many
-                  v_finishat([i-1 many]);  % alternative argument format
-                  ... computation ...
-              end
-
-         (3)  v_finishat(0);               % explicit initialization before loop             
+         (3)  v_finishat(0);               % explicit initialization before loop
               for i=1:many
                   ... computation ...
                   v_finishat(i/many);      % calculate fraction completed
               end
 
-         (4)  for i=1:NI
-                  for j=1:NJ
-                      for k=1:NK
-                          v_finishat([i NI; j NJ; k-1 NK]); % one row per nested loop
+         (5)  for i=MI:NI
+                  for j=MJ:NJ
+                      for k=MK:NK
+                          v_finishat([i MI NI; j MJ NJ; k MK NK]); % one row per nested loop
                           ... computation ...
                       end
                   end
               end
-          
+
+         (6)  for i=MI:DI:NI
+                  for j=MJ:DJ:NJ
+                      for k=MK:DK:NK
+                          v_finishat([i MI DI NI; j MJ DJ NJ; k MK DK NK]); % one row per nested loop
+                          ... computation ...
+                      end
+                  end
+              end
+
  Inputs: FRAC = fraction of total comutation that has been completed
-                Alternatively at start of inner loop: [i NI; j NJ; k-1 NK ...] where i, j, k are
-                loop indices and NI, NJ, NK their limits. Use k instead of k-1 if placed at
-                the end of the inner loop. As a special case, FRAC=0 initializes the routine.
+                Alternatively at start of inner loop: [i MI DI NI; j MJ DJ NJ; k MK DK NK; ...] where i, j, k are
+                nested loop indices and MI:DI:NI, MJ:DJ:NJ, MK:DK:NK their limits. If the DI, DJ, DK, ... all equal 1
+                The may be omitted. Use k+1 instead of k if placed at the end of the inner loop.
+                As a special case, FRAC=0 initializes the routine.
          TOL  = Tolerance in minutes. If the estimated time has changed by less
                 than this, then nothing will be printed. [default 10% of remaining time]
-         FMT  = Format string which should include %s for estimated finish time, %d for remaining minutes and %f for fraction complete
+         FMT  = Format string which should include:
+                   %s for estimated finish time
+                   %d for remaining minutes
+                   %t for remaining hr:min:sec
+                   %f for fraction complete
+                   %p for % complete
+                The %t, %f and %p options can include optional width and/or decimal-place dimensions (e.g. %.2f)
 
  Output: ETA  = string containing the expected finish time
                 specifying this will suppress printing message to std err (fid=2)
@@ -92,118 +103,166 @@ This function is called by:
 0005 <span class="comment">%                  ... computation ...</span>
 0006 <span class="comment">%              end</span>
 0007 <span class="comment">%</span>
-0008 <span class="comment">%         (2)  for i=1:many</span>
-0009 <span class="comment">%                  v_finishat([i-1 many]);  % alternative argument format</span>
+0008 <span class="comment">%         (3)  v_finishat(0);               % explicit initialization before loop</span>
+0009 <span class="comment">%              for i=1:many</span>
 0010 <span class="comment">%                  ... computation ...</span>
-0011 <span class="comment">%              end</span>
-0012 <span class="comment">%</span>
-0013 <span class="comment">%         (3)  v_finishat(0);               % explicit initialization before loop</span>
-0014 <span class="comment">%              for i=1:many</span>
-0015 <span class="comment">%                  ... computation ...</span>
-0016 <span class="comment">%                  v_finishat(i/many);      % calculate fraction completed</span>
-0017 <span class="comment">%              end</span>
-0018 <span class="comment">%</span>
-0019 <span class="comment">%         (4)  for i=1:NI</span>
-0020 <span class="comment">%                  for j=1:NJ</span>
-0021 <span class="comment">%                      for k=1:NK</span>
-0022 <span class="comment">%                          v_finishat([i NI; j NJ; k-1 NK]); % one row per nested loop</span>
-0023 <span class="comment">%                          ... computation ...</span>
-0024 <span class="comment">%                      end</span>
-0025 <span class="comment">%                  end</span>
-0026 <span class="comment">%              end</span>
-0027 <span class="comment">%</span>
-0028 <span class="comment">% Inputs: FRAC = fraction of total comutation that has been completed</span>
-0029 <span class="comment">%                Alternatively at start of inner loop: [i NI; j NJ; k-1 NK ...] where i, j, k are</span>
-0030 <span class="comment">%                loop indices and NI, NJ, NK their limits. Use k instead of k-1 if placed at</span>
-0031 <span class="comment">%                the end of the inner loop. As a special case, FRAC=0 initializes the routine.</span>
-0032 <span class="comment">%         TOL  = Tolerance in minutes. If the estimated time has changed by less</span>
-0033 <span class="comment">%                than this, then nothing will be printed. [default 10% of remaining time]</span>
-0034 <span class="comment">%         FMT  = Format string which should include %s for estimated finish time, %d for remaining minutes and %f for fraction complete</span>
-0035 <span class="comment">%</span>
-0036 <span class="comment">% Output: ETA  = string containing the expected finish time</span>
-0037 <span class="comment">%                specifying this will suppress printing message to std err (fid=2)</span>
-0038 <span class="comment">%         ETAF = expected finish time as a daynumber</span>
-0039 <span class="comment">%</span>
-0040 <span class="comment">% Example:       v_finishat(0);</span>
-0041 <span class="comment">%                for i=1:many</span>
-0042 <span class="comment">%                    long computation;</span>
-0043 <span class="comment">%                    v_finishat(i/many);</span>
-0044 <span class="comment">%                end</span>
-0045 
-0046 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
-0047 <span class="comment">%      Version: $Id: v_finishat.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0048 <span class="comment">%</span>
-0049 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0050 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0051 <span class="comment">%</span>
-0052 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0053 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0054 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0055 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0056 <span class="comment">%   (at your option) any later version.</span>
-0057 <span class="comment">%</span>
-0058 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0059 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0060 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0061 <span class="comment">%   GNU General Public License for more details.</span>
+0011 <span class="comment">%                  v_finishat(i/many);      % calculate fraction completed</span>
+0012 <span class="comment">%              end</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%         (5)  for i=MI:NI</span>
+0015 <span class="comment">%                  for j=MJ:NJ</span>
+0016 <span class="comment">%                      for k=MK:NK</span>
+0017 <span class="comment">%                          v_finishat([i MI NI; j MJ NJ; k MK NK]); % one row per nested loop</span>
+0018 <span class="comment">%                          ... computation ...</span>
+0019 <span class="comment">%                      end</span>
+0020 <span class="comment">%                  end</span>
+0021 <span class="comment">%              end</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%         (6)  for i=MI:DI:NI</span>
+0024 <span class="comment">%                  for j=MJ:DJ:NJ</span>
+0025 <span class="comment">%                      for k=MK:DK:NK</span>
+0026 <span class="comment">%                          v_finishat([i MI DI NI; j MJ DJ NJ; k MK DK NK]); % one row per nested loop</span>
+0027 <span class="comment">%                          ... computation ...</span>
+0028 <span class="comment">%                      end</span>
+0029 <span class="comment">%                  end</span>
+0030 <span class="comment">%              end</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% Inputs: FRAC = fraction of total comutation that has been completed</span>
+0033 <span class="comment">%                Alternatively at start of inner loop: [i MI DI NI; j MJ DJ NJ; k MK DK NK; ...] where i, j, k are</span>
+0034 <span class="comment">%                nested loop indices and MI:DI:NI, MJ:DJ:NJ, MK:DK:NK their limits. If the DI, DJ, DK, ... all equal 1</span>
+0035 <span class="comment">%                The may be omitted. Use k+1 instead of k if placed at the end of the inner loop.</span>
+0036 <span class="comment">%                As a special case, FRAC=0 initializes the routine.</span>
+0037 <span class="comment">%         TOL  = Tolerance in minutes. If the estimated time has changed by less</span>
+0038 <span class="comment">%                than this, then nothing will be printed. [default 10% of remaining time]</span>
+0039 <span class="comment">%         FMT  = Format string which should include:</span>
+0040 <span class="comment">%                   %s for estimated finish time</span>
+0041 <span class="comment">%                   %d for remaining minutes</span>
+0042 <span class="comment">%                   %t for remaining hr:min:sec</span>
+0043 <span class="comment">%                   %f for fraction complete</span>
+0044 <span class="comment">%                   %p for % complete</span>
+0045 <span class="comment">%                The %t, %f and %p options can include optional width and/or decimal-place dimensions (e.g. %.2f)</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">% Output: ETA  = string containing the expected finish time</span>
+0048 <span class="comment">%                specifying this will suppress printing message to std err (fid=2)</span>
+0049 <span class="comment">%         ETAF = expected finish time as a daynumber</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% Example:       v_finishat(0);</span>
+0052 <span class="comment">%                for i=1:many</span>
+0053 <span class="comment">%                    long computation;</span>
+0054 <span class="comment">%                    v_finishat(i/many);</span>
+0055 <span class="comment">%                end</span>
+0056 
+0057 <span class="comment">%      Copyright (C) Mike Brookes 1998-2023</span>
+0058 <span class="comment">%      Version: $Id: v_finishat.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0061 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
 0062 <span class="comment">%</span>
-0063 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0064 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0065 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0066 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0067 
-0068 <span class="keyword">persistent</span> oldt oldnw
-0069 <span class="keyword">if</span> nargin&lt;3
-0070     fmt=<span class="string">'Estimated finish at %s (%.2f done, %d min remaining)\n'</span>;
-0071 
-0072 <span class="keyword">end</span>
-0073 nf=size(frac,1);
-0074 <span class="keyword">if</span> all(frac(:,1)&lt;=[ones(nf-1,1); 0]) <span class="comment">% initialize if fraction done is &lt;=0</span>
-0075     oldt=0;
-0076     eta=<span class="string">'Unknown'</span>;
-0077     tic;
-0078 <span class="keyword">else</span>
-0079     <span class="keyword">if</span> size(frac,2)==2
-0080         fp=cumprod(frac(:,2));
-0081         frac=sum((frac(:,1)-1)./fp)+1/fp(end);
-0082     <span class="keyword">end</span>
-0083     nw=now;                             <span class="comment">% current time as serial number</span>
-0084     sectogo=(1/frac-1)*toc;      <span class="comment">% seconds to go</span>
-0085     newt=nw+sectogo/86400;       <span class="comment">% add estimated time in days</span>
-0086     <span class="keyword">if</span> nargin&lt;2 || ~numel(tol)
-0087         tol=max(0.1*(newt-nw)*1440,1);
-0088     <span class="keyword">end</span>
-0089     <span class="keyword">if</span> ~exist(<span class="string">'oldt'</span>,<span class="string">'var'</span>) || oldt==0 || (abs(newt-oldt)&gt;tol/1440 &amp;&amp; (nw-oldnw)&gt;10/86400) || (nw-oldnw)&gt;10/1440 || nargout&gt;0
-0090         oldt=newt;
-0091         <span class="keyword">if</span> floor(oldt)==floor(nw)
-0092             df=<span class="string">'HH:MM'</span>;
-0093         <span class="keyword">else</span>
-0094             df=<span class="string">'HH:MM dd-mmm-yyyy'</span>;
-0095         <span class="keyword">end</span>
-0096         eta=datestr(oldt,df);
-0097         <span class="keyword">if</span> ~nargout
-0098             ix=find(fmt==<span class="string">'%'</span>,1);
-0099             <span class="keyword">while</span> ~isempty(ix)
-0100                 fprintf(2,fmt(1:ix-1));
-0101                 fmt=fmt(ix:end);
-0102                 ix=find(fmt&gt;=<span class="string">'a'</span> &amp; fmt&lt;=<span class="string">'z'</span>,1); <span class="comment">% find letter</span>
-0103                 <span class="keyword">switch</span> fmt(ix)
-0104                     <span class="keyword">case</span> <span class="string">'s'</span>
-0105                         fprintf(2,fmt(1:ix),eta);
-0106                     <span class="keyword">case</span> <span class="string">'d'</span>
-0107                         fprintf(2,fmt(1:ix),round(sectogo/60));
-0108                     <span class="keyword">case</span> <span class="string">'f'</span>
-0109                         fprintf(2,fmt(1:ix),frac);
-0110                 <span class="keyword">end</span>
-0111                 fmt=fmt(ix+1:end);
-0112                 ix=find(fmt==<span class="string">'%'</span>,1);
-0113             <span class="keyword">end</span>
-0114             fprintf(2,fmt);
-0115         <span class="keyword">end</span>
-0116         oldnw=nw;                           <span class="comment">%</span>
-0117     <span class="keyword">end</span>
-0118 <span class="keyword">end</span>
-0119 etaf=oldt;</pre></div>
+0063 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0064 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0065 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0066 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0067 <span class="comment">%   (at your option) any later version.</span>
+0068 <span class="comment">%</span>
+0069 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0070 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0071 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0072 <span class="comment">%   GNU General Public License for more details.</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0075 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0076 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0077 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0078 
+0079 <span class="keyword">persistent</span> oldt oldnw tstart
+0080 [nf,nv]=size(frac);
+0081 <span class="keyword">if</span> nargin&lt;3
+0082     fmt=<span class="string">'Estimated finish at %s (%.0p done, %t remaining)\n'</span>;
+0083 <span class="keyword">end</span>
+0084 <span class="keyword">if</span> isempty(tstart) || nv&lt;3 &amp;&amp; all(frac(:,1)&lt;=[ones(nf-1,1); 0]) || nv&gt;=3 &amp;&amp; all(frac(:,1)==frac(:,2)) <span class="comment">% initialize if fraction done is &lt;=0</span>
+0085     oldt=0;
+0086     eta=<span class="string">'Unknown'</span>;
+0087     tstart=tic;
+0088 <span class="keyword">else</span>
+0089     <span class="keyword">if</span> nv==2 <span class="comment">% obsolete format that assumes all loop indices start at 1</span>
+0090         fp=cumprod(frac(:,2));
+0091         frac=sum((frac(:,1)-1)./fp)+1/fp(end);
+0092     <span class="keyword">elseif</span> nv==3
+0093         fp=cumprod(frac(:,3)-frac(:,2)+1);
+0094         frac=sum((frac(:,1)-frac(:,2))./fp);
+0095     <span class="keyword">else</span>
+0096         fp=cumprod(floor((frac(:,4)-frac(:,2))./frac(:,3))+1);
+0097         frac=sum(round((frac(:,1)-frac(:,2))./frac(:,3))./fp);
+0098     <span class="keyword">end</span>
+0099     nw=now;                             <span class="comment">% current time as serial number</span>
+0100     sectogo=(1/frac-1)*toc(tstart);      <span class="comment">% seconds to go</span>
+0101     newt=nw+sectogo/86400;       <span class="comment">% add estimated time in days</span>
+0102     <span class="keyword">if</span> nargin&lt;2 || ~numel(tol)
+0103         tol=max(0.1*(newt-nw)*1440,1);
+0104     <span class="keyword">end</span>
+0105     <span class="keyword">if</span> ~exist(<span class="string">'oldt'</span>,<span class="string">'var'</span>) || length(oldt)~=1 || oldt==0 || (abs(newt-oldt)&gt;tol/1440 &amp;&amp; (nw-oldnw)&gt;10/86400) || (nw-oldnw)&gt;10/1440 || nargout&gt;0
+0106         oldt=newt;
+0107         <span class="keyword">if</span> floor(oldt)==floor(nw)
+0108             df=<span class="string">'HH:MM'</span>;
+0109         <span class="keyword">else</span>
+0110             df=<span class="string">'HH:MM dd-mmm-yyyy'</span>;
+0111         <span class="keyword">end</span>
+0112         eta=datestr(oldt,df);
+0113         <span class="keyword">if</span> ~nargout
+0114             ix=find(fmt==<span class="string">'%'</span>,1);
+0115             <span class="keyword">while</span> ~isempty(ix)
+0116                 fprintf(2,fmt(1:ix-1));
+0117                 fmt=fmt(ix:end);
+0118                 ix=find(fmt&gt;=<span class="string">'a'</span> &amp; fmt&lt;=<span class="string">'z'</span>,1); <span class="comment">% find letter</span>
+0119                 <span class="keyword">switch</span> fmt(ix)
+0120                     <span class="keyword">case</span> <span class="string">'s'</span>
+0121                         fprintf(2,fmt(1:ix),eta);
+0122                     <span class="keyword">case</span> <span class="string">'d'</span>
+0123                         fprintf(2,fmt(1:ix),round(sectogo/60));
+0124                     <span class="keyword">case</span> <span class="string">'f'</span>
+0125                         <span class="keyword">if</span> ix&gt;2
+0126                             fprintf(2,fmt(1:ix),frac);
+0127                         <span class="keyword">else</span>
+0128                             fprintf(2,<span class="string">'%.2f'</span>,frac);
+0129                         <span class="keyword">end</span>
+0130                     <span class="keyword">case</span> <span class="string">'p'</span>
+0131                         <span class="keyword">if</span> ix&gt;2
+0132                         fprintf(2,[fmt(1:ix-1) <span class="string">'f%%'</span>],frac*100);
+0133                         <span class="keyword">else</span>
+0134                             fprintf(2,<span class="string">'%.0f%%'</span>,frac*100);
+0135                         <span class="keyword">end</span>
+0136                     <span class="keyword">case</span> <span class="string">'t'</span>
+0137                         <span class="keyword">if</span> ix&gt;2
+0138                             <span class="keyword">if</span> sectogo&gt;=3600
+0139                                 fprintf(2,[fmt(1:ix-1) <span class="string">'f hr'</span>],sectogo/3600);
+0140                             <span class="keyword">elseif</span> sectogo&gt;=60
+0141                                 fprintf(2,[fmt(1:ix-1) <span class="string">'f min'</span>],sectogo/60);
+0142                             <span class="keyword">else</span>
+0143                                 fprintf(2,[fmt(1:ix-1) <span class="string">'f sec'</span>],sectogo);
+0144                             <span class="keyword">end</span>
+0145                         <span class="keyword">else</span>
+0146                             <span class="keyword">if</span> sectogo&gt;=36000
+0147                                 fprintf(2,<span class="string">'%.0f hr'</span>,sectogo/3600);
+0148                             <span class="keyword">elseif</span> sectogo&gt;=3600
+0149                                 fprintf(2,<span class="string">'%.1f hr'</span>,sectogo/3600);
+0150                             <span class="keyword">elseif</span> sectogo&gt;=600
+0151                                 fprintf(2,<span class="string">'%.0f min'</span>,sectogo/60);
+0152                             <span class="keyword">elseif</span> sectogo&gt;=60
+0153                                 fprintf(2,<span class="string">'%.1f min'</span>,sectogo/60);
+0154                             <span class="keyword">else</span>
+0155                                 fprintf(2,<span class="string">'%.0f sec'</span>,sectogo);
+0156                             <span class="keyword">end</span>
+0157                         <span class="keyword">end</span>
+0158                 <span class="keyword">end</span>
+0159                 fmt=fmt(ix+1:end);
+0160                 ix=find(fmt==<span class="string">'%'</span>,1);
+0161             <span class="keyword">end</span>
+0162             fprintf(2,fmt);
+0163         <span class="keyword">end</span>
+0164         oldnw=nw;                           <span class="comment">%</span>
+0165     <span class="keyword">end</span>
+0166 <span class="keyword">end</span>
+0167 etaf=oldt;</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

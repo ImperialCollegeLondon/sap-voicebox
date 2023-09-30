@@ -58,19 +58,29 @@
                   'P'  calculate the 2-sided power/energy spectrum of each frame
                   'a'  scale window to give unity gain with overlap-add
                   's'  scale window so that power is preserved: sum(mean(v_enframe(x,win,hop,'sp'),1))=mean(x.^2)
-                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp')))=sum(x.^2)
-                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'sp'),1))*fs/length(win)=mean(x.^2)
+                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp'),2),1)=sum(x.^2)
+                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'spd',fs),1))*fs/length(win)=mean(x.^2)
            fs    sample frequency (only needed for 'd' option) [1]
 
  Outputs:   f    enframed data - one frame per row
             t    fractional time in samples at the centre of each frame
                  with the first sample being 1.
-            w    window function used
+            w    window function used including scaling
 
  By default, the number of frames will be rounded down to the nearest
  integer and the last few samples of x() will be ignored unless its length
  is lw more than a multiple of hop. If the 'z' or 'r' options are given,
- the number of frame will instead be rounded up and no samples will be ignored.</pre></div>
+ the number of frame will instead be rounded up and no samples will be ignored.
+
+ The scaling options available in the 'm' input imply the follwoing approximate
+ constraints which are only exact if the window is rectangular with no overlap
+ and the input length is an exact number of frames.
+ In the expressions below, ff=sum(f,2), lw=frame length, win is the unscaled window
+       'P','P'         mean(ff)            = mean(x.^2) * lw*sum(win.^2)
+       'ps','Ps'       mean(ff)            = mean(x.^2)
+       'pS','PS'       sum(ff)             = sum(x.^2)
+       'psd','Psd'     mean(ff) * fs/lw    = mean(x.^2)
+       'pSd','PSd'     sum(ff) * fs/lw     = sum(x.^2) / fs</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -81,6 +91,7 @@ This function calls:
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 
+<li><a href="v_earnoise.html" class="code" title="function [y,x,v]=v_earnoise(s,fs,m,spl)">v_earnoise</a>	V_EARNOISE Add noise to simulate the hearing threshold of a listener [Y,X,V]=(S,FS,M,SPL)</li>
 <li><a href="v_melcepst.html" class="code" title="function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)">v_melcepst</a>	V_MELCEPST Calculate the mel cepstrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li>
 <li><a href="v_modspect.html" class="code" title="function [c,qq,ff,tt,po]=v_modspect(s,fs,m,nf,nq,p)">v_modspect</a>	V_MODSPECT Calculate the modulation spectrum of a signal C=(S,FS,W,NC,P,N,INC,FL,FH)</li>
 <li><a href="v_specsub.html" class="code" title="function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)">v_specsub</a>	V_SPECSUB performs speech enhancement using spectral subtraction [SS,ZO]=(S,FSZ,P)</li>
@@ -130,134 +141,151 @@ This function is called by:
 0032 <span class="comment">%                  'P'  calculate the 2-sided power/energy spectrum of each frame</span>
 0033 <span class="comment">%                  'a'  scale window to give unity gain with overlap-add</span>
 0034 <span class="comment">%                  's'  scale window so that power is preserved: sum(mean(v_enframe(x,win,hop,'sp'),1))=mean(x.^2)</span>
-0035 <span class="comment">%                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp')))=sum(x.^2)</span>
-0036 <span class="comment">%                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'sp'),1))*fs/length(win)=mean(x.^2)</span>
+0035 <span class="comment">%                  'S'  scale window so that total energy is preserved: sum(sum(v_enframe(x,win,hop,'Sp'),2),1)=sum(x.^2)</span>
+0036 <span class="comment">%                  'd'  make options 's' and 'S' give power/energy per Hz: sum(mean(v_enframe(x,win,hop,'spd',fs),1))*fs/length(win)=mean(x.^2)</span>
 0037 <span class="comment">%           fs    sample frequency (only needed for 'd' option) [1]</span>
 0038 <span class="comment">%</span>
 0039 <span class="comment">% Outputs:   f    enframed data - one frame per row</span>
 0040 <span class="comment">%            t    fractional time in samples at the centre of each frame</span>
 0041 <span class="comment">%                 with the first sample being 1.</span>
-0042 <span class="comment">%            w    window function used</span>
+0042 <span class="comment">%            w    window function used including scaling</span>
 0043 <span class="comment">%</span>
 0044 <span class="comment">% By default, the number of frames will be rounded down to the nearest</span>
 0045 <span class="comment">% integer and the last few samples of x() will be ignored unless its length</span>
 0046 <span class="comment">% is lw more than a multiple of hop. If the 'z' or 'r' options are given,</span>
 0047 <span class="comment">% the number of frame will instead be rounded up and no samples will be ignored.</span>
 0048 <span class="comment">%</span>
-0049 
-0050 <span class="comment">% Bugs/Suggestions:</span>
-0051 <span class="comment">%  (1) Possible additional mode options:</span>
-0052 <span class="comment">%        'u'  modify window for first and last few frames to ensure WOLA</span>
-0053 <span class="comment">%        'a'  normalize window to give a mean of unity after overlaps</span>
-0054 <span class="comment">%        'e'  normalize window to give an energy of unity after overlaps</span>
-0055 <span class="comment">%        'wm' use Hamming window</span>
-0056 <span class="comment">%        'wn' use Hanning window</span>
-0057 <span class="comment">%        'x'  hoplude all frames that hoplude any of the x samples</span>
+0049 <span class="comment">% The scaling options available in the 'm' input imply the follwoing approximate</span>
+0050 <span class="comment">% constraints which are only exact if the window is rectangular with no overlap</span>
+0051 <span class="comment">% and the input length is an exact number of frames.</span>
+0052 <span class="comment">% In the expressions below, ff=sum(f,2), lw=frame length, win is the unscaled window</span>
+0053 <span class="comment">%       'P','P'         mean(ff)            = mean(x.^2) * lw*sum(win.^2)</span>
+0054 <span class="comment">%       'ps','Ps'       mean(ff)            = mean(x.^2)</span>
+0055 <span class="comment">%       'pS','PS'       sum(ff)             = sum(x.^2)</span>
+0056 <span class="comment">%       'psd','Psd'     mean(ff) * fs/lw    = mean(x.^2)</span>
+0057 <span class="comment">%       'pSd','PSd'     sum(ff) * fs/lw     = sum(x.^2) / fs</span>
 0058 
-0059 <span class="comment">%       Copyright (C) Mike Brookes 1997-2014</span>
-0060 <span class="comment">%      Version: $Id: v_enframe.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0061 <span class="comment">%</span>
-0062 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0063 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0064 <span class="comment">%</span>
-0065 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0066 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0067 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0068 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0069 <span class="comment">%   (at your option) any later version.</span>
+0059 <span class="comment">% Bugs/Suggestions:</span>
+0060 <span class="comment">%  (1) Possible additional mode options:</span>
+0061 <span class="comment">%        'u'  modify window for first and last few frames to ensure WOLA</span>
+0062 <span class="comment">%        'a'  normalize window to give a mean of unity after overlaps</span>
+0063 <span class="comment">%        'e'  normalize window to give an energy of unity after overlaps</span>
+0064 <span class="comment">%        'wm' use Hamming window</span>
+0065 <span class="comment">%        'wn' use Hanning window</span>
+0066 <span class="comment">%        'x'  hoplude all frames that hoplude any of the x samples</span>
+0067 
+0068 <span class="comment">%       Copyright (C) Mike Brookes 1997-2014</span>
+0069 <span class="comment">%      Version: $Id: v_enframe.m 10865 2018-09-21 17:22:45Z dmb $</span>
 0070 <span class="comment">%</span>
-0071 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0072 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0073 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0074 <span class="comment">%   GNU General Public License for more details.</span>
-0075 <span class="comment">%</span>
-0076 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0077 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0078 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0079 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0080 
-0081 nx=length(x(:));
-0082 <span class="keyword">if</span> nargin&lt;2 || isempty(win)
-0083     win=nx;
-0084 <span class="keyword">end</span>
-0085 <span class="keyword">if</span> nargin&lt;4 || isempty(m)
-0086     m=<span class="string">''</span>;
-0087 <span class="keyword">end</span>
-0088 nwin=length(win);
-0089 <span class="keyword">if</span> nwin == 1
-0090     lw = win;
-0091     w = ones(1,lw);
-0092 <span class="keyword">else</span>
-0093     lw = nwin;
-0094     w = win(:).';
-0095 <span class="keyword">end</span>
-0096 <span class="keyword">if</span> (nargin &lt; 3) || isempty(hop)
-0097     hop = lw; <span class="comment">% if no hop given, make non-overlapping</span>
-0098 <span class="keyword">elseif</span> hop&lt;1
-0099     hop=lw*hop;
-0100 <span class="keyword">end</span>
-0101 <span class="keyword">if</span> any(m==<span class="string">'a'</span>)
-0102     w=w*sqrt(hop/sum(w.^2)); <span class="comment">% scale to give unity gain for overlap-add</span>
-0103 <span class="keyword">elseif</span> any(m==<span class="string">'s'</span>)
-0104     w=w/sqrt(w*w'*lw);
-0105 <span class="keyword">elseif</span> any(m==<span class="string">'S'</span>)
-0106     w=w/sqrt(w*w'*lw/hop);
-0107 <span class="keyword">end</span>
-0108 <span class="keyword">if</span> any(m==<span class="string">'d'</span>) <span class="comment">% scale to give power/energy densities</span>
-0109     <span class="keyword">if</span> nargin&lt;5 || isempty(fs)
-0110         w=w*sqrt(lw);
-0111     <span class="keyword">else</span>
-0112         w=w*sqrt(lw/fs);
-0113     <span class="keyword">end</span>
-0114 <span class="keyword">end</span>
-0115 nli=nx-lw+hop;
-0116 nf = max(fix(nli/hop),0);   <span class="comment">% number of full frames</span>
-0117 na=nli-hop*nf+(nf==0)*(lw-hop);       <span class="comment">% number of samples left over</span>
-0118 fx=nargin&gt;3 &amp;&amp; (any(m==<span class="string">'z'</span>) || any(m==<span class="string">'r'</span>)) &amp;&amp; na&gt;0; <span class="comment">% need an extra row</span>
-0119 f=zeros(nf+fx,lw);
-0120 indf= hop*(0:(nf-1)).';
-0121 inds = (1:lw);
-0122 <span class="keyword">if</span> fx
-0123     f(1:nf,:) = x(indf(:,ones(1,lw))+inds(ones(nf,1),:));
-0124     <span class="keyword">if</span> any(m==<span class="string">'r'</span>)
-0125         ix=1+mod(nf*hop:nf*hop+lw-1,2*nx);
-0126         f(nf+1,:)=x(ix+(ix&gt;nx).*(2*nx+1-2*ix));
-0127     <span class="keyword">else</span>
-0128         f(nf+1,1:nx-nf*hop)=x(1+nf*hop:nx);
-0129     <span class="keyword">end</span>
-0130     nf=size(f,1);
-0131 <span class="keyword">else</span>
-0132     f(:) = x(indf(:,ones(1,lw))+inds(ones(nf,1),:));
-0133 <span class="keyword">end</span>
-0134 <span class="keyword">if</span> (nwin &gt; 1)   <span class="comment">% if we have a non-unity window</span>
-0135     f = f .* w(ones(nf,1),:);
-0136 <span class="keyword">end</span>
-0137 <span class="keyword">if</span> any(lower(m)==<span class="string">'p'</span>) <span class="comment">% 'pP' = calculate the power spectrum</span>
-0138     f=fft(f,[],2);
-0139     f=real(f.*conj(f));
-0140     <span class="keyword">if</span> any(m==<span class="string">'p'</span>)
-0141         imx=fix((lw+1)/2); <span class="comment">% highest replicated frequency</span>
-0142         f(:,2:imx)=f(:,2:imx)+f(:,lw:-1:lw-imx+2);
-0143         f=f(:,1:fix(lw/2)+1);
-0144     <span class="keyword">end</span>
-0145 <span class="keyword">elseif</span> any(lower(m)==<span class="string">'f'</span>) <span class="comment">% 'fF' = take the DFT</span>
-0146     f=fft(f,[],2);
-0147     <span class="keyword">if</span> any(m==<span class="string">'f'</span>)
-0148         f=f(:,1:fix(lw/2)+1);
-0149     <span class="keyword">end</span>
-0150 <span class="keyword">end</span>
-0151 <span class="keyword">if</span> nargout&gt;1
-0152     <span class="keyword">if</span> any(m==<span class="string">'E'</span>)
-0153         t0=sum((1:lw).*w.^2)/sum(w.^2);
-0154     <span class="keyword">elseif</span> any(m==<span class="string">'A'</span>)
-0155         t0=sum((1:lw).*w)/sum(w);
-0156     <span class="keyword">else</span>
-0157         t0=(1+lw)/2;
-0158     <span class="keyword">end</span>
-0159     t=t0+hop*(0:(nf-1)).';
-0160 <span class="keyword">end</span>
-0161 
-0162</pre></div>
+0071 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0072 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0075 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0076 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0077 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0078 <span class="comment">%   (at your option) any later version.</span>
+0079 <span class="comment">%</span>
+0080 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0081 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0082 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0083 <span class="comment">%   GNU General Public License for more details.</span>
+0084 <span class="comment">%</span>
+0085 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0086 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0087 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0088 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0089 
+0090 nx=length(x(:));
+0091 <span class="keyword">if</span> nargin&lt;2 || isempty(win)
+0092     win=nx;
+0093 <span class="keyword">end</span>
+0094 <span class="keyword">if</span> nargin&lt;4 || isempty(m)
+0095     m=<span class="string">''</span>;
+0096 <span class="keyword">end</span>
+0097 nwin=length(win);
+0098 <span class="keyword">if</span> nwin == 1
+0099     lw = win;
+0100     w = ones(1,lw);
+0101 <span class="keyword">else</span>
+0102     lw = nwin;
+0103     w = win(:).'; <span class="comment">% force w to be a row vector</span>
+0104 <span class="keyword">end</span>
+0105 <span class="keyword">if</span> (nargin &lt; 3) || isempty(hop)
+0106     hop = lw;                   <span class="comment">% if no hop given, make non-overlapping</span>
+0107 <span class="keyword">elseif</span> hop&lt;1
+0108     hop=round(lw*hop);          <span class="comment">% if hop&lt;1 then it is a fraction of lw</span>
+0109 <span class="keyword">end</span>
+0110 wsc=1;                          <span class="comment">% window scale factor</span>
+0111 <span class="keyword">if</span> any(m==<span class="string">'a'</span>)
+0112     wsc=sqrt(hop/(w*w'));       <span class="comment">% scale to give unity gain for overlap-add</span>
+0113 <span class="keyword">elseif</span> any(m==<span class="string">'d'</span>)
+0114     <span class="keyword">if</span> nargin&lt;5 || isempty(fs)
+0115         fs=1;                   <span class="comment">% default is fs=1</span>
+0116     <span class="keyword">end</span>
+0117     <span class="keyword">if</span> any(m==<span class="string">'s'</span>)
+0118         wsc=sqrt(1/(w*w'*fs));
+0119     <span class="keyword">elseif</span> any(m==<span class="string">'S'</span>)
+0120         wsc=sqrt(hop/(w*w'))/fs;
+0121     <span class="keyword">end</span>
+0122 <span class="keyword">else</span>
+0123     <span class="keyword">if</span> any(m==<span class="string">'s'</span>)
+0124         wsc=sqrt(1/(w*w'*lw));
+0125     <span class="keyword">elseif</span> any(m==<span class="string">'S'</span>)
+0126         wsc=sqrt(hop/(w*w'*lw));
+0127     <span class="keyword">end</span>
+0128 <span class="keyword">end</span>
+0129 nli=nx-lw+hop;
+0130 nf = max(fix(nli/hop),0);   <span class="comment">% number of full frames</span>
+0131 na=nli-hop*nf+(nf==0)*(lw-hop);       <span class="comment">% number of samples left over</span>
+0132 fx=nargin&gt;3 &amp;&amp; (any(m==<span class="string">'z'</span>) || any(m==<span class="string">'r'</span>)) &amp;&amp; na&gt;0; <span class="comment">% need an extra row</span>
+0133 f=zeros(nf+fx,lw);
+0134 indf= hop*(0:(nf-1)).';
+0135 inds = (1:lw);
+0136 <span class="keyword">if</span> fx
+0137     f(1:nf,:) = x(indf(:,ones(1,lw))+inds(ones(nf,1),:));
+0138     <span class="keyword">if</span> any(m==<span class="string">'r'</span>)
+0139         ix=1+mod(nf*hop:nf*hop+lw-1,2*nx);
+0140         f(nf+1,:)=x(ix+(ix&gt;nx).*(2*nx+1-2*ix));
+0141     <span class="keyword">else</span>
+0142         f(nf+1,1:nx-nf*hop)=x(1+nf*hop:nx);
+0143     <span class="keyword">end</span>
+0144     nf=size(f,1);
+0145 <span class="keyword">else</span>
+0146     f(:) = x(indf(:,ones(1,lw))+inds(ones(nf,1),:));
+0147 <span class="keyword">end</span>
+0148 w=wsc*w;                           <span class="comment">% scale the window</span>
+0149 <span class="keyword">if</span> (nwin &gt; 1)                       <span class="comment">% if we have a non-unity window</span>
+0150     f = f .* repmat(w,nf,1);        <span class="comment">% ... multiply by the scaled window</span>
+0151 <span class="keyword">else</span>                                <span class="comment">% else if the unscaled window is unit-rectangular</span>
+0152     f = wsc*f;                      <span class="comment">% ... just multiply by the scale factor</span>
+0153 <span class="keyword">end</span>
+0154 <span class="keyword">if</span> any(lower(m)==<span class="string">'p'</span>)               <span class="comment">% 'pP' = calculate the power spectrum</span>
+0155     f=fft(f,[],2);                  <span class="comment">% complex spectrum</span>
+0156     f=real(f.*conj(f));             <span class="comment">% power spectrum</span>
+0157     <span class="keyword">if</span> any(m==<span class="string">'p'</span>)                  <span class="comment">% if need a 1-sided spectrum</span>
+0158         imx=fix((lw+1)/2);          <span class="comment">% highest replicated frequency</span>
+0159         f(:,2:imx)=f(:,2:imx)+f(:,lw:-1:lw-imx+2); <span class="comment">% double all except DC and Nyquist</span>
+0160         f=f(:,1:fix(lw/2)+1);       <span class="comment">% keep only the positive frequencies</span>
+0161     <span class="keyword">end</span>
+0162 <span class="keyword">elseif</span> any(lower(m)==<span class="string">'f'</span>)           <span class="comment">% 'fF' = take the DFT</span>
+0163     f=fft(f,[],2);
+0164     <span class="keyword">if</span> any(m==<span class="string">'f'</span>)
+0165         f=f(:,1:fix(lw/2)+1);
+0166     <span class="keyword">end</span>
+0167 <span class="keyword">end</span>
+0168 <span class="keyword">if</span> nargout&gt;1
+0169     <span class="keyword">if</span> any(m==<span class="string">'E'</span>)
+0170         t0=sum((1:lw).*w.^2)/sum(w.^2);
+0171     <span class="keyword">elseif</span> any(m==<span class="string">'A'</span>)
+0172         t0=sum((1:lw).*w)/sum(w);
+0173     <span class="keyword">else</span>
+0174         t0=(1+lw)/2;
+0175     <span class="keyword">end</span>
+0176     t=t0+hop*(0:(nf-1)).';
+0177 <span class="keyword">end</span>
+0178 
+0179</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

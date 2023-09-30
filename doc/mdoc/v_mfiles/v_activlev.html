@@ -88,6 +88,7 @@ This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 
 <li><a href="v_activlevg.html" class="code" title="function [lev,xx] = v_activlevg(sp,fs,mode)">v_activlevg</a>	V_ACTIVLEVG Measure active speech level robustly [LEV,AF,FSO]=(sp,FS,MODE)</li>
+<li><a href="v_earnoise.html" class="code" title="function [y,x,v]=v_earnoise(s,fs,m,spl)">v_earnoise</a>	V_EARNOISE Add noise to simulate the hearing threshold of a listener [Y,X,V]=(S,FS,M,SPL)</li>
 <li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li>
 <li><a href="v_snrseg.html" class="code" title="function [seg,glo]=v_snrseg(s,r,fs,m,tf)">v_snrseg</a>	V_SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)</li>
 <li><a href="v_spendred.html" class="code" title="function [enhanced_speech] = v_spendred(input_speech,fs,algo_params)">v_spendred</a>	V_SPENDRED Speech Enhancement and Dereverberation by Doire</li>
@@ -425,52 +426,54 @@ This function is called by:
 0325     tax=(1:ns)/fso.ffs;
 0326     plot(tax,sp,<span class="string">'-y'</span>,tax,s,<span class="string">'-r'</span>,tax,(vad&gt;0)*sqrt(lp),<span class="string">'-b'</span>);
 0327     xlabel(<span class="string">'Time (s)'</span>);
-0328     title(sprintf(<span class="string">'Active Level = %.2g dB, Activity = %.0f%% (ITU-T P.56)'</span>,levdb,100*af));
+0328     title(sprintf(<span class="string">'Active Level = %.1f dB, Activity = %.0f%% (ITU-T P.56)'</span>,levdb,100*af));
 0329     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1 -1.4 -1.05]);
 0330     <span class="keyword">if</span> nz&gt;0
 0331         hold on
 0332         ylim=get(gca,<span class="string">'ylim'</span>);
 0333         plot(tax(end-nz)*[1 1],ylim,<span class="string">':k'</span>);
 0334         hold off
-0335     <span class="keyword">end</span>
-0336     ylabel(<span class="string">'Amplitude'</span>);
-0337     legend(<span class="string">'Signal'</span>,<span class="string">'Smoothed envelope'</span>,<span class="string">'VAD * Active-Level'</span>,<span class="string">'Location'</span>,<span class="string">'SouthEast'</span>);
-0338     <span class="comment">% lower right plot: diagram of threshold and active level calculation</span>
-0339     subplot(2,2,4);
-0340     plot(cj,repmat(levdb,nbin,1),<span class="string">'k:'</span>,cj,aj(:),<span class="string">'-b'</span>,cj,cj,<span class="string">'-r'</span>,levdb-thresh*ones(1,2),[levdb-thresh levdb],<span class="string">'-r'</span>);
-0341     xlabel(<span class="string">'Threshold (dB)'</span>);
-0342     ylabel(<span class="string">'Active Level (dB)'</span>);
-0343     legend(<span class="string">'Active Level'</span>,<span class="string">'Speech&gt;Thresh'</span>,<span class="string">'Threshold'</span>,<span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
-0344     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb-thresh,levdb-0.5*thresh,sprintf(<span class="string">'%.1f dB '</span>,thresh),<span class="string">'rmr'</span>);
-0345     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0346     ylim=get(gca,<span class="string">'ylim'</span>);
-0347     set(gca,<span class="string">'ylim'</span>,[levdb-1.2*thresh max(ylim(2),levdb+1.9*thresh)]);
-0348     kch=filter([1 -1],1,kc);
-0349     <span class="comment">% lower left plot: power histogram</span>
-0350     subplot(2,2,3);
-0351     bar(5*log10(2)+cj(end:-1:1),kch(end:-1:1)*100/kc(end));
-0352     set(gca,<span class="string">'xlim'</span>,[cj(end) cj(1)+10*log10(2)]);
-0353     ylim=get(gca,<span class="string">'ylim'</span>);
-0354     hold on
-0355     plot(levdb([1 1]),ylim,<span class="string">'k:'</span>,levdb([1 1])-thresh,ylim,<span class="string">'r:'</span>);
-0356     hold off
-0357     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1),ylim(2),sprintf(<span class="string">'Active\nLev'</span>),<span class="string">'ctk'</span>);
-0358     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1)-thresh,ylim(2),sprintf(<span class="string">'Threshold'</span>),<span class="string">'rtr'</span>);
-0359     xlabel(<span class="string">'Frame power (dB)'</span>)
-0360     ylabel(<span class="string">'% frames'</span>);
-0361 <span class="keyword">elseif</span> any(md==<span class="string">'n'</span>) || any(md==<span class="string">'N'</span>)             <span class="comment">% output normalized speech waveform</span>
-0362     fsx=fso;                                    <span class="comment">% shift along other outputs</span>
-0363     fso=af;
-0364     af=lev;
-0365     <span class="keyword">if</span> any(md==<span class="string">'n'</span>)
-0366         sq=sp;                                  <span class="comment">% 'n' -&gt; use unfiltered speech</span>
-0367     <span class="keyword">end</span>
-0368     <span class="keyword">if</span> fsx.ns&gt;0 &amp;&amp; fsx.ssq&gt;0                    <span class="comment">% if there has been any non-zero speech</span>
-0369         lev=sq(1:nsp)/sqrt(lp);
-0370     <span class="keyword">else</span>
-0371         lev=sq(1:nsp);
-0372     <span class="keyword">end</span>
-0373 <span class="keyword">end</span></pre></div>
+0335         legend(<span class="string">'Signal'</span>,<span class="string">'Smoothed envelope'</span>,<span class="string">'VAD * Active-Level'</span>,<span class="string">'Zero-padding'</span>,<span class="string">'Location'</span>,<span class="string">'SouthEast'</span>);
+0336     <span class="keyword">else</span>
+0337         legend(<span class="string">'Signal'</span>,<span class="string">'Smoothed envelope'</span>,<span class="string">'VAD * Active-Level'</span>,<span class="string">'Location'</span>,<span class="string">'SouthEast'</span>);
+0338     <span class="keyword">end</span>
+0339     ylabel(<span class="string">'Amplitude'</span>);
+0340     <span class="comment">% lower right plot: diagram of threshold and active level calculation</span>
+0341     subplot(2,2,4);
+0342     plot(cj,repmat(levdb,nbin,1),<span class="string">'k:'</span>,cj,aj(:),<span class="string">'-b'</span>,cj,cj,<span class="string">'-r'</span>,levdb-thresh*ones(1,2),[levdb-thresh levdb],<span class="string">'-r'</span>);
+0343     xlabel(<span class="string">'Threshold (dB)'</span>);
+0344     ylabel(<span class="string">'Active Level (dB)'</span>);
+0345     legend(<span class="string">'Active Level (AL)'</span>,<span class="string">'Speech&gt;Thresh'</span>,<span class="string">'Threshold'</span>,<span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
+0346     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb-thresh,levdb-0.5*thresh,sprintf(<span class="string">'%.1f dB '</span>,thresh),<span class="string">'rmr'</span>);
+0347     <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0348     ylim=get(gca,<span class="string">'ylim'</span>);
+0349     set(gca,<span class="string">'ylim'</span>,[levdb-1.2*thresh max(ylim(2),levdb+1.9*thresh)]);
+0350     kch=filter([1 -1],1,kc);
+0351     <span class="comment">% lower left plot: power histogram</span>
+0352     subplot(2,2,3);
+0353     bar(5*log10(2)+cj(end:-1:1),kch(end:-1:1)*100/kc(end));
+0354     set(gca,<span class="string">'xlim'</span>,[cj(end) cj(1)+10*log10(2)]);
+0355     ylim=get(gca,<span class="string">'ylim'</span>);
+0356     hold on
+0357     plot(levdb([1 1]),ylim,<span class="string">'k:'</span>,levdb([1 1])-thresh,ylim,<span class="string">'r:'</span>);
+0358     hold off
+0359     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1),ylim(2),<span class="string">'AL'</span>,<span class="string">'rtk'</span>);
+0360     <a href="v_texthvc.html" class="code" title="function h=v_texthvc(x,y,t,p,q,r)">v_texthvc</a>(levdb(1)-thresh,ylim(2),sprintf(<span class="string">'Threshold'</span>),<span class="string">'rtr'</span>);
+0361     xlabel(<span class="string">'Frame power (dB)'</span>)
+0362     ylabel(<span class="string">'% frames'</span>);
+0363 <span class="keyword">elseif</span> any(md==<span class="string">'n'</span>) || any(md==<span class="string">'N'</span>)             <span class="comment">% output normalized speech waveform</span>
+0364     fsx=fso;                                    <span class="comment">% shift along other outputs</span>
+0365     fso=af;
+0366     af=lev;
+0367     <span class="keyword">if</span> any(md==<span class="string">'n'</span>)
+0368         sq=sp;                                  <span class="comment">% 'n' -&gt; use unfiltered speech</span>
+0369     <span class="keyword">end</span>
+0370     <span class="keyword">if</span> fsx.ns&gt;0 &amp;&amp; fsx.ssq&gt;0                    <span class="comment">% if there has been any non-zero speech</span>
+0371         lev=sq(1:nsp)/sqrt(lp);
+0372     <span class="keyword">else</span>
+0373         lev=sq(1:nsp);
+0374     <span class="keyword">end</span>
+0375 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
