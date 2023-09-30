@@ -80,6 +80,7 @@
 %   v_activlev      - Calculate the active level of speech (ITU-T P.56)
 %   v_activlevg     - Calculate the active level of speech robustly to added noise
 %   v_dypsa         - Estimate glottal closure instants from a speech waveform
+%   v_earnoise      - Add noise to an audio signal to represent the listener's hearing threshold
 %   v_enframe       - Divide a speech signal into frames for frame-based processing
 %   v_correlogram   - calculate a 3-D v_correlogram
 %   v_ewgrpdel      - Energy-weighted group delay waveform
