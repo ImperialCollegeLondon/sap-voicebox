@@ -41,6 +41,13 @@
 %   v_zoomfft       - calculate the fft over a portion of the spectrum with any resolution
 %   v_sphrharm      - calculate forward and inverse shperical harmonic transformations
 %
+% Random Number Generation
+%   v_randvec       - Generate random vectors
+%   v_randiscr      - Generate discrete random values with prescribed probabilities
+%   v_stdspectrum   - Generate noise samples from standard audio and speech spectra
+%   v_randfilt      - Generate filtered random noise without transients
+%   v_rnsubset      - Select a random subset
+%
 % Probability Distributions
 %   v_berk2prob     - Convert Berksons to probability
 %   v_gaussmix      - Fit a gaussian mixture model to data values
@@ -58,11 +65,6 @@
 %   v_normcdflog    - Calculate the log of the Normal cdf without underflow
 %   v_pdfmoments    - Convert between central moments, raw moments and cumulants
 %   v_prob2berk     - Convert probability to Berksons
-%   v_randvec       - Generate random vectors
-%   v_randiscr      - Generate discrete random values with prescribed probabilities
-%   v_rnsubset      - Select a random subset
-%   v_randfilt      - Generate filtered random noise without transients
-%   v_stdspectrum   - Generate standard audio and speech spectra
 %   v_usasi         - Generate USASI noise (obsolete: use v_stdspectrum instead)
 %   v_chimv         - Approximate mean and variance of non-central chi distribution
 %   v_vonmisespdf   - Calculate the pdf of the Von Mises (circular normal) distribution
@@ -91,7 +93,7 @@
 %   v_gammabank     - Calculate a bank of IIR gammatone filters
 %   v_importsii     - Calculate the SII importance function (ANSI S3.5-1997)
 %   v_istftw        - Inverse Short-time Fourier Transform
-%   v_modspect      - Caluclate the modulation specrogram
+%   v_modspect      - Calculate the modulation specrogram
 %   v_mos2pesq      - Convert MOS values to equivalent PESQ scores
 %   v_overlapadd    - Reconstitute an output waveform after frame-based processing
 %   v_pesq2mos      - Convert PESQ scores to equivalent MOS values
