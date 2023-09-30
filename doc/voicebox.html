@@ -18,8 +18,10 @@ maintained by and mostly written by
 Engineering</a>, <a href="http://www.ic.ac.uk/">Imperial College</a>, Exhibition 
 Road, London SW7 2BT, UK.</p>
 <p>The routines are available as a 
-<a href="https://github.com/ImperialCollegeLondon/sap-voicebox.git">GitHub repository</a> or a
+<a href="https://github.com/ImperialCollegeLondon/sap-voicebox.git">GitHub repository</a> 
+(or a
 <a href="http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/sap-voicebox.zip">zip archive</a> 
+but oftren slightly out-of-date) 
 and are made available under the terms of the <a href="copying.txt">GNU Public 
 License</a>. To avoid conflicts, all routine names begin with a &quot;v_&quot; prefix. 
 For compatibility with legacy code, aliased versions without the prefix are included 
@@ -29,8 +31,10 @@ legacy code to the new names).</p>
 <h2>Installation</h2>
 <ol>
 	<li>Pull the 
-	<a href="https://github.com/ImperialCollegeLondon/sap-voicebox.git">GitHub repository</a> or unzip the 
-	<a href="http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/sap-voicebox.zip">zip archive</a> into any suitable 
+	<a href="https://github.com/ImperialCollegeLondon/sap-voicebox.git">GitHub repository</a> 
+	(or unzip the 
+	<a href="http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/sap-voicebox.zip">zip archive</a> 
+	but may be out-of-date) )into any suitable 
 	folder (assumed below to be C:\sap-voicebox)</li>
 	<li>Start MATLAB, click &quot;Set Path&quot;, click &quot;Add Folder ...&quot;, navigate to
 	C:\sap-voicebox\voicebox, 
@@ -154,13 +158,20 @@ Limited <a href="http://www.softsound.com">www.softsound.com</a>. This is needed
 		<tr>
 			<td style="width: 60px"><a href="mdoc/v_mfiles/v_readcnx.html">v_readcnx</a></td>
 			<td style="width: 60px">&nbsp;</td>
-			<td style="width: 40px">cnx</td>
+			<td style="width: 40px">.cnx</td>
 			<td>Read Connex database files (from BT)</td>
+		</tr>
+		<tr>
+			<td style="width: 60px"><a href="mdoc/v_mfiles/v_readflac.html">
+			v_readflac</a></td>
+			<td style="width: 60px">&nbsp;</td>
+			<td style="width: 40px">.flac</td>
+			<td>Read FLAC audio files</td>
 		</tr>
 		<tr>
 			<td style="width: 60px"><a href="mdoc/v_mfiles/v_readau.html">v_readau</a></td>
 			<td style="width: 60px">&nbsp;</td>
-			<td style="width: 40px">au</td>
+			<td style="width: 40px">.au</td>
 			<td>Read AV audio files (from Sun)</td>
 		</tr>
 	</table>
@@ -450,6 +461,12 @@ Limited <a href="http://www.softsound.com">www.softsound.com</a>. This is needed
 			<td>estimates the glottal closure instants from the speech waveform.</td>
 		</tr>
 		<tr>
+			<td width="69" valign="top" style="height: 25px">
+			<a href="mdoc/v_mfiles/v_earnoise.html">v_ earnoise</a></td>
+			<td width="861" style="height: 25px">Add noise to an audio signal to 
+			represent the listener's hearing threshold</td>
+		</tr>
+		<tr>
 			<td width="69" valign="top"><a href="mdoc/v_mfiles/v_enframe.html">v_
 			enframe</a></td>
 			<td width="861">can be used to split a signal up into frames. It can 
@@ -487,6 +504,14 @@ Limited <a href="http://www.softsound.com">www.softsound.com</a>. This is needed
 		<tr>
 			<td width="69"><a href="mdoc/v_mfiles/v_importsii.html">v_importsii</a></td>
 			<td>calculate the SII importance function</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_istftw.html">v_istftw</a></td>
+			<td>Inverse Short-time Fourier Transform (ISTFT)</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_modspect.html">v_modspect</a></td>
+			<td>Calculate the modulation specrogram</td>
 		</tr>
 		<tr>
 			<td width="69"><a href="mdoc/v_mfilesmos2pesqi.html">v_mos2pesq</a></td>
@@ -549,6 +574,15 @@ Limited <a href="http://www.softsound.com">www.softsound.com</a>. This is needed
 			<td width="69"><a href="mdoc/v_mfiles/v_txalign.html">v_txalign</a></td>
 			<td>finds the best alignment (in a least squares sense) between two 
 			sets of time markers (e.g. glottal closure instants).</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_stftw.html">v_stftw</a></td>
+			<td>Short-time Fourier Transform (STFT)</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_stoi2prob.html">v_stoi2prob</a></td>
+			<td>Convert STOI intelligibility measure to probability of correct 
+			recognition</td>
 		</tr>
 		<tr>
 			<td width="69"><a href="mdoc/v_mfiles/v_vadsohn.html">v_vadsohn</a></td>
@@ -777,6 +811,11 @@ Limited <a href="http://www.softsound.com">www.softsound.com</a>. This is needed
 		<tr>
 			<td width="69"><a href="mdoc/v_mfiles/v_momfilt.html">v_momfilt</a></td>
 			<td>generate running moments from a signal</td>
+		</tr>
+		<tr>
+			<td width="69"><a href="mdoc/v_mfiles/v_resample.html">v_resample</a></td>
+			<td>Resamples a signal: identical to MATLAB resample but removes 
+			filter transients</td>
 		</tr>
 		<tr>
 			<td width="69"><a href="mdoc/v_mfiles/v_sigalign.html">v_sigalign</a></td>
@@ -1046,6 +1085,12 @@ Interface</a></h2>
 			besseli(v+1,x)./besseli(v,x)</td>
 		</tr>
 		<tr>
+			<td height="19" style="width: 69px">
+			<a href="mdoc/v_mfiles/v_besselratioi.html">v_besselratioi</a></td>
+			<td height="19">calculate the Inverse of v_besselratio (currently 
+			only for v=0)</td>
+		</tr>
+		<tr>
 			<td height="19" style="width: 69px"><a href="mdoc/v_mfiles/v_bitsprec.html">v_bitsprec</a></td>
 			<td height="19">Rounds values to a precision of n bits</td>
 		</tr>
@@ -1112,14 +1157,19 @@ Interface</a></h2>
 			matrix</td>
 		</tr>
 		<tr>
-			<td height="19" style="width: 69px"><a href="mdoc/v_mfiles/v_m2htmlpwd.html">v_m2htmlpwd</a></td>
-			<td height="19">Create HTML documentation of matlab routines in the 
+			<td style="width: 69px; height: 19px;"><a href="mdoc/v_mfiles/v_m2htmlpwd.html">v_m2htmlpwd</a></td>
+			<td style="height: 19px">Create HTML documentation of matlab routines in the 
 			current directory</td>
 		</tr>
 		<tr>
 			<td height="19" style="width: 69px"><a href="mdoc/v_mfiles/v_nearnonz.html">v_nearnonz</a></td>
 			<td height="19">Replace zero elements by the nearest non-zero 
 			elements</td>
+		</tr>
+		<tr>
+			<td height="19" style="width: 69px">
+			<a href="mdoc/v_mfiles/v_paramsetch.html">v_paramsetch</a></td>
+			<td height="19">Set a parameter structure and do valididty checks</td>
 		</tr>
 		<tr>
 			<td height="19" style="width: 69px"><a href="mdoc/v_mfiles/v_permutes.html">v_permutes</a></td>
@@ -1134,6 +1184,11 @@ Interface</a></h2>
 		<tr>
 			<td height="19" style="width: 69px"><a href="mdoc/v_mfiles/v_rotation.html">v_rotation</a></td>
 			<td height="19">generates rotation matrices</td>
+		</tr>
+		<tr>
+			<td height="19" style="width: 69px">
+			<a href="mdoc/v_mfiles/v_skew3d.html">v_skew3d</a></td>
+			<td height="19">Generate 3x3 skew symmetric matrices</td>
 		</tr>
 		<tr>
 			<td width="69" height="19"><a href="mdoc/v_mfiles/v_zerotrim.html">v_
