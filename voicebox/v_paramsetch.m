@@ -18,7 +18,7 @@ function p=v_paramsetch(d,q,m,c,t)
 %       q  new parameter values either a struct or alternatively matrix with
 %          each row a different variable in the same order as the fields of d
 %       m  mode string: any combination of the following
-%           'a' ignore additional fields in q
+%           'a' include additional fields in q that are not in d
 %           'A' additional fields in q constitute an error
 %           'e' print errors but don't exit
 %           'E' print errors and exit
@@ -72,8 +72,8 @@ end
 if nargin>1 && numel(q)>0   % if update argument exists
     if isstruct(q)          % if update argument is a structure
         qn=fieldnames(q);   % field names to update
-        addnew=~any(lower(m)=='a'); % new fields should be added into p
-        adderr=any(m=='A');         % new fields constitute an error
+        addnew=any(m=='a'); % new fields should be added into p
+        adderr=~addnew && any(m=='A');         % new fields constitute an error
         for i=1:length(qn)
             fi=qn{i};
             old=isfield(p,fi); % is this an existing field ?
