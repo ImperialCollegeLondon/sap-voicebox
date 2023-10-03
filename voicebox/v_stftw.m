@@ -28,7 +28,7 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt)
 %              z3=v_istftw(y(11:end,:),so,io);    	 % omit 'io' output on final chunk
 %              z=[z1; z2; z3];                       % z is the same as x everywhere due to 'e' option
 %
-%  Inputs: x(tax,...)	input signal (one signal per column)
+%  Inputs: x(t,...)	input signal (one signal per column)
 %          nw       Window length (will be rounded up to a multiple of ov)
 %                       alternatively, the so output from the previous chunk's call to v_stftw
 %          m        mode string including window code
