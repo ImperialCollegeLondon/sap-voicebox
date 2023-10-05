@@ -31,8 +31,11 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %                   'v_bipveey'    bipolar scale that is V-shaped in luminance
 %                                  Negative values are blue/turqoise and positive values are red/yellow.
 %                                  Luminance is proportional to absolute value with zero=black.
-%                For the two bipolar scales, zero corresponds to entry 33 and so the range of values
-%                is -32:31 or, equivalently, either -1 to +0.96875 or -1.0323 to +1.
+%                   'v_circrby'    Circular scale that is V-shaped in luminance and is red for
+%                                  entries 2-32 and blue for entries 34-64.
+%                For 'v_bipliny' and 'v_circrby', zero corresponds to entry 33 and so the range of values
+%                is -32:31 or, equivalently, either [-1, +0.96875=31/32] or [-1.0323=-32/31,+1]. See usage
+%                example (5) above.
 %
 %             m  Mode string:
 %                   'g' to plot information about the color map
@@ -41,7 +44,7 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %                   'Y' like 'y' but with default p=0.667
 %                   'L' like 'l' but with default p=2
 %                   'f' flips the map to reverse its order
-%                   'b' force maximum luminance >=0.05 (or 0.1 for 'B')
+%                   'b' force minimum luminance >=0.05 (or 0.1 for 'B')
 %                   'w' force maximum luminance <=0.95 (or 0.9 for 'W')
 %                   'k' to keep the current color map (i.e. don't update it to a new one]
 %
@@ -65,7 +68,6 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %             l  column vector of lightness values (lightness is the perceived brightness from CIELUV colour space)
 
 % Bugs/Suggestions:
-% (1) add option to exclude black from the colormap
 
 %      Copyright (C) Mike Brookes 2012-2018
 %      Version: $Id: v_colormap.m 10866 2018-09-21 17:32:44Z dmb $
@@ -88,7 +90,7 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-persistent maps nams mcal modes nszs pows la lb lc lci laci lk lq yv
+persistent maps nams mcal modes nmap nszs pows la lb lc lci laci lk lq yv
 if isempty(maps)
     lk=(6/29)^3;
     la=841/108;
@@ -99,17 +101,22 @@ if isempty(maps)
     laci=lci/la;
     %     yv=inv([1.0 0.956 0.621; 1.0 -0.272 -0.647; 1.0 -1.106 1.703]);
     %     yv=yv(:,1);
-    yv=[0.2126; 0.7152; 0.0722];
-    nams={'v_thermliny','v_bipliny','v_bipveey'};
-    % modified thermal with better grayscale linearity
-    mcal=[1 1 1]; % +1 if need to calculate maps entry
-    modes={'y' 'y' 'y'}; % modes for map calculation
-    nszs={64 64 [33 31]};  % sizes for maps
-    pows=[1 1 1];  % powers for maps
+    yv=[0.2126; 0.7152; 0.0722];                    % Mapping from RGB to luminance
+    % specifications for local color maps
+    nams={'v_thermliny','v_bipliny','v_bipveey','v_circrby'};
+    mcal=[1 1 1 1];                                 % +1 if need to calculate maps entry
+    modes={'y' 'y' 'y' 'y'};                        % modes for map calculation
+    nszs={64 64 [33 31]  [33 32]};                  % linear interpolation regions
+    nmap=[64 64 64 64];                             % final map size
+    pows=[1 1 1 1];                                 % powers for maps
+    % 'v_thermliny'
     maps{1}=[0 0 0; 72 0 167; 252 83 16; 255 249 0; 255 255 255]/255;
-    % bipolar map with grayscale linearity
+    % 'v_bipliny': bipolar map with grayscale linearity
     maps{2}=[0 0 0; 0 2 203; 1 101 226; 128 128 128; 252 153 12; 252 245 0; 252 249 18; 252 252 252]/252;
+    % 'v_bipveey'
     maps{3}=[0 0.95 1; 0 0 0.9; 0 0 0; 0.5 0 0; 0.80 0.78 0];
+    % 'v_circrby'
+    maps{4}=[0 0 0; 1 0.183 0; 1 1 1; 0 0.379 1; 0 0 0];
 end
 if nargin<2
     m='';
@@ -120,27 +127,28 @@ if nargin<4
     elseif any(m=='L')
         p=2;
     else
-        p=1;  % power to raise lightness/luminance to
+        p=1;                            % power to raise lightness/luminance to
     end
 end
 pr=1/p;
 um=m;
-m=lower(m);   % convert mode letters to lower case
-oldmap=colormap; % get existing map
-rest=0; % do not restore old map by default
-if nargin==0 || numel(map)==0     % use existing map
+m=lower(m);                                     % convert mode letters to lower case
+oldmap=colormap;                                % get existing map
+rest=0;                                         % do not restore old map by default
+if nargin==0 || numel(map)==0                   % use existing map
     rgb=oldmap;
-elseif ischar(map)               % if map given as a string
-    ix=find(strcmpi(map,nams),1);       % check if it is one of ours
-    if numel(ix)                        % if it is one of ours
-        if mcal(ix)             % need to calculate the map the first time around
+elseif ischar(map)                              % if map given as a string
+    ix=find(strcmpi(map,nams),1);               % check if it is one of ours
+    if numel(ix)                                % if it is one of ours
+        if mcal(ix)                             % need to calculate the map the first time around
             maps{ix}=v_colormap(maps{ix},modes{ix},nszs{ix},pows(ix));
-            mcal(ix)=0;                 % don't calculate it again
+            mcal(ix)=0;                         % don't calculate it again
+            maps{ix}=maps{ix}(1:nmap(ix),:);    % only keep the first nmap(ix) entries
         end
         rgb=maps{ix};
     else
-        rgb=colormap(map); % not one of ours - just pass it on to standard colormap function
-        rest=any(m=='k'); % need to restore the old map if 'k' option is set
+        rgb=colormap(map);              % not one of ours - just pass it on to standard colormap function
+        rest=any(m=='k');               % need to restore the old map if 'k' option is set
     end
 else
     rgb=map; % numeric map specified
@@ -241,6 +249,7 @@ if any(m=='g')
     plot(1:nc,rgb(:,3),'-b');
     hold off
     axis([0.5 nc+0.5 -axw 1+axw]);
+    legend('Y','R','G','B','location','best');
     ylabel('RGB + Y');
     subplot(ssp,1,sp(1)+sp(2)+1:ssp);
     plot(1:nc,l,'--k');
@@ -250,6 +259,7 @@ if any(m=='g')
     plot(1:nc,hsv(:,3),'-b');
     hold off
     axis([0.5 nc+0.5 -axw 1+axw]);
+    legend('L*','H','S','V','location','best');
     ylabel('HSV + L*');
     subplot(ssp,1,1:sp(1));
     image(permute(reshape([rgb y(:,[1 1 1])],[nc,3,2]),[3 1 2]));
