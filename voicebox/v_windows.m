@@ -11,7 +11,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 %                  and also determines the period of the underlying window [default 256]
 %           MODE   is a string specifying various options (see below)
 %           P      is a vector of parameters required for some window types
-%           OV      is the overlap in samples between succesive windows (must be H<=N/2 and
+%           OV     is the overlap in samples between succesive windows (must be H<=N/2 and
 %                  used only for the 'o' option) [default floor(N/2)]
 %
 % Outputs:  W(1,N)   is the output window. If no output is specified, a graph
