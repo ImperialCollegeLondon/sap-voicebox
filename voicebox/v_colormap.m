@@ -13,10 +13,10 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %              v_colormap('v_bipveey');                     % select a bipolar colormap
 %              colorbar;                                    % show the color bar
 %
-%          (6) rev=360;                                     % 360 for degrees or 2*pi for radians
-%              phase=repmat(linspace(0,2*rev,200),200,1);   % create 2 cycles of linear phase
+%          (6) rev=360;                                                     % 360 for degrees or 2*pi for radians
+%              phase=repmat(linspace(0,2*rev,200),200,1);                   % create 2 cycles of linear phase
 %              imagesc(mod(phase+rev/128,rev)-rev/128,rev*[-1 127]/128);    % ensure data range is rev*[-1 127]/128
-%              v_colormap('v_circrby');                     % select a bipolar colormap
+%              v_colormap('v_circrby');                                     % select a circular colormap
 %              colorbar;
 %
 %  Inputs:
@@ -121,7 +121,7 @@ if isempty(maps)
     % 'v_bipveey'
     maps{3}=[0 0.95 1; 0 0 0.9; 0 0 0; 0.5 0 0; 0.80 0.78 0];
     % 'v_circrby'
-    maps{4}=[0 0 0; 1 0.183 0; 1 1 1; 0 0.379 1; 0 0 0];
+    maps{4}=[0 0 0; 1 0.183 0; 1 0.9 0; 1 1 1; 0 1 0.8; 0 0.379 1; 0 0 0];
 end
 if nargin<2
     m='';
