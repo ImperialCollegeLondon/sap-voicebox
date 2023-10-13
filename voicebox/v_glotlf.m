@@ -7,15 +7,15 @@ function [u,q]=v_glotlf(d,t,p)
 %         (2) v_glotlf(1,[],[0.6 0.2 0.25]); % plot graph if no output argument
 %
 %  Inputs:  d selects which derivative of the flow waveform to calculate; 0<=d<=3 [0]
-%           t is a vector of time instants at which to calculate the
-%             waveform. Time units are in fractions of a cycle (the integer part is ignored).
+%           t is a vector of time instants at which to calculate the waveform. Time units are in
+%           fractions of a cycle measured from the start of the open phase (the integer part is ignored).
 %           p is a vector, [te, E0/Ee, 1-tp/te], defining the waveform [0.6 0.1 0.2]
 %             See below for the parameter meanings.
 %             The peak negative value of the flow derivative is Ug'(te) = -Ee
-%             The peak flow occurs at tp.
+%             The peak flow occurs at tp when the flow derivative equals zero.
 %
 % Outputs:  u the output waveform
-%           q a structure with the following fields taken from Fig 2 of [1]:
+%           q a structure with the following fields taken from Fig 2 of reference [1]:
 %                q.Up       peak value of Ug occurs at tp            [0.979]
 %                q.E0=1     gain in open phase (always 1)            [1]
 %                q.Ei       peak value of Ug' occurs at ti           [3.57]
@@ -31,13 +31,13 @@ function [u,q]=v_glotlf(d,t,p)
 %                q.tc=1     cycle end tiem (always 1)                [1]
 %
 %             Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]          
-%             Note that for the return phase in Fig. 2 is wrong; the correct equation is (11).
-%             The value of epsilon is chosen to ensure the flow derivative, Ug'(t), integrates to zero.
+%             Note that the equation for the return phase in Fig. 2 of [1] is wrong; the correct equation is given in (11).
+%             The value of epsilon in this equation is chosen to ensure the flow derivative, Ug'(t), integrates to zero.
 %
 % Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]
 %
 % References
-% [1]	G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1�13, 1985.
+% [1]	G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1-13, 1985.
 
 %      Copyright (C) Mike Brookes 1998-2017
 %      Version: $Id: v_glotlf.m 10865 2018-09-21 17:22:45Z dmb $
