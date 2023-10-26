@@ -9,10 +9,15 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %
 %          (4) v_colormap('copper','L');    % make copper color map linear in lightness^2
 %
-%          (5) imagesc(x);                                  % plot an image containing signed data
+%          (5) imagesc(x,max(abs(x(:)))*[-1 31/32]);        % plot an image containing signed data and set the color range
 %              v_colormap('v_bipveey');                     % select a bipolar colormap
-%              set(gca,'clim',max(abs(x(:)))*[-1 31/32]);   % set the range to make zero=black
 %              colorbar;                                    % show the color bar
+%
+%          (6) rev=360;                                                     % 360 for degrees or 2*pi for radians
+%              phase=repmat(linspace(0,2*rev,200),200,1);                   % create 2 cycles of linear phase
+%              imagesc(mod(phase+rev/128,rev)-rev/128,rev*[-1 127]/128);    % ensure data range is rev*[-1 127]/128
+%              v_colormap('v_circrby');                                     % select a circular colormap
+%              colorbar;
 %
 %  Inputs:
 %           map  Either an (r,3) array specifying the RGB colourmap entries
@@ -32,7 +37,7 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %                                  Negative values are blue/turqoise and positive values are red/yellow.
 %                                  Luminance is proportional to absolute value with zero=black.
 %                   'v_circrby'    Circular scale that is V-shaped in luminance and is red for
-%                                  entries 2-32 and blue for entries 34-64.
+%                                  entries 2-32 and blue for entries 34-64. Intended for plotting phase.
 %                For 'v_bipliny' and 'v_circrby', zero corresponds to entry 33 and so the range of values
 %                is -32:31 or, equivalently, either [-1, +0.96875=31/32] or [-1.0323=-32/31,+1]. See usage
 %                example (5) above.
@@ -116,7 +121,7 @@ if isempty(maps)
     % 'v_bipveey'
     maps{3}=[0 0.95 1; 0 0 0.9; 0 0 0; 0.5 0 0; 0.80 0.78 0];
     % 'v_circrby'
-    maps{4}=[0 0 0; 1 0.183 0; 1 1 1; 0 0.379 1; 0 0 0];
+    maps{4}=[0 0 0; 1 0.183 0; 1 0.9 0; 1 1 1; 0 1 0.8; 0 0.379 1; 0 0 0];
 end
 if nargin<2
     m='';
