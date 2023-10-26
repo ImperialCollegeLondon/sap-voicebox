@@ -137,15 +137,9 @@ else                                                % n gives dft length
     nf=1+floor(n/2);                                % number of input frequency bins
     df=fs/n;                                        % input frequency bin spacing
 end
-<<<<<<< HEAD
-fin0=fa+(0:nf-1)*df;  % input frequency bins
-mflh=[fl fh];
-if ~any(w=='h')             % convert Hz to mel/erb/...
-=======
 fin0=fa+(0:nf-1)*df;                                % nf input frequency bins linearly spaced from fa to fa+(nf-1)*df
 mflh=[fl fh];                                       % low and high limits of filterbank triangular filters
 if ~any(w=='h')                                     % convert mflh from Hz to mel/erb/... unless already converted via 'h' option
->>>>>>> 30d6258f912a2a55d0ce3242cdf7e35872a7da7d
     switch wr
         case 1                                      % 'l' = log scaled
             if fl<=0
