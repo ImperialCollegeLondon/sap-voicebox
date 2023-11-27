@@ -73,6 +73,7 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %             l  column vector of lightness values (lightness is the perceived brightness from CIELUV colour space)
 
 % Bugs/Suggestions:
+%  (1) Should allow an optional "target" input (like colormap(0) does).
 
 %      Copyright (C) Mike Brookes 2012-2018
 %      Version: $Id: v_colormap.m 10866 2018-09-21 17:32:44Z dmb $
