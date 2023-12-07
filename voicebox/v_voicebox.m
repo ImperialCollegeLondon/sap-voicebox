@@ -10,7 +10,7 @@ function y=v_voicebox(f,v)
 %               corresponding field or null if it doesn't exist.
 %
 % You can override the defaults set here by setting the environment variable "VOICEBOX"
-% to the path of an m-file that contains lines like "% PP.dir_temp='F:\TEMP';"
+% to the path of an m-file that contains lines like "PP.dir_temp='F:\TEMP';"
 %
 % This routine contains default values for constants that are used by
 % other functions in the VOICEBOX toolbox. Values in the first section below,
