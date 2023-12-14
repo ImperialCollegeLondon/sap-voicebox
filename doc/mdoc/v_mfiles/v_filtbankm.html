@@ -263,265 +263,259 @@ This function is called by:
 0137     nf=1+floor(n/2);                                <span class="comment">% number of input frequency bins</span>
 0138     df=fs/n;                                        <span class="comment">% input frequency bin spacing</span>
 0139 <span class="keyword">end</span>
-0140 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-0141 fin0=fa+(0:nf-1)*df;  <span class="comment">% input frequency bins</span>
-0142 mflh=[fl fh];
-0143 <span class="keyword">if</span> ~any(w==<span class="string">'h'</span>)             <span class="comment">% convert Hz to mel/erb/...</span>
-0144 =======
-0145 fin0=fa+(0:nf-1)*df;                                <span class="comment">% nf input frequency bins linearly spaced from fa to fa+(nf-1)*df</span>
-0146 mflh=[fl fh];                                       <span class="comment">% low and high limits of filterbank triangular filters</span>
-0147 <span class="keyword">if</span> ~any(w==<span class="string">'h'</span>)                                     <span class="comment">% convert mflh from Hz to mel/erb/... unless already converted via 'h' option</span>
-0148 &gt;&gt;&gt;&gt;&gt;&gt;&gt; 30d6258f912a2a55d0ce3242cdf7e35872a7da7d
-0149     <span class="keyword">switch</span> wr
-0150         <span class="keyword">case</span> 1                                      <span class="comment">% 'l' = log scaled</span>
-0151             <span class="keyword">if</span> fl&lt;=0
-0152                 error(<span class="string">'Low frequency limit must be &gt;0 for ''l'' option'</span>);
-0153             <span class="keyword">end</span>
-0154             mflh=log10(mflh);                       <span class="comment">% convert frequency limits into log10 Hz</span>
-0155         <span class="keyword">case</span> 2                                      <span class="comment">% 'e' = erb-rate scaled</span>
-0156             mflh=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(mflh);                   <span class="comment">% convert frequency limits into erb-rate</span>
-0157         <span class="keyword">case</span> 3                                      <span class="comment">% 'b' = bark scaled</span>
-0158             mflh=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(mflh);                  <span class="comment">% convert frequency limits into bark</span>
-0159         <span class="keyword">case</span> 4                                      <span class="comment">% 'm' = mel scaled</span>
-0160             mflh=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(mflh);                   <span class="comment">% convert frequency limits into mel</span>
-0161     <span class="keyword">end</span>
-0162 <span class="keyword">end</span>
-0163 melrng=mflh(2)-mflh(1);                             <span class="comment">% mel/erb/... range</span>
-0164 <span class="keyword">if</span> isempty(p)
-0165     p=ceil(4.6*log10(2*(fa+(nf-1)*df)));            <span class="comment">% default number of output filters</span>
-0166 <span class="keyword">end</span>
-0167 puc=any(w==<span class="string">'P'</span>) || (p&lt;1) &amp;&amp; ~any(w==<span class="string">'p'</span>);           <span class="comment">% input p specifies the filter spacing rather than the number of filters</span>
-0168 <span class="keyword">if</span> any(w==<span class="string">'c'</span>)                                      <span class="comment">% 'c' option: melrng excludes outer halves of the first and last filters</span>
+0140 fin0=fa+(0:nf-1)*df;                                <span class="comment">% nf input frequency bins linearly spaced from fa to fa+(nf-1)*df</span>
+0141 mflh=[fl fh];                                       <span class="comment">% low and high limits of filterbank triangular filters</span>
+0142 <span class="keyword">if</span> ~any(w==<span class="string">'h'</span>)                                     <span class="comment">% convert mflh from Hz to mel/erb/... unless already converted via 'h' option</span>
+0143     <span class="keyword">switch</span> wr
+0144         <span class="keyword">case</span> 1                                      <span class="comment">% 'l' = log scaled</span>
+0145             <span class="keyword">if</span> fl&lt;=0
+0146                 error(<span class="string">'Low frequency limit must be &gt;0 for ''l'' option'</span>);
+0147             <span class="keyword">end</span>
+0148             mflh=log10(mflh);                       <span class="comment">% convert frequency limits into log10 Hz</span>
+0149         <span class="keyword">case</span> 2                                      <span class="comment">% 'e' = erb-rate scaled</span>
+0150             mflh=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(mflh);                   <span class="comment">% convert frequency limits into erb-rate</span>
+0151         <span class="keyword">case</span> 3                                      <span class="comment">% 'b' = bark scaled</span>
+0152             mflh=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(mflh);                  <span class="comment">% convert frequency limits into bark</span>
+0153         <span class="keyword">case</span> 4                                      <span class="comment">% 'm' = mel scaled</span>
+0154             mflh=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(mflh);                   <span class="comment">% convert frequency limits into mel</span>
+0155     <span class="keyword">end</span>
+0156 <span class="keyword">end</span>
+0157 melrng=mflh(2)-mflh(1);                             <span class="comment">% mel/erb/... range</span>
+0158 <span class="keyword">if</span> isempty(p)
+0159     p=ceil(4.6*log10(2*(fa+(nf-1)*df)));            <span class="comment">% default number of output filters</span>
+0160 <span class="keyword">end</span>
+0161 puc=any(w==<span class="string">'P'</span>) || (p&lt;1) &amp;&amp; ~any(w==<span class="string">'p'</span>);           <span class="comment">% input p specifies the filter spacing rather than the number of filters</span>
+0162 <span class="keyword">if</span> any(w==<span class="string">'c'</span>)                                      <span class="comment">% 'c' option: melrng excludes outer halves of the first and last filters</span>
+0163     <span class="keyword">if</span> puc                                          <span class="comment">% the p input specifies the filter spacing</span>
+0164         p=round(melrng/(p*1000))+1;                 <span class="comment">% p now gives the number of filters</span>
+0165     <span class="keyword">end</span>
+0166     melinc=melrng/(p-1);                            <span class="comment">% inter-filter increment in mel</span>
+0167     mflh=mflh+(-1:2:1)*melinc;                      <span class="comment">% update mflh to include the full width of all filters</span>
+0168 <span class="keyword">else</span>                                                <span class="comment">% melrng includes full width of all filters</span>
 0169     <span class="keyword">if</span> puc                                          <span class="comment">% the p input specifies the filter spacing</span>
-0170         p=round(melrng/(p*1000))+1;                 <span class="comment">% p now gives the number of filters</span>
+0170         p=round(melrng/(p*1000))-1;                 <span class="comment">% p now gives the number of filters</span>
 0171     <span class="keyword">end</span>
-0172     melinc=melrng/(p-1);                            <span class="comment">% inter-filter increment in mel</span>
-0173     mflh=mflh+(-1:2:1)*melinc;                      <span class="comment">% update mflh to include the full width of all filters</span>
-0174 <span class="keyword">else</span>                                                <span class="comment">% melrng includes full width of all filters</span>
-0175     <span class="keyword">if</span> puc                                          <span class="comment">% the p input specifies the filter spacing</span>
-0176         p=round(melrng/(p*1000))-1;                 <span class="comment">% p now gives the number of filters</span>
-0177     <span class="keyword">end</span>
-0178     melinc=melrng/(p+1);                            <span class="comment">% inter-filter increment in mel</span>
-0179 <span class="keyword">end</span>
-0180 <span class="comment">%</span>
-0181 <span class="comment">% Calculate the FFT bins0 corresponding to the filters</span>
-0182 <span class="comment">%</span>
-0183 cf=mflh(1)+(0:p+1)*melinc;                          <span class="comment">% centre frequencies in mel/erb/... including dummy ends</span>
-0184 cf(2:end)=max(cf(2:end),0);                         <span class="comment">% only the first point can be negative</span>
-0185 <span class="keyword">switch</span> wr                                           <span class="comment">% convert centre frequencies from mel/erb/... to Hz</span>
-0186     <span class="keyword">case</span> 1                                          <span class="comment">% 'l' = log scaled</span>
-0187         mb=10.^(cf);
-0188     <span class="keyword">case</span> 2                                          <span class="comment">% 'e' = erb-rate scaled</span>
-0189         mb=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(cf);
-0190     <span class="keyword">case</span> 3                                          <span class="comment">% 'b' = bark scaled</span>
-0191         mb=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(cf);
-0192     <span class="keyword">case</span> 4                                          <span class="comment">% 'm' = mel scaled</span>
-0193         mb=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(cf);
-0194     <span class="keyword">otherwise</span>                                       <span class="comment">% [default] = linear scaled</span>
-0195         mb=cf;
-0196 <span class="keyword">end</span>
-0197 <span class="comment">%</span>
-0198 <span class="comment">% first sort out 2-sided input frequencies</span>
-0199 <span class="comment">%</span>
-0200 fin=fin0;                                           <span class="comment">% input frequency bin values</span>
-0201 fin(nf+1)=fin(nf)+df;                               <span class="comment">% add on a dummy point at the high end</span>
-0202 <span class="keyword">if</span> fin(1)==0
-0203     fin=[-fin(nf+1:-1:2) fin];
-0204 <span class="keyword">elseif</span> fin(1)&lt;=df/2
-0205     fin=[-fin(nf+1:-1:1) fin];
-0206 <span class="keyword">elseif</span> fin(1)&lt;df
-0207     fin=[-fin(nf+1:-1:1) fin(1)-df df-fin(1) fin];
-0208 <span class="keyword">elseif</span> fin(1)==df
-0209     fin=[-fin(nf+1:-1:1) 0 fin];
-0210 <span class="keyword">else</span>
-0211     fin=[-fin(nf+1:-1:1) df-fin(1) fin(1)-df fin];
-0212 <span class="keyword">end</span>
-0213 nfin=length(fin);                                   <span class="comment">% length of extended input frequency list</span>
-0214 <span class="comment">%</span>
-0215 <span class="comment">% now sort out the interleaving</span>
-0216 <span class="comment">%</span>
-0217 fout=mb;                                            <span class="comment">% output frequencies in Hz</span>
-0218 lowex=any(w==<span class="string">'y'</span>)~=any(w==<span class="string">'Y'</span>);                     <span class="comment">% extend to 0 Hz</span>
-0219 highex=any(w==<span class="string">'y'</span>) &amp;&amp; (fout(end-1)&lt;fin(end));       <span class="comment">% extend at high end</span>
-0220 <span class="keyword">if</span> lowex
-0221     fout=[0 0 fout(2:end)];
-0222 <span class="keyword">end</span>
-0223 <span class="keyword">if</span> highex
-0224     fout=[fout(1:end-1) fin(end) fin(end)];
-0225 <span class="keyword">end</span>
-0226 mfout=length(fout);
-0227 <span class="keyword">if</span> any(w==<span class="string">'u'</span>) || any(w==<span class="string">'U'</span>)
-0228     gout=fout(3:mfout)-fout(1:mfout-2);
-0229     gout=2*(gout+(gout==0)).^(-1);                  <span class="comment">% Gain of output triangles</span>
-0230 <span class="keyword">else</span>
-0231     gout=ones(1,mfout-2);
-0232 <span class="keyword">end</span>
-0233 <span class="keyword">if</span> any(w==<span class="string">'S'</span>)
-0234     msk=fout(2:mfout-1)~=0;
-0235     gout(msk)=2*gout(msk);                          <span class="comment">% double non-DC outputs for a 1-sided output spectrum</span>
+0172     melinc=melrng/(p+1);                            <span class="comment">% inter-filter increment in mel</span>
+0173 <span class="keyword">end</span>
+0174 <span class="comment">%</span>
+0175 <span class="comment">% Calculate the FFT bins0 corresponding to the filters</span>
+0176 <span class="comment">%</span>
+0177 cf=mflh(1)+(0:p+1)*melinc;                          <span class="comment">% centre frequencies in mel/erb/... including dummy ends</span>
+0178 cf(2:end)=max(cf(2:end),0);                         <span class="comment">% only the first point can be negative</span>
+0179 <span class="keyword">switch</span> wr                                           <span class="comment">% convert centre frequencies from mel/erb/... to Hz</span>
+0180     <span class="keyword">case</span> 1                                          <span class="comment">% 'l' = log scaled</span>
+0181         mb=10.^(cf);
+0182     <span class="keyword">case</span> 2                                          <span class="comment">% 'e' = erb-rate scaled</span>
+0183         mb=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(cf);
+0184     <span class="keyword">case</span> 3                                          <span class="comment">% 'b' = bark scaled</span>
+0185         mb=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(cf);
+0186     <span class="keyword">case</span> 4                                          <span class="comment">% 'm' = mel scaled</span>
+0187         mb=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(cf);
+0188     <span class="keyword">otherwise</span>                                       <span class="comment">% [default] = linear scaled</span>
+0189         mb=cf;
+0190 <span class="keyword">end</span>
+0191 <span class="comment">%</span>
+0192 <span class="comment">% first sort out 2-sided input frequencies</span>
+0193 <span class="comment">%</span>
+0194 fin=fin0;                                           <span class="comment">% input frequency bin values</span>
+0195 fin(nf+1)=fin(nf)+df;                               <span class="comment">% add on a dummy point at the high end</span>
+0196 <span class="keyword">if</span> fin(1)==0
+0197     fin=[-fin(nf+1:-1:2) fin];
+0198 <span class="keyword">elseif</span> fin(1)&lt;=df/2
+0199     fin=[-fin(nf+1:-1:1) fin];
+0200 <span class="keyword">elseif</span> fin(1)&lt;df
+0201     fin=[-fin(nf+1:-1:1) fin(1)-df df-fin(1) fin];
+0202 <span class="keyword">elseif</span> fin(1)==df
+0203     fin=[-fin(nf+1:-1:1) 0 fin];
+0204 <span class="keyword">else</span>
+0205     fin=[-fin(nf+1:-1:1) df-fin(1) fin(1)-df fin];
+0206 <span class="keyword">end</span>
+0207 nfin=length(fin);                                   <span class="comment">% length of extended input frequency list</span>
+0208 <span class="comment">%</span>
+0209 <span class="comment">% now sort out the interleaving</span>
+0210 <span class="comment">%</span>
+0211 fout=mb;                                            <span class="comment">% output frequencies in Hz</span>
+0212 lowex=any(w==<span class="string">'y'</span>)~=any(w==<span class="string">'Y'</span>);                     <span class="comment">% extend to 0 Hz</span>
+0213 highex=any(w==<span class="string">'y'</span>) &amp;&amp; (fout(end-1)&lt;fin(end));       <span class="comment">% extend at high end</span>
+0214 <span class="keyword">if</span> lowex
+0215     fout=[0 0 fout(2:end)];
+0216 <span class="keyword">end</span>
+0217 <span class="keyword">if</span> highex
+0218     fout=[fout(1:end-1) fin(end) fin(end)];
+0219 <span class="keyword">end</span>
+0220 mfout=length(fout);
+0221 <span class="keyword">if</span> any(w==<span class="string">'u'</span>) || any(w==<span class="string">'U'</span>)
+0222     gout=fout(3:mfout)-fout(1:mfout-2);
+0223     gout=2*(gout+(gout==0)).^(-1);                  <span class="comment">% Gain of output triangles</span>
+0224 <span class="keyword">else</span>
+0225     gout=ones(1,mfout-2);
+0226 <span class="keyword">end</span>
+0227 <span class="keyword">if</span> any(w==<span class="string">'S'</span>)
+0228     msk=fout(2:mfout-1)~=0;
+0229     gout(msk)=2*gout(msk);                          <span class="comment">% double non-DC outputs for a 1-sided output spectrum</span>
+0230 <span class="keyword">end</span>
+0231 <span class="keyword">if</span> any(w==<span class="string">'u'</span>)
+0232     gin=ones(1,nfin-2);
+0233 <span class="keyword">else</span>
+0234     gin=fin(3:nfin)-fin(1:nfin-2);
+0235     gin=2*(gin+(gin==0)).^(-1);                     <span class="comment">% Gain of input triangles</span>
 0236 <span class="keyword">end</span>
-0237 <span class="keyword">if</span> any(w==<span class="string">'u'</span>)
-0238     gin=ones(1,nfin-2);
-0239 <span class="keyword">else</span>
-0240     gin=fin(3:nfin)-fin(1:nfin-2);
-0241     gin=2*(gin+(gin==0)).^(-1);                     <span class="comment">% Gain of input triangles</span>
-0242 <span class="keyword">end</span>
-0243 msk=fin(2:end-1)==0;
-0244 <span class="keyword">if</span> any(w==<span class="string">'s'</span>)
-0245     gin(~msk)=0.5*gin(~msk);                        <span class="comment">% halve non-DC inputs to change back to a 2-sided spectrum</span>
-0246 <span class="keyword">end</span>
-0247 <span class="keyword">if</span> lowex
-0248     gin(msk)=2*gin(msk);                            <span class="comment">% double DC input to preserve its power</span>
-0249 <span class="keyword">end</span>
-0250 foutin=[fout fin];
-0251 nfall=length(foutin);
-0252 wleft=[0 fout(2:mfout)-fout(1:mfout-1) 0 fin(2:nfin)-fin(1:nfin-1)]; <span class="comment">% left width</span>
-0253 wright=[wleft(2:end) 0];                            <span class="comment">% right width</span>
-0254 ffact=[0 gout 0 0 gin(1:min(nf,nfin-nf-2)) zeros(1,max(nfin-2*nf-2,0)) gin(nfin-nf-1:nfin-2) 0]; <span class="comment">% gain of triangle posts</span>
-0255 <span class="comment">% ffact(wleft+wright==0)=0;                         % disable null width triangles shouldn't need this if all frequencies are distinct</span>
-0256 [fall,ifall]=sort(foutin);
-0257 jfall=zeros(1,nfall);
-0258 infall=1:nfall;
-0259 jfall(ifall)=infall;                                <span class="comment">% unsort-&gt;sort index</span>
-0260 ffact(ifall([1:max(jfall(1),jfall(mfout+1))-2 min(jfall(mfout),jfall(nfall))+2:nfall]))=0;  <span class="comment">% zap nodes that are much too small/big</span>
-0261 nxto=cumsum(ifall&lt;=mfout);
-0262 nxti=cumsum(ifall&gt;mfout);
-0263 nxtr=min(nxti+1+mfout,nfall);                       <span class="comment">% next input node to the right of each value (or nfall if none)</span>
-0264 nxtr(ifall&gt;mfout)=1+nxto(ifall&gt;mfout);              <span class="comment">% next post to the right of opposite type (unsorted indexes)</span>
-0265 nxtr=nxtr(jfall);                                   <span class="comment">% next post to the right of opposite type (converted to unsorted indices) or if none: nfall/(mfout+1)</span>
+0237 msk=fin(2:end-1)==0;
+0238 <span class="keyword">if</span> any(w==<span class="string">'s'</span>)
+0239     gin(~msk)=0.5*gin(~msk);                        <span class="comment">% halve non-DC inputs to change back to a 2-sided spectrum</span>
+0240 <span class="keyword">end</span>
+0241 <span class="keyword">if</span> lowex
+0242     gin(msk)=2*gin(msk);                            <span class="comment">% double DC input to preserve its power</span>
+0243 <span class="keyword">end</span>
+0244 foutin=[fout fin];
+0245 nfall=length(foutin);
+0246 wleft=[0 fout(2:mfout)-fout(1:mfout-1) 0 fin(2:nfin)-fin(1:nfin-1)]; <span class="comment">% left width</span>
+0247 wright=[wleft(2:end) 0];                            <span class="comment">% right width</span>
+0248 ffact=[0 gout 0 0 gin(1:min(nf,nfin-nf-2)) zeros(1,max(nfin-2*nf-2,0)) gin(nfin-nf-1:nfin-2) 0]; <span class="comment">% gain of triangle posts</span>
+0249 <span class="comment">% ffact(wleft+wright==0)=0;                         % disable null width triangles shouldn't need this if all frequencies are distinct</span>
+0250 [fall,ifall]=sort(foutin);
+0251 jfall=zeros(1,nfall);
+0252 infall=1:nfall;
+0253 jfall(ifall)=infall;                                <span class="comment">% unsort-&gt;sort index</span>
+0254 ffact(ifall([1:max(jfall(1),jfall(mfout+1))-2 min(jfall(mfout),jfall(nfall))+2:nfall]))=0;  <span class="comment">% zap nodes that are much too small/big</span>
+0255 nxto=cumsum(ifall&lt;=mfout);
+0256 nxti=cumsum(ifall&gt;mfout);
+0257 nxtr=min(nxti+1+mfout,nfall);                       <span class="comment">% next input node to the right of each value (or nfall if none)</span>
+0258 nxtr(ifall&gt;mfout)=1+nxto(ifall&gt;mfout);              <span class="comment">% next post to the right of opposite type (unsorted indexes)</span>
+0259 nxtr=nxtr(jfall);                                   <span class="comment">% next post to the right of opposite type (converted to unsorted indices) or if none: nfall/(mfout+1)</span>
+0260 <span class="comment">%</span>
+0261 <span class="comment">% Each triangle is &quot;attached&quot; to the node at its extreme right end.</span>
+0262 <span class="comment">% The general result for integrating the product of two trapesiums with</span>
+0263 <span class="comment">% heights (a,b) and (c,d) over a width x is (ad+bc+2bd+2ac)*x/6</span>
+0264 <span class="comment">%</span>
+0265 <span class="comment">% integrate product of lower triangles</span>
 0266 <span class="comment">%</span>
-0267 <span class="comment">% Each triangle is &quot;attached&quot; to the node at its extreme right end.</span>
-0268 <span class="comment">% The general result for integrating the product of two trapesiums with</span>
-0269 <span class="comment">% heights (a,b) and (c,d) over a width x is (ad+bc+2bd+2ac)*x/6</span>
-0270 <span class="comment">%</span>
-0271 <span class="comment">% integrate product of lower triangles</span>
-0272 <span class="comment">%</span>
-0273 msk0=(ffact&gt;0);
-0274 msk=msk0 &amp; (ffact(nxtr)&gt;0);                         <span class="comment">% select appropriate triangle pairs (unsorted indices)</span>
-0275 ix1=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
-0276 jx1=nxtr(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
-0277 vfgx=foutin(ix1)-foutin(jx1-1);                     <span class="comment">% length of right triangle to the left of the left post</span>
-0278 yx=min(wleft(ix1),vfgx);                            <span class="comment">% integration length</span>
-0279 wx1=ffact(ix1).*ffact(jx1).*yx.*(wleft(ix1).*vfgx-yx.*(0.5*(wleft(ix1)+vfgx)-yx/3))./(wleft(ix1).*wleft(jx1)+(yx==0));
-0280 
-0281 <span class="comment">% integrate product of upper triangles</span>
-0282 
-0283 nxtu=max([nxtr(2:end)-1 0],1);
-0284 msk=msk0 &amp; (ffact(nxtu)&gt;0);
-0285 ix2=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
-0286 jx2=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
-0287 vfgx=foutin(ix2+1)-foutin(jx2);                     <span class="comment">% length of left triangle to the right of the right post</span>
-0288 yx=min(wright(ix2),vfgx);                           <span class="comment">% integration length</span>
-0289 yx(foutin(jx2+1)&lt;foutin(ix2+1))=0;                  <span class="comment">% zap invalid triangles</span>
-0290 wx2=ffact(ix2).*ffact(jx2).*yx.^2.*((0.5*(wright(jx2)-vfgx)+yx/3))./(wright(ix2).*wright(jx2)+(yx==0));
-0291 
-0292 <span class="comment">% integrate lower triangle and upper triangle that ends to its right</span>
-0293 
-0294 nxtu=max(nxtr-1,1);
-0295 msk=msk0 &amp; (ffact(nxtu)&gt;0);
-0296 ix3=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
-0297 jx3=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
-0298 vfgx=foutin(ix3)-foutin(jx3);                       <span class="comment">% length of upper triangle to the left of the lower post</span>
-0299 yx=min(wleft(ix3),vfgx);                            <span class="comment">% integration length</span>
-0300 yx(foutin(jx3+1)&lt;foutin(ix3))=0;                    <span class="comment">% zap invalid triangles</span>
-0301 wx3=ffact(ix3).*ffact(jx3).*yx.*(wleft(ix3).*(wright(jx3)-vfgx)+yx.*(0.5*(wleft(ix3)-wright(jx3)+vfgx)-yx/3))./(wleft(ix3).*wright(jx3)+(yx==0));
-0302 
-0303 <span class="comment">% integrate upper triangle and lower triangle that starts to its right</span>
-0304 
-0305 nxtu=[nxtr(2:end) 1];
-0306 msk=msk0 &amp; (ffact(nxtu)&gt;0);
-0307 ix4=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
-0308 jx4=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
-0309 vfgx=foutin(ix4+1)-foutin(jx4-1);                   <span class="comment">% length of upper triangle to the left of the lower post</span>
-0310 yx=min(wright(ix4),vfgx);                           <span class="comment">% integration length</span>
-0311 wx4=ffact(ix4).*ffact(jx4).*yx.^2.*(0.5*vfgx-yx/3)./(wright(ix4).*wleft(jx4)+(yx==0));
-0312 
-0313 <span class="comment">% now create the matrix</span>
-0314 
-0315 iox=sort([ix1 ix2 ix3 ix4;jx1 jx2 jx3 jx4]);
-0316 <span class="comment">% [iox;[wx1 wx2 wx3 wx4]&gt;0 ]</span>
-0317 msk=iox(2,:)&lt;=(nfall+mfout)/2;
-0318 iox(2,msk)=(nfall+mfout+1)-iox(2,msk);  <span class="comment">% convert negative frequencies to positive</span>
-0319 <span class="keyword">if</span> highex
-0320     iox(1,iox(1,:)==mfout-1)=mfout-2; <span class="comment">% merge highest two output nodes</span>
-0321 <span class="keyword">end</span>
-0322 <span class="keyword">if</span> lowex
-0323     iox(1,iox(1,:)==2)=3; <span class="comment">% merge lowest two output nodes</span>
-0324 <span class="keyword">end</span>
-0325 
-0326 x=sparse(iox(1,:)-1-lowex,max(iox(2,:)-nfall+nf+1,1),[wx1 wx2 wx3 wx4],p,nf);
-0327 <span class="comment">%</span>
-0328 <span class="comment">% sort out the output argument options</span>
-0329 <span class="comment">%</span>
-0330 <span class="keyword">if</span> ~any(w==<span class="string">'H'</span>)
-0331     cf=mb;         <span class="comment">% output Hz instead of mel/erb/...</span>
-0332 <span class="keyword">end</span>
-0333 cf=cf(2:p+1);  <span class="comment">% remove dummy end frequencies</span>
-0334 il=1;
-0335 ih=nf;
-0336 <span class="keyword">if</span> any(w==<span class="string">'n'</span>) <span class="comment">% round outputs to the centre of gravity bin</span>
-0337     sx2=sum(x,2);
-0338     msk=full(sx2~=0);
-0339     vxc=zeros(p,1);
-0340     vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));
-0341     x=sparse(1:p,vxc,sx2,p,nf);
-0342 <span class="keyword">end</span>
-0343 <span class="keyword">if</span> nargout &gt; 2
-0344     msk=full(any(x&gt;0,1));
-0345     il=find(msk,1);
-0346     <span class="keyword">if</span> ~numel(il)
-0347         ih=1;
-0348     <span class="keyword">elseif</span> nargout &gt;3
-0349         ih=find(msk,1,<span class="string">'last'</span>);
-0350     <span class="keyword">end</span>
-0351     x=x(:,il:ih);
-0352 <span class="keyword">end</span>
-0353 <span class="keyword">if</span> any(w==<span class="string">'u'</span>)
-0354     sx=sum(x,2);
-0355     x=x./repmat(sx+(sx==0),1,size(x,2));
-0356 <span class="keyword">end</span>
-0357 <span class="comment">%</span>
-0358 <span class="comment">% plot results if no output arguments or g option given</span>
-0359 <span class="comment">%</span>
-0360 <span class="keyword">if</span> ~nargout || any(w==<span class="string">'g'</span>) || any(w==<span class="string">'G'</span>) <span class="comment">% plot idealized filters</span>
-0361     <span class="keyword">if</span> ~any(w==<span class="string">'g'</span>) &amp;&amp; ~any(w==<span class="string">'G'</span>)
-0362         w=[w <span class="string">'G'</span>];
-0363     <span class="keyword">end</span>
-0364     newfig=0;
-0365     <span class="keyword">if</span>  any(w==<span class="string">'g'</span>)
-0366         plot(fa-df+(il:ih)*df,x');
-0367         title([<span class="string">'filtbankm: mode = '</span> w]);
-0368         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0369         ylabel(<span class="string">'Weight'</span>);
-0370         newfig=1;
-0371     <span class="keyword">end</span>
-0372 
-0373     <span class="keyword">if</span>  any(w==<span class="string">'G'</span>)
-0374         <span class="keyword">if</span> newfig
-0375             figure;
-0376         <span class="keyword">end</span>
-0377         imagesc(fa-df+(il:ih)*df,1:p,x);
-0378         axis <span class="string">'xy'</span>
-0379         colorbar;
-0380         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Weight'</span>);
-0381         <span class="keyword">switch</span> wr
-0382             <span class="keyword">case</span> 1
-0383                 type=<span class="string">'Log-spaced'</span>;
-0384             <span class="keyword">case</span> 2
-0385                 type=<span class="string">'Erb-spaced'</span>;
-0386             <span class="keyword">case</span> 3
-0387                 type=<span class="string">'Bark-spaced'</span>;
-0388             <span class="keyword">case</span> 4
-0389                 type=<span class="string">'Mel-spaced'</span>;
-0390             <span class="keyword">otherwise</span>
-0391                 type=<span class="string">'Linear-spaced'</span>;
-0392         <span class="keyword">end</span>
-0393         ylabel([type <span class="string">' Filter'</span>]);
-0394         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0395         title([<span class="string">'filtbankm: mode = '</span> w]);
-0396     <span class="keyword">end</span>
-0397 
-0398 <span class="keyword">end</span></pre></div>
+0267 msk0=(ffact&gt;0);
+0268 msk=msk0 &amp; (ffact(nxtr)&gt;0);                         <span class="comment">% select appropriate triangle pairs (unsorted indices)</span>
+0269 ix1=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
+0270 jx1=nxtr(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
+0271 vfgx=foutin(ix1)-foutin(jx1-1);                     <span class="comment">% length of right triangle to the left of the left post</span>
+0272 yx=min(wleft(ix1),vfgx);                            <span class="comment">% integration length</span>
+0273 wx1=ffact(ix1).*ffact(jx1).*yx.*(wleft(ix1).*vfgx-yx.*(0.5*(wleft(ix1)+vfgx)-yx/3))./(wleft(ix1).*wleft(jx1)+(yx==0));
+0274 
+0275 <span class="comment">% integrate product of upper triangles</span>
+0276 
+0277 nxtu=max([nxtr(2:end)-1 0],1);
+0278 msk=msk0 &amp; (ffact(nxtu)&gt;0);
+0279 ix2=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
+0280 jx2=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
+0281 vfgx=foutin(ix2+1)-foutin(jx2);                     <span class="comment">% length of left triangle to the right of the right post</span>
+0282 yx=min(wright(ix2),vfgx);                           <span class="comment">% integration length</span>
+0283 yx(foutin(jx2+1)&lt;foutin(ix2+1))=0;                  <span class="comment">% zap invalid triangles</span>
+0284 wx2=ffact(ix2).*ffact(jx2).*yx.^2.*((0.5*(wright(jx2)-vfgx)+yx/3))./(wright(ix2).*wright(jx2)+(yx==0));
+0285 
+0286 <span class="comment">% integrate lower triangle and upper triangle that ends to its right</span>
+0287 
+0288 nxtu=max(nxtr-1,1);
+0289 msk=msk0 &amp; (ffact(nxtu)&gt;0);
+0290 ix3=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
+0291 jx3=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
+0292 vfgx=foutin(ix3)-foutin(jx3);                       <span class="comment">% length of upper triangle to the left of the lower post</span>
+0293 yx=min(wleft(ix3),vfgx);                            <span class="comment">% integration length</span>
+0294 yx(foutin(jx3+1)&lt;foutin(ix3))=0;                    <span class="comment">% zap invalid triangles</span>
+0295 wx3=ffact(ix3).*ffact(jx3).*yx.*(wleft(ix3).*(wright(jx3)-vfgx)+yx.*(0.5*(wleft(ix3)-wright(jx3)+vfgx)-yx/3))./(wleft(ix3).*wright(jx3)+(yx==0));
+0296 
+0297 <span class="comment">% integrate upper triangle and lower triangle that starts to its right</span>
+0298 
+0299 nxtu=[nxtr(2:end) 1];
+0300 msk=msk0 &amp; (ffact(nxtu)&gt;0);
+0301 ix4=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
+0302 jx4=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
+0303 vfgx=foutin(ix4+1)-foutin(jx4-1);                   <span class="comment">% length of upper triangle to the left of the lower post</span>
+0304 yx=min(wright(ix4),vfgx);                           <span class="comment">% integration length</span>
+0305 wx4=ffact(ix4).*ffact(jx4).*yx.^2.*(0.5*vfgx-yx/3)./(wright(ix4).*wleft(jx4)+(yx==0));
+0306 
+0307 <span class="comment">% now create the matrix</span>
+0308 
+0309 iox=sort([ix1 ix2 ix3 ix4;jx1 jx2 jx3 jx4]);
+0310 <span class="comment">% [iox;[wx1 wx2 wx3 wx4]&gt;0 ]</span>
+0311 msk=iox(2,:)&lt;=(nfall+mfout)/2;
+0312 iox(2,msk)=(nfall+mfout+1)-iox(2,msk);  <span class="comment">% convert negative frequencies to positive</span>
+0313 <span class="keyword">if</span> highex
+0314     iox(1,iox(1,:)==mfout-1)=mfout-2; <span class="comment">% merge highest two output nodes</span>
+0315 <span class="keyword">end</span>
+0316 <span class="keyword">if</span> lowex
+0317     iox(1,iox(1,:)==2)=3; <span class="comment">% merge lowest two output nodes</span>
+0318 <span class="keyword">end</span>
+0319 
+0320 x=sparse(iox(1,:)-1-lowex,max(iox(2,:)-nfall+nf+1,1),[wx1 wx2 wx3 wx4],p,nf);
+0321 <span class="comment">%</span>
+0322 <span class="comment">% sort out the output argument options</span>
+0323 <span class="comment">%</span>
+0324 <span class="keyword">if</span> ~any(w==<span class="string">'H'</span>)
+0325     cf=mb;         <span class="comment">% output Hz instead of mel/erb/...</span>
+0326 <span class="keyword">end</span>
+0327 cf=cf(2:p+1);  <span class="comment">% remove dummy end frequencies</span>
+0328 il=1;
+0329 ih=nf;
+0330 <span class="keyword">if</span> any(w==<span class="string">'n'</span>) <span class="comment">% round outputs to the centre of gravity bin</span>
+0331     sx2=sum(x,2);
+0332     msk=full(sx2~=0);
+0333     vxc=zeros(p,1);
+0334     vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));
+0335     x=sparse(1:p,vxc,sx2,p,nf);
+0336 <span class="keyword">end</span>
+0337 <span class="keyword">if</span> nargout &gt; 2
+0338     msk=full(any(x&gt;0,1));
+0339     il=find(msk,1);
+0340     <span class="keyword">if</span> ~numel(il)
+0341         ih=1;
+0342     <span class="keyword">elseif</span> nargout &gt;3
+0343         ih=find(msk,1,<span class="string">'last'</span>);
+0344     <span class="keyword">end</span>
+0345     x=x(:,il:ih);
+0346 <span class="keyword">end</span>
+0347 <span class="keyword">if</span> any(w==<span class="string">'u'</span>)
+0348     sx=sum(x,2);
+0349     x=x./repmat(sx+(sx==0),1,size(x,2));
+0350 <span class="keyword">end</span>
+0351 <span class="comment">%</span>
+0352 <span class="comment">% plot results if no output arguments or g option given</span>
+0353 <span class="comment">%</span>
+0354 <span class="keyword">if</span> ~nargout || any(w==<span class="string">'g'</span>) || any(w==<span class="string">'G'</span>) <span class="comment">% plot idealized filters</span>
+0355     <span class="keyword">if</span> ~any(w==<span class="string">'g'</span>) &amp;&amp; ~any(w==<span class="string">'G'</span>)
+0356         w=[w <span class="string">'G'</span>];
+0357     <span class="keyword">end</span>
+0358     newfig=0;
+0359     <span class="keyword">if</span>  any(w==<span class="string">'g'</span>)
+0360         plot(fa-df+(il:ih)*df,x');
+0361         title([<span class="string">'filtbankm: mode = '</span> w]);
+0362         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0363         ylabel(<span class="string">'Weight'</span>);
+0364         newfig=1;
+0365     <span class="keyword">end</span>
+0366 
+0367     <span class="keyword">if</span>  any(w==<span class="string">'G'</span>)
+0368         <span class="keyword">if</span> newfig
+0369             figure;
+0370         <span class="keyword">end</span>
+0371         imagesc(fa-df+(il:ih)*df,1:p,x);
+0372         axis <span class="string">'xy'</span>
+0373         colorbar;
+0374         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Weight'</span>);
+0375         <span class="keyword">switch</span> wr
+0376             <span class="keyword">case</span> 1
+0377                 type=<span class="string">'Log-spaced'</span>;
+0378             <span class="keyword">case</span> 2
+0379                 type=<span class="string">'Erb-spaced'</span>;
+0380             <span class="keyword">case</span> 3
+0381                 type=<span class="string">'Bark-spaced'</span>;
+0382             <span class="keyword">case</span> 4
+0383                 type=<span class="string">'Mel-spaced'</span>;
+0384             <span class="keyword">otherwise</span>
+0385                 type=<span class="string">'Linear-spaced'</span>;
+0386         <span class="keyword">end</span>
+0387         ylabel([type <span class="string">' Filter'</span>]);
+0388         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0389         title([<span class="string">'filtbankm: mode = '</span> w]);
+0390     <span class="keyword">end</span>
+0391 
+0392 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

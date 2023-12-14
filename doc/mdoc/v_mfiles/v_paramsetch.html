@@ -44,7 +44,7 @@
        q  new parameter values either a struct or alternatively matrix with
           each row a different variable in the same order as the fields of d
        m  mode string: any combination of the following
-           'a' ignore additional fields in q
+           'a' include additional fields in q that are not in d
            'A' additional fields in q constitute an error
            'e' print errors but don't exit
            'E' print errors and exit
@@ -94,7 +94,7 @@ This function is called by:
 0018 <span class="comment">%       q  new parameter values either a struct or alternatively matrix with</span>
 0019 <span class="comment">%          each row a different variable in the same order as the fields of d</span>
 0020 <span class="comment">%       m  mode string: any combination of the following</span>
-0021 <span class="comment">%           'a' ignore additional fields in q</span>
+0021 <span class="comment">%           'a' include additional fields in q that are not in d</span>
 0022 <span class="comment">%           'A' additional fields in q constitute an error</span>
 0023 <span class="comment">%           'e' print errors but don't exit</span>
 0024 <span class="comment">%           'E' print errors and exit</span>
@@ -148,8 +148,8 @@ This function is called by:
 0072 <span class="keyword">if</span> nargin&gt;1 &amp;&amp; numel(q)&gt;0   <span class="comment">% if update argument exists</span>
 0073     <span class="keyword">if</span> isstruct(q)          <span class="comment">% if update argument is a structure</span>
 0074         qn=fieldnames(q);   <span class="comment">% field names to update</span>
-0075         addnew=~any(lower(m)==<span class="string">'a'</span>); <span class="comment">% new fields should be added into p</span>
-0076         adderr=any(m==<span class="string">'A'</span>);         <span class="comment">% new fields constitute an error</span>
+0075         addnew=any(m==<span class="string">'a'</span>); <span class="comment">% new fields should be added into p</span>
+0076         adderr=~addnew &amp;&amp; any(m==<span class="string">'A'</span>);         <span class="comment">% new fields constitute an error</span>
 0077         <span class="keyword">for</span> i=1:length(qn)
 0078             fi=qn{i};
 0079             old=isfield(p,fi); <span class="comment">% is this an existing field ?</span>

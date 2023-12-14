@@ -247,6 +247,7 @@
 %   v_quadpeak      - Find quadratically-interpolated peak in a 2D array
 %   v_rotation      - Generate v_rotation matrices
 %   v_skew3d        - Generate 3x3 skew symmetric matrices
+%   v_sort          - Same as normal sort() but with an additional output that is an inverse index
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

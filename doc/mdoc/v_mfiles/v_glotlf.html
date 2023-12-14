@@ -33,15 +33,15 @@
          (2) v_glotlf(1,[],[0.6 0.2 0.25]); % plot graph if no output argument
 
   Inputs:  d selects which derivative of the flow waveform to calculate; 0&lt;=d&lt;=3 [0]
-           t is a vector of time instants at which to calculate the
-             waveform. Time units are in fractions of a cycle (the integer part is ignored).
+           t is a vector of time instants at which to calculate the waveform. Time units are in
+           fractions of a cycle measured from the start of the open phase (the integer part is ignored).
            p is a vector, [te, E0/Ee, 1-tp/te], defining the waveform [0.6 0.1 0.2]
              See below for the parameter meanings.
              The peak negative value of the flow derivative is Ug'(te) = -Ee
-             The peak flow occurs at tp.
+             The peak flow occurs at tp when the flow derivative equals zero.
 
  Outputs:  u the output waveform
-           q a structure with the following fields taken from Fig 2 of [1]:
+           q a structure with the following fields taken from Fig 2 of reference [1]:
                 q.Up       peak value of Ug occurs at tp            [0.979]
                 q.E0=1     gain in open phase (always 1)            [1]
                 q.Ei       peak value of Ug' occurs at ti           [3.57]
@@ -57,13 +57,13 @@
                 q.tc=1     cycle end tiem (always 1)                [1]
 
              Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]          
-             Note that for the return phase in Fig. 2 is wrong; the correct equation is (11).
-             The value of epsilon is chosen to ensure the flow derivative, Ug'(t), integrates to zero.
+             Note that the equation for the return phase in Fig. 2 of [1] is wrong; the correct equation is given in (11).
+             The value of epsilon in this equation is chosen to ensure the flow derivative, Ug'(t), integrates to zero.
 
  Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]
 
  References
- [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1�13, 1985.</pre></div>
+ [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1-13, 1985.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -92,15 +92,15 @@ This function is called by:
 0007 <span class="comment">%         (2) v_glotlf(1,[],[0.6 0.2 0.25]); % plot graph if no output argument</span>
 0008 <span class="comment">%</span>
 0009 <span class="comment">%  Inputs:  d selects which derivative of the flow waveform to calculate; 0&lt;=d&lt;=3 [0]</span>
-0010 <span class="comment">%           t is a vector of time instants at which to calculate the</span>
-0011 <span class="comment">%             waveform. Time units are in fractions of a cycle (the integer part is ignored).</span>
+0010 <span class="comment">%           t is a vector of time instants at which to calculate the waveform. Time units are in</span>
+0011 <span class="comment">%           fractions of a cycle measured from the start of the open phase (the integer part is ignored).</span>
 0012 <span class="comment">%           p is a vector, [te, E0/Ee, 1-tp/te], defining the waveform [0.6 0.1 0.2]</span>
 0013 <span class="comment">%             See below for the parameter meanings.</span>
 0014 <span class="comment">%             The peak negative value of the flow derivative is Ug'(te) = -Ee</span>
-0015 <span class="comment">%             The peak flow occurs at tp.</span>
+0015 <span class="comment">%             The peak flow occurs at tp when the flow derivative equals zero.</span>
 0016 <span class="comment">%</span>
 0017 <span class="comment">% Outputs:  u the output waveform</span>
-0018 <span class="comment">%           q a structure with the following fields taken from Fig 2 of [1]:</span>
+0018 <span class="comment">%           q a structure with the following fields taken from Fig 2 of reference [1]:</span>
 0019 <span class="comment">%                q.Up       peak value of Ug occurs at tp            [0.979]</span>
 0020 <span class="comment">%                q.E0=1     gain in open phase (always 1)            [1]</span>
 0021 <span class="comment">%                q.Ei       peak value of Ug' occurs at ti           [3.57]</span>
@@ -116,13 +116,13 @@ This function is called by:
 0031 <span class="comment">%                q.tc=1     cycle end tiem (always 1)                [1]</span>
 0032 <span class="comment">%</span>
 0033 <span class="comment">%             Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]</span>
-0034 <span class="comment">%             Note that for the return phase in Fig. 2 is wrong; the correct equation is (11).</span>
-0035 <span class="comment">%             The value of epsilon is chosen to ensure the flow derivative, Ug'(t), integrates to zero.</span>
+0034 <span class="comment">%             Note that the equation for the return phase in Fig. 2 of [1] is wrong; the correct equation is given in (11).</span>
+0035 <span class="comment">%             The value of epsilon in this equation is chosen to ensure the flow derivative, Ug'(t), integrates to zero.</span>
 0036 <span class="comment">%</span>
 0037 <span class="comment">% Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]</span>
 0038 <span class="comment">%</span>
 0039 <span class="comment">% References</span>
-0040 <span class="comment">% [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1�13, 1985.</span>
+0040 <span class="comment">% [1]    G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1-13, 1985.</span>
 0041 
 0042 <span class="comment">%      Copyright (C) Mike Brookes 1998-2017</span>
 0043 <span class="comment">%      Version: $Id: v_glotlf.m 10865 2018-09-21 17:22:45Z dmb $</span>
