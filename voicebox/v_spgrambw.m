@@ -1,20 +1,24 @@
 function [t,f,b]=v_spgrambw(s,fs,varargin)
 %V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)
 %
-%  Usage: (1) v_spgrambw(s,fs,'pJcw')     % Plot spectrogram with my favourite set of options
+%  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options
 %
-%         (2) v_spgrambw(s,fs,'PJcwm',50,[100 2000])    % Plot narrow-band spectrogram on mel scale
-%                                                       from 100 to 2000 mel in power/mel units
+%         (2) [y,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
+%             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with transcription (replace
+%                                                             wrd by phn for phonetic trascription)
 %
-%         (3)     [t,f,b]=v_spgrambw(s,fs,'p');        % calculate the spectrogram without plotting
-%                 imagesc(t,f,10*log10(b'));         % plot it manually
-%                 axis('xy');
+%         (3) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale
+%                                                             from 100 to 2000 mel in power/mel units
 %
-%         (4) ninc=0.0045*fs;           % Frame increment for BW=200 Hz (in samples)
-%             nwin=2*ninc;              % Frame length (in samples)
-%             win=hamming(nwin);        % Analysis window
-%             k=0.5*fs*sum(win.^2);     % Scale factor to convert to power/Hz
-%             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;           % Calculate spectrum array                
+%         (4) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting
+%             imagesc(t,f,10*log10(b'));                    % plot it manually
+%             axis('xy');
+%
+%         (5) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)
+%             nwin=2*ninc;                                  % Frame length (in samples)
+%             win=hamming(nwin);                            % Analysis window
+%             k=0.5*fs*sum(win.^2);                         % Scale factor to convert to power/Hz
+%             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array                
 %             v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array
 %
 %         For examples of the many options available see:
