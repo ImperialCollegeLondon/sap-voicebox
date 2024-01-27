@@ -63,14 +63,15 @@ function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %
 %
 % Outputs:	x(p,k)  a sparse matrix containing the v_filterbank amplitudes
-%		            If the il and ih outputs are included then k=ih-il+1 otherwise k=1+floor(n/2)
+%		            If the il and ih output arguments are included then k=ih-il+1 otherwise k=1+floor(n/2)
 %                   Note that the peak filter values equal 2 to account for the power in the negative FFT frequencies.
 %           cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)
 %		    il      the lowest fft bin with a non-zero coefficient
 %		    ih      the highest fft bin with a non-zero coefficient
 %
 % The routine performs interpolation of the input spectrum by convolving the power spectrum
-% with a triangular filter and then simulates a v_filterbank with asymetric triangular filters.
+% with a triangular filter (or equivalently, linearly interpolating between input frequency
+% bins) and then simulates a filterbank with asymetric triangular filters.
 
 %
 % References:
