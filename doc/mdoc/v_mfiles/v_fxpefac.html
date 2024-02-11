@@ -50,7 +50,7 @@
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
 
-<li><a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li>
+<li><a href="v_filtbankm.html" class="code" title="function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>	V_FILTBANKM determine matrix for a linear/mel/erb/bark-spaced v_filterbank [X,IL,IH]=(P,N,FS,FL,FH,W)</li>
 <li><a href="v_findpeaks.html" class="code" title="function [k,v]=v_findpeaks(y,m,w,x)">v_findpeaks</a>	V_FINDPEAKS finds peaks with optional quadratic interpolation [K,V]=(Y,M,W,X)</li>
 <li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li>
 <li><a href="v_spgrambw.html" class="code" title="function [t,f,b]=v_spgrambw(s,fs,varargin)">v_spgrambw</a>	V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</li>
@@ -227,7 +227,7 @@ This function is called by:
 0152 txinc=tx(2)-tx(1);  <span class="comment">% actual frame increment</span>
 0153 <span class="comment">%  ==== we could combine v_spgrambw and v_filtbankm into a single call to v_spgrambw or use fft directly ====</span>
 0154 <span class="comment">% Log-frequency scale</span>
-0155 [trans,cf]=<a href="v_filtbankm.html" class="code" title="function [x,cf,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>(length(f),2*length(f)-1,2*f(end),p.fbanklo,f(end),<span class="string">'usl'</span>);
+0155 [trans,cf]=<a href="v_filtbankm.html" class="code" title="function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)">v_filtbankm</a>(length(f),2*length(f)-1,2*f(end),p.fbanklo,f(end),<span class="string">'usl'</span>);
 0156 O = MIX*trans'; <span class="comment">% Original spectrum in Log-frequency scale</span>
 0157 
 0158 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
