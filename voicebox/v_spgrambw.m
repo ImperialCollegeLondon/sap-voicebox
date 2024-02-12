@@ -3,7 +3,7 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %
 %  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options
 %
-%         (2) [y,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
+%         (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
 %             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with transcription (replace
 %                                                             wrd by phn for phonetic trascription)
 %
@@ -138,7 +138,6 @@ end
 if nargin<2
     error('Usage: SPGRAMBW(s,fs,mode,bw,fmax,db,tinc)');
 end
-%SPGRAMBW Draw grey-scale spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc)
 %
 % first decode the input arguments
 %
