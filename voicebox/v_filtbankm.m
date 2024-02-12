@@ -137,24 +137,24 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 % (1) In the comments, "FFT bin_0" assumes DC = bin 0 whereas "FFT bin_1" means DC = bin 1nfout
 % (2) "input" and "output" need to be interchanged if the 'i' option is given
 
-if nargin<6 || isempty(w)           % if no mode option, w, is specified
-    w='f';                          % default mode option: 'f' = linear output frequency scale
+if nargin<6 || isempty(w)               % if no mode option, w, is specified
+    w='f';                              % default mode option: 'f' = linear output frequency scale
 end
 wr=max(any(repmat('lebm',length(w),1)==repmat(w',1,4),1).*(1:4));           % output warping: 0=linear,1=log,2=erbrate,3=bark,4=mel
 ww=any(repmat('ncChHxXyYpPzZqdDuUsSgG',length(w),1)==repmat(w',1,22),1);    % decode all other options
 % ww elements: 1=n,2=c,3=C,4=h,5=H,6=x,7=X,8=y,9=Y,10=p,11=P,12=z,13=Z,14=q,15=d,16=D,17=u,18=U,19=s,20=S,21=g,22=G
 % Convert legacy option codes: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'
-ww(6)=ww(8) ~= ww(9);               % convert 'y' or 'Y' (but not both) to 'x'; extend low frequencies
-ww(7)=ww(8);                        % convert 'y' to 'X'; extend high frequencies
-ww(15)=ww(17);                      % convert 'u' to 'd'; input is also in power spectral density
-ww(16)=ww(17) || ww(18);            % convert 'u' or 'U' to 'd'; output is in power spectral density
-flhconv=repmat(wr>0 && ~ww(4),1,2); % flag indicating need to convert filterbank limits from Hz to mel/erb/bark/log10
+ww(6)=ww(6) || (ww(8) ~= ww(9));        % convert 'y' or 'Y' (but not both) to 'x'; extend low frequencies
+ww(7)=ww(7) || ww(8);                   % convert 'y' to 'X'; extend high frequencies
+ww(15)=ww(15) || ww(17);                % convert 'u' to 'd'; input is also in power spectral density
+ww(16)=ww(16) || ww(17) || ww(18);      % convert 'u' or 'U' to 'd'; output is in power spectral density
+flhconv=repmat(wr>0 && ~ww(4),1,2);     % flag indicating need to convert filterbank limits from Hz to mel/erb/bark/log10
 if nargin < 4 || isempty(fl)
-    fl=30*(wr==1);                  % lower limit is 0 Hz unless 'l' option specified, in which case it is 30 Hz
+    fl=30*(wr==1);                      % lower limit is 0 Hz unless 'l' option specified, in which case it is 30 Hz
     flhconv(1)=wr>0;
 end
 if nargin < 5 || isempty(fh)
-    fh=0.5*fs;                      % max freq is the nyquist frequency
+    fh=0.5*fs;                          % max freq is the nyquist frequency
     flhconv(2)=wr>0;
 end
 %
