@@ -210,7 +210,9 @@
 %   v_texthvc       - write text on a plot with specified alignment and colour
 %   v_tilefigs      - Arrange all figures on the screen
 %   v_colormap      - Set and plot colormap information
+%   v_xtickint      - Restrict x-axis tick marks to integer values
 %   v_xticksi       - Label x-axis tick marks using SI multipliers
+%   v_ytickint      - Restrict y-axis tick marks to integer values
 %   v_yticksi       - Label y-axis tick marks using SI multipliers
 %   v_xyzticksi     - Helper function for v_xticksi and v_yticksi
 %
@@ -251,6 +253,9 @@
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% === Unclassified ===
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 1998-2022 Mike Brookes
