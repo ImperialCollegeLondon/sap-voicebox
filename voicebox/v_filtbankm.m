@@ -6,8 +6,8 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %
 %        f=v_rfft(s);			                        % v_rfft() returns only 1+floor(n/2) coefficients
 %		 x=v_filtbankm(p,n,fs,0,fs/2,'m');              % n is the fft length, p is the number of filters wanted
-%		 z=log(x*abs(f).^2);                            % multiply x by the power spectrum
-%		 c=dct(z);                                      % take the DCT
+%		 z=log(x*abs(f).^2);                            % multiply the power spectrum by x to get log mel-spectrum
+%		 c=dct(z);                                      % take the DCT to get the mel-cepstrum
 %
 % (2) Calcuate the Mel-frequency Cepstral Coefficients efficiently
 %
@@ -16,13 +16,17 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %        z=log(x*(f(na:nb)).*conj(f(na:nb)));           % multiply x by the power spectrum
 %		 c=dct(z);                                      % take the DCT
 %
-% (3) Plot the calculated filterbanks as a graph
+% (3) Plot the calculated filterbanks as a graph or spectrogram
 %
-%        plot((0:floor(n/2))*fs/n,v_filtbankm(p,n,fs,0,fs/2,'m')')   % fs=sample frequency
+%        v_filtbankm(p,n,fs,0,fs/2,'mg');               % use option 'mg' for a graph or 'mG' for a spectrogram
 %
-% (4) Plot the calculated filterbanks as a spectrogram
+% (4) Convert to mel-spectrum and back again
 %
-%        v_filtbankm(p,n,fs,0,fs/2,'m');
+%        [x,cf,xi]=v_filtbankm(p,n,fs,0,fs/2,'mxXzq');  % n is the fft length, p is the number of filters wanted
+%        f=v_rfft(s);			                        % v_rfft() returns only 1+floor(n/2) coefficients		
+%		 z=x*abs(f).^2;                                 % multiply the power spectrum by x to get mel-spectrum
+%        gp=xi*z;                                       % multiply by xi to recover the approximate power spectrum
+%		 g=v_irfft(sqrt(gp).*exp(1i*angle(f)));         % take the inverse DFT using the original phase to recover the time domain signal 
 %
 % Inputs:
 %       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]
@@ -60,7 +64,7 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %
 %             's' = single-sided input: do not add power from symmetric negative frequencies (i.e. non-DC/Nyquist inputs have already been doubled)
 %             'S' = single-sided output: include power from both positive and negative frequencies (this doubles the non-DC/Nyquist outputs)
-%            ['w' = size(x,2)=size(xi,1)=n rather than 1+floor(n/2) although the rightmost half of x is all zeros] not yet implemented
+%             'w' = size(x,2)=size(xi,1)=n rather than 1+floor(n/2) although the rightmost half of x is all zeros
 %
 %             'g' = plot filter coefficients as graph
 %             'G' = plot filter coefficients as spectrogram image [default if no output arguments present]
@@ -141,8 +145,8 @@ if nargin<6 || isempty(w)               % if no mode option, w, is specified
     w='f';                              % default mode option: 'f' = linear output frequency scale
 end
 wr=max(any(repmat('lebm',length(w),1)==repmat(w',1,4),1).*(1:4));           % output warping: 0=linear,1=log,2=erbrate,3=bark,4=mel
-ww=any(repmat('ncChHxXyYpPzZqdDuUsSgG',length(w),1)==repmat(w',1,22),1);    % decode all other options
-% ww elements: 1=n,2=c,3=C,4=h,5=H,6=x,7=X,8=y,9=Y,10=p,11=P,12=z,13=Z,14=q,15=d,16=D,17=u,18=U,19=s,20=S,21=g,22=G
+ww=any(repmat('ncChHxXyYpPzZqdDuUsSgGw',length(w),1)==repmat(w',1,23),1);    % decode all other options
+% ww elements: 1=n,2=c,3=C,4=h,5=H,6=x,7=X,8=y,9=Y,10=p,11=P,12=z,13=Z,14=q,15=d,16=D,17=u,18=U,19=s,20=S,21=g,22=G,23=w
 % Convert legacy option codes: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'
 ww(6)=ww(6) || (ww(8) ~= ww(9));        % convert 'y' or 'Y' (but not both) to 'x'; extend low frequencies
 ww(7)=ww(7) || ww(8);                   % convert 'y' to 'X'; extend high frequencies
@@ -222,9 +226,8 @@ nfin=length(fin);                                   % length of extended input f
 % now sort out the list of output frequencies
 %
 fout=mb;                                            % output centre frequencies in Hz including dummy values at each end
-lowex=ww(6);                                        % extend to 0 Hz if 'x' given
 highex=ww(7) && (fout(end-1)<fin(end));             % extend at high end if 'X' specified and final centre frequency < Nyquist
-if lowex                                            % extend first filter at low end to DC
+if ww(6)                                            % ww(6)='x': extend first filter at low end to DC
     fout=[0 0 fout(2:end)];                         % ... add two dummy values at DC instead of previous single dummy value
 end
 if highex                                           % extend last filter at high end to Nyquist
@@ -311,24 +314,20 @@ iox=sort([ix1 ix2 ix3 ix4;jx1 jx2 jx3 jx4]);        % iox(1,:) are output posts,
 msk=iox(2,:)<=(nfall+nfout)/2;                      % find references to negative input frequencies
 iox(2,msk)=(nfall+nfout+1)-iox(2,msk);              % convert negative frequencies to positive
 %
-% deal with impluses at DC
-%
-% if ww(13)                   % 'Z': DC input is an impulse plus a diffuse component
-%     iox(2,iox(2,:)==nfout+nf+1)=nfout+nf+2; % change references to the DC input to the adjacent bin
-% end
-%
 % Sort out output gains:
 % If output is power then output gain is 1; if output is power/Hz then output gain is 1/area of output filter
 %
-if lowex                                            % if lowest filter extended to DC, we added a dummy point at 0Hz, so
+if ww(6)                                            % ww(6)='x': if lowest filter extended to DC, we added a dummy point at 0Hz, so
     iox(1,iox(1,:)==2)=3;                           % merge lowest two output nodes
 end
 if highex                                           % if highest filter extended, we added a dummy point at Nyquist, so
     iox(1,iox(1,:)==nfout-1)=nfout-2;               % merge highest two output nodes
 end
-x=sparse(iox(1,:)-1-lowex,max(iox(2,:)-nfout-nf,1),[wx1 wx2 wx3 wx4],pmq,nf);   % forward transformation matrix without input/output gains
+x=sparse(iox(1,:)-1-ww(6),max(iox(2,:)-nfout-nf,1),[wx1 wx2 wx3 wx4],pmq,nf);   % forward transformation matrix without input/output gains
 gout=full(sum(x,2));                                % area of each output integral
 goutd=sparse(1:pmq,1:pmq,(gout+(gout==0)).^(-1));   % create sparse diagonal matrix of output gains
+gouti=full(sum(x(:,1+ww(12):end),2));                                % area of each output integral excluding DC if 'z' option given
+    goutid=sparse(1:pmq,1:pmq,(gouti+(gouti==0)).^(-1));   % create sparse diagonal matrix of output gains
 %
 % Sort out input gains:
 % If input is power then input gain is 1/area; if input is power/Hz then input gain is 1
@@ -344,10 +343,10 @@ gind=sparse(1:nf,1:nf,gin(end-nf+1:end));                   % input gains
 %
 switch 2*ww(16)+ww(15)
     case 0                          % '': input and output are both power
-        xi=ginsid*x'*goutd;
+        xi=ginsid*x'*goutid;
         x=x*(gind*ginsd);
     case 1                          % 'd': input is power/Hz, output is power
-        xi=(ginsid*gind)*x'*goutd;
+        xi=(ginsid*gind)*x'*goutid;
         x=x*ginsd;
     case 2                          % 'D': input is power, output is power/Hz
         xi=ginsid*x';
@@ -392,8 +391,6 @@ else                                        % keep cf in mel/erb/...
         cf=cf(2:p+1);                       % ... just remove dummy end frequencies
     end 
 end
-il=1;
-ih=nf;
 if ww(1)                                    % round outputs to the centre of gravity bin
     sx2=sum(x,2);                           % sum of each row
     msk=full(sx2~=0);
@@ -401,27 +398,32 @@ if ww(1)                                    % round outputs to the centre of gra
     vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));   % find centre of gravity of each row
     x=sparse(1:pmq,vxc,sx2,pmq,nf);             % put all the weight into the centre of gravity bin
 end
-if nargout > 3                              % if il and/or ih output arguments are specified ...
-    msk=full(any(x>0,1));                   % find non-zero columns
-    il=find(msk,1);                         % il is first non-zero column
-    if ~numel(il)                           % if x is all zeros ...
-        ih=1;                               % ... set ih to 1 ********   should we also set il to one?
-    elseif nargout >3
-        ih=find(msk,1,'last');              % ih is last non-zero column
+il=1; % default range is entire x maxtrix
+ih=nf;
+if nargout > 3                                  % if il and/or ih output arguments are specified ...
+    if nargout==4                               % xi has been omitted ...
+    msk=full(any(x>0,1));                       % find non-zero columns in x
+    else                                        % xi output included
+        msk=full(any(x>0,1) | any(xi>0,2)');    % find non-zero columns in x or rows in xi
     end
-    x=x(:,il:ih);                           % remove redundant columns from x
-    if nargout==4                           % xi has been omitted ...
-        xi=il;                              % shift the il and ih outputs up by one position
+    il=find(msk,1);                             % il is first non-zero column
+    if ~numel(il)                               % if x is all zeros ...
+        il=1;                                   % ... set il and ih to 1
+        ih=1;                              
+    elseif nargout >3
+        ih=find(msk,1,'last');                  % ih is last non-zero column
+    end
+    x=x(:,il:ih);                               % remove redundant columns from x
+    if nargout==4                               % xi has been omitted ...
+        xi=il;                                  % shift the il and ih outputs up by one position
         il=ih;
     else
-        xi=x(il:ih,:);                      % remove redundant rows from xi
+        xi=xi(il:ih,:);                         % remove redundant rows from xi
     end
+elseif ww(23)                                   % ww(23)='w': use whole dft
+    x=[x sparse(p,n-nf)];                       % append zeros onto x
+    xi=[xi; xi(n-nf+1:-1:2,:)];                 % reflect elements other than the DC and Nyquist
 end
-% This bit commented out because it should be redundant
-% if ww(15) && ww(16)               % if input and output are both in power per Hz
-%     sx=sum(x,2);
-%     x=x./repmat(sx+(sx==0),1,size(x,2));    % force rows to sum to 1 (should be true anyway)
-% end
 %
 % plot results if no output arguments or 'g','G' options given
 %
@@ -430,7 +432,7 @@ if ~nargout || ww(21) || ww(22)                 % plot idealized filters
     finax=(il-1:ih-1)*df;                       % input frequency axis
     newfig=0;
     if  ww(21)
-        plot(finax,x'); 
+        plot(finax,x(:,il:ih)'); 
         hold on  
         plot(finax,sum(x,1),'--k');
         v_axisenlarge([-1 -1.05]);
