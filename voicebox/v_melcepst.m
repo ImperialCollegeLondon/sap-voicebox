@@ -94,10 +94,8 @@ end
 if any(w=='R')
    [z,tc]=v_enframe(s,n,inc);
 elseif any (w=='N')
-%    [z,tc]=v_enframe(s,hanning(n),inc);
    [z,tc]=enframe(s,0.5-0.5*cos(2*pi*(1:n)'/(n+1)),inc); % Hanning window
 else
-%    [z,tc]=v_enframe(s,hamming(n),inc);
    [z,tc]=enframe(s,0.54-0.46*cos(2*pi*(0:n-1)'/(n-1)),inc); % Hamming window
 end
 f=rfft(z.');
