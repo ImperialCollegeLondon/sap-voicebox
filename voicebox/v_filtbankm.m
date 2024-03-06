@@ -77,7 +77,7 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %           cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)
 %           xi(k,p) [optional] sparse matrix that is an approximate inverse of x
 %		    il      the lowest fft bin with a non-zero coefficient
-%		    ih      the highest fft bin with a non-zero coefficient
+%		    ih      the highest fft bin with a non-zero coefficient (Note: ih must be given if il is given and xi is omitted)
 %
 % The input power will be preserved if the options 'xXS' are given
 %
