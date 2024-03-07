@@ -1,22 +1,29 @@
 function y=v_rdct(x,n,a,b)
 %V_RDCT     Discrete cosine transform of real data Y=(X,N,A,B)
-% Data is truncated/padded to length N.
+%
+%  Inputs: x(m,k)   Real-valued input data; transform will be applied to columns 
+%          n        Transform length. x will be zero-padded or truncated to length n [default: m]
+%          a        Output scale factor [default: sqrt(2*n)]
+%          b        Output scale factor for DC term [default: 1]
+%
+% Outputs: y(n,k)   Output data
 %
 % This routine is equivalent to multiplying by the matrix
 %
-%   rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)
+%   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)
 %
 % Default values of the scaling factors are A=sqrt(2N) and B=1 which
-% results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2). 
+% results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).
 % If b~=1 then the columns are no longer orthogonal.
 %
 % see IRDCT for the inverse transform
 
-% BUG: in line 51 we should do chopping after transform and not before
+% Bugs/Suggestions:
+%   (1) in line 51 we should maybe do truncation after transform and not before
+%   (2) should be able to choose which dimension to perform the transform
+%   (3) should cope with multi-dimensional input array
 
-
-
-%      Copyright (C) Mike Brookes 1998
+%      Copyright (C) Mike Brookes 1998-2018
 %      Version: $Id: v_rdct.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -43,10 +50,10 @@ if fl x=x(:); end
 [m,k]=size(x);
 if nargin<2 n=m;
 end
-if nargin<4 b=1;  
+if nargin<4 b=1;
     if nargin<3 a=sqrt(2*n);
     end
-    end
+end
 if n>m x=[x; zeros(n-m,k)];
 elseif n<m x(n+1:m,:)=[];
 end
