@@ -5,7 +5,7 @@ function [z,zm]=v_horizdiff(y,v,x,u,q)
 %
 %  Inputs: y(n,m) each column is a function of x
 %          v(k,1) reference function of u
-%          x(n,1) x values [default: x'=1:n]
+%          x(n,1) x values for y [default: x'=1:n]
 %          u(k,1) x values for v [default: v=x]
 %          q      interpolation mode
 %                    'l' linear [default]
