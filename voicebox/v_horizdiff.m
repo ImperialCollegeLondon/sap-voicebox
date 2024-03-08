@@ -1,11 +1,17 @@
 function [z,zm]=v_horizdiff(y,v,x,u,q)
 %V_HORIZDIFF - Estimates the horizontal difference between two functions of x
 %
-% Usage: z=horizdiff(y,v,x); % Approximately: y(x) = v(x+z)
+% Usage: (1) z=v_horizdiff(y,v,x); % Approximately: y(x) = v(x+z)
+%
+%        (2) SNRgain=v_horizdiff(PESQenh,PESQraw,SNRs); % SNRs are the test SNRs, PESQraw and PESQenh are the
+%                                                       % quatlity metrics of the raw and enhanced signal, SNRgain
+%                                                       % is the effective SNR improvement of the enhancer.
+%
+%        (3) x=(1:10)'; v_horizdiff(1.4*x,x,x);         % plots illustrative example
 %
 %  Inputs: y(n,m) each column is a function of x
-%          v(k,1) reference function of u
-%          x(n,1) x values for y [default: x'=1:n]
+%          v(k,1) reference function of u (this will be extrapolated if necessary)
+%          x(n,1) x values for y [default: x=(1:n)']
 %          u(k,1) x values for v [default: v=x]
 %          q      interpolation mode
 %                    'l' linear [default]
@@ -16,7 +22,7 @@ function [z,zm]=v_horizdiff(y,v,x,u,q)
 %          zm(1,m)  MMSE horizontal difference that minimizes sum((y(x)-v(x+z)).^2)
 %
 
-%	   Copyright (C) Mike Brookes 2012
+%	   Copyright (C) Mike Brookes 2012-2024
 %      Version: $Id: v_axisenlarge.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
@@ -70,17 +76,26 @@ if nargout>1
     end
 end
 if ~nargout
-    subplot(212);
-    plot(x,z);
+    ax=subplot(212);
+    if m==1
+        plot(x,z,'-r');
+    else
+        plot(x,z);
+    end
     xlabel('x');
-    ylabel('x shift');
+    ylabel('\Delta{x} Gain');
     if all(abs(z-z(1))<=z(1)*1e-4)
         set(gca,'ylim',2*[min(z(1),0) max(z(1),0)]);
     end
-    subplot(211);
+    ax(2)=subplot(211);
     plot(x,y);
     hold on
-    plot(u,v,':k');
+    legax=plot(u,v,':k');
+    if m==1
+        plot([x x+z]',[y y]','-r',x+z,y,'>r');
+    end
     hold off
-    ylabel('y and v');
+    linkaxes(ax,'x');
+    ylabel('y(x) and v(x)');
+    legend(legax,'Reference, v(x)','location','best');
 end
