@@ -43,9 +43,7 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %           ANN       annotation cell array: each row contains either
 %                     {time 'text-string' 'font'} or {[t_start t_end] 'text-string' 'font'} where
 %                     the time value is in seconds with s(n) at time offset+n/fs. The font column can
-%                     omitted in which case the system font will be used. MATLAB cannot cope with
-%                     unicode so I recommend the SILDoulosIPA (serifed) or SILSophiaIPA (sans) fonts
-%                     for phonetic symbols; these are now a little hard to find.
+%                     omitted in which case the system font will be used.
 %
 % Outputs:  T(NT)        time axis values (in seconds). Input sample s(n) is at time offset+n/fs.
 %           F(NF)        frequency axis values in Hz or, unless mode=H, other selected frequency units
@@ -411,15 +409,16 @@ if ~nargout || any(mode=='g')
     %
     % Now check if annotations or a waveform are required
     %
+    % dotaw = Boolean: [time-markers annotations waveform]
     dotaw=[((any(mode=='t') && size(ann,2)>1) || size(ann,2)==1) size(ann,2)>1 (any(mode=='w') && ns2==1)];
-    ylim=get(gca,'ylim');
+    ylim=get(gca,'ylim');                                                   % y-axis limits
     if  any(dotaw)
-        yrange = ylim(2)-ylim(1);
+        yrange = ylim(2)-ylim(1);                                           % y-axis range
         zlim=ylim;
-        toptaw=cumsum([0 dotaw.*[0.05 0.05 0.1]]*yrange)+ylim(2);
-        zlim(2)=toptaw(4);
-        set(gca,'ylim',zlim,'color',map(1,:));
-        if dotaw(3)        % Plot the waveform
+        toptaw=cumsum([0 dotaw.*[0.05 0.05 0.1]]*yrange)+ylim(2);           % y-limits of time-markers, annotations, waveform
+        zlim(2)=toptaw(4);                                                  % new upper likit for y
+        set(gca,'ylim',zlim,'color',map(1,:));                              % extend y limits with black background
+        if dotaw(3)                                                         % *** Plot the waveform
             six=min(max(floor((get(gca,'xlim')-fs(2))*fs(1))+[1 2],1),ns1);
             smax=max(s(six(1):six(2)));
             smin=min(s(six(1):six(2)));
