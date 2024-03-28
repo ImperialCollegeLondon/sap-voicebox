@@ -4,21 +4,23 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options
 %
 %         (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
-%             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with transcription (replace
-%                                                             wrd by phn for phonetic trascription)
+%             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with word transcription
 %
-%         (3) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale
+%         (3) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
+%             v_spgrambw(s,fs,'pJcwaAtT',[],[],[],[],{wrd phn}); % plot spectrogram with word and phone transcriptions
+%
+%         (4) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale
 %                                                             from 100 to 2000 mel in power/mel units
 %
-%         (4) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting
+%         (5) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting
 %             imagesc(t,f,10*log10(b'));                    % plot it manually
 %             axis('xy');
 %
-%         (5) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)
+%         (6) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)
 %             nwin=2*ninc;                                  % Frame length (in samples)
 %             win=hamming(nwin);                            % Analysis window
 %             k=0.5*fs*sum(win.^2);                         % Scale factor to convert to power/Hz
-%             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array                
+%             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array
 %             v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array
 %
 %         For examples of the many options available see:
@@ -40,10 +42,10 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %           TINC      output frame increment in seconds [0 or missing uses default=0.45/BW]
 %                     or [TFIRST TLAST] or [TFIRST TINC TLAST] where TFIRST/TLAST are the times
 %                     of first/last frames
-%           ANN       annotation cell array: each row contains either
-%                     {time 'text-string' 'font'} or {[t_start t_end] 'text-string' 'font'} where
-%                     the time value is in seconds with s(n) at time offset+n/fs. The font column can
-%                     omitted in which case the system font will be used.
+%           ANN       annotation cell array: each row contains either {time 'text-string' 'font'} or
+%                     {[t_start t_end] 'text-string' 'font'} where the time value is in seconds  with s(n) at time offset+n/fs.
+%                     The font column can omitted in which case the system font (Helvetica) will be used (To display: g=get(gca);g.Children(1).FontName).
+%                     For multiple annotation lines, ANN should be a cell  array whose elements are cell arrays as described above.
 %
 % Outputs:  T(NT)        time axis values (in seconds). Input sample s(n) is at time offset+n/fs.
 %           F(NF)        frequency axis values in Hz or, unless mode=H, other selected frequency units
@@ -76,8 +78,10 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %        'i' = inverted colourmap (white background)
 %        'c' = include a colourbar as an intensity scale
 %        'w' = draw the speech waveform above the spectrogram
-%        'a' = centre-align annotations rather than left-aligning them
-%        't' = add time markers with annotations
+%        'a','A' = centre-align annotations rather than left-aligning them.
+%                  'a' applies to the lowest annotation, 'A' to all the others.
+%        't','T' = add time markers with annotations.
+%                  't' applies to the lowest annotation, 'T' to all the others.
 %
 % The BW input gives the 6dB bandwidth of the Hamming window used in the analysis.
 % Equal amplitude frequency components are guaranteed to give separate peaks if they
@@ -409,16 +413,32 @@ if ~nargout || any(mode=='g')
     %
     % Now check if annotations or a waveform are required
     %
-    % dotaw = Boolean: [time-markers annotations waveform]
-    dotaw=[((any(mode=='t') && size(ann,2)>1) || size(ann,2)==1) size(ann,2)>1 (any(mode=='w') && ns2==1)];
-    ylim=get(gca,'ylim');                                                   % y-axis limits
-    if  any(dotaw)
-        yrange = ylim(2)-ylim(1);                                           % y-axis range
+    % calculate space for annotations
+    annh=2*(any(mode=='w') && ns2==1);                              % height of waveform (2 * annotation height)
+    nann=0;
+    if ~isempty(ann)                                                % we also have annotations
+        if ~iscell(ann{1})                                          % only one annotation array
+            ann={ann};                                              % ... so make it a sub-cell
+        end
+        nann=length(ann);
+        annh=repmat(annh,1,2*nann+1);                               % two possible components for each annotation + waveform
+        modet=any(mode=='t');
+        for i=1:nann
+            anni=ann{nann+1-i};                                     % process in reverse order (bottom up)
+            annh(2*i)=size(anni,2)>1;                               % annotation needed
+            annh(2*i-1)=(modet && annh(2*i)) || size(anni,2)==1;    % time markers needed
+            modet=any(mode=='T');                                   % 'T' applies to each annotation except for the first
+        end
+    end
+    ylim=get(gca,'ylim');                                           % y-axis limits
+    % draw annotations
+    if any(annh>0)
+        yrange = ylim(2)-ylim(1);                                   % y-axis range
         zlim=ylim;
-        toptaw=cumsum([0 dotaw.*[0.05 0.05 0.1]]*yrange)+ylim(2);           % y-limits of time-markers, annotations, waveform
-        zlim(2)=toptaw(4);                                                  % new upper likit for y
-        set(gca,'ylim',zlim,'color',map(1,:));                              % extend y limits with black background
-        if dotaw(3)                                                         % *** Plot the waveform
+        toptaw=cumsum([0 0.05*yrange*annh])+ylim(2);                % y-limits of time-markers, annotations, waveform
+        zlim(2)=toptaw(end);                                        % new upper limit for y
+        set(gca,'ylim',zlim,'color',map(1,:));                      % extend y limits with black background
+        if annh(end) % draw waveform
             six=min(max(floor((get(gca,'xlim')-fs(2))*fs(1))+[1 2],1),ns1);
             smax=max(s(six(1):six(2)));
             smin=min(s(six(1):six(2)));
@@ -428,56 +448,62 @@ if ~nargout || any(mode=='g')
             end
             srange=smax-smin;
             hold on
-            plot(fs(2)+(six(1)-1:six(2)-1)/fs(1),(s(six(1):six(2))-smin)/srange*0.9*(toptaw(4)-toptaw(3))+toptaw(3),'color',map(48,:))
+            plot(fs(2)+(six(1)-1:six(2)-1)/fs(1),(s(six(1):six(2))-smin)/srange*0.9*(toptaw(end)-toptaw(end-1))+toptaw(end-1),'color',map(48,:))
             hold off
         end
-        if dotaw(1) || dotaw(2)
-            tmk=cell2mat(ann(:,1));
-            tmksel=tmk(:,1)<=t(end) & tmk(:,end)>=t(1);
-            yix=1+[tmk(tmksel,1)<t(1) ones(sum(tmksel),2) tmk(tmksel,end)>t(end)]';
-            tmk(:,1)=max(tmk(:,1),t(1));  % clip to axis limits
-            tmk(:,end)=min(tmk(:,end),t(end));
-        end
-        if dotaw(1) && any(tmksel)  % draw time markers
-            ymk=toptaw(1:2)*[0.8 0.4;0.2 0.6];
-            switch size(tmk,2)
-                case 0
-                case 1      % isolated marks
-                    hold on
-                    plot([tmk(tmksel) tmk(tmksel)]',repmat(ymk',1,sum(tmksel)),'color',map(48,:));
-                    hold off
-                otherwise % draw durations
-
-                    hold on
-                    plot(tmk(tmksel,[1 1 2 2])',ymk(yix),'color',map(48,:));
-                    hold off
+        modet=any(mode=='t');
+        modea=any(mode=='a');
+        for iann=1:nann % loop thropugh each annotation cell array
+            anni=ann{nann+1-iann}; % process in reverse order (bottom up)
+            if annh(2*iann-1) || annh(2*iann)
+                tmk=cell2mat(anni(:,1));
+                tmksel=tmk(:,1)<=t(end) & tmk(:,end)>=t(1); % select those that lie within the time axis
+                yix=1+[tmk(tmksel,1)<t(1) ones(sum(tmksel),2) tmk(tmksel,end)>t(end)]';
+                tmk(:,1)=max(tmk(:,1),t(1));  % clip to axis limits
+                tmk(:,end)=min(tmk(:,end),t(end));
             end
-        end
-        if dotaw(2) && any(tmksel) % print annotations
-            if any(mode=='a')
-                horal='center';
-                tmk=(tmk(:,1)+tmk(:,end))*0.5;
-            else
-                horal='left';
-                tmk=tmk(:,1);
+            if annh(2*iann-1) && any(tmksel)  % draw time markers
+                ymk=toptaw(2*iann-1:2*iann)*[0.8 0.4;0.2 0.6];
+                switch size(tmk,2)
+                    case 0
+                    case 1      % isolated marks
+                        hold on
+                        plot([tmk(tmksel) tmk(tmksel)]',repmat(ymk',1,sum(tmksel)),'color',map(48,:));
+                        hold off
+                    otherwise % draw durations
+                        hold on
+                        plot(tmk(tmksel,[1 1 2 2])',ymk(yix),'color',map(48,:));
+                        hold off
+                end
             end
-            if size(ann,2)>2
-                font='Arial';
-                for i=1:size(ann,1)
-                    if tmksel(i)
-                        if ~isempty(ann{i,3})
-                            font = ann{i,3};
+            if annh(2*iann) && any(tmksel)  % print annotations
+                if modea                    % align centrally
+                    horal='center';
+                    tmk=(tmk(:,1)+tmk(:,end))*0.5;
+                else
+                    horal='left';
+                    tmk=tmk(:,1);
+                end
+                if size(anni,2)>2
+                    font='Arial';
+                    for i=1:size(anni,1)
+                        if tmksel(i)
+                            if ~isempty(anni{i,3})
+                                font = anni{i,3};
+                            end
+                            text(tmk(i),toptaw(2*iann),anni{i,2},'color',map(48,:),'fontname',font,'VerticalAlignment','baseline','HorizontalAlignment',horal);
                         end
-                        text(tmk(i),toptaw(2),ann{i,2},'color',map(48,:),'fontname',font,'VerticalAlignment','baseline','HorizontalAlignment',horal);
                     end
-                end
-            else
-                for i=1:size(ann,1)
-                    if tmksel(i)
-                        text(tmk(i),toptaw(2),ann{i,2},'color',map(48,:),'VerticalAlignment','baseline','HorizontalAlignment',horal);
+                else
+                    for i=1:size(anni,1)
+                        if tmksel(i)
+                            text(tmk(i),toptaw(2*iann),anni{i,2},'color',map(48,:),'VerticalAlignment','baseline','HorizontalAlignment',horal);
+                        end
                     end
                 end
             end
+            modet=any(mode=='T'); % 'T' applies to each annotation except for the first
+            modea=any(mode=='A'); % 'A' applies to each annotation except for the first
         end
     end
     xlabel(['Time (' v_xticksi 's)']);
