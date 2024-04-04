@@ -11,7 +11,7 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 %   wg(kg,1)                weights for GMM g - must sum to 1
 %
 % Outputs:
-%   d             the approximate KL divergence D(f||g)
+%   d             the approximate KL divergence D(f||g)=E_f(log(f(x)/g(x)))
 %   klfg(kf,kg)   the exact KL divergence between the components of f and g
 %
 % The Kullback-Leibler (KL) divergence, D(f||g), between two distributions,
