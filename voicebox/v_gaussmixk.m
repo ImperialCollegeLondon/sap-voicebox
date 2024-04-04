@@ -19,7 +19,7 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 % It is defined as <log(f(x)) - log(g(x))> where <y(x)> denotes the
 % expectation with respect to f(x), i.e. <y(x)> = Integral(f(x) y(x) dx).
 % The KL divergence is always >=0 and equals 0 if and only if f(x)=g(x)
-% almost everywhere. % It is not a distance because it is not symmetric
+% almost everywhere. It is not a distance because it is not symmetric
 % between f and g and also does not satisfy the triangle inequality.
 % It is normally appropriate for f(x) to be the "true" distribution and
 % g(x) to be an approximation to it. See [1].
@@ -30,11 +30,11 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 %
 % Refs:
 % [1]	S. Kullback and R. Leibler. On information and sufficiency.
-%       Annals of Mathematical Statistics, 22 (1): 79�86, 1951. doi: 10.1214/aoms/1177729694.
+%       Annals of Mathematical Statistics, 22 (1): 79-86, 1951. doi: 10.1214/aoms/1177729694.
 % [2]	J. R. Hershey and P. A. Olsen.
 %       Approximating the kullback leibler divergence between gaussian mixture models.
 %       In Proc. IEEE Intl Conf. Acoustics, Speech and Signal Processing, volume 4,
-%       pages IV�317�IV�320, Apr. 2007. doi: 10.1109/ICASSP.2007.366913.
+%       pages IV:317-320, Apr. 2007. doi: 10.1109/ICASSP.2007.366913.
 
 %	   Copyright (C) Mike Brookes 2012
 %      Version: $Id: v_gaussmixk.m 10865 2018-09-21 17:22:45Z dmb $
