@@ -1,4 +1,4 @@
-function x=v_randvec(n,m,c,w,mode)
+function [x,kx]=v_randvec(n,m,c,w,mode)
 %V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)
 % generates a random matrix of size (|n|,p) where p is the maximum
 % dimension of M or C (see note below about row versus column vectors)
@@ -12,7 +12,8 @@ function x=v_randvec(n,m,c,w,mode)
 %                       c = complex gaussian
 %                       l = lognormal
 %
-% Outputs:  X(N,P) is the output data
+% Outputs:  X(N,P)  is the output data
+%           KX(N,1) Mixture number associated with each row of X
 %
 % Note this routine generates row vectors such that E((x-m)'*(x-m)) = C = cov(x). If
 % Alternatively x=(n,m',c,w,mode)' will generate column vectors satisfying E((x-m)*(x-m)') = C = cov(x').
