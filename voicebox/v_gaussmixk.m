@@ -16,7 +16,7 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 %
 % The Kullback-Leibler (KL) divergence, D(f||g), between two distributions,
 % f(x) and g(x) is also known as the "relative v_entropy" of f relative to g.
-% It is defined as <log(f(x)) - log(g(x))> where <y(x)> denotes the
+% It is defined as <log(f(x)/g(x))> where <...> denotes the
 % expectation with respect to f(x), i.e. <y(x)> = Integral(f(x) y(x) dx).
 % The KL divergence is always >=0 and equals 0 if and only if f(x)=g(x)
 % almost everywhere. It is not a distance because it is not symmetric
@@ -69,9 +69,9 @@ fvf=ndims(vf)>2 || size(vf,1)>kf;       % full covariance matrix vf is supplied
 % First calculate vf covariance matrix determinants and precision matrices
 % and then the individual KL divergences between the components of f
 
-klff=zeros(kf,kf);      % space for intra-a KL negative divergence
+klff=zeros(kf,kf);      % space for intra-f KL negative divergence
 ixdf=1:kf+1:kf*kf;      % indexes of diagonal elements in kf*kf matrix
-ixdp=(1:p+1:p*p)';         % indexes of diagonal elements in p*p matrix
+ixdp=(1:p+1:p*p)';      % indexes of diagonal elements in p*p matrix
 wkf=ones(kf,1);
 if fvf                  % vf is a full matrix
     dvf=zeros(kf,1);    % space for log(det(vf))
@@ -106,26 +106,32 @@ else
     if nargin<5 || isempty(vg)
         vg=ones(kg,p);
     end
-    fvb=ndims(vg)>2 || size(vg,1)>kg;       % full covariance matrix vg is supplied
 
     % Calculate vg covariance matrix determinants and precision matrices
     % and then the individual inter-component KL divergences between components of f and g
 
     klfg=zeros(kf,kg);      % space for inter-a-b KL negative divergence
     wkg=ones(kg,1);
-    if fvb                  % vg is a full matrix
+    if ndims(vg)>2 || size(vg,1)>kg                  % vg is a full matrix
         dvg=zeros(kg,1);    % space for log(det(vg))
         pg=zeros(p,p,kg);   % space for inv(vg)
-        for j=1:kg
-            dvgj=log(det(vg(:,:,j)));
-            dvg(j)=dvgj;
-            pgj=inv(vg(:,:,j));
-            pg(:,:,j)=pgj;
-            mfgj=mf-mg(j(wkf),:);
-            if fvf              % vf and vg are both full matrices
+        if fvf              % vf and vg are both full matrices
+            for j=1:kg
+                dvgj=log(det(vg(:,:,j)));
+                dvg(j)=dvgj;
+                pgj=inv(vg(:,:,j));
+                pg(:,:,j)=pgj;
+                mfgj=mf-mg(j(wkf),:);
                 pgjvf=reshape(pgj*reshape(vf,p,p*kf),p^2,kf); % pg(:,:,j)* all the vf matices
                 klfg(:,j)=0.5*(dvgj-p-dvf+sum(pgjvf(ixdp,:),1)'+sum((mfgj*pgj).*mfgj,2));
-            else                % vf diagonal but vg is full
+            end
+        else                % vf diagonal but vg is full
+            for j=1:kg
+                dvgj=log(det(vg(:,:,j)));
+                dvg(j)=dvgj;
+                pgj=inv(vg(:,:,j));
+                pg(:,:,j)=pgj;
+                mfgj=mf-mg(j(wkf),:);
                 klfg(:,j)=0.5*(dvgj-p-dvf+vf*pgj(ixdp)+sum((mfgj*pgj).*mfgj,2));
             end
         end
@@ -142,5 +148,3 @@ else
     end
     d=wf'*(v_logsum(-klff,2,wf)-v_logsum(-klfg,2,wg));
 end
-
-
