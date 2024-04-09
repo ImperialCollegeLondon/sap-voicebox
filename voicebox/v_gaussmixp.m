@@ -5,7 +5,7 @@ function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)
 %
 % Inputs: n data values, k mixtures, p parameters, q data vector size
 %
-%   Y(n,q) = input data (or optional plot range if no out arguments)
+%   Y(n,q) = (possibly transformed) input data (or optional plot range if no output arguments)
 %            Row of Y(i,:) represents a single observation of the
 %            transformed GMM data point X: Y(i,1:q)=X(i,1:p)*A'+B'. If A and B are
 %            omitted and q=p, then Y(i,:)=X(i,:).
