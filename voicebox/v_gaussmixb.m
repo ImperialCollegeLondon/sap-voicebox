@@ -22,7 +22,7 @@ function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
 %     (1) D_B(f,g) >= 0
 %     (2) D_B(f,g) = 0 iff f = g
 %     (3) D_B(f,g) = D_B(g,f)
-% It is not a distance because it  does not satisfy the triangle inequality. It closely approximates the Bayes
+% It is not a distance because it  does not satisfy the triangle inequality. It upper bounds the Bayes
 % divergence -log(Int(min(f(x),g(x)) dx) which relates to the probability of 2-class misclassification [1].
 %
 % This routine calculates the "variational importance sampling" estimate of (or if nx=0,
@@ -253,5 +253,32 @@ else                                                            % both f and g G
         end
         x=v_randvec(nx,ms,vs,ws);                               % draw from sampling distribution
         d=-(v_logsum(0.5*(v_gaussmixp(x,mf,vf,wf)+v_gaussmixp(x,mg,vg,wg))-v_gaussmixp(x,ms,vs,ws)))+log(nx); % montecarlo estimate of Bhatt divergence
+    end
+end
+if ~nargout
+    switch p
+        case 1
+            nsd=3;          % number of std deviations to plot
+            nxax=251; % number of points on x-axis (MUST be odd)
+            xlo=min([mf;mg]-nsd*sqrt([vf;vg]));
+            xhi=max([mf;mg]+nsd*sqrt([vf;vg]));
+            xax=linspace(xlo,xhi,nxax)';
+            sint=(xax(2)-xax(1))/3*(4-2*mod(1:nxax,2)-[1 zeros(1,nxax-2) 1]); % Simpson's rule integration
+            yf=exp(v_gaussmixp(xax,mf,vf,wf));
+            yg=exp(v_gaussmixp(xax,mg,vg,wg)); 
+         bayeserr=sint*min(yf,yg)*0.5; % calculate Bayes error
+            plot(xax,yf,'-b',xax,yg,'-r',xax,sqrt(yf.*yg),'-g');
+            if ~isempty(nx) && nx~=0
+                ys=exp(v_gaussmixp(xax,ms,vs,ws));
+                hold on
+                plot(xax,ys,'--k');
+                hold off
+                legend('f(x)','g(x)','sqrt(fg)','h(x)','location','northeast');
+                v_texthvc(0.02,0.98,sprintf('Bhattacharya = %.1f%% (>=%.1f%%)\n2 x Bayes Err = %.1f%%',100*exp(-d),100*exp(-dub),200*bayeserr),'LTk');
+            else
+                legend('f(x)','g(x)','sqrt(fg)','location','northeast');
+            end
+            xlabel('x');
+            ylabel('Prob density');        
     end
 end
