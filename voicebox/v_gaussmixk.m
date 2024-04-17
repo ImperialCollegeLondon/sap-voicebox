@@ -12,7 +12,7 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 %
 % Outputs:
 %   d             the approximate KL divergence D(f||g)=E_f(log(f(x)/g(x)))
-%   klfg(kf,kg)   the exact KL divergence between the components of f and g
+%   klfg(kf,kg)   the exact KL divergence between the unweighted components of f and g
 %
 % The Kullback-Leibler (KL) divergence, D(f||g), between two distributions,
 % f(x) and g(x) is also known as the "relative entropy" of f relative to g.
