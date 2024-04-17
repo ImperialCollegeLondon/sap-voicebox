@@ -51,6 +51,7 @@
 % Probability Distributions
 %   v_berk2prob     - Convert Berksons to probability
 %   v_gaussmix      - Fit a gaussian mixture model to data values
+%   v_gaussmixb     - Estimate Bhattacharya divergence between two GMMs
 %   v_gaussmixd     - Calculate marginal and conditional density distributions and perform inference
 %   v_gaussmixk     - Estimate Kuleck-Leibler divergence between two GMMs
 %   v_gaussmixg     - Calculate global mean, covariance and mode of a Gaussian mixture
@@ -253,6 +254,8 @@
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% === Unclassified ===
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 1998-2022 Mike Brookes

@@ -30,21 +30,23 @@
   Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options
 
          (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
-             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with transcription (replace
-                                                             wrd by phn for phonetic trascription)
+             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with word transcription
 
-         (3) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale
+         (3) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
+             v_spgrambw(s,fs,'pJcwaAtT',[],[],[],[],{wrd phn}); % plot spectrogram with word and phone transcriptions
+
+         (4) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale
                                                              from 100 to 2000 mel in power/mel units
 
-         (4) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting
+         (5) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting
              imagesc(t,f,10*log10(b'));                    % plot it manually
              axis('xy');
 
-         (5) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)
+         (6) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)
              nwin=2*ninc;                                  % Frame length (in samples)
              win=hamming(nwin);                            % Analysis window
              k=0.5*fs*sum(win.^2);                         % Scale factor to convert to power/Hz
-             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array                
+             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array
              v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array
 
          For examples of the many options available see:
@@ -66,12 +68,10 @@
            TINC      output frame increment in seconds [0 or missing uses default=0.45/BW]
                      or [TFIRST TLAST] or [TFIRST TINC TLAST] where TFIRST/TLAST are the times
                      of first/last frames
-           ANN       annotation cell array: each row contains either
-                     {time 'text-string' 'font'} or {[t_start t_end] 'text-string' 'font'} where
-                     the time value is in seconds with s(n) at time offset+n/fs. The font column can
-                     omitted in which case the system font will be used. MATLAB cannot cope with
-                     unicode so I recommend the SILDoulosIPA (serifed) or SILSophiaIPA (sans) fonts
-                     for phonetic symbols; these are now a little hard to find.
+           ANN       annotation cell array: each row contains either {time 'text-string' 'font'} or
+                     {[t_start t_end] 'text-string' 'font'} where the time value is in seconds  with s(n) at time offset+n/fs.
+                     The font column can omitted in which case the system font (Helvetica) will be used (To display: g=get(gca);g.Children(1).FontName).
+                     For multiple annotation lines, ANN should be a cell  array whose elements are cell arrays as described above.
 
  Outputs:  T(NT)        time axis values (in seconds). Input sample s(n) is at time offset+n/fs.
            F(NF)        frequency axis values in Hz or, unless mode=H, other selected frequency units
@@ -104,8 +104,10 @@
         'i' = inverted colourmap (white background)
         'c' = include a colourbar as an intensity scale
         'w' = draw the speech waveform above the spectrogram
-        'a' = centre-align annotations rather than left-aligning them
-        't' = add time markers with annotations
+        'a','A' = centre-align annotations rather than left-aligning them.
+                  'a' applies to the lowest annotation, 'A' to all the others.
+        't','T' = add time markers with annotations.
+                  't' applies to the lowest annotation, 'T' to all the others.
 
  The BW input gives the 6dB bandwidth of the Hamming window used in the analysis.
  Equal amplitude frequency components are guaranteed to give separate peaks if they
@@ -158,48 +160,48 @@ This function is called by:
 0004 <span class="comment">%  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options</span>
 0005 <span class="comment">%</span>
 0006 <span class="comment">%         (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file</span>
-0007 <span class="comment">%             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with transcription (replace</span>
-0008 <span class="comment">%                                                             wrd by phn for phonetic trascription)</span>
-0009 <span class="comment">%</span>
-0010 <span class="comment">%         (3) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale</span>
-0011 <span class="comment">%                                                             from 100 to 2000 mel in power/mel units</span>
-0012 <span class="comment">%</span>
-0013 <span class="comment">%         (4) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting</span>
-0014 <span class="comment">%             imagesc(t,f,10*log10(b'));                    % plot it manually</span>
-0015 <span class="comment">%             axis('xy');</span>
-0016 <span class="comment">%</span>
-0017 <span class="comment">%         (5) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)</span>
-0018 <span class="comment">%             nwin=2*ninc;                                  % Frame length (in samples)</span>
-0019 <span class="comment">%             win=hamming(nwin);                            % Analysis window</span>
-0020 <span class="comment">%             k=0.5*fs*sum(win.^2);                         % Scale factor to convert to power/Hz</span>
-0021 <span class="comment">%             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array</span>
-0022 <span class="comment">%             v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array</span>
-0023 <span class="comment">%</span>
-0024 <span class="comment">%         For examples of the many options available see:</span>
-0025 <span class="comment">%         http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/tutorial/spgrambw/spgram_tut.pdf</span>
-0026 <span class="comment">%</span>
-0027 <span class="comment">%  Inputs:  S         speech signal, or single-sided power spectrum array, S(NT,NF), in power per Hz</span>
-0028 <span class="comment">%           FS        sample fequency (Hz) or [FS T1] where T1 is the time of the first sample</span>
-0029 <span class="comment">%                     or, if s is a matrix, [FS T1 FINC F1] where FS is the frame rate, T1 is</span>
-0030 <span class="comment">%                     the time of the first sample, FINC is the frequency increment and F1 the</span>
-0031 <span class="comment">%                     frequency of the first column.</span>
-0032 <span class="comment">%           MODE      optional character string specifying options (see list below)</span>
-0033 <span class="comment">%           BW        bandwidth resolution in Hz (DFT window length = 1.81/BW)[default: 200]</span>
-0034 <span class="comment">%           FMAX      frequency range [Fmin Fstep Fmax]. If Fstep is omitted</span>
-0035 <span class="comment">%                     it is taken to be (Fmax-Fmin)/257, if Fmin is also omitted it is taken</span>
-0036 <span class="comment">%                     to be 0 (or 20Hz for mode l), if all three are omitted Fmax is taken to be FS/2.</span>
-0037 <span class="comment">%                     If modes m, b, e or l are specified then the units are in mel, bark or erb or</span>
-0038 <span class="comment">%                     log10(Hz); this can be over-ridden by the 'h' option.</span>
-0039 <span class="comment">%           DB        either dB-range relative to peak or [dB-min dB-max] for plotting (and B output if 'D' given [default: 40]</span>
-0040 <span class="comment">%           TINC      output frame increment in seconds [0 or missing uses default=0.45/BW]</span>
-0041 <span class="comment">%                     or [TFIRST TLAST] or [TFIRST TINC TLAST] where TFIRST/TLAST are the times</span>
-0042 <span class="comment">%                     of first/last frames</span>
-0043 <span class="comment">%           ANN       annotation cell array: each row contains either</span>
-0044 <span class="comment">%                     {time 'text-string' 'font'} or {[t_start t_end] 'text-string' 'font'} where</span>
-0045 <span class="comment">%                     the time value is in seconds with s(n) at time offset+n/fs. The font column can</span>
-0046 <span class="comment">%                     omitted in which case the system font will be used. MATLAB cannot cope with</span>
-0047 <span class="comment">%                     unicode so I recommend the SILDoulosIPA (serifed) or SILSophiaIPA (sans) fonts</span>
-0048 <span class="comment">%                     for phonetic symbols; these are now a little hard to find.</span>
+0007 <span class="comment">%             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with word transcription</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%         (3) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file</span>
+0010 <span class="comment">%             v_spgrambw(s,fs,'pJcwaAtT',[],[],[],[],{wrd phn}); % plot spectrogram with word and phone transcriptions</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%         (4) v_spgrambw(s,fs,'PJcwm',50,[100 2000])        % Plot narrow-band spectrogram on mel scale</span>
+0013 <span class="comment">%                                                             from 100 to 2000 mel in power/mel units</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%         (5) [t,f,b]=v_spgrambw(s,fs,'p');                 % calculate the spectrogram without plotting</span>
+0016 <span class="comment">%             imagesc(t,f,10*log10(b'));                    % plot it manually</span>
+0017 <span class="comment">%             axis('xy');</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%         (6) ninc=0.0045*fs;                               % Frame increment for BW=200 Hz (in samples)</span>
+0020 <span class="comment">%             nwin=2*ninc;                                  % Frame length (in samples)</span>
+0021 <span class="comment">%             win=hamming(nwin);                            % Analysis window</span>
+0022 <span class="comment">%             k=0.5*fs*sum(win.^2);                         % Scale factor to convert to power/Hz</span>
+0023 <span class="comment">%             sf=abs(v_rfft(v_enframe(s,win,ninc),nwin,2)).^2/k;         % Calculate spectrum array</span>
+0024 <span class="comment">%             v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%         For examples of the many options available see:</span>
+0027 <span class="comment">%         http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/tutorial/spgrambw/spgram_tut.pdf</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%  Inputs:  S         speech signal, or single-sided power spectrum array, S(NT,NF), in power per Hz</span>
+0030 <span class="comment">%           FS        sample fequency (Hz) or [FS T1] where T1 is the time of the first sample</span>
+0031 <span class="comment">%                     or, if s is a matrix, [FS T1 FINC F1] where FS is the frame rate, T1 is</span>
+0032 <span class="comment">%                     the time of the first sample, FINC is the frequency increment and F1 the</span>
+0033 <span class="comment">%                     frequency of the first column.</span>
+0034 <span class="comment">%           MODE      optional character string specifying options (see list below)</span>
+0035 <span class="comment">%           BW        bandwidth resolution in Hz (DFT window length = 1.81/BW)[default: 200]</span>
+0036 <span class="comment">%           FMAX      frequency range [Fmin Fstep Fmax]. If Fstep is omitted</span>
+0037 <span class="comment">%                     it is taken to be (Fmax-Fmin)/257, if Fmin is also omitted it is taken</span>
+0038 <span class="comment">%                     to be 0 (or 20Hz for mode l), if all three are omitted Fmax is taken to be FS/2.</span>
+0039 <span class="comment">%                     If modes m, b, e or l are specified then the units are in mel, bark or erb or</span>
+0040 <span class="comment">%                     log10(Hz); this can be over-ridden by the 'h' option.</span>
+0041 <span class="comment">%           DB        either dB-range relative to peak or [dB-min dB-max] for plotting (and B output if 'D' given [default: 40]</span>
+0042 <span class="comment">%           TINC      output frame increment in seconds [0 or missing uses default=0.45/BW]</span>
+0043 <span class="comment">%                     or [TFIRST TLAST] or [TFIRST TINC TLAST] where TFIRST/TLAST are the times</span>
+0044 <span class="comment">%                     of first/last frames</span>
+0045 <span class="comment">%           ANN       annotation cell array: each row contains either {time 'text-string' 'font'} or</span>
+0046 <span class="comment">%                     {[t_start t_end] 'text-string' 'font'} where the time value is in seconds  with s(n) at time offset+n/fs.</span>
+0047 <span class="comment">%                     The font column can omitted in which case the system font (Helvetica) will be used (To display: g=get(gca);g.Children(1).FontName).</span>
+0048 <span class="comment">%                     For multiple annotation lines, ANN should be a cell  array whose elements are cell arrays as described above.</span>
 0049 <span class="comment">%</span>
 0050 <span class="comment">% Outputs:  T(NT)        time axis values (in seconds). Input sample s(n) is at time offset+n/fs.</span>
 0051 <span class="comment">%           F(NF)        frequency axis values in Hz or, unless mode=H, other selected frequency units</span>
@@ -232,623 +234,648 @@ This function is called by:
 0078 <span class="comment">%        'i' = inverted colourmap (white background)</span>
 0079 <span class="comment">%        'c' = include a colourbar as an intensity scale</span>
 0080 <span class="comment">%        'w' = draw the speech waveform above the spectrogram</span>
-0081 <span class="comment">%        'a' = centre-align annotations rather than left-aligning them</span>
-0082 <span class="comment">%        't' = add time markers with annotations</span>
-0083 <span class="comment">%</span>
-0084 <span class="comment">% The BW input gives the 6dB bandwidth of the Hamming window used in the analysis.</span>
-0085 <span class="comment">% Equal amplitude frequency components are guaranteed to give separate peaks if they</span>
-0086 <span class="comment">% are this far apart. This value also determines the time resolution: the window length is</span>
-0087 <span class="comment">% 1.81/BW and the low-pass filter applied to amplitude modulations has a 6-dB bandwidth of</span>
-0088 <span class="comment">% BW/2 Hz.</span>
-0089 <span class="comment">%</span>
-0090 <span class="comment">% The units are power per Hz unless the 'P' option is given in which case power</span>
-0091 <span class="comment">% per displayed unit is used or power per decade for the 'l' option.</span>
-0092 
-0093 <span class="comment">%%%% BUGS %%%%%%</span>
-0094 <span class="comment">% * allow ANN rows to be a mixture of intervals and instants</span>
-0095 <span class="comment">% * allow multiple ANN rows</span>
-0096 <span class="comment">% * Do not use triangular interpolation if the output frequencies are the same as an FFT</span>
-0097 <span class="comment">% * Place as many subticks as will fit beyond the last tick with the 'f' option</span>
-0098 <span class="comment">% * Use a special subtick pattern between ticks that are powers of 10 using the 'f' option</span>
-0099 <span class="comment">% * Future options:</span>
-0100 <span class="comment">%       ['q' = constant q transform]</span>
-0101 <span class="comment">%       ['k' = add a piano keyboard to the frequency scale]</span>
-0102 <span class="comment">%       ['z' = use a bipolar colourmap for a matrix input with negative values]</span>
-0103 
-0104 <span class="comment">%      Copyright (C) Mike Brookes 1997-2011</span>
-0105 <span class="comment">%      Version: $Id: v_spgrambw.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0106 <span class="comment">%</span>
-0107 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0108 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0109 <span class="comment">%</span>
-0110 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0111 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0112 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0113 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0114 <span class="comment">%   (at your option) any later version.</span>
-0115 <span class="comment">%</span>
-0116 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0117 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0118 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0119 <span class="comment">%   GNU General Public License for more details.</span>
-0120 <span class="comment">%</span>
-0121 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0122 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0123 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0124 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0125 <span class="keyword">persistent</span> tcmap
-0126 <span class="keyword">if</span> isempty(tcmap)
-0127     <span class="comment">% modified thermal with better grayscale linearity</span>
-0128     tcmap=[ 0 0 0; 7 0 17; 14 0 33; 21 0 50; 29 0 67; 36 0 84; 43 0 100; 50 0 117;
-0129         57 0 134; 64 0 150; 72 0 167; 80 3 164; 89 7 156; 97 11 149; 106 15 142; 114 19 134;
-0130         123 23 127; 131 27 119; 140 31 112; 149 35 105; 157 39 97; 166 43 90; 174 47 82;
-0131         183 51 75; 192 55 68; 200 59 60; 209 63 53; 217 67 45; 226 71 38; 234 75 31;
-0132         243 79 23; 252 83 16; 255 88 12; 255 95 12; 255 102 11; 255 109 11; 255 116 10;
-0133         255 123 10; 255 130 9; 255 137 9; 255 144 8; 255 151 8; 255 158 7; 255 165 7;
-0134         255 172 6; 255 179 6; 255 186 5; 255 193 4; 255 200 4; 255 207 3; 255 214 3; 255 221 2;
-0135         255 228 2; 255 235 1; 255 242 1; 255 249 0; 255 252 22; 255 252 55; 255 253 88;
-0136         255 253 122; 255 254 155; 255 254 188; 255 255 222; 255 255 255]/255;
-0137 <span class="keyword">end</span>
-0138 <span class="keyword">if</span> nargin&lt;2
-0139     error(<span class="string">'Usage: SPGRAMBW(s,fs,mode,bw,fmax,db,tinc)'</span>);
-0140 <span class="keyword">end</span>
-0141 <span class="comment">%</span>
-0142 <span class="comment">% first decode the input arguments</span>
+0081 <span class="comment">%        'a','A' = centre-align annotations rather than left-aligning them.</span>
+0082 <span class="comment">%                  'a' applies to the lowest annotation, 'A' to all the others.</span>
+0083 <span class="comment">%        't','T' = add time markers with annotations.</span>
+0084 <span class="comment">%                  't' applies to the lowest annotation, 'T' to all the others.</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">% The BW input gives the 6dB bandwidth of the Hamming window used in the analysis.</span>
+0087 <span class="comment">% Equal amplitude frequency components are guaranteed to give separate peaks if they</span>
+0088 <span class="comment">% are this far apart. This value also determines the time resolution: the window length is</span>
+0089 <span class="comment">% 1.81/BW and the low-pass filter applied to amplitude modulations has a 6-dB bandwidth of</span>
+0090 <span class="comment">% BW/2 Hz.</span>
+0091 <span class="comment">%</span>
+0092 <span class="comment">% The units are power per Hz unless the 'P' option is given in which case power</span>
+0093 <span class="comment">% per displayed unit is used or power per decade for the 'l' option.</span>
+0094 
+0095 <span class="comment">%%%% BUGS %%%%%%</span>
+0096 <span class="comment">% * allow ANN rows to be a mixture of intervals and instants</span>
+0097 <span class="comment">% * allow multiple ANN rows</span>
+0098 <span class="comment">% * Do not use triangular interpolation if the output frequencies are the same as an FFT</span>
+0099 <span class="comment">% * Place as many subticks as will fit beyond the last tick with the 'f' option</span>
+0100 <span class="comment">% * Use a special subtick pattern between ticks that are powers of 10 using the 'f' option</span>
+0101 <span class="comment">% * Future options:</span>
+0102 <span class="comment">%       ['q' = constant q transform]</span>
+0103 <span class="comment">%       ['k' = add a piano keyboard to the frequency scale]</span>
+0104 <span class="comment">%       ['z' = use a bipolar colourmap for a matrix input with negative values]</span>
+0105 
+0106 <span class="comment">%      Copyright (C) Mike Brookes 1997-2011</span>
+0107 <span class="comment">%      Version: $Id: v_spgrambw.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0108 <span class="comment">%</span>
+0109 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0110 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0111 <span class="comment">%</span>
+0112 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0113 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0114 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0115 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0116 <span class="comment">%   (at your option) any later version.</span>
+0117 <span class="comment">%</span>
+0118 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0119 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0120 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0121 <span class="comment">%   GNU General Public License for more details.</span>
+0122 <span class="comment">%</span>
+0123 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0124 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0125 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0126 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0127 <span class="keyword">persistent</span> tcmap
+0128 <span class="keyword">if</span> isempty(tcmap)
+0129     <span class="comment">% modified thermal with better grayscale linearity</span>
+0130     tcmap=[ 0 0 0; 7 0 17; 14 0 33; 21 0 50; 29 0 67; 36 0 84; 43 0 100; 50 0 117;
+0131         57 0 134; 64 0 150; 72 0 167; 80 3 164; 89 7 156; 97 11 149; 106 15 142; 114 19 134;
+0132         123 23 127; 131 27 119; 140 31 112; 149 35 105; 157 39 97; 166 43 90; 174 47 82;
+0133         183 51 75; 192 55 68; 200 59 60; 209 63 53; 217 67 45; 226 71 38; 234 75 31;
+0134         243 79 23; 252 83 16; 255 88 12; 255 95 12; 255 102 11; 255 109 11; 255 116 10;
+0135         255 123 10; 255 130 9; 255 137 9; 255 144 8; 255 151 8; 255 158 7; 255 165 7;
+0136         255 172 6; 255 179 6; 255 186 5; 255 193 4; 255 200 4; 255 207 3; 255 214 3; 255 221 2;
+0137         255 228 2; 255 235 1; 255 242 1; 255 249 0; 255 252 22; 255 252 55; 255 253 88;
+0138         255 253 122; 255 254 155; 255 254 188; 255 255 222; 255 255 255]/255;
+0139 <span class="keyword">end</span>
+0140 <span class="keyword">if</span> nargin&lt;2
+0141     error(<span class="string">'Usage: SPGRAMBW(s,fs,mode,bw,fmax,db,tinc)'</span>);
+0142 <span class="keyword">end</span>
 0143 <span class="comment">%</span>
-0144 <span class="keyword">if</span> size(s,1)==1
-0145     s=s(:);   <span class="comment">% force to be a column vector (unless it is a matrix)</span>
-0146 <span class="keyword">end</span>
-0147 [ns1,ns2]=size(s);
-0148 ap=zeros(1,6);
-0149 j=2;
-0150 <span class="keyword">if</span> numel(fs)&lt;2
-0151     fs(2)=1/fs(1);  <span class="comment">% first sample or frame is at time 1/fs</span>
-0152 <span class="keyword">end</span>
-0153 <span class="keyword">for</span> i=1:length(varargin)
-0154     <span class="keyword">if</span> ischar(varargin{i})
-0155         ap(1)=i;
-0156     <span class="keyword">else</span>
-0157         ap(j)=i;
-0158         j=j+1;
-0159     <span class="keyword">end</span>
-0160 <span class="keyword">end</span>
-0161 <span class="keyword">if</span> ap(1) &amp;&amp; ~isempty(varargin{ap(1)})
-0162     mode=varargin{ap(1)};
-0163 <span class="keyword">else</span>
-0164     mode=<span class="string">''</span>;  <span class="comment">% default mode</span>
-0165 <span class="keyword">end</span>
-0166 <span class="keyword">if</span> ap(2) &amp;&amp; ~isempty(varargin{ap(2)})
-0167     bw=varargin{ap(2)};
-0168 <span class="keyword">else</span>
-0169     bw=200;
-0170 <span class="keyword">end</span>
-0171 <span class="keyword">if</span> ap(3) &amp;&amp; ~isempty(varargin{ap(3)})
-0172     fmax=varargin{ap(3)};
-0173 <span class="keyword">else</span>
-0174     fmax=[];
-0175 <span class="keyword">end</span>
-0176 <span class="keyword">if</span> ap(4) &amp;&amp; ~isempty(varargin{ap(4)})
-0177     db=varargin{ap(4)};
-0178 <span class="keyword">else</span>
-0179     db=40;
-0180 <span class="keyword">end</span>
-0181 <span class="keyword">if</span> ap(5) &amp;&amp; ~isempty(varargin{ap(5)})
-0182     tinc=varargin{ap(5)};
-0183 <span class="keyword">else</span>
-0184     tinc=0;
-0185 <span class="keyword">end</span>
-0186 <span class="keyword">switch</span> numel(tinc)
-0187     <span class="keyword">case</span> 1
-0188         tinc=[tinc -Inf Inf];
-0189     <span class="keyword">case</span> 2
-0190         tinc=[0 tinc];
-0191     <span class="keyword">otherwise</span>
-0192         tinc=tinc([2 1 3]);
-0193 <span class="keyword">end</span>
-0194 <span class="keyword">if</span> tinc(1)&lt;=0
-0195     tinc(1)=1.81/(4*bw); <span class="comment">% default frame increment</span>
-0196 <span class="keyword">end</span>
-0197 <span class="keyword">if</span> ap(6)
-0198     ann=varargin{ap(6)};
-0199 <span class="keyword">else</span>
-0200     ann=[];
-0201 <span class="keyword">end</span>
-0202 
-0203 <span class="comment">% now sort out the mode flags</span>
+0144 <span class="comment">% first decode the input arguments</span>
+0145 <span class="comment">%</span>
+0146 <span class="keyword">if</span> size(s,1)==1
+0147     s=s(:);   <span class="comment">% force to be a column vector (unless it is a matrix)</span>
+0148 <span class="keyword">end</span>
+0149 [ns1,ns2]=size(s);
+0150 ap=zeros(1,6);
+0151 j=2;
+0152 <span class="keyword">if</span> numel(fs)&lt;2
+0153     fs(2)=1/fs(1);  <span class="comment">% first sample or frame is at time 1/fs</span>
+0154 <span class="keyword">end</span>
+0155 <span class="keyword">for</span> i=1:length(varargin)
+0156     <span class="keyword">if</span> ischar(varargin{i})
+0157         ap(1)=i;
+0158     <span class="keyword">else</span>
+0159         ap(j)=i;
+0160         j=j+1;
+0161     <span class="keyword">end</span>
+0162 <span class="keyword">end</span>
+0163 <span class="keyword">if</span> ap(1) &amp;&amp; ~isempty(varargin{ap(1)})
+0164     mode=varargin{ap(1)};
+0165 <span class="keyword">else</span>
+0166     mode=<span class="string">''</span>;  <span class="comment">% default mode</span>
+0167 <span class="keyword">end</span>
+0168 <span class="keyword">if</span> ap(2) &amp;&amp; ~isempty(varargin{ap(2)})
+0169     bw=varargin{ap(2)};
+0170 <span class="keyword">else</span>
+0171     bw=200;
+0172 <span class="keyword">end</span>
+0173 <span class="keyword">if</span> ap(3) &amp;&amp; ~isempty(varargin{ap(3)})
+0174     fmax=varargin{ap(3)};
+0175 <span class="keyword">else</span>
+0176     fmax=[];
+0177 <span class="keyword">end</span>
+0178 <span class="keyword">if</span> ap(4) &amp;&amp; ~isempty(varargin{ap(4)})
+0179     db=varargin{ap(4)};
+0180 <span class="keyword">else</span>
+0181     db=40;
+0182 <span class="keyword">end</span>
+0183 <span class="keyword">if</span> ap(5) &amp;&amp; ~isempty(varargin{ap(5)})
+0184     tinc=varargin{ap(5)};
+0185 <span class="keyword">else</span>
+0186     tinc=0;
+0187 <span class="keyword">end</span>
+0188 <span class="keyword">switch</span> numel(tinc)
+0189     <span class="keyword">case</span> 1
+0190         tinc=[tinc -Inf Inf];
+0191     <span class="keyword">case</span> 2
+0192         tinc=[0 tinc];
+0193     <span class="keyword">otherwise</span>
+0194         tinc=tinc([2 1 3]);
+0195 <span class="keyword">end</span>
+0196 <span class="keyword">if</span> tinc(1)&lt;=0
+0197     tinc(1)=1.81/(4*bw); <span class="comment">% default frame increment</span>
+0198 <span class="keyword">end</span>
+0199 <span class="keyword">if</span> ap(6)
+0200     ann=varargin{ap(6)};
+0201 <span class="keyword">else</span>
+0202     ann=[];
+0203 <span class="keyword">end</span>
 0204 
-0205 mdsw=<span class="string">'  '</span>;           <span class="comment">% [yscale preemph]</span>
-0206 <span class="keyword">for</span> i=1:length(mode)
-0207     <span class="keyword">switch</span> mode(i)
-0208         <span class="keyword">case</span> {<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'b'</span>,<span class="string">'e'</span>}
-0209             mdsw(1)=mode(i);
-0210         <span class="keyword">case</span> {<span class="string">'p'</span>,<span class="string">'P'</span>}
-0211             mdsw(2)=mode(i);
-0212     <span class="keyword">end</span>
-0213 <span class="keyword">end</span>
-0214 <span class="keyword">if</span> mdsw(2)==<span class="string">'P'</span>
-0215     mdsw(2)=mdsw(1);        <span class="comment">% preemphasis is scaling dependent</span>
-0216 <span class="keyword">end</span>
-0217 <span class="comment">%</span>
-0218 <span class="comment">% sort out the frequency axis</span>
+0205 <span class="comment">% now sort out the mode flags</span>
+0206 
+0207 mdsw=<span class="string">'  '</span>;           <span class="comment">% [yscale preemph]</span>
+0208 <span class="keyword">for</span> i=1:length(mode)
+0209     <span class="keyword">switch</span> mode(i)
+0210         <span class="keyword">case</span> {<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'b'</span>,<span class="string">'e'</span>}
+0211             mdsw(1)=mode(i);
+0212         <span class="keyword">case</span> {<span class="string">'p'</span>,<span class="string">'P'</span>}
+0213             mdsw(2)=mode(i);
+0214     <span class="keyword">end</span>
+0215 <span class="keyword">end</span>
+0216 <span class="keyword">if</span> mdsw(2)==<span class="string">'P'</span>
+0217     mdsw(2)=mdsw(1);        <span class="comment">% preemphasis is scaling dependent</span>
+0218 <span class="keyword">end</span>
 0219 <span class="comment">%</span>
-0220 flmin=30;                   <span class="comment">% min frequency for 'l' option</span>
-0221 nfrq=257;                   <span class="comment">% default number of frequency bins</span>
-0222 <span class="keyword">if</span> ns2==1
-0223     fnyq=fs(1)/2;           <span class="comment">% default upper frequency limit is fs/2</span>
-0224 <span class="keyword">else</span>                        <span class="comment">% input is a power spectrum</span>
-0225     <span class="keyword">if</span> numel(fs)&lt;3
-0226         fs(3)=fs(1)*0.25;   <span class="comment">% default increment is 0.25 times frame increment</span>
-0227     <span class="keyword">end</span>
-0228     <span class="keyword">if</span> numel(fs)&lt;4
-0229         fs(4)=0;            <span class="comment">% first freq bin is DC by default</span>
-0230     <span class="keyword">end</span>
-0231     fnyq=fs(4)+(ns2-1)*fs(3);  <span class="comment">% default upper frequency limit is highest supplied frequency</span>
-0232 <span class="keyword">end</span>
-0233 
-0234 <span class="keyword">if</span> ~numel(fmax)             <span class="comment">% no explicit frequency range</span>
-0235     <span class="keyword">switch</span> mdsw(1)
-0236         <span class="keyword">case</span> <span class="string">'l'</span>
-0237             fx=linspace(log10(flmin),log10(fnyq),nfrq);   <span class="comment">% 20  Hz to Nyquist</span>
-0238         <span class="keyword">case</span> <span class="string">'m'</span>
-0239             fx=linspace(0,<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(fnyq),nfrq);   <span class="comment">% DC to Nyquist</span>
-0240         <span class="keyword">case</span> <span class="string">'b'</span>
-0241             fx=linspace(0,<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fnyq),nfrq);   <span class="comment">% DC to Nyquist</span>
-0242         <span class="keyword">case</span> <span class="string">'e'</span>
-0243             fx=linspace(0,<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fnyq),nfrq);   <span class="comment">% DC to Nyquist</span>
-0244         <span class="keyword">otherwise</span>   <span class="comment">% linear Hz scale</span>
-0245             fx=(0:nfrq-1)*fnyq/(nfrq-1);
-0246     <span class="keyword">end</span>
-0247 <span class="keyword">else</span>
-0248     <span class="keyword">if</span> any(mode==<span class="string">'h'</span>)
-0249         <span class="keyword">switch</span> mdsw(1)
-0250             <span class="keyword">case</span> <span class="string">'l'</span>
-0251                 fmaxu=log10(fmax);   <span class="comment">% 20  Hz to Nyquist</span>
-0252             <span class="keyword">case</span> <span class="string">'m'</span>
-0253                 fmaxu=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(fmax);   <span class="comment">% DC to Nyquist</span>
-0254             <span class="keyword">case</span> <span class="string">'b'</span>
-0255                 fmaxu=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fmax);   <span class="comment">% DC to Nyquist</span>
-0256             <span class="keyword">case</span> <span class="string">'e'</span>
-0257                 fmaxu=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fmax);   <span class="comment">% DC to Nyquist</span>
-0258             <span class="keyword">otherwise</span>
-0259                 fmaxu=fmax;  <span class="comment">% linear Hz scale</span>
-0260         <span class="keyword">end</span>
-0261     <span class="keyword">else</span>
-0262         fmaxu=fmax;                 <span class="comment">% already in the correct units</span>
-0263     <span class="keyword">end</span>
-0264     <span class="keyword">if</span> numel(fmax)&lt;2   <span class="comment">% only max value specified</span>
-0265         <span class="keyword">if</span> mdsw(1)==<span class="string">'l'</span>
-0266             fx=linspace(log10(flmin),fmaxu,nfrq);   <span class="comment">% 20  Hz to fmax</span>
-0267         <span class="keyword">else</span>
-0268             fx=linspace(0,fmaxu,nfrq);   <span class="comment">% DC to fmax</span>
-0269         <span class="keyword">end</span>
-0270     <span class="keyword">elseif</span> numel(fmax)&lt;3 <span class="comment">% min and max values specified</span>
-0271         fx=linspace(fmaxu(1),fmaxu(2),nfrq);   <span class="comment">% fmin to fmax</span>
-0272     <span class="keyword">else</span>
-0273         fmaxu(2)=fmax(2)*(fmaxu(3)-fmaxu(1))/(fmax(3)-fmax(1)); <span class="comment">% scale the step size appropriately</span>
-0274         fx=fmaxu(1):fmaxu(2):fmaxu(3);   <span class="comment">% fmin to fmax in steps of finc</span>
-0275         nfrq=length(fx);
-0276     <span class="keyword">end</span>
-0277 <span class="keyword">end</span>
-0278 <span class="keyword">switch</span> mdsw(1)          <span class="comment">% convert the frequency range to Hz</span>
-0279     <span class="keyword">case</span> <span class="string">'l'</span>
-0280         f=10.^fx;
-0281         frlab=<span class="string">'log_{10}Hz'</span>;
-0282         frlabf=<span class="string">'log'</span>;
-0283         frq2y=@log10;
-0284         y2frq=@(x) 10.^x;
-0285     <span class="keyword">case</span> <span class="string">'m'</span>
-0286         f=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(fx);
-0287         frlab=<span class="string">'Mel'</span>;
-0288         frlabf=<span class="string">'Mel'</span>;
-0289         frq2y=@<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>;
-0290         y2frq=@<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>;
-0291     <span class="keyword">case</span> <span class="string">'b'</span>
-0292         f=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(fx);
-0293         frlab=<span class="string">'Bark'</span>;
-0294         frlabf=<span class="string">'Bark'</span>;
-0295         frq2y=@<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>;
-0296         y2frq=@<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>;
-0297     <span class="keyword">case</span> <span class="string">'e'</span>
-0298         f=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(fx);
-0299         frlab=<span class="string">'Erb-rate'</span>;
-0300         frlabf=<span class="string">'Erb'</span>;
-0301         frq2y=@<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>;
-0302         y2frq=@<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>;
-0303     <span class="keyword">otherwise</span>
-0304         f=fx;
-0305         frlab=<span class="string">'Hz'</span>;
-0306         frq2y=@(x) x;
-0307         y2frq=@(x) x;
-0308 <span class="keyword">end</span>
-0309 <span class="keyword">if</span> ~any(mode==<span class="string">'H'</span>)
-0310     f=fx;               <span class="comment">% give output frequencies in native units instead of Hz unless 'H' is specified</span>
-0311 <span class="keyword">end</span>
-0312 <span class="comment">%</span>
-0313 <span class="comment">% now calculate the spectrogram</span>
+0220 <span class="comment">% sort out the frequency axis</span>
+0221 <span class="comment">%</span>
+0222 flmin=30;                   <span class="comment">% min frequency for 'l' option</span>
+0223 nfrq=257;                   <span class="comment">% default number of frequency bins</span>
+0224 <span class="keyword">if</span> ns2==1
+0225     fnyq=fs(1)/2;           <span class="comment">% default upper frequency limit is fs/2</span>
+0226 <span class="keyword">else</span>                        <span class="comment">% input is a power spectrum</span>
+0227     <span class="keyword">if</span> numel(fs)&lt;3
+0228         fs(3)=fs(1)*0.25;   <span class="comment">% default increment is 0.25 times frame increment</span>
+0229     <span class="keyword">end</span>
+0230     <span class="keyword">if</span> numel(fs)&lt;4
+0231         fs(4)=0;            <span class="comment">% first freq bin is DC by default</span>
+0232     <span class="keyword">end</span>
+0233     fnyq=fs(4)+(ns2-1)*fs(3);  <span class="comment">% default upper frequency limit is highest supplied frequency</span>
+0234 <span class="keyword">end</span>
+0235 
+0236 <span class="keyword">if</span> ~numel(fmax)             <span class="comment">% no explicit frequency range</span>
+0237     <span class="keyword">switch</span> mdsw(1)
+0238         <span class="keyword">case</span> <span class="string">'l'</span>
+0239             fx=linspace(log10(flmin),log10(fnyq),nfrq);   <span class="comment">% 20  Hz to Nyquist</span>
+0240         <span class="keyword">case</span> <span class="string">'m'</span>
+0241             fx=linspace(0,<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(fnyq),nfrq);   <span class="comment">% DC to Nyquist</span>
+0242         <span class="keyword">case</span> <span class="string">'b'</span>
+0243             fx=linspace(0,<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fnyq),nfrq);   <span class="comment">% DC to Nyquist</span>
+0244         <span class="keyword">case</span> <span class="string">'e'</span>
+0245             fx=linspace(0,<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fnyq),nfrq);   <span class="comment">% DC to Nyquist</span>
+0246         <span class="keyword">otherwise</span>   <span class="comment">% linear Hz scale</span>
+0247             fx=(0:nfrq-1)*fnyq/(nfrq-1);
+0248     <span class="keyword">end</span>
+0249 <span class="keyword">else</span>
+0250     <span class="keyword">if</span> any(mode==<span class="string">'h'</span>)
+0251         <span class="keyword">switch</span> mdsw(1)
+0252             <span class="keyword">case</span> <span class="string">'l'</span>
+0253                 fmaxu=log10(fmax);   <span class="comment">% 20  Hz to Nyquist</span>
+0254             <span class="keyword">case</span> <span class="string">'m'</span>
+0255                 fmaxu=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(fmax);   <span class="comment">% DC to Nyquist</span>
+0256             <span class="keyword">case</span> <span class="string">'b'</span>
+0257                 fmaxu=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(fmax);   <span class="comment">% DC to Nyquist</span>
+0258             <span class="keyword">case</span> <span class="string">'e'</span>
+0259                 fmaxu=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(fmax);   <span class="comment">% DC to Nyquist</span>
+0260             <span class="keyword">otherwise</span>
+0261                 fmaxu=fmax;  <span class="comment">% linear Hz scale</span>
+0262         <span class="keyword">end</span>
+0263     <span class="keyword">else</span>
+0264         fmaxu=fmax;                 <span class="comment">% already in the correct units</span>
+0265     <span class="keyword">end</span>
+0266     <span class="keyword">if</span> numel(fmax)&lt;2   <span class="comment">% only max value specified</span>
+0267         <span class="keyword">if</span> mdsw(1)==<span class="string">'l'</span>
+0268             fx=linspace(log10(flmin),fmaxu,nfrq);   <span class="comment">% 20  Hz to fmax</span>
+0269         <span class="keyword">else</span>
+0270             fx=linspace(0,fmaxu,nfrq);   <span class="comment">% DC to fmax</span>
+0271         <span class="keyword">end</span>
+0272     <span class="keyword">elseif</span> numel(fmax)&lt;3 <span class="comment">% min and max values specified</span>
+0273         fx=linspace(fmaxu(1),fmaxu(2),nfrq);   <span class="comment">% fmin to fmax</span>
+0274     <span class="keyword">else</span>
+0275         fmaxu(2)=fmax(2)*(fmaxu(3)-fmaxu(1))/(fmax(3)-fmax(1)); <span class="comment">% scale the step size appropriately</span>
+0276         fx=fmaxu(1):fmaxu(2):fmaxu(3);   <span class="comment">% fmin to fmax in steps of finc</span>
+0277         nfrq=length(fx);
+0278     <span class="keyword">end</span>
+0279 <span class="keyword">end</span>
+0280 <span class="keyword">switch</span> mdsw(1)          <span class="comment">% convert the frequency range to Hz</span>
+0281     <span class="keyword">case</span> <span class="string">'l'</span>
+0282         f=10.^fx;
+0283         frlab=<span class="string">'log_{10}Hz'</span>;
+0284         frlabf=<span class="string">'log'</span>;
+0285         frq2y=@log10;
+0286         y2frq=@(x) 10.^x;
+0287     <span class="keyword">case</span> <span class="string">'m'</span>
+0288         f=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(fx);
+0289         frlab=<span class="string">'Mel'</span>;
+0290         frlabf=<span class="string">'Mel'</span>;
+0291         frq2y=@<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>;
+0292         y2frq=@<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>;
+0293     <span class="keyword">case</span> <span class="string">'b'</span>
+0294         f=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(fx);
+0295         frlab=<span class="string">'Bark'</span>;
+0296         frlabf=<span class="string">'Bark'</span>;
+0297         frq2y=@<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>;
+0298         y2frq=@<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>;
+0299     <span class="keyword">case</span> <span class="string">'e'</span>
+0300         f=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(fx);
+0301         frlab=<span class="string">'Erb-rate'</span>;
+0302         frlabf=<span class="string">'Erb'</span>;
+0303         frq2y=@<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>;
+0304         y2frq=@<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>;
+0305     <span class="keyword">otherwise</span>
+0306         f=fx;
+0307         frlab=<span class="string">'Hz'</span>;
+0308         frq2y=@(x) x;
+0309         y2frq=@(x) x;
+0310 <span class="keyword">end</span>
+0311 <span class="keyword">if</span> ~any(mode==<span class="string">'H'</span>)
+0312     f=fx;               <span class="comment">% give output frequencies in native units instead of Hz unless 'H' is specified</span>
+0313 <span class="keyword">end</span>
 0314 <span class="comment">%</span>
-0315 <span class="keyword">if</span> ns2==1   <span class="comment">% input is a speech signal vector</span>
-0316     winlen = fix(1.81*fs(1)/bw);   <span class="comment">% window length</span>
-0317     win=0.54+0.46*cos((1-winlen:2:winlen)*pi/winlen);  <span class="comment">% Hamming window</span>
-0318     ninc=max(round(tinc(1)*fs(1)),1);                 <span class="comment">% window increment in samples</span>
-0319     <span class="comment">%  we need to take account of minimum freq increment + make it exact if possible</span>
-0320     fftlen=pow2(nextpow2(4*winlen));        <span class="comment">% enough oversampling to get good interpolation</span>
-0321     win=win/sqrt(sum(win.^2));              <span class="comment">% ensure window squared sums to unity</span>
-0322     ix1=max(round((tinc(2)-fs(2))*fs(1)-(winlen-3)/2),1); <span class="comment">% first sample required</span>
-0323     ix2=min(ceil((tinc(3)-fs(2))*fs(1)+(winlen+1)/2),ns1); <span class="comment">% last sample required</span>
-0324     [sf,t]=<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s(ix1:ix2),win,ninc);
-0325     t=fs(2)+(t+ix1-2)/fs(1);                         <span class="comment">% time axis</span>
-0326     b=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(sf,fftlen,2);
-0327     b=b.*conj(b)*2/fs(1);          <span class="comment">% Power per Hz</span>
-0328     b(:,1)=b(:,1)*0.5;   <span class="comment">% correct for no negative zero frequency to double the power</span>
-0329     b(:,end)=b(:,end)*0.5;   <span class="comment">% correct for no negative nyquist frequency to double the power</span>
-0330     fb=(0:fftlen/2)*fs(1)/fftlen; <span class="comment">% fft bin frequencies</span>
-0331     fftfs=fs(1);
-0332 <span class="keyword">else</span>
-0333     b=s;
-0334     t=fs(2)+(0:ns1-1)/fs(1);  <span class="comment">% frame times</span>
-0335     fb=fs(4)+(0:ns2-1)*fs(3);
-0336     fftlen=[ns2 fs(3) fs(4)]; <span class="comment">% for v_filtbankm: ns2=# input freq bins, freq increment (Hz), first bin freq (Hz)</span>
-0337     fftfs=0;
-0338     <span class="comment">%     fftlen=2*(ns2-1);  % assume an even length fft</span>
-0339     <span class="comment">%     fftfs=fftlen*fs(3);</span>
-0340 <span class="keyword">end</span>
-0341 nfr=numel(t);                   <span class="comment">% number of frames</span>
-0342 dblab=<span class="string">'Power/Hz'</span>;
-0343 <span class="keyword">switch</span> mdsw(2)
-0344     <span class="keyword">case</span> {<span class="string">'p'</span>,<span class="string">'l'</span>}
-0345         b=b.*repmat(fb*log(10),nfr,1);       <span class="comment">% convert to power per decade</span>
-0346         dblab=<span class="string">'Power/Decade'</span>;
-0347     <span class="keyword">case</span> <span class="string">'m'</span>
-0348         b=b.*repmat((700+fb)*log(1+1000/700)/1000,nfr,1);       <span class="comment">% convert to power per mel</span>
-0349         dblab=<span class="string">'Power/Mel'</span>;
-0350     <span class="keyword">case</span> <span class="string">'b'</span>
-0351         b=b.*repmat((1960+fb).^2/52547.6,nfr,1);       <span class="comment">% convert to power per bark</span>
-0352         dblab=<span class="string">'Power/Bark'</span>;
-0353     <span class="keyword">case</span> <span class="string">'e'</span>
-0354         b=b.*repmat(6.23*fb.^2 + 93.39*fb + 28.52,nfr,1);       <span class="comment">% convert to power per erb</span>
-0355         dblab=<span class="string">'Power/Erb-rate'</span>;
-0356 <span class="keyword">end</span>
-0357 <span class="comment">%</span>
-0358 <span class="comment">% Now map onto the desired frequency scale</span>
+0315 <span class="comment">% now calculate the spectrogram</span>
+0316 <span class="comment">%</span>
+0317 <span class="keyword">if</span> ns2==1   <span class="comment">% input is a speech signal vector</span>
+0318     winlen = fix(1.81*fs(1)/bw);   <span class="comment">% window length</span>
+0319     win=0.54+0.46*cos((1-winlen:2:winlen)*pi/winlen);  <span class="comment">% Hamming window</span>
+0320     ninc=max(round(tinc(1)*fs(1)),1);                 <span class="comment">% window increment in samples</span>
+0321     <span class="comment">%  we need to take account of minimum freq increment + make it exact if possible</span>
+0322     fftlen=pow2(nextpow2(4*winlen));        <span class="comment">% enough oversampling to get good interpolation</span>
+0323     win=win/sqrt(sum(win.^2));              <span class="comment">% ensure window squared sums to unity</span>
+0324     ix1=max(round((tinc(2)-fs(2))*fs(1)-(winlen-3)/2),1); <span class="comment">% first sample required</span>
+0325     ix2=min(ceil((tinc(3)-fs(2))*fs(1)+(winlen+1)/2),ns1); <span class="comment">% last sample required</span>
+0326     [sf,t]=<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s(ix1:ix2),win,ninc);
+0327     t=fs(2)+(t+ix1-2)/fs(1);                         <span class="comment">% time axis</span>
+0328     b=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(sf,fftlen,2);
+0329     b=b.*conj(b)*2/fs(1);          <span class="comment">% Power per Hz</span>
+0330     b(:,1)=b(:,1)*0.5;   <span class="comment">% correct for no negative zero frequency to double the power</span>
+0331     b(:,end)=b(:,end)*0.5;   <span class="comment">% correct for no negative nyquist frequency to double the power</span>
+0332     fb=(0:fftlen/2)*fs(1)/fftlen; <span class="comment">% fft bin frequencies</span>
+0333     fftfs=fs(1);
+0334 <span class="keyword">else</span>
+0335     b=s;
+0336     t=fs(2)+(0:ns1-1)/fs(1);  <span class="comment">% frame times</span>
+0337     fb=fs(4)+(0:ns2-1)*fs(3);
+0338     fftlen=[ns2 fs(3) fs(4)]; <span class="comment">% for v_filtbankm: ns2=# input freq bins, freq increment (Hz), first bin freq (Hz)</span>
+0339     fftfs=0;
+0340     <span class="comment">%     fftlen=2*(ns2-1);  % assume an even length fft</span>
+0341     <span class="comment">%     fftfs=fftlen*fs(3);</span>
+0342 <span class="keyword">end</span>
+0343 nfr=numel(t);                   <span class="comment">% number of frames</span>
+0344 dblab=<span class="string">'Power/Hz'</span>;
+0345 <span class="keyword">switch</span> mdsw(2)
+0346     <span class="keyword">case</span> {<span class="string">'p'</span>,<span class="string">'l'</span>}
+0347         b=b.*repmat(fb*log(10),nfr,1);       <span class="comment">% convert to power per decade</span>
+0348         dblab=<span class="string">'Power/Decade'</span>;
+0349     <span class="keyword">case</span> <span class="string">'m'</span>
+0350         b=b.*repmat((700+fb)*log(1+1000/700)/1000,nfr,1);       <span class="comment">% convert to power per mel</span>
+0351         dblab=<span class="string">'Power/Mel'</span>;
+0352     <span class="keyword">case</span> <span class="string">'b'</span>
+0353         b=b.*repmat((1960+fb).^2/52547.6,nfr,1);       <span class="comment">% convert to power per bark</span>
+0354         dblab=<span class="string">'Power/Bark'</span>;
+0355     <span class="keyword">case</span> <span class="string">'e'</span>
+0356         b=b.*repmat(6.23*fb.^2 + 93.39*fb + 28.52,nfr,1);       <span class="comment">% convert to power per erb</span>
+0357         dblab=<span class="string">'Power/Erb-rate'</span>;
+0358 <span class="keyword">end</span>
 0359 <span class="comment">%</span>
-0360 <span class="keyword">if</span> any(mode==<span class="string">'n'</span>)
-0361     fbopt=[<span class="string">'cushn'</span> mdsw(1)];
-0362 <span class="keyword">else</span>
-0363     fbopt=[<span class="string">'cush'</span> mdsw(1)];
-0364 <span class="keyword">end</span>
-0365 b=b*filtbankm(nfrq,fftlen,fftfs,fx(1),fx(end),fbopt)';
-0366 
-0367 <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>) ||  any(lower(mode)==<span class="string">'d'</span>)
-0368     <span class="keyword">if</span> numel(db)&lt;2          <span class="comment">% find clipping limits</span>
-0369         plim=max(b(:))*[0.1^(0.1*db) 1];
-0370     <span class="keyword">else</span>
-0371         plim=10.^(0.1*db(1:2));
-0372     <span class="keyword">end</span>
-0373     <span class="keyword">if</span> plim(2)&lt;=0
-0374         plim(2)=1;
-0375     <span class="keyword">end</span>
-0376     <span class="keyword">if</span> plim(1)&lt;=0 || plim(1)==plim(2)
-0377         plim(1)=0.1*plim(2);
-0378     <span class="keyword">end</span>
-0379     <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>)
-0380         bd=10*log10(max(b,max(b(:)*1e-30)));  <span class="comment">% save an unclipped log version for plotting</span>
-0381     <span class="keyword">end</span>
-0382     <span class="keyword">if</span> any(mode==<span class="string">'D'</span>)
-0383         b=min(max(b,plim(1)),plim(2)); <span class="comment">% clip the output</span>
-0384     <span class="keyword">end</span>
-0385     <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
-0386         b=10*log10(b);    <span class="comment">% output the dB version</span>
-0387     <span class="keyword">end</span>
-0388 <span class="keyword">end</span>
-0389 <span class="comment">% now plot things</span>
-0390 <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>)
-0391     cla;  <span class="comment">% clear current axis</span>
-0392     imagesc(t,fx,bd');
-0393     axis(<span class="string">'xy'</span>);
-0394     set(gca,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'clim'</span>,10*log10(plim));
-0395     <span class="keyword">if</span> any(mode==<span class="string">'j'</span>)
-0396         colormap(<span class="string">'jet'</span>);
-0397         map=colormap;
-0398     <span class="keyword">elseif</span> any(mode==<span class="string">'J'</span>)
-0399         map=tcmap;
-0400     <span class="keyword">else</span>
-0401         map = repmat((0:63)'/63,1,3);
-0402     <span class="keyword">end</span>
-0403     <span class="keyword">if</span> any(mode==<span class="string">'i'</span>)               <span class="comment">% 'i' option = invert the colourmap</span>
-0404         map=map(64:-1:1,:);
-0405     <span class="keyword">end</span>
-0406     colormap(map);
-0407     <span class="keyword">if</span> any(mode==<span class="string">'c'</span>)                <span class="comment">% 'c' option = show a colourbar</span>
-0408         colorbar;
-0409         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>([dblab <span class="string">' (dB)'</span>]);
-0410     <span class="keyword">end</span>
-0411     <span class="comment">%</span>
-0412     <span class="comment">% Now check if annotations or a waveform are required</span>
+0360 <span class="comment">% Now map onto the desired frequency scale</span>
+0361 <span class="comment">%</span>
+0362 <span class="keyword">if</span> any(mode==<span class="string">'n'</span>)
+0363     fbopt=[<span class="string">'cushn'</span> mdsw(1)];
+0364 <span class="keyword">else</span>
+0365     fbopt=[<span class="string">'cush'</span> mdsw(1)];
+0366 <span class="keyword">end</span>
+0367 b=b*filtbankm(nfrq,fftlen,fftfs,fx(1),fx(end),fbopt)';
+0368 
+0369 <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>) ||  any(lower(mode)==<span class="string">'d'</span>)
+0370     <span class="keyword">if</span> numel(db)&lt;2          <span class="comment">% find clipping limits</span>
+0371         plim=max(b(:))*[0.1^(0.1*db) 1];
+0372     <span class="keyword">else</span>
+0373         plim=10.^(0.1*db(1:2));
+0374     <span class="keyword">end</span>
+0375     <span class="keyword">if</span> plim(2)&lt;=0
+0376         plim(2)=1;
+0377     <span class="keyword">end</span>
+0378     <span class="keyword">if</span> plim(1)&lt;=0 || plim(1)==plim(2)
+0379         plim(1)=0.1*plim(2);
+0380     <span class="keyword">end</span>
+0381     <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>)
+0382         bd=10*log10(max(b,max(b(:)*1e-30)));  <span class="comment">% save an unclipped log version for plotting</span>
+0383     <span class="keyword">end</span>
+0384     <span class="keyword">if</span> any(mode==<span class="string">'D'</span>)
+0385         b=min(max(b,plim(1)),plim(2)); <span class="comment">% clip the output</span>
+0386     <span class="keyword">end</span>
+0387     <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
+0388         b=10*log10(b);    <span class="comment">% output the dB version</span>
+0389     <span class="keyword">end</span>
+0390 <span class="keyword">end</span>
+0391 <span class="comment">% now plot things</span>
+0392 <span class="keyword">if</span> ~nargout || any(mode==<span class="string">'g'</span>)
+0393     cla;  <span class="comment">% clear current axis</span>
+0394     imagesc(t,fx,bd');
+0395     axis(<span class="string">'xy'</span>);
+0396     set(gca,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'clim'</span>,10*log10(plim));
+0397     <span class="keyword">if</span> any(mode==<span class="string">'j'</span>)
+0398         colormap(<span class="string">'jet'</span>);
+0399         map=colormap;
+0400     <span class="keyword">elseif</span> any(mode==<span class="string">'J'</span>)
+0401         map=tcmap;
+0402     <span class="keyword">else</span>
+0403         map = repmat((0:63)'/63,1,3);
+0404     <span class="keyword">end</span>
+0405     <span class="keyword">if</span> any(mode==<span class="string">'i'</span>)               <span class="comment">% 'i' option = invert the colourmap</span>
+0406         map=map(64:-1:1,:);
+0407     <span class="keyword">end</span>
+0408     colormap(map);
+0409     <span class="keyword">if</span> any(mode==<span class="string">'c'</span>)                <span class="comment">% 'c' option = show a colourbar</span>
+0410         colorbar;
+0411         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>([dblab <span class="string">' (dB)'</span>]);
+0412     <span class="keyword">end</span>
 0413     <span class="comment">%</span>
-0414     dotaw=[((any(mode==<span class="string">'t'</span>) &amp;&amp; size(ann,2)&gt;1) || size(ann,2)==1) size(ann,2)&gt;1 (any(mode==<span class="string">'w'</span>) &amp;&amp; ns2==1)];
-0415     ylim=get(gca,<span class="string">'ylim'</span>);
-0416     <span class="keyword">if</span>  any(dotaw)
-0417         yrange = ylim(2)-ylim(1);
-0418         zlim=ylim;
-0419         toptaw=cumsum([0 dotaw.*[0.05 0.05 0.1]]*yrange)+ylim(2);
-0420         zlim(2)=toptaw(4);
-0421         set(gca,<span class="string">'ylim'</span>,zlim,<span class="string">'color'</span>,map(1,:));
-0422         <span class="keyword">if</span> dotaw(3)        <span class="comment">% Plot the waveform</span>
-0423             six=min(max(floor((get(gca,<span class="string">'xlim'</span>)-fs(2))*fs(1))+[1 2],1),ns1);
-0424             smax=max(s(six(1):six(2)));
-0425             smin=min(s(six(1):six(2)));
-0426             <span class="keyword">if</span> smax==smin
-0427                 smax=smax+1;
-0428                 smin=smin-1;
-0429             <span class="keyword">end</span>
-0430             srange=smax-smin;
-0431             hold on
-0432             plot(fs(2)+(six(1)-1:six(2)-1)/fs(1),(s(six(1):six(2))-smin)/srange*0.9*(toptaw(4)-toptaw(3))+toptaw(3),<span class="string">'color'</span>,map(48,:))
-0433             hold off
-0434         <span class="keyword">end</span>
-0435         <span class="keyword">if</span> dotaw(1) || dotaw(2)
-0436             tmk=cell2mat(ann(:,1));
-0437             tmksel=tmk(:,1)&lt;=t(end) &amp; tmk(:,end)&gt;=t(1);
-0438             yix=1+[tmk(tmksel,1)&lt;t(1) ones(sum(tmksel),2) tmk(tmksel,end)&gt;t(end)]';
-0439             tmk(:,1)=max(tmk(:,1),t(1));  <span class="comment">% clip to axis limits</span>
-0440             tmk(:,end)=min(tmk(:,end),t(end));
-0441         <span class="keyword">end</span>
-0442         <span class="keyword">if</span> dotaw(1) &amp;&amp; any(tmksel)  <span class="comment">% draw time markers</span>
-0443             ymk=toptaw(1:2)*[0.8 0.4;0.2 0.6];
-0444             <span class="keyword">switch</span> size(tmk,2)
-0445                 <span class="keyword">case</span> 0
-0446                 <span class="keyword">case</span> 1      <span class="comment">% isolated marks</span>
-0447                     hold on
-0448                     plot([tmk(tmksel) tmk(tmksel)]',repmat(ymk',1,sum(tmksel)),<span class="string">'color'</span>,map(48,:));
-0449                     hold off
-0450                 <span class="keyword">otherwise</span> <span class="comment">% draw durations</span>
-0451 
-0452                     hold on
-0453                     plot(tmk(tmksel,[1 1 2 2])',ymk(yix),<span class="string">'color'</span>,map(48,:));
-0454                     hold off
-0455             <span class="keyword">end</span>
-0456         <span class="keyword">end</span>
-0457         <span class="keyword">if</span> dotaw(2) &amp;&amp; any(tmksel) <span class="comment">% print annotations</span>
-0458             <span class="keyword">if</span> any(mode==<span class="string">'a'</span>)
-0459                 horal=<span class="string">'center'</span>;
-0460                 tmk=(tmk(:,1)+tmk(:,end))*0.5;
-0461             <span class="keyword">else</span>
-0462                 horal=<span class="string">'left'</span>;
-0463                 tmk=tmk(:,1);
+0414     <span class="comment">% Now check if annotations or a waveform are required</span>
+0415     <span class="comment">%</span>
+0416     <span class="comment">% calculate space for annotations</span>
+0417     annh=2*(any(mode==<span class="string">'w'</span>) &amp;&amp; ns2==1);                              <span class="comment">% height of waveform (2 * annotation height)</span>
+0418     nann=0;
+0419     <span class="keyword">if</span> ~isempty(ann)                                                <span class="comment">% we also have annotations</span>
+0420         <span class="keyword">if</span> ~iscell(ann{1})                                          <span class="comment">% only one annotation array</span>
+0421             ann={ann};                                              <span class="comment">% ... so make it a sub-cell</span>
+0422         <span class="keyword">end</span>
+0423         nann=length(ann);
+0424         annh=repmat(annh,1,2*nann+1);                               <span class="comment">% two possible components for each annotation + waveform</span>
+0425         modet=any(mode==<span class="string">'t'</span>);
+0426         <span class="keyword">for</span> i=1:nann
+0427             anni=ann{nann+1-i};                                     <span class="comment">% process in reverse order (bottom up)</span>
+0428             annh(2*i)=size(anni,2)&gt;1;                               <span class="comment">% annotation needed</span>
+0429             annh(2*i-1)=(modet &amp;&amp; annh(2*i)) || size(anni,2)==1;    <span class="comment">% time markers needed</span>
+0430             modet=any(mode==<span class="string">'T'</span>);                                   <span class="comment">% 'T' applies to each annotation except for the first</span>
+0431         <span class="keyword">end</span>
+0432     <span class="keyword">end</span>
+0433     ylim=get(gca,<span class="string">'ylim'</span>);                                           <span class="comment">% y-axis limits</span>
+0434     <span class="comment">% draw annotations</span>
+0435     <span class="keyword">if</span> any(annh&gt;0)
+0436         yrange = ylim(2)-ylim(1);                                   <span class="comment">% y-axis range</span>
+0437         zlim=ylim;
+0438         toptaw=cumsum([0 0.05*yrange*annh])+ylim(2);                <span class="comment">% y-limits of time-markers, annotations, waveform</span>
+0439         zlim(2)=toptaw(end);                                        <span class="comment">% new upper limit for y</span>
+0440         set(gca,<span class="string">'ylim'</span>,zlim,<span class="string">'color'</span>,map(1,:));                      <span class="comment">% extend y limits with black background</span>
+0441         <span class="keyword">if</span> annh(end) <span class="comment">% draw waveform</span>
+0442             six=min(max(floor((get(gca,<span class="string">'xlim'</span>)-fs(2))*fs(1))+[1 2],1),ns1);
+0443             smax=max(s(six(1):six(2)));
+0444             smin=min(s(six(1):six(2)));
+0445             <span class="keyword">if</span> smax==smin
+0446                 smax=smax+1;
+0447                 smin=smin-1;
+0448             <span class="keyword">end</span>
+0449             srange=smax-smin;
+0450             hold on
+0451             plot(fs(2)+(six(1)-1:six(2)-1)/fs(1),(s(six(1):six(2))-smin)/srange*0.9*(toptaw(end)-toptaw(end-1))+toptaw(end-1),<span class="string">'color'</span>,map(48,:))
+0452             hold off
+0453         <span class="keyword">end</span>
+0454         modet=any(mode==<span class="string">'t'</span>);
+0455         modea=any(mode==<span class="string">'a'</span>);
+0456         <span class="keyword">for</span> iann=1:nann <span class="comment">% loop thropugh each annotation cell array</span>
+0457             anni=ann{nann+1-iann}; <span class="comment">% process in reverse order (bottom up)</span>
+0458             <span class="keyword">if</span> annh(2*iann-1) || annh(2*iann)
+0459                 tmk=cell2mat(anni(:,1));
+0460                 tmksel=tmk(:,1)&lt;=t(end) &amp; tmk(:,end)&gt;=t(1); <span class="comment">% select those that lie within the time axis</span>
+0461                 yix=1+[tmk(tmksel,1)&lt;t(1) ones(sum(tmksel),2) tmk(tmksel,end)&gt;t(end)]';
+0462                 tmk(:,1)=max(tmk(:,1),t(1));  <span class="comment">% clip to axis limits</span>
+0463                 tmk(:,end)=min(tmk(:,end),t(end));
 0464             <span class="keyword">end</span>
-0465             <span class="keyword">if</span> size(ann,2)&gt;2
-0466                 font=<span class="string">'Arial'</span>;
-0467                 <span class="keyword">for</span> i=1:size(ann,1)
-0468                     <span class="keyword">if</span> tmksel(i)
-0469                         <span class="keyword">if</span> ~isempty(ann{i,3})
-0470                             font = ann{i,3};
-0471                         <span class="keyword">end</span>
-0472                         text(tmk(i),toptaw(2),ann{i,2},<span class="string">'color'</span>,map(48,:),<span class="string">'fontname'</span>,font,<span class="string">'VerticalAlignment'</span>,<span class="string">'baseline'</span>,<span class="string">'HorizontalAlignment'</span>,horal);
-0473                     <span class="keyword">end</span>
-0474                 <span class="keyword">end</span>
-0475             <span class="keyword">else</span>
-0476                 <span class="keyword">for</span> i=1:size(ann,1)
-0477                     <span class="keyword">if</span> tmksel(i)
-0478                         text(tmk(i),toptaw(2),ann{i,2},<span class="string">'color'</span>,map(48,:),<span class="string">'VerticalAlignment'</span>,<span class="string">'baseline'</span>,<span class="string">'HorizontalAlignment'</span>,horal);
-0479                     <span class="keyword">end</span>
-0480                 <span class="keyword">end</span>
-0481             <span class="keyword">end</span>
-0482         <span class="keyword">end</span>
-0483     <span class="keyword">end</span>
-0484     xlabel([<span class="string">'Time ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'s)'</span>]);
-0485     <span class="keyword">if</span> any(mode==<span class="string">'f'</span>) &amp;&amp; ~strcmp(frlab,<span class="string">'Hz'</span>)
-0486         ylabel([frlabf <span class="string">'-scaled frequency (Hz)'</span>]);
-0487         <a href="#_sub1" class="code" title="subfunction ytickhz(frq2y,y2frq)">ytickhz</a>(frq2y,y2frq);
-0488     <span class="keyword">else</span>
-0489         ylabel([<span class="string">'Frequency ('</span> <a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a> frlab <span class="string">')'</span>]);
-0490     <span class="keyword">end</span>
-0491     ytick=get(gca,<span class="string">'YTick'</span>);
-0492     ytickl=get(gca,<span class="string">'YTickLabel'</span>);
-0493     msk=ytick&lt;=ylim(2);
-0494     <span class="keyword">if</span> any(~msk)
-0495         set(gca,<span class="string">'YTick'</span>,ytick(msk),<span class="string">'YTickLabel'</span>,ytickl(msk));
-0496     <span class="keyword">end</span>
-0497 <span class="keyword">end</span>
-0498 
-0499 <a name="_sub1" href="#_subfunctions" class="code">function ytickhz(frq2y,y2frq)</a>
-0500 <span class="comment">% label non linear y frequency axis</span>
-0501 <span class="comment">%</span>
-0502 <span class="comment">% Bugs/Suggestions:</span>
-0503 <span class="comment">% * Add a penalty for large numbers (e.g. 94 is less &quot;round&quot; than 11)</span>
-0504 <span class="comment">% * possibly add subticks at 1:2:5 if boundaries are 1 and 10</span>
-0505 <span class="comment">% * could treat subtick allocation specially if bounding lables are both powers of 10</span>
-0506 <span class="comment">%   and work in log spacing rather than spacing directly</span>
-0507 
-0508 <span class="comment">% algorithm constants</span>
-0509 
-0510 seps=[0.4 1 3 6]; <span class="comment">% spacings: (a) min subtick, (b) min tick, (c) min good tick, (d) max good tick</span>
-0511 ww=[0.5 0.6 0.8 0.1 0.3 0.3 0.2];  <span class="comment">% weight for (a) last digit=5, (b) power of 10, (c) power of 1000, (d) equal spacing, (e) 1:2:5 labels (f) &lt;seps(3) (g) &gt;seps(4)</span>
-0512 nbest=10; <span class="comment">% number of possibilities to track</span>
-0513 
-0514 prefix={<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'a'</span>,<span class="string">'f'</span>,<span class="string">'p'</span>,<span class="string">'n'</span>,<span class="string">'u'</span>,<span class="string">'m'</span>,<span class="string">''</span>,<span class="string">'k'</span>,<span class="string">'M'</span>,<span class="string">'G'</span>,<span class="string">'T'</span>,<span class="string">'P'</span>,<span class="string">'E'</span>,<span class="string">'Z'</span>,<span class="string">'Y'</span>};
-0515 
-0516 ah=gca;
-0517 getgca=get(ah);  <span class="comment">% Get original axis properties</span>
-0518 set(ah,<span class="string">'Units'</span>,<span class="string">'points'</span>,<span class="string">'FontUnits'</span>,<span class="string">'points'</span>);
-0519 getgcac=get(ah);  <span class="comment">% Get axis properties in points units</span>
-0520 set(ah,<span class="string">'Units'</span>,getgca.Units,<span class="string">'FontUnits'</span>,getgca.FontUnits); <span class="comment">% return to original values</span>
-0521 ylim=getgca.YLim;
-0522 yrange=ylim*[-1;1];
-0523 chsz= yrange*getgcac.FontSize/getgcac.Position(4); <span class="comment">% char height in Y-units</span>
-0524 <span class="comment">% divide the y-axis up into bins containing at most one label each</span>
-0525 maxl=ceil(2*yrange/chsz);  <span class="comment">% max number of labels</span>
-0526 
-0527 <span class="comment">% candidate array [cand(:,[1 2])/1000 cand(:,5) cand(:,6)/1000 cand(:,[7 8])]</span>
-0528 <span class="comment">% 1,2=y limits, 3,4=log limits, 5=Hz, 6=cost, 7=mantissa, 8=exponent, 9=sig digits, 10=y-position</span>
-0529 cand=zeros(maxl+2,10);
-0530 yinc=(yrange+chsz*0.0002)/maxl;  <span class="comment">% bin spacing (allowing for a tiny bit to ensure the ends are included)</span>
-0531 cand(2:end-1,2)=ylim(1)+yinc*(1:maxl)'-chsz*0.0001;
-0532 cand(3:end-1,1)=cand(2:end-2,2);
-0533 cand(2,1)=cand(2,2)-yinc;
-0534 cand(2:end-1,1:2)=y2frq(max(cand(2:end-1,1:2),0));
-0535 
-0536 <span class="comment">% find the &quot;roundest&quot; number in each interval</span>
-0537 <span class="comment">% first deal with intervals containing zero</span>
-0538 cand([1 maxl+2],6)=-1;
-0539 cand(2,9)=(cand(2,1)&lt;=0);  <span class="comment">% mask out interval contaiing zero</span>
-0540 cand(2,6)=-cand(2,9);
-0541 msk=cand(:,6)==0;  <span class="comment">% find rows without a cost yet</span>
-0542 cand(msk,3:4)=log10(cand(msk,1:2));
-0543 <span class="comment">% find powers of 1000</span>
-0544 loglim=ceil(cand(:,3:4)/3);
-0545 msk=loglim(:,2)&gt;loglim(:,1);
-0546 <span class="keyword">if</span> any(msk)
-0547     xp=loglim(msk,1);
-0548     wuns=ones(length(xp),1);
-0549     cand(msk,5:9)=[1000.^xp wuns-ww(3) wuns 3*xp wuns];
-0550 <span class="keyword">end</span>
-0551 <span class="comment">% find powers of 10</span>
-0552 loglim=ceil(cand(:,3:4));
-0553 msk=~msk &amp; (loglim(:,2)&gt;loglim(:,1));
-0554 <span class="keyword">if</span> any(msk)
-0555     xp=loglim(msk,1);
-0556     wuns=ones(length(xp),1);
-0557     cand(msk,5:9)=[10.^xp wuns-ww(2) wuns xp wuns];
-0558 <span class="keyword">end</span>
-0559 <span class="comment">% find value with fewest digits</span>
-0560 msk=cand(:,6)==0;  <span class="comment">% find rows without a cost yet</span>
-0561 maxsig=1-floor(log10(10^min(cand(msk,3:4)*[-1;1])-1)); <span class="comment">% maximum number of significant figures to consider</span>
-0562 pten=10.^(0:maxsig-1);   <span class="comment">% row vector of powers of ten</span>
-0563 noten=10.^(-floor(cand(msk,3))); <span class="comment">% exponent of floating point representation of lower bound</span>
-0564 sigdig=sum((ceil(cand(msk,2).*noten*pten)-ceil(cand(msk,1).*noten*pten))==0,2); <span class="comment">% number of digits common to the interval bounds</span>
-0565 lowman=ceil(cand(msk,1).*noten.*10.^sigdig);
-0566 midman=10*floor(lowman/10)+5;
-0567 highman=ceil(cand(msk,2).*noten.*10.^sigdig);
-0568 mskman=midman&gt;=lowman &amp; midman&lt;highman;   <span class="comment">% check if we can include a manitssa ending in 5</span>
-0569 lowman(mskman)=midman(mskman);
-0570 cand(msk,6:9)=[sigdig+1 lowman floor(cand(msk,3))-sigdig sigdig+1];
-0571 cand(msk,5)=cand(msk,7).*10.^cand(msk,8);
-0572 cand(msk,6)=cand(msk,6)-(mod(cand(msk,7),10)==5)*ww(1);
-0573 cand(2:end-1,10)=frq2y(cand(2:end-1,5));
-0574 cand([1 maxl+2],10)=ylim + seps(4)*chsz*[-1 1]; <span class="comment">% put imaginary labels at the optimum spacing beyond the axes</span>
-0575 <span class="comment">% [cand(:,[1 2 5])/1000 cand(:,[6 7 8 9])]</span>
-0576 
-0577 <span class="comment">% Now do n-best DP to find the best sequence</span>
-0578 
-0579 ratint=[8/5 25/10 0 0 4/3];
-0580 costs=Inf(nbest,maxl+2); <span class="comment">% cumulative path costs</span>
-0581 costs(1,1)=0; <span class="comment">% starting node only has one option</span>
-0582 prev=ones(nbest,maxl+2); <span class="comment">% previous label in path</span>
-0583 labcnt=zeros(nbest,maxl+2); <span class="comment">% number of labels in path</span>
-0584 <span class="keyword">for</span> i=2:maxl+2
-0585     ntry=nbest*(i-1); <span class="comment">% number of previous options</span>
-0586     prevc=reshape(repmat(1:i-1,nbest,1),ntry,1); <span class="comment">% previous candidate</span>
-0587     prevprev=1+floor((prev(1:ntry)'-1)/nbest); <span class="comment">% previous previous candidate</span>
-0588     msk=prevprev&gt;1+(maxl+2)*(i==maxl+2); <span class="comment">% mask for label triplets</span>
-0589     labcnti=labcnt(1:ntry)+1;
-0590     disti=(cand(i,10)-cand(prevc,10))/chsz; <span class="comment">% distance to previous label in characters</span>
-0591     costa=max(seps(3)-disti,0)*ww(6)+max(disti-seps(4),0)*ww(7);
-0592     incri=(cand(i,5)-cand(prevc,5)); <span class="comment">% label increment</span>
-0593     incrj=(cand(i,5)-cand(prevprev,5)); <span class="comment">% double label increment</span>
-0594     <span class="keyword">if</span> any(msk)
-0595         costa(msk)=costa(msk)- ww(4)*(abs(incrj(msk)-2*incri(msk))&lt;0.01*incri(msk));
-0596         <span class="keyword">if</span> cand(i,7)==1 || cand(i,7)==2 || cand(i,7)==5 <span class="comment">% look for labels 1:2:5</span>
-0597             costa(msk)=costa(msk)- ww(5)*(abs(incrj(msk)-ratint(cand(i,7))*incri(msk))&lt;0.01*incri(msk));
-0598         <span class="keyword">end</span>
-0599     <span class="keyword">end</span>
-0600     costa(disti&lt;seps(2))=Inf;
-0601     costi=(costs(1:ntry).*max(labcnt(1:ntry),1)+costa'+cand(i,6))./labcnti;
-0602     [sc,isc]=sort(costi);
-0603     isc=isc(1:nbest);
-0604     costs(:,i)=sc(1:nbest)';
-0605     prev(:,i)=isc';
-0606     labcnt(:,i)=labcnti(isc)';
-0607 <span class="keyword">end</span>
-0608 
-0609 <span class="comment">% now traceback the best sequence</span>
-0610 
-0611 <span class="comment">% fprintf('Traceback\n\n');</span>
-0612 ichoose=0;
-0613 labchoose=[];
-0614 <span class="keyword">for</span> i=1:nbest
-0615     <span class="keyword">if</span> labcnt(i,maxl+2)&gt;1 &amp;&amp; costs(i,maxl+2)&lt;Inf
-0616         lablist=zeros(labcnt(i,maxl+2)-1,1);
-0617         k=prev(i,maxl+2);
-0618         <span class="keyword">for</span> j=labcnt(i,maxl+2)-1:-1:1
-0619             lablist(j)=1+floor((k-1)/nbest);
-0620             k=prev(k);
-0621         <span class="keyword">end</span>
-0622         <span class="comment">%         fprintf('Cost=%8.2f :',costs(i,maxl+2));</span>
-0623         <span class="comment">%         fprintf(' %g',cand(lablist,5))</span>
-0624         <span class="comment">%         fprintf('\n');</span>
-0625         <span class="keyword">if</span> ~ichoose || labcnt(ichoose,maxl+2)==1
-0626             ichoose=i;
-0627             labchoose=lablist;
-0628         <span class="keyword">end</span>
-0629     <span class="keyword">end</span>
-0630 <span class="keyword">end</span>
-0631 
-0632 <span class="comment">% now create the labels</span>
+0465             <span class="keyword">if</span> annh(2*iann-1) &amp;&amp; any(tmksel)  <span class="comment">% draw time markers</span>
+0466                 ymk=toptaw(2*iann-1:2*iann)*[0.8 0.4;0.2 0.6];
+0467                 <span class="keyword">switch</span> size(tmk,2)
+0468                     <span class="keyword">case</span> 0
+0469                     <span class="keyword">case</span> 1      <span class="comment">% isolated marks</span>
+0470                         hold on
+0471                         plot([tmk(tmksel) tmk(tmksel)]',repmat(ymk',1,sum(tmksel)),<span class="string">'color'</span>,map(48,:));
+0472                         hold off
+0473                     <span class="keyword">otherwise</span> <span class="comment">% draw durations</span>
+0474                         hold on
+0475                         plot(tmk(tmksel,[1 1 2 2])',ymk(yix),<span class="string">'color'</span>,map(48,:));
+0476                         hold off
+0477                 <span class="keyword">end</span>
+0478             <span class="keyword">end</span>
+0479             <span class="keyword">if</span> annh(2*iann) &amp;&amp; any(tmksel)  <span class="comment">% print annotations</span>
+0480                 <span class="keyword">if</span> modea                    <span class="comment">% align centrally</span>
+0481                     horal=<span class="string">'center'</span>;
+0482                     tmk=(tmk(:,1)+tmk(:,end))*0.5;
+0483                 <span class="keyword">else</span>
+0484                     horal=<span class="string">'left'</span>;
+0485                     tmk=tmk(:,1);
+0486                 <span class="keyword">end</span>
+0487                 <span class="keyword">if</span> size(anni,2)&gt;2
+0488                     font=<span class="string">'Arial'</span>;
+0489                     <span class="keyword">for</span> i=1:size(anni,1)
+0490                         <span class="keyword">if</span> tmksel(i)
+0491                             <span class="keyword">if</span> ~isempty(anni{i,3})
+0492                                 font = anni{i,3};
+0493                             <span class="keyword">end</span>
+0494                             text(tmk(i),toptaw(2*iann),anni{i,2},<span class="string">'color'</span>,map(48,:),<span class="string">'fontname'</span>,font,<span class="string">'VerticalAlignment'</span>,<span class="string">'baseline'</span>,<span class="string">'HorizontalAlignment'</span>,horal);
+0495                         <span class="keyword">end</span>
+0496                     <span class="keyword">end</span>
+0497                 <span class="keyword">else</span>
+0498                     <span class="keyword">for</span> i=1:size(anni,1)
+0499                         <span class="keyword">if</span> tmksel(i)
+0500                             text(tmk(i),toptaw(2*iann),anni{i,2},<span class="string">'color'</span>,map(48,:),<span class="string">'VerticalAlignment'</span>,<span class="string">'baseline'</span>,<span class="string">'HorizontalAlignment'</span>,horal);
+0501                         <span class="keyword">end</span>
+0502                     <span class="keyword">end</span>
+0503                 <span class="keyword">end</span>
+0504             <span class="keyword">end</span>
+0505             modet=any(mode==<span class="string">'T'</span>); <span class="comment">% 'T' applies to each annotation except for the first</span>
+0506             modea=any(mode==<span class="string">'A'</span>); <span class="comment">% 'A' applies to each annotation except for the first</span>
+0507         <span class="keyword">end</span>
+0508     <span class="keyword">end</span>
+0509     xlabel([<span class="string">'Time ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'s)'</span>]);
+0510     <span class="keyword">if</span> any(mode==<span class="string">'f'</span>) &amp;&amp; ~strcmp(frlab,<span class="string">'Hz'</span>)
+0511         ylabel([frlabf <span class="string">'-scaled frequency (Hz)'</span>]);
+0512         <a href="#_sub1" class="code" title="subfunction ytickhz(frq2y,y2frq)">ytickhz</a>(frq2y,y2frq);
+0513     <span class="keyword">else</span>
+0514         ylabel([<span class="string">'Frequency ('</span> <a href="v_yticksi.html" class="code" title="function s=v_yticksi(ah)">v_yticksi</a> frlab <span class="string">')'</span>]);
+0515     <span class="keyword">end</span>
+0516     ytick=get(gca,<span class="string">'YTick'</span>);
+0517     ytickl=get(gca,<span class="string">'YTickLabel'</span>);
+0518     msk=ytick&lt;=ylim(2);
+0519     <span class="keyword">if</span> any(~msk)
+0520         set(gca,<span class="string">'YTick'</span>,ytick(msk),<span class="string">'YTickLabel'</span>,ytickl(msk));
+0521     <span class="keyword">end</span>
+0522 <span class="keyword">end</span>
+0523 
+0524 <a name="_sub1" href="#_subfunctions" class="code">function ytickhz(frq2y,y2frq)</a>
+0525 <span class="comment">% label non linear y frequency axis</span>
+0526 <span class="comment">%</span>
+0527 <span class="comment">% Bugs/Suggestions:</span>
+0528 <span class="comment">% * Add a penalty for large numbers (e.g. 94 is less &quot;round&quot; than 11)</span>
+0529 <span class="comment">% * possibly add subticks at 1:2:5 if boundaries are 1 and 10</span>
+0530 <span class="comment">% * could treat subtick allocation specially if bounding lables are both powers of 10</span>
+0531 <span class="comment">%   and work in log spacing rather than spacing directly</span>
+0532 
+0533 <span class="comment">% algorithm constants</span>
+0534 
+0535 seps=[0.4 1 3 6]; <span class="comment">% spacings: (a) min subtick, (b) min tick, (c) min good tick, (d) max good tick</span>
+0536 ww=[0.5 0.6 0.8 0.1 0.3 0.3 0.2];  <span class="comment">% weight for (a) last digit=5, (b) power of 10, (c) power of 1000, (d) equal spacing, (e) 1:2:5 labels (f) &lt;seps(3) (g) &gt;seps(4)</span>
+0537 nbest=10; <span class="comment">% number of possibilities to track</span>
+0538 
+0539 prefix={<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'a'</span>,<span class="string">'f'</span>,<span class="string">'p'</span>,<span class="string">'n'</span>,<span class="string">'u'</span>,<span class="string">'m'</span>,<span class="string">''</span>,<span class="string">'k'</span>,<span class="string">'M'</span>,<span class="string">'G'</span>,<span class="string">'T'</span>,<span class="string">'P'</span>,<span class="string">'E'</span>,<span class="string">'Z'</span>,<span class="string">'Y'</span>};
+0540 
+0541 ah=gca;
+0542 getgca=get(ah);  <span class="comment">% Get original axis properties</span>
+0543 set(ah,<span class="string">'Units'</span>,<span class="string">'points'</span>,<span class="string">'FontUnits'</span>,<span class="string">'points'</span>);
+0544 getgcac=get(ah);  <span class="comment">% Get axis properties in points units</span>
+0545 set(ah,<span class="string">'Units'</span>,getgca.Units,<span class="string">'FontUnits'</span>,getgca.FontUnits); <span class="comment">% return to original values</span>
+0546 ylim=getgca.YLim;
+0547 yrange=ylim*[-1;1];
+0548 chsz= yrange*getgcac.FontSize/getgcac.Position(4); <span class="comment">% char height in Y-units</span>
+0549 <span class="comment">% divide the y-axis up into bins containing at most one label each</span>
+0550 maxl=ceil(2*yrange/chsz);  <span class="comment">% max number of labels</span>
+0551 
+0552 <span class="comment">% candidate array [cand(:,[1 2])/1000 cand(:,5) cand(:,6)/1000 cand(:,[7 8])]</span>
+0553 <span class="comment">% 1,2=y limits, 3,4=log limits, 5=Hz, 6=cost, 7=mantissa, 8=exponent, 9=sig digits, 10=y-position</span>
+0554 cand=zeros(maxl+2,10);
+0555 yinc=(yrange+chsz*0.0002)/maxl;  <span class="comment">% bin spacing (allowing for a tiny bit to ensure the ends are included)</span>
+0556 cand(2:end-1,2)=ylim(1)+yinc*(1:maxl)'-chsz*0.0001;
+0557 cand(3:end-1,1)=cand(2:end-2,2);
+0558 cand(2,1)=cand(2,2)-yinc;
+0559 cand(2:end-1,1:2)=y2frq(max(cand(2:end-1,1:2),0));
+0560 
+0561 <span class="comment">% find the &quot;roundest&quot; number in each interval</span>
+0562 <span class="comment">% first deal with intervals containing zero</span>
+0563 cand([1 maxl+2],6)=-1;
+0564 cand(2,9)=(cand(2,1)&lt;=0);  <span class="comment">% mask out interval contaiing zero</span>
+0565 cand(2,6)=-cand(2,9);
+0566 msk=cand(:,6)==0;  <span class="comment">% find rows without a cost yet</span>
+0567 cand(msk,3:4)=log10(cand(msk,1:2));
+0568 <span class="comment">% find powers of 1000</span>
+0569 loglim=ceil(cand(:,3:4)/3);
+0570 msk=loglim(:,2)&gt;loglim(:,1);
+0571 <span class="keyword">if</span> any(msk)
+0572     xp=loglim(msk,1);
+0573     wuns=ones(length(xp),1);
+0574     cand(msk,5:9)=[1000.^xp wuns-ww(3) wuns 3*xp wuns];
+0575 <span class="keyword">end</span>
+0576 <span class="comment">% find powers of 10</span>
+0577 loglim=ceil(cand(:,3:4));
+0578 msk=~msk &amp; (loglim(:,2)&gt;loglim(:,1));
+0579 <span class="keyword">if</span> any(msk)
+0580     xp=loglim(msk,1);
+0581     wuns=ones(length(xp),1);
+0582     cand(msk,5:9)=[10.^xp wuns-ww(2) wuns xp wuns];
+0583 <span class="keyword">end</span>
+0584 <span class="comment">% find value with fewest digits</span>
+0585 msk=cand(:,6)==0;  <span class="comment">% find rows without a cost yet</span>
+0586 maxsig=1-floor(log10(10^min(cand(msk,3:4)*[-1;1])-1)); <span class="comment">% maximum number of significant figures to consider</span>
+0587 pten=10.^(0:maxsig-1);   <span class="comment">% row vector of powers of ten</span>
+0588 noten=10.^(-floor(cand(msk,3))); <span class="comment">% exponent of floating point representation of lower bound</span>
+0589 sigdig=sum((ceil(cand(msk,2).*noten*pten)-ceil(cand(msk,1).*noten*pten))==0,2); <span class="comment">% number of digits common to the interval bounds</span>
+0590 lowman=ceil(cand(msk,1).*noten.*10.^sigdig);
+0591 midman=10*floor(lowman/10)+5;
+0592 highman=ceil(cand(msk,2).*noten.*10.^sigdig);
+0593 mskman=midman&gt;=lowman &amp; midman&lt;highman;   <span class="comment">% check if we can include a manitssa ending in 5</span>
+0594 lowman(mskman)=midman(mskman);
+0595 cand(msk,6:9)=[sigdig+1 lowman floor(cand(msk,3))-sigdig sigdig+1];
+0596 cand(msk,5)=cand(msk,7).*10.^cand(msk,8);
+0597 cand(msk,6)=cand(msk,6)-(mod(cand(msk,7),10)==5)*ww(1);
+0598 cand(2:end-1,10)=frq2y(cand(2:end-1,5));
+0599 cand([1 maxl+2],10)=ylim + seps(4)*chsz*[-1 1]; <span class="comment">% put imaginary labels at the optimum spacing beyond the axes</span>
+0600 <span class="comment">% [cand(:,[1 2 5])/1000 cand(:,[6 7 8 9])]</span>
+0601 
+0602 <span class="comment">% Now do n-best DP to find the best sequence</span>
+0603 
+0604 ratint=[8/5 25/10 0 0 4/3];
+0605 costs=Inf(nbest,maxl+2); <span class="comment">% cumulative path costs</span>
+0606 costs(1,1)=0; <span class="comment">% starting node only has one option</span>
+0607 prev=ones(nbest,maxl+2); <span class="comment">% previous label in path</span>
+0608 labcnt=zeros(nbest,maxl+2); <span class="comment">% number of labels in path</span>
+0609 <span class="keyword">for</span> i=2:maxl+2
+0610     ntry=nbest*(i-1); <span class="comment">% number of previous options</span>
+0611     prevc=reshape(repmat(1:i-1,nbest,1),ntry,1); <span class="comment">% previous candidate</span>
+0612     prevprev=1+floor((prev(1:ntry)'-1)/nbest); <span class="comment">% previous previous candidate</span>
+0613     msk=prevprev&gt;1+(maxl+2)*(i==maxl+2); <span class="comment">% mask for label triplets</span>
+0614     labcnti=labcnt(1:ntry)+1;
+0615     disti=(cand(i,10)-cand(prevc,10))/chsz; <span class="comment">% distance to previous label in characters</span>
+0616     costa=max(seps(3)-disti,0)*ww(6)+max(disti-seps(4),0)*ww(7);
+0617     incri=(cand(i,5)-cand(prevc,5)); <span class="comment">% label increment</span>
+0618     incrj=(cand(i,5)-cand(prevprev,5)); <span class="comment">% double label increment</span>
+0619     <span class="keyword">if</span> any(msk)
+0620         costa(msk)=costa(msk)- ww(4)*(abs(incrj(msk)-2*incri(msk))&lt;0.01*incri(msk));
+0621         <span class="keyword">if</span> cand(i,7)==1 || cand(i,7)==2 || cand(i,7)==5 <span class="comment">% look for labels 1:2:5</span>
+0622             costa(msk)=costa(msk)- ww(5)*(abs(incrj(msk)-ratint(cand(i,7))*incri(msk))&lt;0.01*incri(msk));
+0623         <span class="keyword">end</span>
+0624     <span class="keyword">end</span>
+0625     costa(disti&lt;seps(2))=Inf;
+0626     costi=(costs(1:ntry).*max(labcnt(1:ntry),1)+costa'+cand(i,6))./labcnti;
+0627     [sc,isc]=sort(costi);
+0628     isc=isc(1:nbest);
+0629     costs(:,i)=sc(1:nbest)';
+0630     prev(:,i)=isc';
+0631     labcnt(:,i)=labcnti(isc)';
+0632 <span class="keyword">end</span>
 0633 
-0634 ntick=length(labchoose);
-0635 <span class="comment">% sort out the subticks</span>
-0636 subpos=[];
-0637 <span class="keyword">if</span> ntick&gt;=2
-0638     <span class="keyword">for</span> i=1:ntick-1
-0639         clj=cand(labchoose(i:i+1),:);
-0640         sprec=min(clj(1,8)+100*(clj(1,7)==0),clj(2,8)); <span class="comment">% subtick precision</span>
-0641         spos=(clj(1,7)*10^(clj(1,8)-sprec):clj(2,7)*10^(clj(2,8)-sprec))*10^sprec;
-0642         nsub=length(spos);
-0643         <span class="keyword">if</span> nsub==2
-0644             spos=spos*[1 0.5 0;0 0.5 1];
-0645             nsub=3;
+0634 <span class="comment">% now traceback the best sequence</span>
+0635 
+0636 <span class="comment">% fprintf('Traceback\n\n');</span>
+0637 ichoose=0;
+0638 labchoose=[];
+0639 <span class="keyword">for</span> i=1:nbest
+0640     <span class="keyword">if</span> labcnt(i,maxl+2)&gt;1 &amp;&amp; costs(i,maxl+2)&lt;Inf
+0641         lablist=zeros(labcnt(i,maxl+2)-1,1);
+0642         k=prev(i,maxl+2);
+0643         <span class="keyword">for</span> j=labcnt(i,maxl+2)-1:-1:1
+0644             lablist(j)=1+floor((k-1)/nbest);
+0645             k=prev(k);
 0646         <span class="keyword">end</span>
-0647         <span class="keyword">if</span> nsub&gt;=3
-0648             yspos=frq2y(spos);
-0649             <span class="keyword">for</span> kk=1:3 <span class="comment">% try various subdivisions: every 1, 2 or 5</span>
-0650                 k=kk+2*(kk==3);  <span class="comment">% 1, 2 and 5</span>
-0651                 <span class="keyword">if</span> 2*k&lt;=nsub-1 &amp;&amp; ~mod(nsub-1,k)  <span class="comment">% must divide exactly into nsub</span>
-0652                     <span class="keyword">if</span> all((yspos(1+k:k:nsub)-yspos(1:k:nsub-k))&gt;=(seps(1)*chsz)) <span class="comment">% check they all fit in</span>
-0653                         subpos=[subpos yspos(1+k:k:nsub-k)];
-0654                         <span class="keyword">if</span> i==1
-0655                             spos=(ceil(cand(2,1)/10^sprec):clj(1,7)*10^(clj(1,8)-sprec))*10^sprec;
-0656                             nsub=length(spos);
-0657                             yspos=frq2y(spos);
-0658                             <span class="keyword">if</span> nsub&gt;=k+1 &amp;&amp; all((yspos(nsub:-k:1+k)-yspos(nsub-k:-k:1))&gt;=(seps(1)*chsz))
-0659                                 subpos=[subpos yspos(nsub-k:-k:1)];
-0660                             <span class="keyword">end</span>
-0661                         <span class="keyword">elseif</span> i==ntick-1
-0662                             spos=(clj(2,7)*10^(clj(2,8)-sprec):floor(cand(end-1,2)/10^sprec))*10^sprec;
-0663                             nsub=length(spos);
-0664                             yspos=frq2y(spos);
-0665                             <span class="keyword">if</span> nsub&gt;=k+1 &amp;&amp; all((yspos(1+k:k:nsub)-yspos(1:k:nsub-k))&gt;=(seps(1)*chsz))
-0666                                 subpos=[subpos yspos(1+k:k:nsub)];
-0667                             <span class="keyword">end</span>
-0668                         <span class="keyword">end</span>
-0669                         <span class="keyword">break</span>;
-0670                     <span class="keyword">end</span>
-0671                 <span class="keyword">end</span>
-0672             <span class="keyword">end</span>
-0673         <span class="keyword">end</span>
-0674     <span class="keyword">end</span>
-0675 <span class="keyword">end</span>
-0676 nsub=length(subpos);
-0677 tickpos=[cand(labchoose,10); subpos'];
-0678 ticklab=cell(ntick+nsub,1);
-0679 sipref=min(max(floor((sum(cand(labchoose,8:9),2)-1)/3),-8),8);
-0680 nzadd=cand(labchoose,8)-3*sipref;  <span class="comment">% trailing zeros to add</span>
-0681 digzer=cand(labchoose,7).*10.^max(nzadd,0); <span class="comment">% label digits including trailing zeros</span>
-0682 ndleft=cand(labchoose,9)+nzadd; <span class="comment">% digits to the left of the decimal point</span>
-0683 <span class="keyword">for</span> i=1:ntick
-0684     tickint=num2str(digzer(i));
-0685     <span class="keyword">if</span> nzadd(i)&lt;0
-0686         tickint=[tickint(1:ndleft(i)) <span class="string">'.'</span> tickint(1+ndleft(i):end)];
-0687     <span class="keyword">end</span>
-0688     ticklab{i} = sprintf(<span class="string">'%s%s'</span>,tickint,prefix{sipref(i)+9});
-0689 <span class="keyword">end</span>
-0690 <span class="keyword">for</span> i=ntick+1:ntick+nsub
-0691     ticklab{i}=<span class="string">''</span>;
-0692 <span class="keyword">end</span>
-0693 [tickpos,ix]=sort(tickpos);
-0694 ticklab=ticklab(ix);
-0695 
-0696 set(ah,<span class="string">'YTick'</span>,tickpos',<span class="string">'YTickLabel'</span>,ticklab);
-0697</pre></div>
+0647         <span class="comment">%         fprintf('Cost=%8.2f :',costs(i,maxl+2));</span>
+0648         <span class="comment">%         fprintf(' %g',cand(lablist,5))</span>
+0649         <span class="comment">%         fprintf('\n');</span>
+0650         <span class="keyword">if</span> ~ichoose || labcnt(ichoose,maxl+2)==1
+0651             ichoose=i;
+0652             labchoose=lablist;
+0653         <span class="keyword">end</span>
+0654     <span class="keyword">end</span>
+0655 <span class="keyword">end</span>
+0656 
+0657 <span class="comment">% now create the labels</span>
+0658 
+0659 ntick=length(labchoose);
+0660 <span class="comment">% sort out the subticks</span>
+0661 subpos=[];
+0662 <span class="keyword">if</span> ntick&gt;=2
+0663     <span class="keyword">for</span> i=1:ntick-1
+0664         clj=cand(labchoose(i:i+1),:);
+0665         sprec=min(clj(1,8)+100*(clj(1,7)==0),clj(2,8)); <span class="comment">% subtick precision</span>
+0666         spos=(clj(1,7)*10^(clj(1,8)-sprec):clj(2,7)*10^(clj(2,8)-sprec))*10^sprec;
+0667         nsub=length(spos);
+0668         <span class="keyword">if</span> nsub==2
+0669             spos=spos*[1 0.5 0;0 0.5 1];
+0670             nsub=3;
+0671         <span class="keyword">end</span>
+0672         <span class="keyword">if</span> nsub&gt;=3
+0673             yspos=frq2y(spos);
+0674             <span class="keyword">for</span> kk=1:3 <span class="comment">% try various subdivisions: every 1, 2 or 5</span>
+0675                 k=kk+2*(kk==3);  <span class="comment">% 1, 2 and 5</span>
+0676                 <span class="keyword">if</span> 2*k&lt;=nsub-1 &amp;&amp; ~mod(nsub-1,k)  <span class="comment">% must divide exactly into nsub</span>
+0677                     <span class="keyword">if</span> all((yspos(1+k:k:nsub)-yspos(1:k:nsub-k))&gt;=(seps(1)*chsz)) <span class="comment">% check they all fit in</span>
+0678                         subpos=[subpos yspos(1+k:k:nsub-k)];
+0679                         <span class="keyword">if</span> i==1
+0680                             spos=(ceil(cand(2,1)/10^sprec):clj(1,7)*10^(clj(1,8)-sprec))*10^sprec;
+0681                             nsub=length(spos);
+0682                             yspos=frq2y(spos);
+0683                             <span class="keyword">if</span> nsub&gt;=k+1 &amp;&amp; all((yspos(nsub:-k:1+k)-yspos(nsub-k:-k:1))&gt;=(seps(1)*chsz))
+0684                                 subpos=[subpos yspos(nsub-k:-k:1)];
+0685                             <span class="keyword">end</span>
+0686                         <span class="keyword">elseif</span> i==ntick-1
+0687                             spos=(clj(2,7)*10^(clj(2,8)-sprec):floor(cand(end-1,2)/10^sprec))*10^sprec;
+0688                             nsub=length(spos);
+0689                             yspos=frq2y(spos);
+0690                             <span class="keyword">if</span> nsub&gt;=k+1 &amp;&amp; all((yspos(1+k:k:nsub)-yspos(1:k:nsub-k))&gt;=(seps(1)*chsz))
+0691                                 subpos=[subpos yspos(1+k:k:nsub)];
+0692                             <span class="keyword">end</span>
+0693                         <span class="keyword">end</span>
+0694                         <span class="keyword">break</span>;
+0695                     <span class="keyword">end</span>
+0696                 <span class="keyword">end</span>
+0697             <span class="keyword">end</span>
+0698         <span class="keyword">end</span>
+0699     <span class="keyword">end</span>
+0700 <span class="keyword">end</span>
+0701 nsub=length(subpos);
+0702 tickpos=[cand(labchoose,10); subpos'];
+0703 ticklab=cell(ntick+nsub,1);
+0704 sipref=min(max(floor((sum(cand(labchoose,8:9),2)-1)/3),-8),8);
+0705 nzadd=cand(labchoose,8)-3*sipref;  <span class="comment">% trailing zeros to add</span>
+0706 digzer=cand(labchoose,7).*10.^max(nzadd,0); <span class="comment">% label digits including trailing zeros</span>
+0707 ndleft=cand(labchoose,9)+nzadd; <span class="comment">% digits to the left of the decimal point</span>
+0708 <span class="keyword">for</span> i=1:ntick
+0709     tickint=num2str(digzer(i));
+0710     <span class="keyword">if</span> nzadd(i)&lt;0
+0711         tickint=[tickint(1:ndleft(i)) <span class="string">'.'</span> tickint(1+ndleft(i):end)];
+0712     <span class="keyword">end</span>
+0713     ticklab{i} = sprintf(<span class="string">'%s%s'</span>,tickint,prefix{sipref(i)+9});
+0714 <span class="keyword">end</span>
+0715 <span class="keyword">for</span> i=ntick+1:ntick+nsub
+0716     ticklab{i}=<span class="string">''</span>;
+0717 <span class="keyword">end</span>
+0718 [tickpos,ix]=sort(tickpos);
+0719 ticklab=ticklab(ix);
+0720 
+0721 set(ah,<span class="string">'YTick'</span>,tickpos',<span class="string">'YTickLabel'</span>,ticklab);
+0722</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

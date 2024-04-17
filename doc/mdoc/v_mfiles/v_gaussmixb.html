@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmixb</title>
+  <meta name="keywords" content="v_gaussmixb">
+  <meta name="description" content="V_GAUSSMIXB approximate Bhattacharya divergence between two GMMs">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_gaussmixb
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_GAUSSMIXB approximate Bhattacharya divergence between two GMMs</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_GAUSSMIXB approximate Bhattacharya divergence between two GMMs
+
+ Inputs: with kf &amp; kg mixtures, p data dimensions
+
+   mf(kf,p)                mixture means for GMM f
+   vf(kf,p) or vf(p,p,kf)  variances (diagonal or full) for GMM f [default: identity]
+   wf(kf,1)                weights for GMM f - must sum to 1 [default: uniform]
+   mg(kg,p)                mixture means for GMM g [g=f if mg,vg,wg omitted]
+   vg(kg,p) or vg(p,p,kg)  variances (diagonal or full) for GMM g [default: identity]
+   wg(kg,1)                weights for GMM g - must sum to 1 [default: uniform]
+   nx                      number of samples to use in importance sampling [default: 1000]
+                           Set nx=0 to save computation by returning only an upper bound to the Bhattacharya divergence.
+
+ Outputs:
+   d             the approximate Bhattacharya divergence D_B(f,g)=-log(Int(sqrt(f(x)g(x)) dx)).
+                 if nx=0 this will be an upper bound (typically 0.3 to 0.7 too high) rather than an estimate.
+   dbfg(kf,kg)   the exact Bhattacharya divergence between the unweighted components of f and g
+
+ The Bhattacharya divergence, D_B(f,g), between two distributions, f(x) and g(x), is -log(Int(sqrt(f(x)g(x)) dx)).
+ It is a special case of the Chernoff Bound [2]. The Bhattacharya divergence [1] satisfies:
+     (1) D_B(f,g) &gt;= 0
+     (2) D_B(f,g) = 0 iff f = g
+     (3) D_B(f,g) = D_B(g,f)
+ It is not a distance because it  does not satisfy the triangle inequality. It closely approximates the Bayes
+ divergence -log(Int(min(f(x),g(x)) dx) which relates to the probability of 2-class misclassification [1].
+
+ This routine calculates the &quot;variational importance sampling&quot; estimate of (or if nx=0,
+ the &quot;variational II&quot; upper bound to) the Bhattacharya divergence from [3]. It is exact
+ when f and g are single component gaussians and is zero if f=g.
+
+ Refs:
+ [1] T. Kailath. The divergence and Bhattacharyya distance measures in signal selection.
+     IEEE Trans Communication Technology, 15 (1): 52–60, Feb. 1967.
+ [2] H. Chernoff. A measure of asymptotic efficiency for tests of a hypothesis based on the
+     sum of observations. The Annals of Mathematical Statistics, 23 (4): 493–507, Dec. 1952.
+ [3] P. A. Olsen and J. R. Hershey. Bhattacharyya error and divergence using variational
+     importance sampling. In Proc. Interspeech Conf., pages 46–49, 2007.
+
+       Copyright (C) Mike Brookes 2024
+      Version: $Id: v_gaussmixk.m 10865 2018-09-21 17:22:45Z dmb $
+
+   VOICEBOX is a MATLAB toolbox for speech processing.
+   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You can obtain a copy of the GNU General Public License from
+   http://www.gnu.org/copyleft/gpl.html or by writing to
+   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li>
+<li><a href="v_logsum.html" class="code" title="function y=v_logsum(x,d,k)">v_logsum</a>	V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))</li>
+<li><a href="v_randvec.html" class="code" title="function [x,kx]=v_randvec(n,m,c,w,mode)">v_randvec</a>	V_RANDVEC  Generate real or complex GMM/lognormal random vectors X=(N,M,C,W,MODE)</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)</a>
+0002 <span class="comment">%V_GAUSSMIXB approximate Bhattacharya divergence between two GMMs</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs: with kf &amp; kg mixtures, p data dimensions</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   mf(kf,p)                mixture means for GMM f</span>
+0007 <span class="comment">%   vf(kf,p) or vf(p,p,kf)  variances (diagonal or full) for GMM f [default: identity]</span>
+0008 <span class="comment">%   wf(kf,1)                weights for GMM f - must sum to 1 [default: uniform]</span>
+0009 <span class="comment">%   mg(kg,p)                mixture means for GMM g [g=f if mg,vg,wg omitted]</span>
+0010 <span class="comment">%   vg(kg,p) or vg(p,p,kg)  variances (diagonal or full) for GMM g [default: identity]</span>
+0011 <span class="comment">%   wg(kg,1)                weights for GMM g - must sum to 1 [default: uniform]</span>
+0012 <span class="comment">%   nx                      number of samples to use in importance sampling [default: 1000]</span>
+0013 <span class="comment">%                           Set nx=0 to save computation by returning only an upper bound to the Bhattacharya divergence.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Outputs:</span>
+0016 <span class="comment">%   d             the approximate Bhattacharya divergence D_B(f,g)=-log(Int(sqrt(f(x)g(x)) dx)).</span>
+0017 <span class="comment">%                 if nx=0 this will be an upper bound (typically 0.3 to 0.7 too high) rather than an estimate.</span>
+0018 <span class="comment">%   dbfg(kf,kg)   the exact Bhattacharya divergence between the unweighted components of f and g</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% The Bhattacharya divergence, D_B(f,g), between two distributions, f(x) and g(x), is -log(Int(sqrt(f(x)g(x)) dx)).</span>
+0021 <span class="comment">% It is a special case of the Chernoff Bound [2]. The Bhattacharya divergence [1] satisfies:</span>
+0022 <span class="comment">%     (1) D_B(f,g) &gt;= 0</span>
+0023 <span class="comment">%     (2) D_B(f,g) = 0 iff f = g</span>
+0024 <span class="comment">%     (3) D_B(f,g) = D_B(g,f)</span>
+0025 <span class="comment">% It is not a distance because it  does not satisfy the triangle inequality. It closely approximates the Bayes</span>
+0026 <span class="comment">% divergence -log(Int(min(f(x),g(x)) dx) which relates to the probability of 2-class misclassification [1].</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% This routine calculates the &quot;variational importance sampling&quot; estimate of (or if nx=0,</span>
+0029 <span class="comment">% the &quot;variational II&quot; upper bound to) the Bhattacharya divergence from [3]. It is exact</span>
+0030 <span class="comment">% when f and g are single component gaussians and is zero if f=g.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% Refs:</span>
+0033 <span class="comment">% [1] T. Kailath. The divergence and Bhattacharyya distance measures in signal selection.</span>
+0034 <span class="comment">%     IEEE Trans Communication Technology, 15 (1): 52–60, Feb. 1967.</span>
+0035 <span class="comment">% [2] H. Chernoff. A measure of asymptotic efficiency for tests of a hypothesis based on the</span>
+0036 <span class="comment">%     sum of observations. The Annals of Mathematical Statistics, 23 (4): 493–507, Dec. 1952.</span>
+0037 <span class="comment">% [3] P. A. Olsen and J. R. Hershey. Bhattacharyya error and divergence using variational</span>
+0038 <span class="comment">%     importance sampling. In Proc. Interspeech Conf., pages 46–49, 2007.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%       Copyright (C) Mike Brookes 2024</span>
+0041 <span class="comment">%      Version: $Id: v_gaussmixk.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0044 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0047 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0048 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0049 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0050 <span class="comment">%   (at your option) any later version.</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0053 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0054 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0055 <span class="comment">%   GNU General Public License for more details.</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0058 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0059 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0060 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0061 maxiter=15;                                                     <span class="comment">% maximum iterations for upper bound calculation</span>
+0062 pruneth=0.2;                                                    <span class="comment">% prune threshold for importance sampling (prob that any excluded mixture would have been chosen)</span>
+0063 [kf,p]=size(mf);
+0064 <span class="keyword">if</span> nargin&lt;2 || isempty(vf)                                      <span class="comment">% if vf inoput is missing</span>
+0065     vf=ones(kf,p);                                              <span class="comment">% ... default to diagonal covariances</span>
+0066 <span class="keyword">end</span>
+0067 <span class="keyword">if</span> nargin&lt;3 || isempty(wf)                                      <span class="comment">% if wf inoput is missing</span>
+0068     wf=repmat(1/kf,kf,1);                                       <span class="comment">% ... default to uniform weights</span>
+0069 <span class="keyword">end</span>
+0070 <span class="keyword">if</span> p==1                                                         <span class="comment">% if data dimension is 1</span>
+0071     vf=vf(:);                                                   <span class="comment">% ... then variances are always diagonal</span>
+0072     dvf=true;
+0073 <span class="keyword">else</span>
+0074     dvf=ismatrix(vf) &amp;&amp; size(vf,1)==kf;                         <span class="comment">% diagonal covariance matrix vf is supplied</span>
+0075 <span class="keyword">end</span>
+0076 <span class="keyword">if</span> nargin&lt;7
+0077     nx=1000;                                                    <span class="comment">% default count for importance sampling</span>
+0078 <span class="keyword">end</span>
+0079 hpl2=0.5*p*log(2);
+0080 <span class="keyword">if</span> nargin&lt;5                                                     <span class="comment">% only f GMM specified: use this for g GMM as well</span>
+0081     dbfg=zeros(kf,kf);                                          <span class="comment">% space for pairwise divergences</span>
+0082     <span class="keyword">if</span> kf&gt;1
+0083         nup=kf*(kf-1)/2;                                        <span class="comment">% number of elements in upper triangle</span>
+0084         gix=ceil((1+sqrt(8*(1:nup)-3))/2);                      <span class="comment">% column of upper triangle</span>
+0085         fix=(1:nup)-(gix-1).*(gix-2)/2;                         <span class="comment">% row of upper triangle</span>
+0086         <span class="keyword">if</span> dvf                                                  <span class="comment">% diagonal covariances</span>
+0087             mdif=mf(fix,:)-mf(gix,:);                           <span class="comment">% difference in means</span>
+0088             vfpg=(vf(fix,:)+vf(gix,:));                         <span class="comment">% sum of variances</span>
+0089             qldf=0.25*log(prod(vf,2));
+0090             dbfg(fix+kf*(gix-1))=0.25*sum((mdif./vfpg).*mdif,2)+0.5*log(prod(vfpg,2))-qldf(fix)-qldf(gix)-hpl2; <span class="comment">% fill in upper triangle</span>
+0091         <span class="keyword">else</span>                                                    <span class="comment">% full covariance matrices</span>
+0092             qldf=zeros(kf,1);
+0093             <span class="keyword">for</span> jf=1:kf                                         <span class="comment">% precalculate the log determinants for f covariances</span>
+0094                 qldf(jf)=0.5*log(prod(diag(chol(vf(:,:,jf))))); <span class="comment">% equivalent to 0.25*log(det(vf(:,:,jg)))</span>
+0095             <span class="keyword">end</span>
+0096             <span class="keyword">for</span> jf=1:kf-1
+0097                 vjf=vf(:,:,jf);                                 <span class="comment">% covariance matrix for f</span>
+0098                 <span class="keyword">for</span> jg=jf+1:kf
+0099                     vfg=vjf+vf(:,:,jg);
+0100                     mdif=mf(jf,:)-mf(jg,:);                     <span class="comment">% difference in means</span>
+0101                     dbfg(jf,jg)=0.25*(mdif/vfg)*mdif'+log(prod(diag(chol(vfg))))-qldf(jg)-qldf(jf)-hpl2; <span class="comment">% fill in upper triangle</span>
+0102                 <span class="keyword">end</span>
+0103             <span class="keyword">end</span>
+0104         <span class="keyword">end</span>
+0105         dbfg(gix+kf*(fix-1))=dbfg(fix+kf*(gix-1));              <span class="comment">% now reflect upper triangle divergences into the symmmetric lower triangle</span>
+0106     <span class="keyword">end</span>
+0107     d=0;                                                        <span class="comment">% divergence is always zero if f and g are identical</span>
+0108 <span class="keyword">else</span>                                                            <span class="comment">% both f and g GMMs are specified as inputs</span>
+0109     kg=size(mg,1);
+0110     <span class="keyword">if</span> nargin&lt;5 || isempty(vg)
+0111         vg=ones(kg,p);                                          <span class="comment">% default to diagonal covariances</span>
+0112     <span class="keyword">end</span>
+0113     <span class="keyword">if</span> nargin&lt;6 || isempty(wg)
+0114         wg=repmat(1/kg,kg,1);                                   <span class="comment">% default to uniform weights</span>
+0115     <span class="keyword">end</span>
+0116     <span class="keyword">if</span> p==1                                                     <span class="comment">% if data dimension is 1</span>
+0117         vg=vg(:);                                               <span class="comment">% ... then variances are always diagonal</span>
+0118         dvg=true;
+0119     <span class="keyword">else</span>
+0120         dvg=ismatrix(vg) &amp;&amp; size(vg,1)==kg;                     <span class="comment">% diagonal covariance matrix vg is supplied</span>
+0121     <span class="keyword">end</span>
+0122     <span class="comment">% first calculate pairwise Bhattacharya divergences between the components of f and g</span>
+0123     dbfg=zeros(kf,kg);                                          <span class="comment">% space for full covariance matrices (overwritten below if f and g both diagonal)</span>
+0124     dix=1:p+1:p^2;                                              <span class="comment">% index of diagonal elements in covariance matrix</span>
+0125     <span class="keyword">if</span> dvf
+0126         <span class="keyword">if</span> dvg                                                  <span class="comment">% both f and g have diagonal covariances</span>
+0127             fix=repmat((1:kf)',kg,1);                           <span class="comment">% index into f values</span>
+0128             gix=reshape(repmat(1:kg,kf,1),kf*kg,1);             <span class="comment">% index into g values</span>
+0129             mdif=mf(fix,:)-mg(gix,:);                           <span class="comment">% difference in means</span>
+0130             vfpg=(vf(fix,:)+vg(gix,:));                         <span class="comment">% sum of variances</span>
+0131             qldf=0.25*log(prod(vf,2));                          <span class="comment">% 0.25 * log determinants of f components</span>
+0132             qldg=0.25*log(prod(vg,2));                          <span class="comment">% 0.25 * log determinants of g components</span>
+0133             dbfg=reshape(0.25*sum((mdif./vfpg).*mdif,2)+0.5*log(prod(vfpg,2))-qldf(fix)-qldg(gix),kf,kg);
+0134         <span class="keyword">else</span>                                                    <span class="comment">% diagonal f covariance but not g</span>
+0135             qldf=0.25*log(prod(vf,2));                          <span class="comment">% precalculate the log determinants for f covariances</span>
+0136             <span class="keyword">for</span> jg=1:kg                                         <span class="comment">% loop through g components</span>
+0137                 vjg=vg(:,:,jg);                                 <span class="comment">% full covariance matrix for g</span>
+0138                 qldg=0.5*log(prod(diag(chol(vjg))));            <span class="comment">% equivalent to 0.25*log(det(vjg))</span>
+0139                 <span class="keyword">for</span> jf=1:kf                                     <span class="comment">% loop through f components</span>
+0140                     vfg=vjg;                                    <span class="comment">% take full g covariance matrix</span>
+0141                     vfg(dix)=vfg(dix)+vf(jf,:);                 <span class="comment">% ... and add diagonal f covariance</span>
+0142                     mdif=mf(jf,:)-mg(jg,:);                     <span class="comment">% difference in means</span>
+0143                     dbfg(jf,jg)=0.25*(mdif/vfg)*mdif'+log(prod(diag(chol(vfg))))-qldf(jf)-qldg;
+0144                 <span class="keyword">end</span>
+0145             <span class="keyword">end</span>
+0146         <span class="keyword">end</span>
+0147     <span class="keyword">else</span>
+0148         <span class="keyword">if</span> dvg                                                  <span class="comment">% diagonal g covariance but not f</span>
+0149             qldg=0.25*log(prod(vg,2));                          <span class="comment">% precalculate the log determinants for g covariances</span>
+0150             <span class="keyword">for</span> jf=1:kf                                         <span class="comment">% loop through f components</span>
+0151                 vjf=vf(:,:,jf);                                 <span class="comment">% full covariance matrix for f</span>
+0152                 qldf=0.5*log(prod(diag(chol(vjf))));            <span class="comment">% equivalent to 0.25*log(det(vjf))</span>
+0153                 <span class="keyword">for</span> jg=1:kg                                     <span class="comment">% loop through g components</span>
+0154                     vfg=vjf;                                    <span class="comment">% take full f covariance matrix</span>
+0155                     vfg(dix)=vfg(dix)+vg(jg,:);                 <span class="comment">% ... and add diagonal g covariance</span>
+0156                     mdif=mf(jf,:)-mg(jg,:);                     <span class="comment">% difference in means</span>
+0157                     dbfg(jf,jg)=0.25*(mdif/vfg)*mdif'+log(prod(diag(chol(vfg))))-qldg(jg)-qldf;
+0158                 <span class="keyword">end</span>
+0159             <span class="keyword">end</span>
+0160         <span class="keyword">else</span>                                                    <span class="comment">% both f and g have full covariance matrices</span>
+0161             qldg=zeros(kg,1);
+0162             <span class="keyword">for</span> jg=1:kg                                         <span class="comment">% precalculate the log determinants for g covariances</span>
+0163                 qldg(jg)=0.5*log(prod(diag(chol(vg(:,:,jg))))); <span class="comment">% equivalent to 0.25*log(det(vg(:,:,jg)))</span>
+0164             <span class="keyword">end</span>
+0165             <span class="keyword">for</span> jf=1:kf                                         <span class="comment">% loop through f components</span>
+0166                 vjf=vf(:,:,jf);                                 <span class="comment">% covariance matrix for f</span>
+0167                 qldf=0.5*log(prod(diag(chol(vjf))));            <span class="comment">% equivalent to 0.25*log(det(vjf))</span>
+0168                 <span class="keyword">for</span> jg=1:kg                                     <span class="comment">% loop through g components</span>
+0169                     vfg=vjf+vg(:,:,jg);                         <span class="comment">% calculate sum of covariance matrices</span>
+0170                     mdif=mf(jf,:)-mg(jg,:);                     <span class="comment">% difference in means</span>
+0171                     dbfg(jf,jg)=0.25*(mdif/vfg)*mdif'+log(prod(diag(chol(vfg))))-qldg(jg)-qldf;
+0172                 <span class="keyword">end</span>
+0173             <span class="keyword">end</span>
+0174         <span class="keyword">end</span>
+0175     <span class="keyword">end</span>
+0176     dbfg=dbfg-hpl2;                                             <span class="comment">% add correction term to all the calculated covariances</span>
+0177     <span class="comment">%</span>
+0178     <span class="comment">% Now calculate the variational bound</span>
+0179     <span class="comment">% Note that in [3], the psi and phi symbols are interchanged in (20) and also in the previous</span>
+0180     <span class="comment">% line; in addition, the subscript of phi is incorrect in the denominator of (26).</span>
+0181     <span class="comment">%</span>
+0182     lwf=repmat(log(wf),1,kg);                                   <span class="comment">% log of f component weights</span>
+0183     lwg=repmat(log(wg'),kf,1);                                  <span class="comment">% log of g component weights</span>
+0184     lhf=repmat(log(1/kf),kf,kg);                                <span class="comment">% initialize psi_f|g from [3] (cols of exp(lhf) sum to 1)</span>
+0185     lhg=repmat(log(1/kg),kf,kg);                                <span class="comment">% initialize phi_g|f from [3] (rows of exp(lhg) sum to 1)</span>
+0186     dbfg2=2*dbfg;                                               <span class="comment">% log of squared Bhattacharya measure lower bound</span>
+0187     dbfg2f=lwf-dbfg2;                                           <span class="comment">% interation-independent term used to update lhg</span>
+0188     dbfg2g=lwg-dbfg2;                                           <span class="comment">% interation-independent term used to update lhf</span>
+0189     dbfg2fg=dbfg2(:)-lwf(:)-lwg(:);                             <span class="comment">% iteration-independent termto calculate the divergence upper bound</span>
+0190     dub=Inf;                                                    <span class="comment">% dummy upper bound for first iteration</span>
+0191     <span class="keyword">for</span> ip=1:maxiter                                            <span class="comment">% maximum number of iterations</span>
+0192         dubp=dub;                                               <span class="comment">% save previous iteration's upper bound</span>
+0193         dub=-<a href="v_logsum.html" class="code" title="function y=v_logsum(x,d,k)">v_logsum</a>(0.5*(lhf(:)+lhg(:)-dbfg2fg));             <span class="comment">% update the upper bound on Bhattacharya divergence</span>
+0194         <span class="keyword">if</span> dub&gt;=dubp                                            <span class="comment">% quit if no longer decreasing</span>
+0195             <span class="keyword">break</span>;
+0196         <span class="keyword">end</span>
+0197         lhg=lhf+dbfg2f;                                         <span class="comment">% update phi_g|f as in numerator of [3]-(25)</span>
+0198         lhg=lhg-repmat(<a href="v_logsum.html" class="code" title="function y=v_logsum(x,d,k)">v_logsum</a>(lhg,2),1,kg);                   <span class="comment">% normalize phi_g|f as in [3]-(25) (rows of exp(lhg) sum to 1)</span>
+0199         dub=-<a href="v_logsum.html" class="code" title="function y=v_logsum(x,d,k)">v_logsum</a>(0.5*(lhf(:)+lhg(:)-dbfg2fg));             <span class="comment">% update the upper bound on Bhattacharya divergence</span>
+0200         lhf=lhg+dbfg2g;                                         <span class="comment">% update psi_f|g as in numerator of [3]-(26)</span>
+0201         lhf=lhf-repmat(<a href="v_logsum.html" class="code" title="function y=v_logsum(x,d,k)">v_logsum</a>(lhf,1),kf,1);                   <span class="comment">% normalize psi_f|g as in [3]-(26) (cols of exp(lhf) sum to 1)</span>
+0202     <span class="keyword">end</span>
+0203     <span class="keyword">if</span> isempty(nx) || nx==0                                     <span class="comment">% only calculate the upper divergence bound</span>
+0204         d=dub;
+0205     <span class="keyword">else</span>
+0206         [lnwt,jlnwt]=sort(0.5*(lhf(:)+lhg(:)-dbfg2fg)+dub,<span class="string">'descend'</span>); <span class="comment">% normalized component log weights (highest first)</span>
+0207         wt=exp(lnwt);
+0208         cwt=cumsum(wt);
+0209         nmix=1+sum(cwt&lt;1-pruneth/nx);                           <span class="comment">% number of mixtures for &lt;20% chance that any excluded ones would be picked</span>
+0210         [fix,gix]=ind2sub([kf kg],jlnwt(1:nmix));               <span class="comment">% mixture indices that are needed</span>
+0211         <span class="comment">%</span>
+0212         <span class="comment">% now create the sampling GMM distribution</span>
+0213         <span class="comment">%</span>
+0214         ws=wt(1:nmix)/cwt(nmix);                                <span class="comment">% sampling GMM weight vector</span>
+0215         ms=zeros(nmix,p);                                       <span class="comment">% space for sampling GMM means</span>
+0216         vs=zeros(p,p,nmix);                                     <span class="comment">% space for sampling GMM full covariances</span>
+0217         <span class="keyword">if</span> dvf
+0218             <span class="keyword">if</span> dvg                                              <span class="comment">% both f and g have diagonal covariances</span>
+0219                 vff=vf(fix,:);
+0220                 vgg=vg(gix,:);
+0221                 vsumi=1./(vff+vgg);
+0222                 vs=2*vff.*vgg.*vsumi;                           <span class="comment">% mixture covariance matrix</span>
+0223                 ms=vff.*vsumi.*mg(gix,:)+vgg.*vsumi.*mf(fix,:); <span class="comment">% mixture means</span>
+0224             <span class="keyword">else</span>                                                <span class="comment">% diagonal f covariance but not g</span>
+0225                 <span class="keyword">for</span> jfg=1:nmix
+0226                     vgg=vg(:,:,gix(jfg));
+0227                     vff=vf(fix(jfg),:);
+0228                     vsum=vgg;
+0229                     vsum(dix)=vsum(dix)+vff;                    <span class="comment">% add diagonal components</span>
+0230                     vs(:,:,jfg)=2*vgg/vsum.*repmat(vff,p,1);    <span class="comment">% mixture covariance matrix</span>
+0231                     ms(jfg,:)=mg(gix(jfg),:)/vsum.*vff+mf(fix(jfg),:)/vsum*vgg; <span class="comment">% mixture means</span>
+0232                 <span class="keyword">end</span>
+0233             <span class="keyword">end</span>
+0234         <span class="keyword">else</span>
+0235             <span class="keyword">if</span> dvg                                              <span class="comment">% diagonal g covariance but not f</span>
+0236                 <span class="keyword">for</span> jfg=1:nmix
+0237                     vff=vf(:,:,fix(jfg));
+0238                     vgg=vg(gix(jfg),:);
+0239                     vsum=vff;
+0240                     vsum(dix)=vsum(dix)+vgg;                    <span class="comment">% add diagonal components</span>
+0241                     vs(:,:,jfg)=2*vff/vsum.*repmat(vgg,p,1);    <span class="comment">% mixture covariance matrix</span>
+0242                     ms(jfg,:)=mf(fix(jfg),:)/vsum.*vgg+mg(gix(jfg),:)/vsum*vff; <span class="comment">% mixture means</span>
+0243                 <span class="keyword">end</span>
+0244             <span class="keyword">else</span>                                                <span class="comment">% both f and g have full covariance matrices</span>
+0245                 <span class="keyword">for</span> jfg=1:nmix
+0246                     vff=vf(:,:,fix(jfg));
+0247                     vgg=vg(:,:,gix(jfg));
+0248                     vsum=vff+vgg;
+0249                     vs(:,:,jfg)=2*vff/vsum*vgg;                 <span class="comment">% mixture covariance matrix</span>
+0250                     ms(jfg,:)=mf(fix(jfg),:)/vsum*vgg+mg(gix(jfg),:)/vsum*vff; <span class="comment">% mixture means</span>
+0251                 <span class="keyword">end</span>
+0252             <span class="keyword">end</span>
+0253         <span class="keyword">end</span>
+0254         x=<a href="v_randvec.html" class="code" title="function [x,kx]=v_randvec(n,m,c,w,mode)">v_randvec</a>(nx,ms,vs,ws);                               <span class="comment">% draw from sampling distribution</span>
+0255         d=-(<a href="v_logsum.html" class="code" title="function y=v_logsum(x,d,k)">v_logsum</a>(0.5*(<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(x,mf,vf,wf)+<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(x,mg,vg,wg))-<a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>(x,ms,vs,ws)))+log(nx); <span class="comment">% montecarlo estimate of Bhatt divergence</span>
+0256     <span class="keyword">end</span>
+0257 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

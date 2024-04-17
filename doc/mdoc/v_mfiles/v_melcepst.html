@@ -186,78 +186,76 @@ This function is called by:
 0094 <span class="keyword">if</span> any(w==<span class="string">'R'</span>)
 0095    [z,tc]=<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(s,n,inc);
 0096 <span class="keyword">elseif</span> any (w==<span class="string">'N'</span>)
-0097 <span class="comment">%    [z,tc]=v_enframe(s,hanning(n),inc);</span>
-0098    [z,tc]=enframe(s,0.5-0.5*cos(2*pi*(1:n)'/(n+1)),inc); <span class="comment">% Hanning window</span>
-0099 <span class="keyword">else</span>
-0100 <span class="comment">%    [z,tc]=v_enframe(s,hamming(n),inc);</span>
-0101    [z,tc]=enframe(s,0.54-0.46*cos(2*pi*(0:n-1)'/(n-1)),inc); <span class="comment">% Hamming window</span>
-0102 <span class="keyword">end</span>
-0103 f=rfft(z.');
-0104 [m,a,b]=<a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>(p,n,fs,fl,fh,w);
-0105 pw=f(a:b,:).*conj(f(a:b,:));
-0106 pth=max(pw(:))*1E-20;
-0107 <span class="keyword">if</span> any(w==<span class="string">'p'</span>)
-0108    y=log(max(m*pw,pth));
-0109 <span class="keyword">else</span>
-0110    ath=sqrt(pth);
-0111    y=log(max(m*abs(f(a:b,:)),ath));
-0112 <span class="keyword">end</span>
-0113 c=rdct(y).';
-0114 nf=size(c,1);
-0115 nc=nc+1;
-0116 <span class="keyword">if</span> p&gt;nc
-0117    c(:,nc+1:end)=[];
-0118 <span class="keyword">elseif</span> p&lt;nc
-0119    c=[c zeros(nf,nc-p)];
-0120 <span class="keyword">end</span>
-0121 <span class="keyword">if</span> ~any(w==<span class="string">'0'</span>)
-0122    c(:,1)=[];
-0123    nc=nc-1;
-0124 <span class="keyword">end</span>
-0125 <span class="keyword">if</span> any(w==<span class="string">'E'</span>)
-0126    c=[log(max(sum(pw),pth)).' c];
-0127    nc=nc+1;
-0128 <span class="keyword">end</span>
+0097    [z,tc]=enframe(s,0.5-0.5*cos(2*pi*(1:n)'/(n+1)),inc); <span class="comment">% Hanning window</span>
+0098 <span class="keyword">else</span>
+0099    [z,tc]=enframe(s,0.54-0.46*cos(2*pi*(0:n-1)'/(n-1)),inc); <span class="comment">% Hamming window</span>
+0100 <span class="keyword">end</span>
+0101 f=rfft(z.');
+0102 [m,a,b]=<a href="v_melbankm.html" class="code" title="function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)">v_melbankm</a>(p,n,fs,fl,fh,w);
+0103 pw=f(a:b,:).*conj(f(a:b,:));
+0104 pth=max(pw(:))*1E-20;
+0105 <span class="keyword">if</span> any(w==<span class="string">'p'</span>)
+0106    y=log(max(m*pw,pth));
+0107 <span class="keyword">else</span>
+0108    ath=sqrt(pth);
+0109    y=log(max(m*abs(f(a:b,:)),ath));
+0110 <span class="keyword">end</span>
+0111 c=rdct(y).';
+0112 nf=size(c,1);
+0113 nc=nc+1;
+0114 <span class="keyword">if</span> p&gt;nc
+0115    c(:,nc+1:end)=[];
+0116 <span class="keyword">elseif</span> p&lt;nc
+0117    c=[c zeros(nf,nc-p)];
+0118 <span class="keyword">end</span>
+0119 <span class="keyword">if</span> ~any(w==<span class="string">'0'</span>)
+0120    c(:,1)=[];
+0121    nc=nc-1;
+0122 <span class="keyword">end</span>
+0123 <span class="keyword">if</span> any(w==<span class="string">'E'</span>)
+0124    c=[log(max(sum(pw),pth)).' c];
+0125    nc=nc+1;
+0126 <span class="keyword">end</span>
+0127 
+0128 <span class="comment">% calculate derivative</span>
 0129 
-0130 <span class="comment">% calculate derivative</span>
-0131 
-0132 <span class="keyword">if</span> any(w==<span class="string">'D'</span>)
-0133   vf=(4:-1:-4)/60;
-0134   af=(1:-1:-1)/2;
-0135   ww=ones(5,1);
-0136   cx=[c(ww,:); c; c(nf*ww,:)];
-0137   vx=reshape(filter(vf,1,cx(:)),nf+10,nc);
-0138   vx(1:8,:)=[];
-0139   ax=reshape(filter(af,1,vx(:)),nf+2,nc);
-0140   ax(1:2,:)=[];
-0141   vx([1 nf+2],:)=[];
-0142   <span class="keyword">if</span> any(w==<span class="string">'d'</span>)
-0143      c=[c vx ax];
-0144   <span class="keyword">else</span>
-0145      c=[c ax];
-0146   <span class="keyword">end</span>
-0147 <span class="keyword">elseif</span> any(w==<span class="string">'d'</span>)
-0148   vf=(4:-1:-4)/60;
-0149   ww=ones(4,1);
-0150   cx=[c(ww,:); c; c(nf*ww,:)];
-0151   vx=reshape(filter(vf,1,cx(:)),nf+8,nc);
-0152   vx(1:8,:)=[];
-0153   c=[c vx];
-0154 <span class="keyword">end</span>
-0155  
-0156 <span class="keyword">if</span> nargout&lt;1
-0157    [nf,nc]=size(c);
-0158 <span class="comment">%    t=((0:nf-1)*inc+(n-1)/2)/fs;</span>
-0159    ci=(1:nc)-any(w==<span class="string">'0'</span>)-any(w==<span class="string">'E'</span>);
-0160    imh = imagesc(tc/fs,ci,c.');
-0161    axis(<span class="string">'xy'</span>);
-0162    xlabel(<span class="string">'Time (s)'</span>);
-0163    ylabel(<span class="string">'Mel-cepstrum coefficient'</span>);
-0164     map = (0:63)'/63;
-0165     colormap([map map map]);
-0166     colorbar;
-0167 <span class="keyword">end</span>
-0168</pre></div>
+0130 <span class="keyword">if</span> any(w==<span class="string">'D'</span>)
+0131   vf=(4:-1:-4)/60;
+0132   af=(1:-1:-1)/2;
+0133   ww=ones(5,1);
+0134   cx=[c(ww,:); c; c(nf*ww,:)];
+0135   vx=reshape(filter(vf,1,cx(:)),nf+10,nc);
+0136   vx(1:8,:)=[];
+0137   ax=reshape(filter(af,1,vx(:)),nf+2,nc);
+0138   ax(1:2,:)=[];
+0139   vx([1 nf+2],:)=[];
+0140   <span class="keyword">if</span> any(w==<span class="string">'d'</span>)
+0141      c=[c vx ax];
+0142   <span class="keyword">else</span>
+0143      c=[c ax];
+0144   <span class="keyword">end</span>
+0145 <span class="keyword">elseif</span> any(w==<span class="string">'d'</span>)
+0146   vf=(4:-1:-4)/60;
+0147   ww=ones(4,1);
+0148   cx=[c(ww,:); c; c(nf*ww,:)];
+0149   vx=reshape(filter(vf,1,cx(:)),nf+8,nc);
+0150   vx(1:8,:)=[];
+0151   c=[c vx];
+0152 <span class="keyword">end</span>
+0153  
+0154 <span class="keyword">if</span> nargout&lt;1
+0155    [nf,nc]=size(c);
+0156 <span class="comment">%    t=((0:nf-1)*inc+(n-1)/2)/fs;</span>
+0157    ci=(1:nc)-any(w==<span class="string">'0'</span>)-any(w==<span class="string">'E'</span>);
+0158    imh = imagesc(tc/fs,ci,c.');
+0159    axis(<span class="string">'xy'</span>);
+0160    xlabel(<span class="string">'Time (s)'</span>);
+0161    ylabel(<span class="string">'Mel-cepstrum coefficient'</span>);
+0162     map = (0:63)'/63;
+0163     colormap([map map map]);
+0164     colorbar;
+0165 <span class="keyword">end</span>
+0166</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

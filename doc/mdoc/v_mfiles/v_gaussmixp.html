@@ -31,7 +31,7 @@
 
  Inputs: n data values, k mixtures, p parameters, q data vector size
 
-   Y(n,q) = input data (or optional plot range if no out arguments)
+   Y(n,q) = (possibly transformed) input data (or optional plot range if no output arguments)
             Row of Y(i,:) represents a single observation of the
             transformed GMM data point X: Y(i,1:q)=X(i,1:p)*A'+B'. If A and B are
             omitted and q=p, then Y(i,:)=X(i,:).
@@ -50,7 +50,7 @@
   KH(n,1) = highest probability mixture
   KP(n,1) = relative probability of highest probability mixture
 
- See also: <a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>, <a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>, <a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>, <a href="v_randvec.html" class="code" title="function x=v_randvec(n,m,c,w,mode)">v_randvec</a></pre></div>
+ See also: <a href="v_gaussmix.html" class="code" title="function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)">v_gaussmix</a>, <a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>, <a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>, <a href="v_randvec.html" class="code" title="function [x,kx]=v_randvec(n,m,c,w,mode)">v_randvec</a></pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -65,6 +65,7 @@ This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 
 <li><a href="v_fxpefac.html" class="code" title="function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)">v_fxpefac</a>	V_FXPEFAC PEFAC pitch tracker [FX,TT,PV,FV]=(S,FS,TINC,M,PP)</li>
+<li><a href="v_gaussmixb.html" class="code" title="function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)">v_gaussmixb</a>	V_GAUSSMIXB approximate Bhattacharya divergence between two GMMs</li>
 <li><a href="v_gaussmixd.html" class="code" title="function [mz,vz,wz]=v_gaussmixd(y,m,v,w,a,b,f,g)">v_gaussmixd</a>	V_GAUSSMIXD marginal and conditional Gaussian mixture densities</li>
 <li><a href="v_gaussmixg.html" class="code" title="function [mg,vg,pg,pv]=v_gaussmixg(m,v,w,n)">v_gaussmixg</a>	V_GAUSSMIXG global mean, variance and mode of a GMM</li>
 <li><a href="v_gaussmixp.html" class="code" title="function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)">v_gaussmixp</a>	V_GAUSSMIXP calculate probability densities from or plot a Gaussian mixture model</li>
@@ -85,7 +86,7 @@ This function is called by:
 0005 <span class="comment">%</span>
 0006 <span class="comment">% Inputs: n data values, k mixtures, p parameters, q data vector size</span>
 0007 <span class="comment">%</span>
-0008 <span class="comment">%   Y(n,q) = input data (or optional plot range if no out arguments)</span>
+0008 <span class="comment">%   Y(n,q) = (possibly transformed) input data (or optional plot range if no output arguments)</span>
 0009 <span class="comment">%            Row of Y(i,:) represents a single observation of the</span>
 0010 <span class="comment">%            transformed GMM data point X: Y(i,1:q)=X(i,1:p)*A'+B'. If A and B are</span>
 0011 <span class="comment">%            omitted and q=p, then Y(i,:)=X(i,:).</span>

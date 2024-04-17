@@ -103,7 +103,7 @@
            cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)
            xi(k,p) [optional] sparse matrix that is an approximate inverse of x
             il      the lowest fft bin with a non-zero coefficient
-            ih      the highest fft bin with a non-zero coefficient
+            ih      the highest fft bin with a non-zero coefficient (Note: ih must be given if il is given and xi is omitted)
 
  The input power will be preserved if the options 'xXS' are given
 
@@ -239,7 +239,7 @@ This function is called by:
 0077 <span class="comment">%           cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)</span>
 0078 <span class="comment">%           xi(k,p) [optional] sparse matrix that is an approximate inverse of x</span>
 0079 <span class="comment">%            il      the lowest fft bin with a non-zero coefficient</span>
-0080 <span class="comment">%            ih      the highest fft bin with a non-zero coefficient</span>
+0080 <span class="comment">%            ih      the highest fft bin with a non-zero coefficient (Note: ih must be given if il is given and xi is omitted)</span>
 0081 <span class="comment">%</span>
 0082 <span class="comment">% The input power will be preserved if the options 'xXS' are given</span>
 0083 <span class="comment">%</span>
