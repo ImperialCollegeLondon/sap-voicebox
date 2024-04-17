@@ -1,8 +1,11 @@
 function y=v_logsum(x,d,k)
 %V_LOGSUM v_logsum(x,d,k)=log(sum(k.*exp(x),d))
 %
-% Usage: (1) y=v_logsum(x) % log(sum(exp(x)))
-%        (2) f=0.1*log(10); y=logsm(x*f)/f;  % add powers in dB
+% Usage: (1) y=v_logsum(x)                      % log(sum(exp(x)))
+%        (2) f=0.1*log(10); y=logsm(x*f)/f;     % add powers expressed in dB
+%
+% Identities: (1) v_logsum(x+c)=v_logsum(x)+c   % where c is a constant
+%             (2) sum(exp(x-logsum(x)))=1       % normalize to make exp(x) sum to 1
 %
 % Inputs:  X(M,N,...) data matrix to sum
 %          D          optional dimension to sum along [1st non-singular dimension]
