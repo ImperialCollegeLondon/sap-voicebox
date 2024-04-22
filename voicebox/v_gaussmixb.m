@@ -1,5 +1,5 @@
 function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
-%V_GAUSSMIXB approximate Bhattacharya divergence between two GMMs
+%V_GAUSSMIXB approximate Bhattacharyya divergence between two GMMs
 %
 % Inputs: with kf & kg mixtures, p data dimensions
 %
@@ -10,15 +10,15 @@ function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
 %   vg(kg,p) or vg(p,p,kg)  variances (diagonal or full) for GMM g [default: identity]
 %   wg(kg,1)                weights for GMM g - must sum to 1 [default: uniform]
 %   nx                      number of samples to use in importance sampling [default: 1000]
-%                           Set nx=0 to save computation by returning only an upper bound to the Bhattacharya divergence.
+%                           Set nx=0 to save computation by returning only an upper bound to the Bhattacharyya divergence.
 %
 % Outputs:
-%   d             the approximate Bhattacharya divergence D_B(f,g)=-log(Int(sqrt(f(x)g(x)) dx)).
+%   d             the approximate Bhattacharyya divergence D_B(f,g)=-log(Int(sqrt(f(x)g(x)) dx)).
 %                 if nx=0 this will be an upper bound (typically 0.3 to 0.7 too high) rather than an estimate.
-%   dbfg(kf,kg)   the exact Bhattacharya divergence between the unweighted components of f and g
+%   dbfg(kf,kg)   the exact Bhattacharyya divergence between the unweighted components of f and g
 %
-% The Bhattacharya divergence, D_B(f,g), between two distributions, f(x) and g(x), is -log(Int(sqrt(f(x)g(x)) dx)).
-% It is a special case of the Chernoff Bound [2]. The Bhattacharya divergence [1] satisfies:
+% The Bhattacharyya divergence, D_B(f,g), between two distributions, f(x) and g(x), is -log(Int(sqrt(f(x)g(x)) dx)).
+% It is a special case of the Chernoff Bound [2]. The Bhattacharyya divergence [1] satisfies:
 %     (1) D_B(f,g) >= 0
 %     (2) D_B(f,g) = 0 iff f = g
 %     (3) D_B(f,g) = D_B(g,f)
@@ -26,7 +26,7 @@ function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
 % divergence -log(Int(min(f(x),g(x)) dx) which relates to the probability of 2-class misclassification [1].
 %
 % This routine calculates the "variational importance sampling" estimate of (or if nx=0,
-% the "variational II" upper bound to) the Bhattacharya divergence from [3]. It is exact
+% the "variational II" upper bound to) the Bhattacharyya divergence from [3]. It is exact
 % when f and g are single component gaussians and is zero if f=g.
 %
 % Refs:
@@ -119,7 +119,7 @@ else                                                            % both f and g G
     else
         dvg=ismatrix(vg) && size(vg,1)==kg;                     % diagonal covariance matrix vg is supplied
     end
-    % first calculate pairwise Bhattacharya divergences between the components of f and g
+    % first calculate pairwise Bhattacharyya divergences between the components of f and g
     dbfg=zeros(kf,kg);                                          % space for full covariance matrices (overwritten below if f and g both diagonal)
     dix=1:p+1:p^2;                                              % index of diagonal elements in covariance matrix
     if dvf
@@ -183,20 +183,20 @@ else                                                            % both f and g G
     lwg=repmat(log(wg'),kf,1);                                  % log of g component weights
     lhf=repmat(log(1/kf),kf,kg);                                % initialize psi_f|g from [3] (cols of exp(lhf) sum to 1)
     lhg=repmat(log(1/kg),kf,kg);                                % initialize phi_g|f from [3] (rows of exp(lhg) sum to 1)
-    dbfg2=2*dbfg;                                               % log of squared Bhattacharya measure lower bound
+    dbfg2=2*dbfg;                                               % log of squared Bhattacharyya measure lower bound
     dbfg2f=lwf-dbfg2;                                           % interation-independent term used to update lhg
     dbfg2g=lwg-dbfg2;                                           % interation-independent term used to update lhf
     dbfg2fg=dbfg2(:)-lwf(:)-lwg(:);                             % iteration-independent termto calculate the divergence upper bound
     dub=Inf;                                                    % dummy upper bound for first iteration
     for ip=1:maxiter                                            % maximum number of iterations
         dubp=dub;                                               % save previous iteration's upper bound
-        dub=-v_logsum(0.5*(lhf(:)+lhg(:)-dbfg2fg));             % update the upper bound on Bhattacharya divergence
+        dub=-v_logsum(0.5*(lhf(:)+lhg(:)-dbfg2fg));             % update the upper bound on Bhattacharyya divergence
         if dub>=dubp                                            % quit if no longer decreasing
             break;
         end
         lhg=lhf+dbfg2f;                                         % update phi_g|f as in numerator of [3]-(25)
         lhg=lhg-repmat(v_logsum(lhg,2),1,kg);                   % normalize phi_g|f as in [3]-(25) (rows of exp(lhg) sum to 1)
-        dub=-v_logsum(0.5*(lhf(:)+lhg(:)-dbfg2fg));             % update the upper bound on Bhattacharya divergence
+        dub=-v_logsum(0.5*(lhf(:)+lhg(:)-dbfg2fg));             % update the upper bound on Bhattacharyya divergence
         lhf=lhg+dbfg2g;                                         % update psi_f|g as in numerator of [3]-(26)
         lhf=lhf-repmat(v_logsum(lhf,1),kf,1);                   % normalize psi_f|g as in [3]-(26) (cols of exp(lhf) sum to 1)
     end
@@ -274,7 +274,7 @@ if ~nargout
                 plot(xax,ys,'--k');
                 hold off
                 legend('f(x)','g(x)','sqrt(fg)','h(x)','location','northeast');
-                v_texthvc(0.02,0.98,sprintf('Bhattacharya = %.1f%% (>=%.1f%%)\n2 x Bayes Err = %.1f%%',100*exp(-d),100*exp(-dub),200*bayeserr),'LTk');
+                v_texthvc(0.02,0.98,sprintf('Bhattacharyya = %.1f%% (>=%.1f%%)\n2 x Bayes Err = %.1f%%',100*exp(-d),100*exp(-dub),200*bayeserr),'LTk');
             else
                 legend('f(x)','g(x)','sqrt(fg)','location','northeast');
             end
