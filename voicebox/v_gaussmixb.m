@@ -1,6 +1,17 @@
 function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
 %V_GAUSSMIXB approximate Bhattacharyya divergence between two GMMs
 %
+% Usage: (1) d=v_gaussmixb(mf,vf,wf,mg,vg,wg);        % Estimate Bhattacharyya divergence between {mf,vf,wf} and {mg,vg,wg}
+%                                                     % vf and vg can independently be full or diagonal covariances
+%
+%        (2) [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg); % Also calculate exact Bhattacharyya divergence between compnents of f and components of g
+%
+%        (3) d=v_gaussmixb(mf,vf,wf,mg,vg,wg,0);      % Calculate upper bound to Bhattacharyya divergence
+%
+%        (4) [d,dbfg]=v_gaussmixb(mf,vf,wf);          % Calculate Bhattacharyya divergence between compnents of f. d=0 always in this case.
+%
+%        (5) v_gaussmixb(mf,vf,wf,mg,vg,wg);          % Plot gra[hs of distributions (dimension p must equal 1)
+%
 % Inputs: with kf & kg mixtures, p data dimensions
 %
 %   mf(kf,p)                mixture means for GMM f
@@ -265,20 +276,20 @@ if ~nargout
             xax=linspace(xlo,xhi,nxax)';
             sint=(xax(2)-xax(1))/3*(4-2*mod(1:nxax,2)-[1 zeros(1,nxax-2) 1]); % Simpson's rule integration
             yf=exp(v_gaussmixp(xax,mf,vf,wf));
-            yg=exp(v_gaussmixp(xax,mg,vg,wg)); 
-         bayeserr=sint*min(yf,yg)*0.5; % calculate Bayes error
+            yg=exp(v_gaussmixp(xax,mg,vg,wg));
+            bayeserr=sint*min(yf,yg)*0.5; % calculate Bayes error
             plot(xax,yf,'-b',xax,yg,'-r',xax,sqrt(yf.*yg),'-g');
             if ~isempty(nx) && nx~=0
                 ys=exp(v_gaussmixp(xax,ms,vs,ws));
                 hold on
                 plot(xax,ys,'--k');
                 hold off
-                legend('f(x)','g(x)','sqrt(fg)','h(x)','location','northeast');
+                legend('f(x)','g(x)','\surd(fg)','Sample','location','northeast');
                 v_texthvc(0.02,0.98,sprintf('Bhattacharyya = %.1f%% (>=%.1f%%)\n2 x Bayes Err = %.1f%%',100*exp(-d),100*exp(-dub),200*bayeserr),'LTk');
             else
-                legend('f(x)','g(x)','sqrt(fg)','location','northeast');
+                legend('f(x)','g(x)','\surd(fg)','location','northeast');
             end
             xlabel('x');
-            ylabel('Prob density');        
+            ylabel('Prob density');
     end
 end
