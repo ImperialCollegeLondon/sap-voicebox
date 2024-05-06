@@ -282,10 +282,10 @@ if ~nargout
             if ~isempty(nx) && nx~=0
                 ys=exp(v_gaussmixp(xax,ms,vs,ws));
                 hold on
-                plot(xax,ys,'--k');
+                plot(xax,exp(-d)*ys,'--k');
                 hold off
-                legend('f(x)','g(x)','\surd(fg)','Sample','location','northeast');
-                v_texthvc(0.02,0.98,sprintf('Bhattacharyya = %.1f%% (>=%.1f%%)\n2 x Bayes Err = %.1f%%',100*exp(-d),100*exp(-dub),200*bayeserr),'LTk');
+                legend('f(x)','g(x)','\surd(fg)','\approx \surd(fg)','location','northeast');
+                v_texthvc(0.02,0.98,sprintf('Bhattacharyya = %.1f%% (>=%.1f%%)\nBayes Err = 0.5 x %.1f%%',100*exp(-d),100*exp(-dub),200*bayeserr),'LTk');
             else
                 legend('f(x)','g(x)','\surd(fg)','location','northeast');
             end
