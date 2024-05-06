@@ -8,7 +8,7 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 % Inputs: n data values, k mixtures, p parameters, l loops
 %
 %     X(n,p)   Input data vectors, one per row.
-%     C(1)     Minimum variance of normalized data (Use [] to take default value of 1/n^2)
+%     C(1)     Minimum variance of normalized data (Use [] to take default value of n^-2)
 %     L        The integer portion of l gives a maximum loop count. The fractional portion gives
 %              an optional stopping threshold. Iteration will cease if the increase in
 %              log likelihood density per data point is less than this value. Thus l=10.001 will
@@ -16,25 +16,25 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 %              0.001.
 %              As a special case, if L=0, then the first three outputs are omitted.
 %              Use [] to take default value of 100.0001
-%     M0       Number of mixtures required (or initial mixture means - see below)
+%     M0       Number of mixtures required (or initial mixture means, M0(k,p), - see below)
 %     V0       Initialization mode:
 %                'f'    Initialize with K randomly selected data points [default]
 %                'p'    Initialize with centroids and variances of random partitions
 %                'k'    k-means algorithm ('kf' and 'kp' determine initialization)
 %                'h'    k-harmonic means algorithm ('hf' and 'hp' determine initialization) [default]
 %                's'    use unscaled data during initialization phase instead of scaling it first
-%                'm'    M0 contains the initial centres
+%                'm'    M0(k,p) contains the initial centres
 %                'v'    full covariance matrices
 %              Mode 'hf' [the default] generally gives the best results but 'f' is faster and often OK
-%     W0(n,1)  Data point weights
+%     W0(n,1)  Data point weights (need not sum to unity)
 %
-%     Alternatively, initial values for M0, V0 and W0 can be given  explicitly:
+%   Alternatively, initial values for M0, V0 and W0 can be given  explicitly:
 %
-%     M0(k,p)  Initial mixture means, one row per mixture.
-%     V0(k,p)  Initial mixture variances, one row per mixture.
-%      or V0(p,p,k)  one full-covariance matrix per mixture
-%     W0(k,1)  Initial mixture weights, one per mixture. The weights should sum to unity.
-%     WX(n,1)  Data point weights
+%     M0(k,p)       Initial mixture means, one row per mixture.
+%     V0(k,p)       Initial mixture variances, one row per mixture.
+%      or V0(p,p,k)    one full-covariance matrix per mixture
+%     W0(k,1)       Initial mixture weights, one per mixture. The weights must sum to unity.
+%     WX(n,1)       Data point weights (need not sum to unity)
 %
 % Outputs: (Note that M, V and W are omitted if L==0)
 %
@@ -108,7 +108,7 @@ if nargin<5 || isempty(v0) || ischar(v0)             % no initial values specifi
     else
         wx=w0(:);                   % data point weights
     end
-    wx=wx/sum(wx);
+    wx=wx(:)/sum(wx);               % normalize and force to be a column vector
     if any(v0=='m')
         k=size(m0,1);
     else
