@@ -11,7 +11,7 @@ function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)
 %            omitted and q=p, then Y(i,:)=X(i,:).
 %   M(k,p) = mixture means for x(p)
 %   V(k,p) or V(p,p,k) variances (diagonal or full)
-%   W(k,1) = weights
+%   W(k,1) = weights (must sum to 1)
 %   A(q,p) = transformation: y=x*A'+ B' (where y and x are row vectors).
 %   B(q,1)   If A is omitted or null, y=x*I(B,:)' where I is the identity matrix.
 %            If B is also omitted or null, y=x*I(1:q,:)'.
