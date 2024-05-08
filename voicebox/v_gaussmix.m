@@ -115,10 +115,10 @@ if nargin<5 || isempty(v0) || ischar(v0)             % no initial values specifi
         k=m0;
     end
     fv=any(v0=='v');                % full covariance matrices requested
-    mx0=wx'*x;         % calculate mean of input data in each dimension
-    vx0=wx'*x.^2-mx0.^2; % calculate variance of input data in each dimension
+    mx0=wx'*x;                      % calculate mean of input data in each dimension
+    vx0=wx'*x.^2-mx0.^2;            % calculate variance of input data in each dimension
     sx0=sqrt(vx0);
-    sx0(sx0==0)=1;      % do not divide by zero when scaling
+    sx0(sx0==0)=1;                  % do not divide by zero when scaling
     if n<=k                         % each data point can have its own mixture
         xs=(x-mx0(wn,:))./sx0(wn,:);          % scale the data
         m=xs(mod((1:k)-1,n)+1,:);   % just include all points several times
@@ -259,8 +259,8 @@ if ~fulliv          % initializing with diagonal covariance
         
         jx=jx0;
         ii=1:jx;                        % indices of data points in this chunk
-        kk=repmat(ii,k,1);              % kk(jx,k): one row per data point, one column per mixture
-        km=repmat(1:k,1,jx);            % km(jx,k): one row per data point, one column per mixture
+        kk=repmat(ii,k,1);              % kk(k,jx): data poinbt index
+        km=repmat(1:k,1,jx);            % km(k,jx): mixture index
         py=reshape(sum((xs(kk(:),:)-m(km(:),:)).^2.*vi(km(:),:),2),k,jx)+lvm(:,wnj); % py(k,jx) pdf of each point with each mixture
         mx=max(py,[],1);                % mx(1,jx) find normalizing factor for each data point to prevent underflow when using exp()
         px=exp(py-mx(wk,:));            % find normalized probability of each mixture for each datapoint
@@ -290,7 +290,7 @@ if ~fulliv          % initializing with diagonal covariance
         w=pk;                           % normalize to get the weights
         if pk                           % if all elements of pk are non-zero
             m=sx./pk(:,wp);             % calculate mixture means
-            v=sx2./pk(:,wp);            % and variances
+            v=sx2./pk(:,wp);            % and raw second moments
         else
             wm=pk==0;                   % mask indicating mixtures with zero weights
             nz=sum(wm);              	% number of zero-weight mixtures
@@ -301,20 +301,20 @@ if ~fulliv          % initializing with diagonal covariance
             w(wm)=1/n;               	% set these weights non-zero
             w=w*n/(n+nz);            	% normalize so the weights sum to unity
             wm=~wm;                 	% mask for non-zero weights
-            m(wm,:)=sx(wm,:)./pk(wm,wp);  % recalculate means and variances for mixtures with a non-zero weight
+            m(wm,:)=sx(wm,:)./pk(wm,wp);  % recalculate means and raw second moments for mixtures with a non-zero weight
             v(wm,:)=sx2(wm,:)./pk(wm,wp);
         end
-        v=max(v-m.^2,c);                % apply floor to variances
+        v=max(v-m.^2,c);                % convert raw second moments to variances and apply floor
         if g-g1<=th && j>1
-            if ~ss, break; end  %  stop
-            ss=ss-1;       % stop next time
+            if ~ss, break; end          %  stop
+            ss=ss-1;                    % stop next time
         end
     end
-    if sd && ~fv  % we need to calculate the final probabilities
-        pp=lpx'-0.5*p*log(2*pi)-lsx;   % log of total probability of each data point
-        gg=gg(1:j)-0.5*p*log(2*pi)-lsx;    % average log prob at each iteration
+    if sd && ~fv                        % we need to calculate the final probabilities
+        pp=lpx'-0.5*p*log(2*pi)-lsx;    % log of total probability of each data point
+        gg=gg(1:j)-0.5*p*log(2*pi)-lsx; % average log prob at each iteration
         g=gg(end);
-        m=m1;       % back up to previous iteration
+        m=m1;                           % back up to previous iteration
         v=v1;
         w=w1;
         mm=sum(m,1)/k;
@@ -334,35 +334,35 @@ if fv              % check if full covariance matrices were requested
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Full Covariance matrices  %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    pl=p*(p+1)/2;
+    pl=p*(p+1)/2;                                           % number of non-trivial elements in lower triangular matrix
     lix=1:p^2;
     cix=repmat(1:p,p,1);
     rix=cix';
     lix(cix>rix)=[];                                        % index of lower triangular elements
     cix=cix(lix);                                           % index of lower triangular columns
     rix=rix(lix);                                           % index of lower triangular rows
-    dix=find(rix==cix);
+    % dix=find(rix==cix);                                   % index of lower triangular diagonal elements [unused]
     lixi=zeros(p,p);
     lixi(lix)=1:pl;
     lixi=lixi';
-    lixi(lix)=1:pl;                                        % reverse index to build full matrices
+    lixi(lix)=1:pl;                                         % reverse index to build full matrices
     v=reshape(v,p^2,k);
     v=v(lix,:)';                                            % lower triangular in rows
     
     % If data size is large then do calculations in chunks
     
-    nb=min(n,max(1,floor(memsize/(24*p*k))));    % chunk size for testing data points
-    nl=ceil(n/nb);                  % number of chunks
-    jx0=n-(nl-1)*nb;                % size of first chunk
+    nb=min(n,max(1,floor(memsize/(24*p*k))));   % chunk size for testing data points
+    nl=ceil(n/nb);                              % number of chunks
+    jx0=n-(nl-1)*nb;                            % size of first chunk
     %
     th=(l-floor(l))*n;
-    sd=(nargout > 3*(l~=0)); % = 1 if we are outputting log likelihood values
-    lp=floor(l)+sd;   % extra loop needed to calculate final G value
+    sd=(nargout > 3*(l~=0));                    % = 1 if we are outputting log likelihood values
+    lp=floor(l)+sd;                             % extra loop needed to calculate final G value
     %
-    lpx=zeros(1,n);             % log probability of each data point
+    lpx=zeros(1,n);                             % log probability of each data point
     wk=ones(k,1);
     wp=ones(1,p);
-    wpl=ones(1,pl);             % 1 index for lower triangular matrix
+    wpl=ones(1,pl);                             % 1 index for lower triangular matrix
     wnb=ones(1,nb);
     wnj=ones(1,jx0);
     
@@ -381,8 +381,7 @@ if fv              % check if full covariance matrices were requested
         m1=m;                	% save previous means, variances and weights
         v1=v;
         w1=w;
-        for ik=1:k
-            
+        for ik=1:k            
             % these lines added for debugging only
             %             vk=reshape(v(k,lixi),p,p);
             %             condk(ik)=cond(vk);
@@ -412,7 +411,7 @@ if fv              % check if full covariance matrices were requested
         sx2=px*(xsw(ii,rix).*xs(ii,cix));	% accumulator for variance calculation (lower tri cov matrix as a row)
         for il=2:nl
             ix=jx+1;
-            jx=jx+nb;        % increment upper limit
+            jx=jx+nb;                       % increment upper limit
             ii=ix:jx;
             xii=xs(ii,:).';
             py=reshape(sum(reshape((vi*xii-vim(:,wnb)).*(xii(wpk,:)-mtk(:,wnb)),p,nb*k),1),k,nb)+lvm(:,wnb);
@@ -421,38 +420,38 @@ if fv              % check if full covariance matrices were requested
             ps=sum(px,1);                   % total normalized likelihood of each data point
             px=px./ps(wk,:);                % relative mixture probabilities for each data point (columns sum to 1)
             lpx(ii)=log(ps)+mx;
-            pk=pk+px*wx(ii);                    % effective fraction of data points for each mixture (could be zero due to underflow)
+            pk=pk+px*wx(ii);                % effective fraction of data points for each mixture (could be zero due to underflow)
             sx=sx+px*xsw(ii,:);             % accumulator for mean calculation
             sx2=sx2+px*(xsw(ii,rix).*xs(ii,cix));	% accumulator for variance calculation
         end
-        g=lpx*wx;                   % total log probability summed over all data points
-        gg(j)=g;                    % save convergence history
-        w=pk;               	% w(k,1) normalize to get the column of weights
-        if pk                       % if all elements of pk are non-zero
-            m=sx./pk(:,wp);         % find mean and mean square
+        g=lpx*wx;                           % total log probability summed over all data points
+        gg(j)=g;                            % save convergence history
+        w=pk;               	            % w(k,1) normalize to get the column of weights
+        if pk                               % if all elements of pk are non-zero
+            m=sx./pk(:,wp);                 % find mean and mean square
             v=sx2./pk(:,wpl);
         else
             wm=pk==0;                       % mask indicating mixtures with zero weights
-            nz=sum(wm);                  % number of zero-weight mixtures
-            [vv,mk]=sort(lpx);             % find the lowest probability data points
+            nz=sum(wm);                     % number of zero-weight mixtures
+            [vv,mk]=sort(lpx);              % find the lowest probability data points
             m=zeros(k,p);                   % initialize means and variances to zero (variances are floored later)
             v=zeros(k,pl);
-            m(wm,:)=xs(mk(1:nz),:);                % set zero-weight mixture means to worst-fitted data points
+            m(wm,:)=xs(mk(1:nz),:);         % set zero-weight mixture means to worst-fitted data points
             w(wm)=1/n;                      % set these weights non-zero
             w=w*n/(n+nz);                   % normalize so the weights sum to unity
             wm=~wm;                         % mask for non-zero weights
-            m(wm,:)=sx(wm,:)./pk(wm,wp);  % recalculate means and variances for mixtures with a non-zero weight
+            m(wm,:)=sx(wm,:)./pk(wm,wp);    % recalculate means and variances for mixtures with a non-zero weight
             v(wm,:)=sx2(wm,:)./pk(wm,wpl);
         end
-        v=v-m(:,cix).*m(:,rix);                 % subtract off mean squared
+        v=v-m(:,cix).*m(:,rix);             % subtract off mean squared
         if g-g1<=th && j>1
-            if ~ss, break; end  %  stop
-            ss=ss-1;       % stop next time
+            if ~ss, break; end              %  stop
+            ss=ss-1;                        % stop next time
         end
     end
-    if sd  % we need to calculate the final probabilities
-        pp=lpx'-0.5*p*log(2*pi)-lsx;   % log of total probability of each data point
-        gg=gg(1:j)-0.5*p*log(2*pi)-lsx;    % average log prob at each iteration
+    if sd                                   % we need to calculate the final probabilities
+        pp=lpx'-0.5*p*log(2*pi)-lsx;        % log of total probability of each data point
+        gg=gg(1:j)-0.5*p*log(2*pi)-lsx;     % average log prob at each iteration
         g=gg(end);
         %             gg' % *** DEBUG ONLY ***
         m=m1;                                           % back up to previous iteration
@@ -476,10 +475,10 @@ if fv              % check if full covariance matrices were requested
             v(:,:,ik)=uvk*diag(dvk)*uvk';               % reconstitute full matrix
         end
     end
-    m=m.*sx0(ones(k,1),:)+mx0(ones(k,1),:);  % unscale means
+    m=m.*sx0(ones(k,1),:)+mx0(ones(k,1),:);             % unscale means
     v=v.*repmat(sx0'*sx0,[1 1 k]);
 end
-if l==0         % suppress the first three output arguments if l==0
+if l==0                                                 % suppress the first three output arguments if l==0
     m=g;
     v=f;
     w=pp;
