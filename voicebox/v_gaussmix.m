@@ -117,8 +117,7 @@ if nargin<5 || isempty(v0) || ischar(v0)             % no initial values specifi
     fv=any(v0=='v');                % full covariance matrices requested
     mx0=wx'*x;                      % calculate mean of input data in each dimension
     vx0=wx'*x.^2-mx0.^2;            % calculate variance of input data in each dimension
-    sx0=sqrt(vx0);
-    sx0(sx0==0)=1;                  % do not divide by zero when scaling
+    sx0=sqrt(vx0)+(vx0==0);         % scale factor: std of input data in each dimension (or 1 if std==0)             
     if n<=k                         % each data point can have its own mixture
         xs=(x-mx0(wn,:))./sx0(wn,:);          % scale the data
         m=xs(mod((1:k)-1,n)+1,:);   % just include all points several times
