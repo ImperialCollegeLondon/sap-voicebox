@@ -217,7 +217,7 @@ if length(wx)~=n
 end
 lsx=sum(log(sx0));
 xsw=xs.*repmat(wx,1,p); % weighted data points
-if ~fulliv          % initializing with diagonal covariance
+if ~fulliv          % initializing with diagonal covariance if v0 is either unspecified or diagonal
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Diagonal Covariance matrices  %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +258,7 @@ if ~fulliv          % initializing with diagonal covariance
         
         jx=jx0;
         ii=1:jx;                        % indices of data points in this chunk
-        kk=repmat(ii,k,1);              % kk(k,jx): data poinbt index
+        kk=repmat(ii,k,1);              % kk(k,jx): data point index
         km=repmat(1:k,1,jx);            % km(k,jx): mixture index
         py=reshape(sum((xs(kk(:),:)-m(km(:),:)).^2.*vi(km(:),:),2),k,jx)+lvm(:,wnj); % py(k,jx) pdf of each point with each mixture
         mx=max(py,[],1);                % mx(1,jx) find normalizing factor for each data point to prevent underflow when using exp()
@@ -346,7 +346,7 @@ if fv              % check if full covariance matrices were requested
     lixi=lixi';
     lixi(lix)=1:pl;                                         % reverse index to build full matrices
     v=reshape(v,p^2,k);
-    v=v(lix,:)';                                            % lower triangular in rows
+    v=v(lix,:)';                                            % lower triangular in rows (k,p*(p+1)/2)
     
     % If data size is large then do calculations in chunks
     
@@ -467,9 +467,9 @@ if fv              % check if full covariance matrices were requested
         f=(m(:)'*m(:)-k*mm(:)'*mm(:))/trv;
     else
         v1=v;                                           % lower triangular form
-        v=zeros(p,p,k);                                 % reserve spave for k full covariance matrices
+        v=zeros(p,p,k);                                 % reserve space for k full covariance matrices
         for ik=1:k                                      % loop for each mixture to apply variance floor
-            [uvk,dvk,]=eig(reshape(v1(ik,lixi),p,p));	% convert lower triangular to full and find eigenvectors
+            [uvk,dvk]=eig(reshape(v1(ik,lixi),p,p));	% convert lower triangular to full and find eigenvectors
             dvk=max(diag(dvk),c);                       % apply variance floor
             v(:,:,ik)=uvk*diag(dvk)*uvk';               % reconstitute full matrix
         end
