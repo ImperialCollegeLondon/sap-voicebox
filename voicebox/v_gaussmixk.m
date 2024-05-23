@@ -26,7 +26,7 @@ function [d,klfg]=v_gaussmixk(mf,vf,wf,mg,vg,wg)
 %
 % This routine calculates the "variational approximation" to the KL divergence
 % from [2] that is exact when f and g are single component gaussians and that is zero
-% if f=g. However, the approximation may be negative if f and g are different.
+% if f=g. However, the approximation may incorrectly be negative if f and g are different.
 %
 % Refs:
 % [1]	S. Kullback and R. Leibler. On information and sufficiency.
