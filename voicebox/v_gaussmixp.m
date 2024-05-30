@@ -9,7 +9,7 @@ function [lp,rp,kh,kp]=v_gaussmixp(y,m,v,w,a,b)
 %            Row Y(i,:) represents a single observation of the transformed GMM data
 %            point X: Y(i,1:q)=X(i,1:p)*A'+B'. If A and B are omitted and q=p, then Y(i,:)=X(i,:).
 %   M(k,p) = mixture means for x(p)
-%   V(k,p) or V(p,p,k) variances (diagonal or full) forx(p)
+%   V(k,p) or V(p,p,k) variances (diagonal or full) for x(p)
 %   W(k,1) = weights (must sum to 1)
 %   A(q,p) = transformation: y=x*A'+ B' (where y and x are row vectors).
 %   B(q,1)   If A is omitted or null, y=x*I(B,:)' where I is the identity matrix.
