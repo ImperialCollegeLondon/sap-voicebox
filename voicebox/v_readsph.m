@@ -21,7 +21,7 @@ function [y,fs,wrd,phn,ffx]=v_readsph(filename,mode,nmax,nskip)
 %             'd'    Look in data directory: v_voicebox('dir_data')
 %             'w'    Also read the annotation file *.wrd if present (as in TIMIT)
 %             't'    Also read the phonetic transcription file *.phn if present (as in TIMIT)
-%                    Eac line of the annotation and transcription files is of the form: m n token
+%                    Each line of the annotation and transcription files is of the form: m n token
 %                    where m and n are start end end times in samples and token is a word or phoneme test descriptor
 %                    The corresponding cell arrays WRD and PHN contain two elements per row: {[m n]/fs 'token'}
 %                    These outputs are only present if the corresponding 'w' and 't' options are selected
