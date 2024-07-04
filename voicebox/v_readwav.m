@@ -106,7 +106,7 @@ mno=all(mode~='o');                      % scale to input limits not output limi
 sc=mode(k(1));
 z=128*all(mode~='z'); % data offset value
 info=zeros(1,13);
-if ischar(filename)
+if ischar(filename) || isstring(filename)
     if any(mode=='d')
         filename=fullfile(v_voicebox('dir_data'),filename);
     end
