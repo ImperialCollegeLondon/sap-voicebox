@@ -217,7 +217,7 @@ This function is called by:
 0106 sc=mode(k(1));
 0107 z=128*all(mode~=<span class="string">'z'</span>); <span class="comment">% data offset value</span>
 0108 info=zeros(1,13);
-0109 <span class="keyword">if</span> ischar(filename)
+0109 <span class="keyword">if</span> ischar(filename) || isstring(filename)
 0110     <span class="keyword">if</span> any(mode==<span class="string">'d'</span>)
 0111         filename=fullfile(<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'dir_data'</span>),filename);
 0112     <span class="keyword">end</span>

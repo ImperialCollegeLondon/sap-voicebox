@@ -52,7 +52,7 @@
 
  This routine calculates the &quot;variational approximation&quot; to the KL divergence
  from [2] that is exact when f and g are single component gaussians and that is zero
- if f=g. However, the approximation may be negative if f and g are different.
+ if f=g. However, the approximation may incorrectly be negative if f and g are different.
 
  Refs:
  [1]    S. Kullback and R. Leibler. On information and sufficiency.
@@ -107,7 +107,7 @@ This function is called by:
 0026 <span class="comment">%</span>
 0027 <span class="comment">% This routine calculates the &quot;variational approximation&quot; to the KL divergence</span>
 0028 <span class="comment">% from [2] that is exact when f and g are single component gaussians and that is zero</span>
-0029 <span class="comment">% if f=g. However, the approximation may be negative if f and g are different.</span>
+0029 <span class="comment">% if f=g. However, the approximation may incorrectly be negative if f and g are different.</span>
 0030 <span class="comment">%</span>
 0031 <span class="comment">% Refs:</span>
 0032 <span class="comment">% [1]    S. Kullback and R. Leibler. On information and sufficiency.</span>

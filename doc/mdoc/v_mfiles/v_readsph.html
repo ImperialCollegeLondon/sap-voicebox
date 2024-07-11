@@ -47,7 +47,7 @@
              'd'    Look in data directory: v_voicebox('dir_data')
              'w'    Also read the annotation file *.wrd if present (as in TIMIT)
              't'    Also read the phonetic transcription file *.phn if present (as in TIMIT)
-                    Eac line of the annotation and transcription files is of the form: m n token
+                    Each line of the annotation and transcription files is of the form: m n token
                     where m and n are start end end times in samples and token is a word or phoneme test descriptor
                     The corresponding cell arrays WRD and PHN contain two elements per row: {[m n]/fs 'token'}
                     These outputs are only present if the corresponding 'w' and 't' options are selected
@@ -142,7 +142,7 @@ This function is called by:
 0021 <span class="comment">%             'd'    Look in data directory: v_voicebox('dir_data')</span>
 0022 <span class="comment">%             'w'    Also read the annotation file *.wrd if present (as in TIMIT)</span>
 0023 <span class="comment">%             't'    Also read the phonetic transcription file *.phn if present (as in TIMIT)</span>
-0024 <span class="comment">%                    Eac line of the annotation and transcription files is of the form: m n token</span>
+0024 <span class="comment">%                    Each line of the annotation and transcription files is of the form: m n token</span>
 0025 <span class="comment">%                    where m and n are start end end times in samples and token is a word or phoneme test descriptor</span>
 0026 <span class="comment">%                    The corresponding cell arrays WRD and PHN contain two elements per row: {[m n]/fs 'token'}</span>
 0027 <span class="comment">%                    These outputs are only present if the corresponding 'w' and 't' options are selected</span>

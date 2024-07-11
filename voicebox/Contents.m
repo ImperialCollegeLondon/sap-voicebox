@@ -16,8 +16,8 @@
 %   v_readcnx       - Raed BT Connex database files
 %   v_readau        - Read AU files (from SUN)
 %   v_readflac      - Read FLAC files
-%   wavread       - Emulation of legacy MATLAB function to read a WAV file
-%   wavwrite      - Emulation of legacy MATLAB function to write a WAV file
+%   wavread         - Emulation of legacy MATLAB function to read a WAV file
+%   wavwrite        - Emulation of legacy MATLAB function to write a WAV file
 %
 % Frequency Scales
 %   v_frq2bark      - Convert Hz to the Bark frequency scale
@@ -243,6 +243,7 @@
 %   v_logsum        - Calculates log(sum(exp(x))) without overflow/underflow
 %   v_minspane      - calculate the minimum (or shortest) spanning tree
 %   v_mintrace      - find a row permutation to minimize the trace of a matrix
+%   v_modsym        - Symmetric modulus function: v_modsym(x,y) lies in range [-y/2,+y/2]
 %   v_m2htmlpwd     - Create HTML documentation of matlab routines in the current directory
 %   v_nearnonz      - Replace each zero element with the nearest non-zero element
 %   v_paramsetch    - Set a parameter structure and do valididty checks
@@ -254,8 +255,6 @@
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% === Unclassified ===
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 1998-2022 Mike Brookes
