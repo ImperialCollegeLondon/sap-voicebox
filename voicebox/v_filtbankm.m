@@ -69,21 +69,20 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %             'g' = plot filter coefficients as graph
 %             'G' = plot filter coefficients as spectrogram image [default if no output arguments present]
 %
-%           Legacy options: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'
+%           Legacy options, 'yYuU' are mapped as follows: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'
 %
 % Outputs:	x(p,k)  a sparse matrix containing the v_filterbank amplitudes
 %		            If the il and ih output arguments are included then k=ih-il+1 otherwise k=1+floor(n/2)
 %                   Note that, with the 'S' option, the peak filter values equal 2 to account for the energy in the negative FFT frequencies.
 %           cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)
 %           xi(k,p) [optional] sparse matrix that is an approximate inverse of x
-%		    il      the lowest fft bin with a non-zero coefficient
-%		    ih      the highest fft bin with a non-zero coefficient (Note: ih must be given if il is given and xi is omitted)
+%		    il,ih   the lowest and highest fft bins with non-zero coefficient 1<=il,ih<=1+n/2 (Note: you must specify *both* il and ih or neither)
 %
 % The input power will be preserved if the options 'xXS' are given
 %
 % The output of the routine is a sparse filterbank matrix. The vector output of the filterbank can then be obtained
-% by pre-multiplying an input power spectrum vector by the filterbank matrix. The input and output vectors can optionally
-% be in either the power domain or the power spectral density domain.
+% by pre-multiplying an input power spectrum vector (as a column vector) by the filterbank matrix. The input and
+% output vectors can optionally be in either the power domain or the power spectral density domain.
 % The routine implements the filterbank in two conceptual stages (which are merged in the practical implementation):
 %
 % Stage 1:
@@ -110,10 +109,7 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 % Bugs/Suggestions
 % (1) default frequencies won't work if the h option is specified
 % (2) low default frequency is invalid if the 'l' option is specified
-% (3) Add 'z' option to include a DC output as the first coefficient
-% (4) Add 'Z' option to ignore the DC input component
-% (5) Add 'i' option to calculate the inverse of x instead
-% (6) Add option to choose the domain in which linear interpolation is performed
+% (3) Add option to choose the domain in which linear interpolation is performed
 
 %      Copyright (C) Mike Brookes 1997-2024
 %      Version: $Id: v_filtbankm.m $
