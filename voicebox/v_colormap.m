@@ -14,9 +14,10 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %              colorbar;                                    % show the color bar
 %
 %          (6) rev=360;                                                     % 360 for degrees or 2*pi for radians
+%              nmap=64;                                                     % number of map entries
 %              phase=repmat(linspace(0,2*rev,200),200,1);                   % create 2 cycles of linear phase
-%              imagesc(mod(phase+rev/128,rev)-rev/128,rev*[-1 127]/128);    % ensure data range is rev*[-1 127]/128
-%              v_colormap('v_circrby');                                     % select a circular colormap
+%              imagesc(mod(phase+rev*0.5/nmap,rev)-rev*0.5/nmap,rev*[-0.5 nmap-0.5]/nmap);    % ensure data range is rev*[-1 127]/128
+%              v_colormap('v_circrby','y',nmap);                                     % select a circular colormap
 %              colorbar;
 %
 %  Inputs:
