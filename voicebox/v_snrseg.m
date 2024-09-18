@@ -14,7 +14,7 @@ function [seg,glo]=v_snrseg(s,r,fs,m,tf)
 %                 V = use P.56-based VAD to discard silent portions [default]
 %                 a = A-weight the signals
 %                 b = weight signals by BS-468
-%                 q = use quadratic interpolation to remove delays +- 1 sample
+%                 q = use quadratic interpolation to remove delays +- 1 sample [default]
 %                 z = do not do any alignment
 %                 p = plot results
 %           tf  frame increment [0.01]

@@ -1,7 +1,7 @@
 function [t,f,b]=v_spgrambw(s,fs,varargin)
 %V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)
 %
-%  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options
+%  Usage: (1) v_spgrambw(s,fs,'pJcw');                      % Plot spectrogram with my favourite set of options
 %
 %         (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
 %             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with word transcription
