@@ -6,12 +6,12 @@ function p=v_paramsetch(d,q,m,c,t)
 %
 %        (2) function x=func(y,q)
 %            d=struct('a',1,'b',2,'c',3);   % default parameters
-%            c={'p.a>0 && p.a<5','p.b>0'};
+%            c={'p.a>0 && p.a<5','Message 1';'p.b>0','b must be positive'};
 %            p=v_paramsetch(d,q,'E',c);     % check parameter ranges
 %
 %        (3) t={'a','description of parameter a';'c','and of parameter c'}
 %            p=v_paramsetch(d,q,'l',c,t);   % list values with optional descrpitions
-%                                           % '-','*','+' indicates default, updated and new fields
+%                                           % '-','=','*','+' indicates default, unchanged, updated and new fields
 %
 %  Inputs:
 %       d  default parameter structure
@@ -115,7 +115,8 @@ else                                            % we have >2 arguments or else n
             nq=length(qn);                      % number of fields to update
             if addnew                           % we are including all fields in q(n)
                 for i=1:nq                      % loop through list of fields to update
-                    p.(fi)=q.(qn{i});           % set new field value
+                    fi=qn{i};                   % get field name to update
+                    p.(fi)=q.(fi);              % set new field value
                 end
             else
                 for i=1:length(qn)              % loop through list of fields to update
@@ -135,10 +136,14 @@ else                                            % we have >2 arguments or else n
             for i=1:min(nq,ndn)
                 p.(dn{i})=q(i,:);
             end
-            if nq>ndn && adderr
+            if nq>ndn
                 numerr=numerr+nq-ndn;
                 if printerr
-                    fprintf(2,'%d extra parameters specified\n',nq-ndn);
+                    if  nq==ndn+1
+                        fprintf(2,'1 extra parameter specified\n');
+                    else
+                        fprintf(2,'%d extra parameters specified\n',nq-ndn);
+                    end
                 end
             end
         end
@@ -146,30 +151,32 @@ else                                            % we have >2 arguments or else n
     % Apply parameter checks
     if numel(c)>0                               % check if any checks are specified
         for i=1:size(c,1)                       % one check per row of c
-            if ~all(eval(c{i,1}))               % perform the check
+            if ~all(eval(c{i,1}),'all')               % perform the check
                 numerr=numerr+1;
                 if size(c,1)==1
                     fprintf(2,'Parameter check failed: %s\n',c{i});
                 else
                     fprintf(2,c{i,2});
+                    fprintf(2,'\n');
                 end
             end
         end
     end
     % print out a list of the parameters if requested
     if ~nargout || any(m=='l')
+           fprintf('Key: - default value, = updated to default value, * updated to new value, + additional field\n');
         pn=fieldnames(p);
         nf=length(pn);                          % length of updated structure
         st=size(t);
-        for i=1:nf
-            fi=pn{i};
-            vi=p.(fi);
-            if i>ndn
-                cat='+';
+        for i=1:nf                              % loop through field in output p
+            fi=pn{i};                           % field name
+            vi=p.(fi);                          % field value
+            if i>ndn                            % if this field was added to structure d
+                cat='+';                        % new field
             else
                 if nq>0 && isstruct(q)          % if update argument is a structure
                     if isfield(q,fi)            % was this field updated ?
-                        if isequal(p.(fi),q.(fi))
+                        if isequal(p.(fi),d.(fi))
                             cat='=';            % updated to existing value
                         else
                             cat='*';            % updated to new value
@@ -181,7 +188,7 @@ else                                            % we have >2 arguments or else n
                     if i>nq                     % beyond list of updated fields
                         cat='-';                % not updated
                     else
-                        if isequal(p.(fi),q(i,:))
+                        if isequal(p.(fi),d.(fi))
                             cat='=';            % updated to existing value
                         else
                             cat='*';            % updated to new value
@@ -189,20 +196,20 @@ else                                            % we have >2 arguments or else n
                     end
                 end
             end
-            if st(2)>1
-                jti=find(strcmp(fi,t(:,1)),1);
+            if st(2)>1                          % description are field-based
+                jti=find(strcmp(fi,t(:,1)),1);  % find description for this field
                 if ~isempty(jti)
                     jti=t{jti,2};               % description string
                 end
             elseif i<=st(1)
                 jti=t{i,1};                     % description string
             else
-                jti=[];
+                jti=[];                         % empty description
             end
-            if isnumeric(vi) && length(vi)==numel(vi) && isreal(vi) % can print on one line
+            if isnumeric(vi) && length(vi)==numel(vi) && isreal(vi) % can print vector on one line
                 fit=fi;
                 if size(vi,1)>1
-                    fit=[fi ''''];
+                    fit=[fi '''']; % transposed vector
                 end
                 fprintf('%3d%c %s:',i,cat,fit);
                 fprintf(' %g',vi);
