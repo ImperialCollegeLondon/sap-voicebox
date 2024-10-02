@@ -57,10 +57,10 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %
 %             'z' = Treat input power spectrum at 0Hz as an impulse rather than being diffuse
 %             'Z' = Treat input power spectrum at 0Hz as the sum of an impulse and a continuous component with the same amlitude as the adjacent bin
-%             'q' = The first output filter gives the power of the impulse at 0Hz (regardless of the 'D' option). 'zq' ensures exact retention of DC component by zi*z
+%             'q' = The first output filter gives the power of the impulse at 0Hz (regardless of the 'D' option). 'zq' ensures exact retention of DC component by xi*x
 %
 %             'd' = input is power spectral density (power per Hz) instead of power
-%             'D' = output is power spectral density (power per Hz) instead of power
+%             'D' = output is power spectral density (power per Hz) instead of power (option 'dD' makes the rows of x sum to approximately 1)
 %
 %             's' = single-sided input: do not add power from symmetric negative frequencies (i.e. non-DC/Nyquist inputs have already been doubled)
 %             'S' = single-sided output: include power from both positive and negative frequencies (this doubles the non-DC/Nyquist outputs)

@@ -49,6 +49,8 @@ function [seg,glo]=v_snrseg(s,r,fs,m,tf)
 % Bugs/suggestions
 % (1) Optionally restrict the bandwidth to the smaller of the two
 %     bandwidths either with an extra parameter or automatically determined
+% (2) Optionally apply a gain to the s signal to maximize the SNR and
+%     output the gain as an additional parameter
 
 %      Copyright (C) Mike Brookes 2011
 %      Version: $Id: v_snrseg.m 10865 2018-09-21 17:22:45Z dmb $
@@ -76,41 +78,41 @@ if nargin<4 || ~ischar(m)
     m='Vq';
 end
 if nargin<5 || ~numel(tf)
-    tf=0.01; % default frame length is 10 ms
+    tf=0.01;                                            % default frame length is 10 ms
 end
-snmax=100;  % clipping limit for SNR
+snmax=100;                                              % clipping limit for SNR
 
 % filter the input signals if required
 
-if any(m=='a')  % A-weighting
-    [b,a]=v_stdspectrum(2,'z',fs);
-    s=filter(b,a,s);
-    r=filter(b,a,r);
-elseif any(m=='b') %  BS-468 weighting
-    [b,a]=v_stdspectrum(8,'z',fs);
-    s=filter(b,a,s);
-    r=filter(b,a,r);
+if any(m=='a')                                          % A-weighting
+    [b,a]=v_stdspectrum(2,'z',fs);                      % create bandpass filter
+    s=filter(b,a,s);                                    % filter test signal
+    r=filter(b,a,r);                                    % filter reference signal
+elseif any(m=='b')                                      %  BS-468 weighting
+    [b,a]=v_stdspectrum(8,'z',fs);                      % create bandpass filter
+    s=filter(b,a,s);                                    % filter test signal
+    r=filter(b,a,r);                                    % filter reference signal
 end
 
-mq=~any(m=='z');
-nr=min(length(r), length(s));
-kf=round(tf*fs); % length of frame in samples
-ifr=kf+mq:kf:nr-mq; % ending sample of each frame
-ifl=ifr(end);
-nf=numel(ifr); % number of frames
-if mq % perform interpolation
+mq=~any(m=='z');                                        % flag indicating we need to do alignment
+nr=min(length(r), length(s));                           % signal length to align
+kf=round(tf*fs);                                        % length of frame in samples
+ifr=kf+mq:kf:nr-mq;                                     % ending sample of each frame (allowing +-mq at each end)
+ifl=ifr(end);                                           % end sample of last frame
+nf=numel(ifr);                                          % number of frames
+if mq                                                   % perform interpolation
     ssm=reshape(s(2:ifl)-s(3:ifl+1),kf,nf);
     ssp=reshape(s(2:ifl)-s(1:ifl-1),kf,nf);
-    sr=reshape(s(2:ifl)-r(2:ifl),kf,nf);
-    am=min(max(sum(sr.*ssm,1)./sum(ssm.^2,1),0),1); %optimum dist between s(2:ifl) and s(3:ifl+1)
-    ap=min(max(sum(sr.*ssp,1)./sum(ssp.^2,1),0),1); %optimum dist between s(2:ifl) and s(1:ifl-1)
+    sr=reshape(s(2:ifl)-r(2:ifl),kf,nf);                % enframed error: test-ref (one frame per column)
+    am=min(max(sum(sr.*ssm,1)./sum(ssm.^2,1),0),1);     % optimum dist between s(2:ifl) and s(3:ifl+1)
+    ap=min(max(sum(sr.*ssp,1)./sum(ssp.^2,1),0),1);     % optimum dist between s(2:ifl) and s(1:ifl-1)
     ef=min(sum((sr-repmat(am,kf,1).*ssm).^2,1),sum((sr-repmat(ap,kf,1).*ssp).^2,1)); % select the best for each frame
-else % no interpolation
-    ef=sum(reshape((s(1:ifl)-r(1:ifl)).^2,kf,nf),1);
+else                                                    % no interpolation
+    ef=sum(reshape((s(1:ifl)-r(1:ifl)).^2,kf,nf),1);    % sum of squared errors in each frame
 end
-rf=sum(reshape(r(mq+1:ifl).^2,kf,nf),1);
-em=ef==0; % mask for zero noise frames
-rm=rf==0; % mask for zero reference frames
+rf=sum(reshape(r(mq+1:ifl).^2,kf,nf),1);                % sum of sqared reference signal in each frame
+em=ef==0;                                               % mask for zero noise frames
+rm=rf==0;                                               % mask for zero reference frames
 snf=10*log10((rf+rm)./(ef+em));
 snf(rm)=-snmax;
 snf(em)=snmax;
@@ -118,26 +120,26 @@ snf(em)=snmax;
 % select the frames to include
 
 if any(m=='w')
-    vf=true(1,nf); % include all frames
+    vf=true(1,nf);                                      % include all frames
 elseif any(m=='v')
     vs=v_vadsohn(r,fs,'na');
     nvs=length(vs);
     [vss,vix]=sort([ifr'; vs(:,2)]);
     vjx=zeros(nvs+nf,5);
-    vjx(vix,1)=(1:nvs+nf)'; % sorted position
-    vjx(1:nf,2)=vjx(1:nf,1)-(1:nf)'; % prev VAD frame end (or 0 or nvs+1 if none)
-    vjx(nf+1:end,2)=vjx(nf+1:end,1)-(1:nvs)'; % prev snr frame end (or 0 or nvs+1 if none)
-    dvs=[vss(1)-mq; vss(2:end)-vss(1:end-1)];  % number of samples from previous frame boundary
-    vjx(:,3)=dvs(vjx(:,1)); % number of samples from previous frame boundary
-    vjx(1:nf,4)=vs(min(1+vjx(1:nf,2),nvs),3); % VAD result for samples between prev frame boundary and this one
-    vjx(nf+1:end,4)=vs(:,3); % VAD result for samples between prev frame boundary and this one
-    vjx(1:nf,5)=1:nf; % SNR frame to accumulate into
-    vjx(vjx(nf+1:end,2)>=nf,3)=0;  % zap any VAD frame beyond the last snr frame
-    vjx(nf+1:end,5)=min(vjx(nf+1:end,2)+1,nf); % SNR frame to accumulate into
+    vjx(vix,1)=(1:nvs+nf)';                             % sorted position
+    vjx(1:nf,2)=vjx(1:nf,1)-(1:nf)';                    % prev VAD frame end (or 0 or nvs+1 if none)
+    vjx(nf+1:end,2)=vjx(nf+1:end,1)-(1:nvs)';           % prev snr frame end (or 0 or nvs+1 if none)
+    dvs=[vss(1)-mq; vss(2:end)-vss(1:end-1)];           % number of samples from previous frame boundary
+    vjx(:,3)=dvs(vjx(:,1));                             % number of samples from previous frame boundary
+    vjx(1:nf,4)=vs(min(1+vjx(1:nf,2),nvs),3);           % VAD result for samples between prev frame boundary and this one
+    vjx(nf+1:end,4)=vs(:,3);                            % VAD result for samples between prev frame boundary and this one
+    vjx(1:nf,5)=1:nf;                                   % SNR frame to accumulate into
+    vjx(vjx(nf+1:end,2)>=nf,3)=0;                       % zap any VAD frame beyond the last snr frame
+    vjx(nf+1:end,5)=min(vjx(nf+1:end,2)+1,nf);          % SNR frame to accumulate into
     vf=full(sparse(1,vjx(:,5),vjx(:,3).*vjx(:,4),1,nf))>kf/2; % accumulate into SNR frames and compare with threshold
-else  % default is 'V'
-    [lev,af,fso,vad]=v_activlev(r,fs);    % do VAD on reference signal
-    vf=sum(reshape(vad(mq+1:ifl),kf,nf),1)>kf/2; % find frames that are mostly active
+else                                                    % default is 'V'
+    [lev,af,fso,vad]=v_activlev(r,fs);                  % do VAD on reference signal
+    vf=sum(reshape(vad(mq+1:ifl),kf,nf),1)>kf/2;        % find frames that are mostly active
 end
 seg=mean(snf(vf));
 glo=10*log10(sum(rf(vf))/sum(ef(vf)));
