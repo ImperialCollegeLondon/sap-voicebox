@@ -29,7 +29,7 @@ function [x,cf,xi,il,ih]=v_filtbankm(p,n,fs,fl,fh,w)
 %		 g=v_irfft(sqrt(gp).*exp(1i*angle(f)));         % take the inverse DFT using the original phase to recover the time domain signal 
 %
 % Inputs:
-%       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]
+%       p   number of filters in filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]
 %		n   length of dft
 %		fs  sample rate in Hz
 %		fl  low end of the lowest filter in Hz (or in mel/erb/bark/log10 with 'h' option) [default = 0Hz or, if 'l' option given, 30Hz]
@@ -330,69 +330,69 @@ gouti=full(sum(x(:,1+ww(12):end),2));                                % area of e
 %
 gin=fin(3:nfin)-fin(1:nfin-2);                              % full width of input interpolation filters
 gin=2*(gin+(gin==0)).^(-1);                                 % input gain equals 1/area
-ginsi=repmat(1+ww(19),1,nf-2);                        % 's' option means all inputs except DC and Nyquist have been doubled
-ginsd=sparse(1:nf,1:nf,[1-ww(12) ginsi.^(-1) 1]);                        % ... cancel this out with additional input scaling for forward transform
-ginsid=sparse(1:nf,1:nf,[2*(1-ww(12)) ginsi 2]);     % and back again for inverse transform
+ginsi=repmat(1+ww(19),1,nf-2);                              % 's' option means all inputs except DC and Nyquist have been doubled
+ginsd=sparse(1:nf,1:nf,[1-ww(12) ginsi.^(-1) 1]);           % ... cancel this out with additional input scaling for forward transform
+ginsid=sparse(1:nf,1:nf,[2*(1-ww(12)) ginsi 2]);            % and back again for inverse transform
 gind=sparse(1:nf,1:nf,gin(end-nf+1:end));                   % input gains
 %
 % Now create the x and xi matrices
 %
 switch 2*ww(16)+ww(15)
-    case 0                          % '': input and output are both power
+    case 0                                                  % '': input and output are both power
         xi=ginsid*x'*goutid;
         x=x*(gind*ginsd);
-    case 1                          % 'd': input is power/Hz, output is power
+    case 1                                                  % 'd': input is power/Hz, output is power
         xi=(ginsid*gind)*x'*goutid;
         x=x*ginsd;
-    case 2                          % 'D': input is power, output is power/Hz
+    case 2                                                  % 'D': input is power, output is power/Hz
         xi=ginsid*x';
         x=goutd*x*(gind*ginsd);
-    case 3                              % 'dD': input and output are both power/Hz
+    case 3                                                  % 'dD': input and output are both power/Hz
         xi=(ginsid*gind)*x';
         x=goutd*x*ginsd;
 end
-if ww(20)                               % 'S': double outputs to include negative frequency energy
+if ww(20)                                                   % 'S': double outputs to include negative frequency energy
     x=2*x;
     xi=0.5*xi;
 end
-if ww(13)                               % 'Z': DC input is an impulse plus a diffuse component
-    x(:,2)=x(:,2)+x(:,1)*ginsd(2,2);    % power of diffuse component at DC is equal to that opf adjacent bin corrected for 's' option
-    x(:,1)=0;                           % Eliminate references to DC input in forward transform only
+if ww(13)                                                   % 'Z': DC input is an impulse plus a diffuse component
+    x(:,2)=x(:,2)+x(:,1)*ginsd(2,2);                        % power of diffuse component at DC is equal to that opf adjacent bin corrected for 's' option
+    x(:,1)=0;                                               % Eliminate references to DC input in forward transform only
 end
-if ww(14)                               % 'q': we need an extra output that replicates the DC component
-    if ww(12)                           % 'z': DC input is an impulse
+if ww(14)                                                   % 'q': we need an extra output that replicates the DC component
+    if ww(12)                                               % 'z': DC input is an impulse
         x=[sparse(1,1,1,1,nf); x];
         xi=[sparse(1,1,1,nf,1) xi];
-    elseif ww(13)                       % 'Z': DC input is an impulse plus a diffuse component
-        x=[sparse([1 1],[1 2],[1 -ginsd(2,2)],1,nf); x]; % impulse component is DC input minus adjacent bin corrected for 's' option
+    elseif ww(13)                                           % 'Z': DC input is an impulse plus a diffuse component
+        x=[sparse([1 1],[1 2],[1 -ginsd(2,2)],1,nf); x];    % impulse component is DC input minus adjacent bin corrected for 's' option
         xi=[sparse(1,1,1,nf,1) xi];
     else
-        x=[sparse(1,nf); x];            % '': DC input is diffuse as normal
+        x=[sparse(1,nf); x];                                % '': DC input is diffuse as normal
         xi=[sparse(nf,1) xi];
     end
 end
 %
 % sort out the output argument options
 %
-if ~ww(5)                                   % output cf in Hz instead of mel/erb/...
-    cf=[zeros(1,ww(14)) mb(2:pmq+1)];       % ... and include an initial 0 if 'q' option (ww(14)==1)
-else                                        % keep cf in mel/erb/...
-    if ww(14)                               % 'q' (ww(14)==1): we need an extra output for the DC component
-        if wr==1                            % log-scaled so ...
-            cf=[-Inf cf(2:p)];              % ... DC corresponds to -Inf
-        else                                % not log-scaled ...
-            cf=[0 cf(2:p)];                 % ... DC corresponds to 0
+if ~ww(5)                                                   % output cf in Hz instead of mel/erb/...
+    cf=[zeros(1,ww(14)) mb(2:pmq+1)];                       % ... and include an initial 0 if 'q' option (ww(14)==1)
+else                                                        % keep cf in mel/erb/...
+    if ww(14)                                               % 'q' (ww(14)==1): we need an extra output for the DC component
+        if wr==1                                            % log-scaled so ...
+            cf=[-Inf cf(2:p)];                              % ... DC corresponds to -Inf
+        else                                                % not log-scaled                 ...
+            cf=[0 cf(2:p)];                                 % ... DC corresponds to 0
         end
-    else                                    % no 'q' option (ww(14)==0) ...
-        cf=cf(2:p+1);                       % ... just remove dummy end frequencies
+    else                                                    % no 'q' option (ww(14)==0) ...
+        cf=cf(2:p+1);                                       % ... just remove dummy end frequencies
     end 
 end
-if ww(1)                                    % round outputs to the centre of gravity bin
-    sx2=sum(x,2);                           % sum of each row
+if ww(1)                                                    % round outputs to the centre of gravity bin
+    sx2=sum(x,2);                                           % sum of each row
     msk=full(sx2~=0);
     vxc=zeros(pmq,1);
-    vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));   % find centre of gravity of each row
-    x=sparse(1:pmq,vxc,sx2,pmq,nf);             % put all the weight into the centre of gravity bin
+    vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));           % find centre of gravity of each row
+    x=sparse(1:pmq,vxc,sx2,pmq,nf);                         % put all the weight into the centre of gravity bin
 end
 il=1; % default range is entire x maxtrix
 ih=nf;

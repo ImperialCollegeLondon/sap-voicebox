@@ -8,9 +8,9 @@ function y=v_rdct(x,n,a,b)
 %
 % Outputs: y(n,k)   Output data
 %
-% This routine is equivalent to multiplying by the matrix
+% This routine is equivalent to pre-multiplying x by the matrix
 %
-%   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)
+%   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n-0.5)*pi/n)
 %
 % Default values of the scaling factors are A=sqrt(2N) and B=1 which
 % results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).

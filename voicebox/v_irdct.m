@@ -2,9 +2,9 @@ function x=v_irdct(y,n,a,b)
 %V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N) 
 % Data is truncated/padded to length N.
 %
-% This routine is equivalent to multiplying by the matrix
+% This routine is equivalent to pre-multiplying y by the matrix
 %
-%    irdct(eye(n)) = cos((0.5:n)'*(0:n-1)*pi/n)*diag([sqrt(0.5)*a/b repmat(a,1,n-1)])/n
+%    irdct(eye(n)) = cos((0.5:n-0.5)'*(0:n-1)*pi/n)*diag([sqrt(0.5)*a/b repmat(a,1,n-1)])/n
 %
 %
 % Default values of the scaling factors are A=sqrt(2N) and B=1 which
