@@ -12,6 +12,7 @@ function x=v_irfft(y,n,d)
 % output of dimension N. Only the first half of the spectrum need be supplied: if N is even,
 % this includes the Nyquist term and is of dimension M=N/2 + 1 whereas if N is odd then there is
 % no Nyquist term and the input is of dimension M=(N+1)/2.
+% The DC and (if present) Nyquist values are forced to be real before performing the transform.
 % Note that the default value of N is always even so that N must be given explicitly
 % if it is odd.
 %
@@ -64,6 +65,7 @@ else
         end
         m=mm;
     end
+    v(1,:)=real(v(1,:));	% force DC element real
     if rem(n,2)		% odd output length
         x=real(ifft([v;conj(v(m:-1:2,:))],[],1));    % do it the long way
     else			% even output length
