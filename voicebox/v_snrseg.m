@@ -14,7 +14,7 @@ function [seg,glo]=v_snrseg(s,r,fs,m,tf)
 %                 V = use P.56-based VAD to discard silent portions [default]
 %                 a = A-weight the signals
 %                 b = weight signals by BS-468
-%                 q = use quadratic interpolation to remove delays +- 1 sample [default]
+%                 q = use linear interpolation to remove delays +- 1 sample [default]
 %                 z = do not do any alignment
 %                 p = plot results
 %           tf  frame increment [0.01]
@@ -100,7 +100,14 @@ kf=round(tf*fs);                                        % length of frame in sam
 ifr=kf+mq:kf:nr-mq;                                     % ending sample of each frame (allowing +-mq at each end)
 ifl=ifr(end);                                           % end sample of last frame
 nf=numel(ifr);                                          % number of frames
-if mq                                                   % perform interpolation
+if mq                                                   % perform linear interpolation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Consider the linearly interpolated signal sm(i)=(1-am)*s(i)+am*s(i+1) where 0<=am<=1.     %
+% For each frame we calculate the value of am that minimizes the error sum((sm(i)-r(i))^2). %
+% The solution is am = sum((s(i)-r(i)).*(s(i)-s(i+1))) / sum((s(i)-s(i+1))^2).              %
+% Similarly, we calculate the optimum ap in sp(i)=(1-ap)*s(i)+ap*s(i-1) and then            %
+% finally, we select whichever of sm(i) and sp(i) with the lowest error.                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ssm=reshape(s(2:ifl)-s(3:ifl+1),kf,nf);
     ssp=reshape(s(2:ifl)-s(1:ifl-1),kf,nf);
     sr=reshape(s(2:ifl)-r(2:ifl),kf,nf);                % enframed error: test-ref (one frame per column)
@@ -119,9 +126,9 @@ snf(em)=snmax;
 
 % select the frames to include
 
-if any(m=='w')
+if any(m=='w')                                          % 'w' option: do not discard silent frames
     vf=true(1,nf);                                      % include all frames
-elseif any(m=='v')
+elseif any(m=='v')                                      % 'v' option: use Sohn VAD to discard silent frames
     vs=v_vadsohn(r,fs,'na');
     nvs=length(vs);
     [vss,vix]=sort([ifr'; vs(:,2)]);
@@ -137,7 +144,7 @@ elseif any(m=='v')
     vjx(vjx(nf+1:end,2)>=nf,3)=0;                       % zap any VAD frame beyond the last snr frame
     vjx(nf+1:end,5)=min(vjx(nf+1:end,2)+1,nf);          % SNR frame to accumulate into
     vf=full(sparse(1,vjx(:,5),vjx(:,3).*vjx(:,4),1,nf))>kf/2; % accumulate into SNR frames and compare with threshold
-else                                                    % default is 'V'
+else                                                    % default is 'V': use P.56 VAD to discard silent frames
     [lev,af,fso,vad]=v_activlev(r,fs);                  % do VAD on reference signal
     vf=sum(reshape(vad(mq+1:ifl),kf,nf),1)>kf/2;        % find frames that are mostly active
 end
