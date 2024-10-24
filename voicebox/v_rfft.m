@@ -5,10 +5,8 @@ function y=v_rfft(x,n,d)
 % 			the first and last being real
 %   N odd:	(N+1)/2 points are returned with the
 % 			first being real
-% In all cases fix(1+N/2) points are returned
+% In all cases floor(1+N/2) points are returned
 % D is the dimension along which to do the DFT
-
-
 
 %      Copyright (C) Mike Brookes 1998
 %      Version: $Id: v_rfft.m 10865 2018-09-21 17:22:45Z dmb $
