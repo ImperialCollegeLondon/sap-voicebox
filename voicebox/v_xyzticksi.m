@@ -30,7 +30,6 @@ function s=v_xyzticksi(ax,ah)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Note that "mu" = char(181) assumes Western European encoding
 % Bugs:
 %   (1) ipan=3 or 4 is not really debugged yet:
 %   (2) axis lengths incorrect for 3D graphs
@@ -47,8 +46,7 @@ axfield={'XLim' 'YLim' 'ZLim'; 'XTick' 'YTick' 'ZTick'; 'XMinorTick' 'YMinorTick
 tryglobal=nargout>0;
 digith=1;    % height of a digit in font units
 digitw=0.5;    % width of a digit in font units
-
-prefix={'y','z','a','f','p','n','�','m','','k','M','G','T','P','E','Z','Y'};
+prefix={'y','z','a','f','p','n','μ','m','','k','M','G','T','P','E','Z','Y'};
 marg=[2 0.5 0.25 0.25];     % gap between labels in font units
 ntreq=[3 2 2 1];        % minimum number of labelled ticks required as a function of IPAN
 % grid template: each pair is [#steps final-value]. Start=10, end=100
