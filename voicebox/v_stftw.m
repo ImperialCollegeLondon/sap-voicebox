@@ -1,4 +1,4 @@
-function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt)
+function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)
 %V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)
 %  Usage:  (1) [y,so]=v_stftw(x,nw); % default parameters: m='rM', ov=2
 %              % ...                 % time-frequency domain processing goes here
@@ -35,11 +35,12 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt)
 %          ov       integer overlap factor; the frame hop is nw/ov. [2]
 %          nt       Optional DFT length (normally >=nw). [Default is nw as modified by 'i','I','u' options]
 %
-% Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally 1+nw/2 from DC to Nyquist
-%          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times
-%          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)
+% Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally floor(1+nw/2) from DC to Nyquist
 %          so           structure used in subsequent call as the nw argument to
 %                       alllow processing in chunks. Also used in v_istftw
+%          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times
+%          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)
+%          gd(tf,k,...) group delay in samples. A impulse at x(i,n+1) will give gd(i,:)=n. Will be infinite wherever y()=0.
 %
 % The mode string, m, is a character string containing a combination of the following options and a window code (see below):
 %
@@ -76,8 +77,8 @@ function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt)
 %        p = mean(x.^2) ~=~ mean(sum(abs(yy).^2,2)) where yy=[y conj(y(:,nw-size(y,2)+1:-1:2))]
 %
 %      where yy is the double-sided spectrum. This equivalence is stochastic rather than exact.
-%  (2) For perfect reconstruction (see [3]), the overlap factor, ov, must be a multiple of one of
-%      the values listed above in the ov column for the selected window.
+%  (2) For perfect reconstruction (see [3]), the overlap factor, ov, must be an integer multiple
+%      of one of the values listed above in the ov column for the selected window.
 %  (3) Using the default parameters, perfect reconstruction will not be obtained for the first and
 %      the last frames of the signal. Using the 'e' option will add padding frames to the start and
 %      end of the signal so that the entire signal will be reconstructed perfectly.
@@ -193,49 +194,56 @@ if nx>0                             % there are some samples
     elseif po<3 && ~mp              % ensure all samples are in at least one frame
         f1=max(ceil((nx-nw)/nh),0);
     else                            % only include full frames
-        f1=floor((nx-nw)/nh);       % last full frame (might be negative and/or <f0)
+        f1=floor((nx-nw)/nh);               % last full frame (might be negative and/or <f0)
     end
-else                                % input signal is empty
+else                                        % input signal is empty
     f1=-1;
 end
-nf=max((f1-f0+1)*(f1>=0),0);        % number of frames to output
-if nf>0                             % if there are frames to output
-    ff=0;                           % turn off first frame flag
-    indx=repmat(nh*(f0:f1).',nw,1)+reshape(repmat(0:nw-1,nf,1),nf*nw,1); % index into x
-    mk=indx<0 | indx>nx-1;          % mask for values outside 0:nx-1
+nf=max((f1-f0+1)*(f1>=0),0);                % number of frames to output
+if nf>0                                     % if there are frames to output
+    ff=0;                                   % turn off first frame flag
+    indx=repmat(nh*(f0:f1).',nw,1)+reshape(repmat(0:nw-1,nf,1),nf*nw,1);    % index into x
+    mk=indx<0 | indx>nx-1;                  % mask for values outside 0:nx-1
     indx=nx+0.5-abs(mod(indx,2*nx)+0.5-nx); % reflect values outside the range
-    y=x(indx,:);                    % create output
-    if po==1                        % padding option was 'z'
-        y(mk,:)=0;                  % set padding values to zero
+    v=x(indx,:);                            % create output
+    if po==1                                % padding option was 'z'
+        v(mk,:)=0;                          % set padding values to zero
     end
-    y=v_rfft(reshape(y,[nf,nw,sx(2:end)]).*repmat(wa,[nf,1,sx(2:end)]),nt,2);  % perform windowed DFT
+    y=v_rfft(reshape(v,[nf,nw,sx(2:end)]).*repmat(wa,[nf,1,sx(2:end)]),nt,2);  % perform windowed DFT
 else
     y=zeros([0,nw,sx(2:end)]);
 end
-if nargout>1                        % need additional outputs
+if nargout>1                                % need additional outputs
     if nf>0
-        tax=(f0+mf:f1+mf)*nh+0.5*(1+nw);      % frame centre times (where input samples are 1,2,...)
+        tax=(f0+mf:f1+mf)*nh+0.5*(1+nw);    % frame centre times (where input samples are 1,2,...)
     else
         tax=[];
     end
-    fax=(0:size(y,2)-1)/nt;           % bin centre frequencies (normalized by sample frequency)
+    fax=(0:size(y,2)-1)/nt;                 % bin centre frequencies (normalized by sample frequency)
     if nf>0
-        so.xx=x((f1+1)*nh+1:end,:);	% save data tail for next chunk (starts at sample nh+1 of the last frame in y)
+        so.xx=x((f1+1)*nh+1:end,:);	        % save data tail for next chunk (starts at sample nh+1 of the last frame in y)
     else
-        so.xx=x;               % if nf==0 then data tail is entire signal (including any previous tail)
+        so.xx=x;                            % if nf==0 then data tail is entire signal (including any previous tail)
     end
-    so.ff=ff;                  % first frame flag
-    so.mp=mp;                  % flag indicating more chunks to follow
-    so.mf=mf+nf+f0;            % add number of additional non-prefix frames output
+    so.ff=ff;                               % first frame flag
+    so.mp=mp;                               % flag indicating more chunks to follow
+    so.mf=mf+nf+f0;                         % add number of additional non-prefix frames output
+    if nargout>4                            % need group delay output
+        if nf>0                             % if there are frames to output
+            gd=real(v_rfft(reshape(v,[nf,nw,sx(2:end)]).*repmat(wa.*(0:nt-1),[nf,1,sx(2:end)]),nt,2)./y);  % calculate group delay
+        else
+            gd=zeros([0,nw,sx(2:end)]);
+        end
+    end
 end
-if nf>0 && (~nargout || any(lower(m)=='s')) 	% no outputs or 'sS' options so plot graphs
+if nf>0 && (~nargout || any(lower(m)=='s')) % no outputs or 'sS' options so plot graphs
     ta=(f0+mf:f1+mf)*nh+0.5*(1+nw);
     nv=size(y,2);
     fa=(0:nv-1)/nt;
     clf;
     if any(m=='S')
         subplot(2,1,1);
-        yp=abs(reshape(y,[nf,nv,nc])).^2;       % calculate power spectrum
+        yp=abs(reshape(y,[nf,nv,nc])).^2;   % calculate power spectrum
         plot(ta,10*log10(reshape(sum(cat(2,yp,yp(:,2:floor((nt+1)/2),:)),2),nf,nc))); % add in power from negative frequencies
         v_axisenlarge([-1 -1.05]);
         xlabel('Sample Number');
