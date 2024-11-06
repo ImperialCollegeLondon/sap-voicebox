@@ -155,11 +155,6 @@ end
 seg=mean(snf(vf));
 glo=10*log10(sum(rf(vf))/sum(ef(vf)));
 if ~nargout || any (m=='p')
-    subplot(311);                                       % plot test signal
-    plot((1:length(s))/fs,s);
-    ylabel('Signal');
-    title(sprintf('SNR = %.1f dB, SNR_{seg} = %.1f dB',glo,seg));
-    axh(1)=gca;
     subplot(312);                                       % plot reference signal
     plot((1:length(r))/fs,r);
     ylabel('Reference');
@@ -172,9 +167,14 @@ if ~nargout || any (m=='p')
     plot([1 nr]/fs,[glo seg; glo seg],':k',tc,snv,'-b',tc,snu,'-r');
     ylabel('Frame SNR');
     xlabel('Time (s)');
+       set(gca,'ylim',min([snv(:);snu(:)])+[-5 60]);       % restrict displayed SNR range
     axh(3)=gca;
+    subplot(311);                                       % plot test signal
+    plot((1:length(s))/fs,s);
+    ylabel('Signal');
+    title(sprintf('SNR = %.1f dB, SNR_{seg} = %.1f dB',glo,seg));
+    axh(1)=gca;
     linkaxes(axh,'x');                                  % link time axes
     linkaxes(axh(1:2),'y');                             % link signal amplitude axes
     set(gca,'xlim',[1 nr]/fs);
-    set(gca,'ylim',min([snv(:);snu(:)])+[-5 60]);       % restrict displayed SNR range
 end
