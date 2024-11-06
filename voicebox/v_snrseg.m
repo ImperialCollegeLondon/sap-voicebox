@@ -1,4 +1,4 @@
-function [seg,glo]=v_snrseg(s,r,fs,m,tf)
+function [seg,glo,tc,snf,vf]=v_snrseg(s,r,fs,m,tf)
 %V_SNRSEG Measure segmental and global SNR [SEG,GLO]=(S,R,FS,M,TF)
 %
 %Usage: (1) seg=v_snrseg(s,r,fs);                  % s & r are noisy and clean signal
@@ -21,6 +21,9 @@ function [seg,glo]=v_snrseg(s,r,fs,m,tf)
 %
 % Outputs: seg = Segmental SNR in dB
 %          glo = Global SNR in dB (typically 7 dB greater than SNR-seg)
+%          tc  = time at centre of each frame (seconds)
+%          snf = Segmental SNR in dB in each frame
+%          vf  = Boolean mask indicating frames that valid (from VAD)
 %
 % This function compares a noisy signal, S, with a clean reference, R, and
 % computes the segemntal signal-to-noise ratio (SNR) in dB. The signals,
@@ -147,28 +150,31 @@ elseif any(m=='v')                                      % 'v' option: use Sohn V
 else                                                    % default is 'V': use P.56 VAD to discard silent frames
     [lev,af,fso,vad]=v_activlev(r,fs);                  % do VAD on reference signal
     vf=sum(reshape(vad(mq+1:ifl),kf,nf),1)>kf/2;        % find frames that are mostly active
+    tc=((1:nf)*kf+(1-kf)/2)/fs;                         % time at centre of frame
 end
 seg=mean(snf(vf));
 glo=10*log10(sum(rf(vf))/sum(ef(vf)));
-
 if ~nargout || any (m=='p')
-    subplot(311);
+    subplot(311);                                       % plot test signal
     plot((1:length(s))/fs,s);
     ylabel('Signal');
     title(sprintf('SNR = %.1f dB, SNR_{seg} = %.1f dB',glo,seg));
     axh(1)=gca;
-    subplot(312);
+    subplot(312);                                       % plot reference signal
     plot((1:length(r))/fs,r);
     ylabel('Reference');
     axh(2)=gca;
-    subplot(313);
+    subplot(313);                                       % plot SNR + global and segmental means
     snv=snf;
-    snv(~vf)=NaN;
+    snv(~vf)=NaN;                                       % plot valid frames in blue
     snu=snf;
-    snu(vf>0)=NaN;
-    plot([1 nr]/fs,[glo seg; glo seg],':k',((1:nf)*kf+(1-kf)/2)/fs,snv,'-b',((1:nf)*kf+(1-kf)/2)/fs,snu,'-r');
+    snu(vf>0)=NaN;                                      % plot invalid frames in red
+    plot([1 nr]/fs,[glo seg; glo seg],':k',tc,snv,'-b',tc,snu,'-r');
     ylabel('Frame SNR');
     xlabel('Time (s)');
     axh(3)=gca;
-    linkaxes(axh,'x');
+    linkaxes(axh,'x');                                  % link time axes
+    linkaxes(axh(1:2),'y');                             % link signal amplitude axes
+    set(gca,'xlim',[1 nr]/fs);
+    set(gca,'ylim',min([snv(:);snu(:)])+[-5 60]);       % restrict displayed SNR range
 end
