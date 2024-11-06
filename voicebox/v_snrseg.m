@@ -104,13 +104,13 @@ ifr=kf+mq:kf:nr-mq;                                     % ending sample of each 
 ifl=ifr(end);                                           % end sample of last frame
 nf=numel(ifr);                                          % number of frames
 if mq                                                   % perform linear interpolation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Consider the linearly interpolated signal sm(i)=(1-am)*s(i)+am*s(i+1) where 0<=am<=1.     %
-% For each frame we calculate the value of am that minimizes the error sum((sm(i)-r(i))^2). %
-% The solution is am = sum((s(i)-r(i)).*(s(i)-s(i+1))) / sum((s(i)-s(i+1))^2).              %
-% Similarly, we calculate the optimum ap in sp(i)=(1-ap)*s(i)+ap*s(i-1) and then            %
-% finally, we select whichever of sm(i) and sp(i) with the lowest error.                    %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Consider the linearly interpolated signal sm(i)=(1-am)*s(i)+am*s(i+1) where 0<=am<=1.     %
+    % For each frame we calculate the value of am that minimizes the error sum((sm(i)-r(i))^2). %
+    % The solution is am = sum((s(i)-r(i)).*(s(i)-s(i+1))) / sum((s(i)-s(i+1))^2).              %
+    % Similarly, we calculate the optimum ap in sp(i)=(1-ap)*s(i)+ap*s(i-1) and then            %
+    % finally, we select whichever of sm(i) and sp(i) with the lowest error.                    %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ssm=reshape(s(2:ifl)-s(3:ifl+1),kf,nf);
     ssp=reshape(s(2:ifl)-s(1:ifl-1),kf,nf);
     sr=reshape(s(2:ifl)-r(2:ifl),kf,nf);                % enframed error: test-ref (one frame per column)
@@ -167,7 +167,7 @@ if ~nargout || any (m=='p')
     plot([1 nr]/fs,[glo seg; glo seg],':k',tc,snv,'-b',tc,snu,'-r');
     ylabel('Frame SNR');
     xlabel('Time (s)');
-       set(gca,'ylim',min([snv(:);snu(:)])+[-5 60]);       % restrict displayed SNR range
+    set(gca,'ylim',min([snv(:);snu(:)])+[-3 60]);       % restrict displayed SNR range
     axh(3)=gca;
     subplot(311);                                       % plot test signal
     plot((1:length(s))/fs,s);
