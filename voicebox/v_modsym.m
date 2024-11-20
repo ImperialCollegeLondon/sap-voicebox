@@ -1,11 +1,17 @@
-function z=v_modsym(x,y)
-%V_MODSYM  symmetric modulus function [Z]=(X,Y)
+function z=v_modsym(x,y,r)
+%V_MODSYM  symmetric modulus function [Z]=(X,Y,R)
 %
-% v_modsym(x,y) adds an integer multiple of y onto x so that it lies in
-% the range [-y/2,+y/2) if y is positive or (-y/2,y/2] if y is negative.
+%   Usage: v_modsym(x,-2*pi) converts an angle in radians into the range (-pi,+pi].
 %
-% Usage: v_modsym(x,-2*pi) converts an angle in radians into the range (-pi,+pi].
-
+%  Inputs: x    Input data (scalar or matrix)
+%          y    modulus (scalar or same size as x)
+%          r    Reference data (scalar or same size as x) [default: 0]
+%
+% Outputs: z    Output data (same size as x): z=x+k*y where integer k is chosen so that |z-r| <= |y/2|
+%
+% v_modsym(x,y,r) adds an integer multiple of y onto x so that it lies in
+% the range [r-y/2,r+y/2) if y is positive or (r-y/2,r+y/2] if y is negative.
+%
 %      Copyright (C) Mike Brookes 2024
 %      Version: $Id:  $
 %
@@ -27,5 +33,9 @@ function z=v_modsym(x,y)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-v=0.5*y;
+if nargin<3
+    v=0.5*y;
+else
+    v=0.5*y-r;
+end 
 z=mod(x+v,y)-v;
