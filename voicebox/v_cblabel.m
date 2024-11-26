@@ -9,7 +9,11 @@ function c=v_cblabel(l,h)
 % Outputs:
 %
 %     C        Handle of the colorbar
-
+%
+% Bugs/Suggestions:
+%
+%  (1) doesn't always select the correct colorbar if subplot includes multiple colorbars
+%
 %      Copyright (C) Mike Brookes 2000-2009
 %      Version: $Id: v_cblabel.m 10865 2018-09-21 17:22:45Z dmb $
 %
@@ -31,13 +35,12 @@ function c=v_cblabel(l,h)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 if nargin<2
-    h=gcf;
+    h=gcf; % default is current figure
 end
 switch get(h,'Type')
     case 'axes'
-        if strcmp(get(h,'Tag'),'Colorbar')
+        if strcmpi(get(h,'Tag'),'colorbar')
             c=h;
         else
             while ~strcmp(get(h,'Type'),'figure')
@@ -59,6 +62,8 @@ switch get(h,'Type')
             error('There is no colour bar on this figure')
         end
         c=c(1);      % use the most recently added colorbar
+    case 'colorbar'
+        c=h;
     otherwise
         error('h argument must be colorbar, axis or figure handle');
 end
