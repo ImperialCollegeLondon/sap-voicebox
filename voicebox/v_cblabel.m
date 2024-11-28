@@ -10,9 +10,6 @@ function c=v_cblabel(l,h)
 %
 %     C        Handle of the colorbar
 %
-% Bugs/Suggestions:
-%
-%  (1) doesn't always select the correct colorbar if subplot includes multiple colorbars
 %
 %      Copyright (C) Mike Brookes 2000-2009
 %      Version: $Id: v_cblabel.m 10865 2018-09-21 17:22:45Z dmb $
@@ -35,6 +32,10 @@ function c=v_cblabel(l,h)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+persistent t
+if isempty(t)
+    t=[1 0 0.5 0; 0 1 0 0.5]'; % matrix used to find centre of graphical object
+end
 if nargin<2
     h=gcf; % default is current figure
 end
@@ -49,19 +50,46 @@ switch get(h,'Type')
                     error('cannot find parent figure');
                 end
             end
-            c=findobj(h,'tag','Colorbar');
-            if isempty(c)
-                error('There is no colour bar on this figure')
+            cx=findobj(h,'tag','Colorbar');
+            nc=length(cx);
+            switch nc
+                case 0
+                    error('There is no colour bar on this figure')
+                case 1
+                    c=cx(1);
+                otherwise                                   % find the nearest colorbar to the centre of current graph
+                    cg=(gca().Position*t);                  % coordinates of the centre of current graph
+                    c=cx(1);                                % select the first colorbar
+                    d=sum((c.Position*t-cg).^2);            % squared distance to centre of current graph
+                    for ic=2:nc                             % loop through each colorbar
+                        di=sum((cx(ic).Position*t-cg).^2);  % squared distance to centre of current graph
+                        if di<d                             % if this colorbar is nearer
+                            c=cx(ic);                       % ... select this colorbar
+                            d=di;                           % ... and save the squared distance
+                        end
+                    end
             end
-            % we could look for the nearest colorbar to the selected axes
-            c=c(1);      % for now use the most recently added colorbar
         end
     case 'figure'
-        c=findobj(h,'tag','Colorbar');
-        if isempty(c)
-            error('There is no colour bar on this figure')
+        cx=findobj(h,'tag','Colorbar');
+        nc=length(cx);
+        switch nc
+            case 0
+                error('There is no colour bar on this figure')
+            case 1
+                c=cx(1);
+            otherwise                                   % find the nearest colorbar to the centre of current graph
+                cg=(gca().Position*t);                  % coordinates of the centre of current graph
+                c=cx(1);                                % select the first colorbar
+                d=sum((c.Position*t-cg).^2);            % squared distance to centre of current graph
+                for ic=2:nc                             % loop through each colorbar
+                    di=sum((cx(ic).Position*t-cg).^2);  % squared distance to centre of current graph
+                    if di<d                             % if this colorbar is nearer
+                        c=cx(ic);                       % ... select this colorbar
+                        d=di;                           % ... and save the squared distance
+                    end
+                end
         end
-        c=c(1);      % use the most recently added colorbar
     case 'colorbar'
         c=h;
     otherwise
