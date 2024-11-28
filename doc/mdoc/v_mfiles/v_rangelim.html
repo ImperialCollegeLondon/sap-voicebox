@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_rangelim</title>
+  <meta name="keywords" content="v_rangelim">
+  <meta name="description" content="V_RANGELIM  limit the range of matrix elements: Y=(X,R,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_rangelim
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_RANGELIM  limit the range of matrix elements: Y=(X,R,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y=v_rangelim(x,r,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_RANGELIM  limit the range of matrix elements: Y=(X,R,M)
+
+  Usage: (1) y=v_rangelim(x,[a b]);        % limit x to the range [a,b]
+         (2) y=v_rangelim(x,[a b],'n');    % set values outside range to NaN
+         (3) y=v_rangelim(x,r);            % limit x to the range max(x(:))+[-r,0]
+         (4) y=v_rangelim(x,r,'r');        % limit x to the range max(x(:)).*[1/r,1]
+
+  Inputs: x    Input data (scalar or matrix)
+          r    desired range as [min max], max-min, max/min or 20*log10(max/min) (see options below)
+          m    mode string containing any reasonable combination of:
+
+                   'd' range r gives range in dB: 20*log10(max(y)/min(y))
+                   'r' range r gives max(y)/min(y) ratio
+                   'l' range r gives max(y)-min(y) difference [default]
+
+                   'p' max(x) is top of range [default]
+                   't' min(x) is bottom of range
+                   'g' geometric mean is centre of range
+                   'u' mean is centre of range
+                   'm' median is centre of range
+
+                   'c' clip out of range values to limit [default]
+                   'n' set out of range values to NaN
+
+ Outputs: y    Output data (same size as x)
+
+
+      Copyright (C) Mike Brookes 2024
+      Version: $Id:  $
+
+   VOICEBOX is a MATLAB toolbox for speech processing.
+   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You can obtain a copy of the GNU General Public License from
+   http://www.gnu.org/copyleft/gpl.html or by writing to
+   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function y=v_rangelim(x,r,m)</a>
+0002 <span class="comment">%V_RANGELIM  limit the range of matrix elements: Y=(X,R,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Usage: (1) y=v_rangelim(x,[a b]);        % limit x to the range [a,b]</span>
+0005 <span class="comment">%         (2) y=v_rangelim(x,[a b],'n');    % set values outside range to NaN</span>
+0006 <span class="comment">%         (3) y=v_rangelim(x,r);            % limit x to the range max(x(:))+[-r,0]</span>
+0007 <span class="comment">%         (4) y=v_rangelim(x,r,'r');        % limit x to the range max(x(:)).*[1/r,1]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs: x    Input data (scalar or matrix)</span>
+0010 <span class="comment">%          r    desired range as [min max], max-min, max/min or 20*log10(max/min) (see options below)</span>
+0011 <span class="comment">%          m    mode string containing any reasonable combination of:</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%                   'd' range r gives range in dB: 20*log10(max(y)/min(y))</span>
+0014 <span class="comment">%                   'r' range r gives max(y)/min(y) ratio</span>
+0015 <span class="comment">%                   'l' range r gives max(y)-min(y) difference [default]</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%                   'p' max(x) is top of range [default]</span>
+0018 <span class="comment">%                   't' min(x) is bottom of range</span>
+0019 <span class="comment">%                   'g' geometric mean is centre of range</span>
+0020 <span class="comment">%                   'u' mean is centre of range</span>
+0021 <span class="comment">%                   'm' median is centre of range</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%                   'c' clip out of range values to limit [default]</span>
+0024 <span class="comment">%                   'n' set out of range values to NaN</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Outputs: y    Output data (same size as x)</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%      Copyright (C) Mike Brookes 2024</span>
+0030 <span class="comment">%      Version: $Id:  $</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0033 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0037 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0038 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0039 <span class="comment">%   (at your option) any later version.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0042 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0043 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0044 <span class="comment">%   GNU General Public License for more details.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0047 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0048 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0050 <span class="keyword">if</span> nargin&lt;3 || ~length(m)
+0051     m=<span class="string">'lp'</span>;
+0052 <span class="keyword">end</span>
+0053 nm=length(m);
+0054 
+0055 id=find([any(repmat(m',1,4)==repmat(<span class="string">'gumt'</span>,nm,1),1) 1].*(1:5),1);
+0056 <span class="keyword">if</span> length(r)&gt;1                          <span class="comment">% r specifies explicit limits</span>
+0057     p=r(1);
+0058     q=r(2); 
+0059 <span class="keyword">else</span>                                    <span class="comment">% r specifies max/min or max-min</span>
+0060     ir=find([any(repmat(m',1,2)==repmat(<span class="string">'dr'</span>,nm,1),1) 1].*(1:3),1);
+0061 <span class="keyword">if</span> ir==1                                <span class="comment">% ratio in dB</span>
+0062     r=10^(0.05*r);                      <span class="comment">% convert to actual ratio</span>
+0063 <span class="keyword">end</span>
+0064 <span class="keyword">if</span> ir==3                                <span class="comment">% 'l' denotes a linear range specification</span>
+0065     <span class="keyword">switch</span> id                           <span class="comment">% switch according to reference value</span>
+0066         <span class="keyword">case</span> 5                          <span class="comment">% 'p': peak of x(:)</span>
+0067             q=max(x(:));                <span class="comment">% ... upper limit</span>
+0068             p=q-r;                      <span class="comment">% ... lower limit</span>
+0069         <span class="keyword">case</span> 4                          <span class="comment">% 't': trough of x(:)</span>
+0070             p=min(x(:));                <span class="comment">% ... lower limit</span>
+0071             q=p+r;                      <span class="comment">% ... upper limit</span>
+0072         <span class="keyword">case</span> 3                          <span class="comment">% 'm': median of x(:)</span>
+0073             p=median(x(:))-0.5*r;       <span class="comment">% ... lower limit</span>
+0074             q=p+r;                      <span class="comment">% ... upper limit</span>
+0075         <span class="keyword">case</span> 2                          <span class="comment">% 'u': mean of x(:)</span>
+0076             p=mean(x(:))-0.5*r;         <span class="comment">% ... lower limit</span>
+0077             q=p+r;                      <span class="comment">% ... upper limit</span>
+0078         <span class="keyword">case</span> 1                          <span class="comment">% 'g': geometric mean of x(:)</span>
+0079             p=exp(mean(log(x(:))))-0.5*r; <span class="comment">% ... lower limit</span>
+0080             q=p+r;                      <span class="comment">% ... upper limit</span>
+0081     <span class="keyword">end</span>
+0082 <span class="keyword">else</span>                                    <span class="comment">% 'r' or 'd' denotes a ratio range specification</span>
+0083     <span class="keyword">switch</span> id                           <span class="comment">% switch according to reference value</span>
+0084         <span class="keyword">case</span> 5                          <span class="comment">% 'p': peak of x(:)</span>
+0085             q=max(x(:));                <span class="comment">% ... upper limit</span>
+0086             p=q/r;                      <span class="comment">% ... lower limit</span>
+0087         <span class="keyword">case</span> 4                          <span class="comment">% 't': trough of x(:)</span>
+0088             p=min(x(:));                <span class="comment">% ... lower limit</span>
+0089             q=p*r;                      <span class="comment">% ... upper limit</span>
+0090         <span class="keyword">case</span> 3                          <span class="comment">% 'm': median of x(:)</span>
+0091             p=median(x(:))/sqrt(r);     <span class="comment">% ... lower limit</span>
+0092             q=p*r;                      <span class="comment">% ... upper limit</span>
+0093         <span class="keyword">case</span> 2                          <span class="comment">% 'u': mean of x(:)</span>
+0094             p=mean(x(:))/sqrt(r);       <span class="comment">% ... lower limit</span>
+0095             q=p*r;                      <span class="comment">% ... upper limit</span>
+0096         <span class="keyword">case</span> 1                          <span class="comment">% 'g': geometric mean of x(:)</span>
+0097             p=exp(mean(log(x(:))))/sqrt(r); <span class="comment">% ... lower limit</span>
+0098             q=p*r;                      <span class="comment">% ... upper limit</span>
+0099     <span class="keyword">end</span>
+0100 <span class="keyword">end</span>
+0101 <span class="keyword">end</span>
+0102 y=x;                                    <span class="comment">% initialize y output</span>
+0103 <span class="keyword">if</span> any(m==<span class="string">'n'</span>)
+0104     y(x&lt;p | x&gt;q)=NaN;                   <span class="comment">% set out-of-range elements to NaN</span>
+0105 <span class="keyword">else</span>
+0106     y(x&lt;p)=p;                           <span class="comment">% clip low out-of-range elements</span>
+0107     y(x&gt;q)=q;                           <span class="comment">% clip high out-of-range elements</span>
+0108 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
