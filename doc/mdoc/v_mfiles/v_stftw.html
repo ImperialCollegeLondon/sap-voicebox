@@ -22,7 +22,7 @@
 <div class="box"><strong>V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt) </strong></div>
+<div class="box"><strong>function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)
@@ -61,11 +61,12 @@
           ov       integer overlap factor; the frame hop is nw/ov. [2]
           nt       Optional DFT length (normally &gt;=nw). [Default is nw as modified by 'i','I','u' options]
 
- Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally 1+nw/2 from DC to Nyquist
-          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times
-          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)
+ Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally floor(1+nw/2) from DC to Nyquist
           so           structure used in subsequent call as the nw argument to
                        alllow processing in chunks. Also used in v_istftw
+          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times
+          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)
+          gd(tf,k,...) group delay in samples. A impulse at x(i,n+1) will give gd(i,:)=n. Will be infinite wherever y()=0.
 
  The mode string, m, is a character string containing a combination of the following options and a window code (see below):
 
@@ -91,7 +92,7 @@ This function is called by:
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,so,tax,fax]=v_stftw(x,nw,m,ov,nt)</a>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)</a>
 0002 <span class="comment">%V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)</span>
 0003 <span class="comment">%  Usage:  (1) [y,so]=v_stftw(x,nw); % default parameters: m='rM', ov=2</span>
 0004 <span class="comment">%              % ...                 % time-frequency domain processing goes here</span>
@@ -128,235 +129,243 @@ This function is called by:
 0035 <span class="comment">%          ov       integer overlap factor; the frame hop is nw/ov. [2]</span>
 0036 <span class="comment">%          nt       Optional DFT length (normally &gt;=nw). [Default is nw as modified by 'i','I','u' options]</span>
 0037 <span class="comment">%</span>
-0038 <span class="comment">% Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally 1+nw/2 from DC to Nyquist</span>
-0039 <span class="comment">%          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times</span>
-0040 <span class="comment">%          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)</span>
-0041 <span class="comment">%          so           structure used in subsequent call as the nw argument to</span>
-0042 <span class="comment">%                       alllow processing in chunks. Also used in v_istftw</span>
-0043 <span class="comment">%</span>
-0044 <span class="comment">% The mode string, m, is a character string containing a combination of the following options and a window code (see below):</span>
-0045 <span class="comment">%</span>
-0046 <span class="comment">%             'p'   x is a partial signal which will be followed by another chunk (prevents paddding of the final frame)</span>
-0047 
-0048 <span class="comment">%             'r'   pad final frame with reflected data if necessary [default]</span>
-0049 <span class="comment">%             'z'   pad final frame with zeros if necessary</span>
-0050 <span class="comment">%             't'   truncate data to an exact number of frames</span>
-0051 <span class="comment">%             'e'   pad with samples at beginning and end of signal to include all frames with at least one signal sample</span>
-0052 <span class="comment">%</span>
-0053 <span class="comment">%             'i'   zero-pad by a factor of 2 to increase apparent frequency resolution</span>
-0054 <span class="comment">%             'I'   zero-pad by a factor of 4 to increase apparent frequency resolution</span>
-0055 <span class="comment">%             'u'   zero-pad to round transform length up to a power of 2 to speed computation</span>
-0056 <span class="comment">%</span>
-0057 <span class="comment">%             's'   plot spectrogram of first channel (default if no outputs)</span>
-0058 <span class="comment">%             'S'   plot mean spectra and mean power waveforms of all channels</span>
-0059 <span class="comment">%</span>
-0060 <span class="comment">%            Code Window      wmode  ov   Sidelobe  3dB-BW  6dB-BW  Falloff    Comment</span>
-0061 <span class="comment">%</span>
-0062 <span class="comment">%             'c'   cos(1)     s   2,3,5   -23dB     1.2     1.6  -12dB/oct   used in MP3</span>
-0063 <span class="comment">%             'k'   kaiser(5)  boq   2     -23dB     1.2     1.7   -6dB/oct   used in AAC</span>
-0064 <span class="comment">%             'm'   hamming    s   3,4,5   -43dB     1.3     1.8   -6dB/oct   low sidelobes [default if ov&gt;2]</span>
-0065 <span class="comment">%             'M'   hamming    sq  2,3,5   -24dB     1.1     1.5   -6dB/oct   sqrt Hamming  [default if ov=2]</span>
-0066 <span class="comment">%             'n'   hanning    s   3,4,5   -31dB     1.4     2.0  -18dB/oct   rapid falloff</span>
-0067 <span class="comment">%             'R'   rectangle        1     -13dB     0.9     1.2   -6dB/oct   narrow bandwidth [default if ov=1]</span>
-0068 <span class="comment">%             'v'   vorbis     s    2,15   -21dB     1.3     1.8  -18dB/oct   used in Vorbis</span>
-0069 <span class="comment">%             'V'   rsqvorbis  sq    2     -26dB     1.1     1.5   -6dB/oct   sqrt Vorbis</span>
-0070 <span class="comment">%</span>
-0071 <span class="comment">%             where wmode is the mode string for the v_windows call.</span>
-0072 <span class="comment">% Notes:</span>
-0073 <span class="comment">%</span>
-0074 <span class="comment">%  (1) The scaling preserves power in a 2-sided transform so that</span>
-0075 <span class="comment">%</span>
-0076 <span class="comment">%        p = mean(x.^2) ~=~ mean(sum(abs(yy).^2,2)) where yy=[y conj(y(:,nw-size(y,2)+1:-1:2))]</span>
-0077 <span class="comment">%</span>
-0078 <span class="comment">%      where yy is the double-sided spectrum. This equivalence is stochastic rather than exact.</span>
-0079 <span class="comment">%  (2) For perfect reconstruction (see [3]), the overlap factor, ov, must be a multiple of one of</span>
-0080 <span class="comment">%      the values listed above in the ov column for the selected window.</span>
-0081 <span class="comment">%  (3) Using the default parameters, perfect reconstruction will not be obtained for the first and</span>
-0082 <span class="comment">%      the last frames of the signal. Using the 'e' option will add padding frames to the start and</span>
-0083 <span class="comment">%      end of the signal so that the entire signal will be reconstructed perfectly.</span>
-0084 <span class="comment">%  (4) By default, padding at the start and end of the signal will avoid introducing a discontinuity</span>
-0085 <span class="comment">%      by using a time-reversed reflection of the input signal. Alternatively, the 'z' option will</span>
-0086 <span class="comment">%      pad with zeros and the 't' option will truncate the signal to fit into an exact number of frames.</span>
-0087 <span class="comment">%  (5) To avoid temporal aliasing in the time-frequency domain , an overlap factor of ov&gt;=4 is required for</span>
-0088 <span class="comment">%      most windows. Using an overlap factor of ov=2 (the default) halves the number of frames to process</span>
-0089 <span class="comment">%      but may result in aliasing for some signals although this is normally slight (see [1]).</span>
-0090 <span class="comment">%</span>
-0091 <span class="comment">% Refs: [1] J. B. Allen. Short term spectral analysis, synthesis, and modification by discrete Fourier transform.</span>
-0092 <span class="comment">%           IEEE Trans. Acoustics, Speech and Signal Processing, 25 (3): 235–238, June 1977.</span>
-0093 <span class="comment">%       [2]    R. Crochiere. A weighted overlap-add method of short-time fourier analysis/synthesis.</span>
-0094 <span class="comment">%           IEEE Trans. Acoustics, Speech and Signal Processing, 28 (1): 99–102, 1980.</span>
-0095 <span class="comment">%       [3]    J. Princen and A. Bradley. Analysis/synthesis filter bank design based on time domain aliasing cancellation.</span>
-0096 <span class="comment">%           IEEE Trans. Acoustics, Speech and Signal Processing, 34 (5): 1153–1161, 1986. doi: 10.1109/TASSP.1986.1164954.</span>
-0097 <span class="comment">%</span>
-0098 <span class="comment">% Revision History</span>
-0099 <span class="comment">%    2022-04-10 First version</span>
-0100 <span class="keyword">persistent</span> nw0 nt0 wi0 w0 wt wm wp
-0101 <span class="keyword">if</span> isempty(nw0)
-0102     nw0=0;
-0103     wt={<span class="string">'rectangle'</span>,<span class="string">'hamming'</span>,<span class="string">'hamming'</span>,<span class="string">'cos'</span>,<span class="string">'kaiser'</span>,<span class="string">'hanning'</span>,<span class="string">'rsqvorbis'</span>,<span class="string">'vorbis'</span>};
-0104     wm={<span class="string">''</span>,<span class="string">'sq'</span>,<span class="string">'s'</span>,<span class="string">'s'</span>,<span class="string">'boq'</span>,<span class="string">'s'</span>,<span class="string">'sq'</span>,<span class="string">'s'</span>};
-0105     wp=[0 0 0 1 5 0 0 0];
-0106 <span class="keyword">end</span>
-0107 sx=size(x);
-0108 <span class="keyword">if</span> sx(1)==1 &amp;&amp; length(sx)==2 <span class="comment">% transpose x if it is a row vector</span>
-0109     x=x.';
-0110     sx=size(x);
-0111 <span class="keyword">end</span>
-0112 nx=sx(1);                   <span class="comment">% number of samples</span>
-0113 nc=prod(sx(2:end));         <span class="comment">% total number of channels</span>
-0114 x=reshape(x,nx,nc);         <span class="comment">% make input data 2-dimensional</span>
-0115 <span class="keyword">if</span> nargin&lt;3 || ~numel(m)    <span class="comment">% no mode options specified</span>
-0116     m=<span class="string">''</span>;                   <span class="comment">% use default modes</span>
-0117 <span class="keyword">end</span>
-0118 <span class="keyword">if</span> isstruct(nw)             <span class="comment">% nw is structure from previous call to v_stftw</span>
-0119     so=nw;                  <span class="comment">% replicate into so since most fields will be identical</span>
-0120     wa=nw.wa;               <span class="comment">% analysis window</span>
-0121     nh=nw.nh;               <span class="comment">% frame hop (samples)</span>
-0122     po=nw.po;               <span class="comment">% padding option</span>
-0123     nt=nw.nt;               <span class="comment">% overwrite nt with length of transform</span>
-0124     me=nw.me;               <span class="comment">% 'e' option given</span>
-0125     ff=nw.ff;               <span class="comment">% first frame flag</span>
-0126     mf=nw.mf;
-0127     <span class="keyword">if</span> ~isempty(nw.xx)        <span class="comment">% there is a data tail from a previous call</span>
-0128         x=cat(1,nw.xx,x);     <span class="comment">% pre-append saved data</span>
-0129     <span class="keyword">end</span>
-0130     so.mx=so.mx+nx;          <span class="comment">% cumulative signal length (using original value of nx)</span>
-0131     sx=size(x);             <span class="comment">% recalculate sx (especially necessary if input argument x=[]</span>
-0132     nx=sx(1);               <span class="comment">% recalculate the number of samples</span>
-0133     nw=length(wa);          <span class="comment">% overwrite nw with the window length</span>
-0134 <span class="keyword">else</span>
-0135     <span class="keyword">if</span> nargin&lt;4 || ~numel(ov)
-0136         ov=2;               <span class="comment">% default overlap factor</span>
-0137     <span class="keyword">else</span>
-0138         ov=round(ov);         <span class="comment">% force integer overlap factor</span>
-0139     <span class="keyword">end</span>
-0140     nh=ceil(nw/ov);         <span class="comment">% force integer hop length</span>
-0141     nw=ov*nh;               <span class="comment">% recalculate DFT length</span>
-0142     wi=find(sum(repmat(m(:),1,8)==repmat(<span class="string">'RMmcknVv'</span>,length(m),1),1),1); <span class="comment">% check if m specifies the window</span>
-0143     <span class="keyword">if</span> isempty(wi)          <span class="comment">% if no window specified</span>
-0144         wi=1+(ov&gt;1)+(ov&gt;2); <span class="comment">% use 'R', 'M' or 'm'</span>
-0145     <span class="keyword">end</span>
-0146     <span class="comment">% sort out zero-padding</span>
-0147     <span class="keyword">if</span> nargin&lt;5             <span class="comment">% DFT length is not explicitly specified</span>
-0148         nt=nw;                  <span class="comment">% default transform length</span>
-0149         <span class="keyword">if</span> any(m==<span class="string">'i'</span>)          <span class="comment">% 'i' = multiply nt by 2 for increased frequency resolution</span>
-0150             nt=2*nt;
-0151         <span class="keyword">end</span>
-0152         <span class="keyword">if</span> any(m==<span class="string">'I'</span>)          <span class="comment">% 'I' = multiply nt by 4 for increased frequency resolution</span>
-0153             nt=4*nt;
-0154         <span class="keyword">end</span>
-0155         <span class="keyword">if</span> any(m==<span class="string">'u'</span>)          <span class="comment">% 'u' = round up nt to a power of 2 for increased frequency resolution</span>
-0156             [fw,pw]=log2(nt);
-0157             nt=pow2(pw-(fw==0.5));
-0158         <span class="keyword">end</span>
-0159     <span class="keyword">end</span>
-0160     me=any(m==<span class="string">'e'</span>);
-0161     <span class="keyword">if</span> nw==nw0 &amp;&amp; wi==wi0 &amp;&amp; nt==nt0    <span class="comment">% check if window already cached</span>
-0162         wa=w0;                          <span class="comment">% use cached version if available</span>
-0163     <span class="keyword">else</span>
-0164         wa = <a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>(wt{wi},nw,wm{wi},wp(wi)); <span class="comment">% only need the parameter for 'c' and 'k' windows</span>
-0165         wa=wa/sqrt(sum(wa.^2)*nt);      <span class="comment">% scale to preserve power</span>
-0166         nw0=nw;                         <span class="comment">% save parameters of cached window</span>
-0167         nt0=nt;
-0168         wi0=wi;
-0169         w0=wa;                          <span class="comment">% save window in cache</span>
-0170     <span class="keyword">end</span>
-0171     <span class="comment">% sort out enframing details</span>
-0172     ff=1;                               <span class="comment">% flag to indicate the first frame</span>
-0173     po=find(sum(repmat(m(:),1,3)==repmat(<span class="string">'zrt'</span>,length(m),1),1),1); <span class="comment">% find padding option</span>
-0174     <span class="keyword">if</span> isempty(po)
-0175         po=2;                           <span class="comment">% default to po=2 ('r')</span>
-0176     <span class="keyword">end</span>
-0177     <span class="comment">% create so structure</span>
-0178     mf=0;
-0179     so.wa=wa;                       <span class="comment">% save analysis window</span>
-0180     so.po=po;                       <span class="comment">% save padding option for final frame</span>
-0181     so.nh=nh;                       <span class="comment">% save frame hop</span>
-0182     so.nt=nt;                       <span class="comment">% length of transform</span>
-0183     so.me=me;                       <span class="comment">% 'e' option given</span>
-0184     so.mx=nx;                       <span class="comment">% cumulative signal length</span>
-0185     so.mf=0;                        <span class="comment">% zero cumulative frames output so far (excluding prefix frames)</span>
-0186 <span class="keyword">end</span>
-0187 <span class="comment">% now do the STFT</span>
-0188 mp=any(m==<span class="string">'p'</span>);                     <span class="comment">% 'p' option given: this is not the last chunk</span>
-0189 f0=(1-nw/nh)*(me &amp;&amp; ff);            <span class="comment">% initial frame: either 0 or (1-ov)</span>
-0190 <span class="keyword">if</span> nx&gt;0                             <span class="comment">% there are some samples</span>
-0191     <span class="keyword">if</span> me &amp;&amp; ~mp                    <span class="comment">% include all frames that contain at least one sample</span>
-0192         f1=ceil(nx/nh)-1;           <span class="comment">% last frame that include at least one sample</span>
-0193     <span class="keyword">elseif</span> po&lt;3 &amp;&amp; ~mp              <span class="comment">% ensure all samples are in at least one frame</span>
-0194         f1=max(ceil((nx-nw)/nh),0);
-0195     <span class="keyword">else</span>                            <span class="comment">% only include full frames</span>
-0196         f1=floor((nx-nw)/nh);       <span class="comment">% last full frame (might be negative and/or &lt;f0)</span>
-0197     <span class="keyword">end</span>
-0198 <span class="keyword">else</span>                                <span class="comment">% input signal is empty</span>
-0199     f1=-1;
-0200 <span class="keyword">end</span>
-0201 nf=max((f1-f0+1)*(f1&gt;=0),0);        <span class="comment">% number of frames to output</span>
-0202 <span class="keyword">if</span> nf&gt;0                             <span class="comment">% if there are frames to output</span>
-0203     ff=0;                           <span class="comment">% turn off first frame flag</span>
-0204     indx=repmat(nh*(f0:f1).',nw,1)+reshape(repmat(0:nw-1,nf,1),nf*nw,1); <span class="comment">% index into x</span>
-0205     mk=indx&lt;0 | indx&gt;nx-1;          <span class="comment">% mask for values outside 0:nx-1</span>
-0206     indx=nx+0.5-abs(mod(indx,2*nx)+0.5-nx); <span class="comment">% reflect values outside the range</span>
-0207     y=x(indx,:);                    <span class="comment">% create output</span>
-0208     <span class="keyword">if</span> po==1                        <span class="comment">% padding option was 'z'</span>
-0209         y(mk,:)=0;                  <span class="comment">% set padding values to zero</span>
-0210     <span class="keyword">end</span>
-0211     y=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(reshape(y,[nf,nw,sx(2:end)]).*repmat(wa,[nf,1,sx(2:end)]),nt,2);  <span class="comment">% perform windowed DFT</span>
-0212 <span class="keyword">else</span>
-0213     y=zeros([0,nw,sx(2:end)]);
-0214 <span class="keyword">end</span>
-0215 <span class="keyword">if</span> nargout&gt;1                        <span class="comment">% need additional outputs</span>
-0216     <span class="keyword">if</span> nf&gt;0
-0217         tax=(f0+mf:f1+mf)*nh+0.5*(1+nw);      <span class="comment">% frame centre times (where input samples are 1,2,...)</span>
-0218     <span class="keyword">else</span>
-0219         tax=[];
-0220     <span class="keyword">end</span>
-0221     fax=(0:size(y,2)-1)/nt;           <span class="comment">% bin centre frequencies (normalized by sample frequency)</span>
-0222     <span class="keyword">if</span> nf&gt;0
-0223         so.xx=x((f1+1)*nh+1:<span class="keyword">end</span>,:);    <span class="comment">% save data tail for next chunk (starts at sample nh+1 of the last frame in y)</span>
-0224     <span class="keyword">else</span>
-0225         so.xx=x;               <span class="comment">% if nf==0 then data tail is entire signal (including any previous tail)</span>
-0226     <span class="keyword">end</span>
-0227     so.ff=ff;                  <span class="comment">% first frame flag</span>
-0228     so.mp=mp;                  <span class="comment">% flag indicating more chunks to follow</span>
-0229     so.mf=mf+nf+f0;            <span class="comment">% add number of additional non-prefix frames output</span>
-0230 <span class="keyword">end</span>
-0231 <span class="keyword">if</span> nf&gt;0 &amp;&amp; (~nargout || any(lower(m)==<span class="string">'s'</span>))     <span class="comment">% no outputs or 'sS' options so plot graphs</span>
-0232     ta=(f0+mf:f1+mf)*nh+0.5*(1+nw);
-0233     nv=size(y,2);
-0234     fa=(0:nv-1)/nt;
-0235     clf;
-0236     <span class="keyword">if</span> any(m==<span class="string">'S'</span>)
-0237         subplot(2,1,1);
-0238         yp=abs(reshape(y,[nf,nv,nc])).^2;       <span class="comment">% calculate power spectrum</span>
-0239         plot(ta,10*log10(reshape(sum(cat(2,yp,yp(:,2:floor((nt+1)/2),:)),2),nf,nc))); <span class="comment">% add in power from negative frequencies</span>
-0240         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0241         xlabel(<span class="string">'Sample Number'</span>);
-0242         ylabel(<span class="string">'Frame power (dB)'</span>);
-0243         subplot(2,1,2);
-0244         plot(fa,10*log10(reshape(mean(yp,1),nv,nc)));
-0245         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0246         xlabel(<span class="string">'Normalized Frequency'</span>);
-0247         ylabel(<span class="string">'Mean Power (dB)'</span>);
-0248     <span class="keyword">else</span>
-0249         imagesc(ta,fa,20*log10(abs(y(:,:,1)))'); <span class="comment">% plot only the first channel</span>
-0250         colorbar;
-0251         axis <span class="string">'xy'</span>;
-0252         ylabel(<span class="string">'Normalized Frequency'</span>);
-0253         xlabel(<span class="string">'Sample Number'</span>);
-0254         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Energy (dB)'</span>);
-0255         hold on;
-0256         clim=get(gca,<span class="string">'clim'</span>);
-0257         set(gca,<span class="string">'clim'</span>,[max(clim(1),clim(2)-40) clim(2)]);
-0258         ylim=get(gca,<span class="string">'ylim'</span>);
-0259         plot([0.5;0.5],ylim',<span class="string">':k'</span>);             <span class="comment">% indicate start of signal</span>
-0260         <span class="keyword">if</span> ~mp
-0261             plot([1;1]*(so.mx+0.5),ylim',<span class="string">':k'</span>); <span class="comment">% indicate end of signal</span>
-0262         <span class="keyword">end</span>
-0263         hold off
-0264     <span class="keyword">end</span>
-0265 <span class="keyword">end</span>
-0266</pre></div>
+0038 <span class="comment">% Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally floor(1+nw/2) from DC to Nyquist</span>
+0039 <span class="comment">%          so           structure used in subsequent call as the nw argument to</span>
+0040 <span class="comment">%                       alllow processing in chunks. Also used in v_istftw</span>
+0041 <span class="comment">%          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times</span>
+0042 <span class="comment">%          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)</span>
+0043 <span class="comment">%          gd(tf,k,...) group delay in samples. A impulse at x(i,n+1) will give gd(i,:)=n. Will be infinite wherever y()=0.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">% The mode string, m, is a character string containing a combination of the following options and a window code (see below):</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%             'p'   x is a partial signal which will be followed by another chunk (prevents paddding of the final frame)</span>
+0048 
+0049 <span class="comment">%             'r'   pad final frame with reflected data if necessary [default]</span>
+0050 <span class="comment">%             'z'   pad final frame with zeros if necessary</span>
+0051 <span class="comment">%             't'   truncate data to an exact number of frames</span>
+0052 <span class="comment">%             'e'   pad with samples at beginning and end of signal to include all frames with at least one signal sample</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%             'i'   zero-pad by a factor of 2 to increase apparent frequency resolution</span>
+0055 <span class="comment">%             'I'   zero-pad by a factor of 4 to increase apparent frequency resolution</span>
+0056 <span class="comment">%             'u'   zero-pad to round transform length up to a power of 2 to speed computation</span>
+0057 <span class="comment">%</span>
+0058 <span class="comment">%             's'   plot spectrogram of first channel (default if no outputs)</span>
+0059 <span class="comment">%             'S'   plot mean spectra and mean power waveforms of all channels</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%            Code Window      wmode  ov   Sidelobe  3dB-BW  6dB-BW  Falloff    Comment</span>
+0062 <span class="comment">%</span>
+0063 <span class="comment">%             'c'   cos(1)     s   2,3,5   -23dB     1.2     1.6  -12dB/oct   used in MP3</span>
+0064 <span class="comment">%             'k'   kaiser(5)  boq   2     -23dB     1.2     1.7   -6dB/oct   used in AAC</span>
+0065 <span class="comment">%             'm'   hamming    s   3,4,5   -43dB     1.3     1.8   -6dB/oct   low sidelobes [default if ov&gt;2]</span>
+0066 <span class="comment">%             'M'   hamming    sq  2,3,5   -24dB     1.1     1.5   -6dB/oct   sqrt Hamming  [default if ov=2]</span>
+0067 <span class="comment">%             'n'   hanning    s   3,4,5   -31dB     1.4     2.0  -18dB/oct   rapid falloff</span>
+0068 <span class="comment">%             'R'   rectangle        1     -13dB     0.9     1.2   -6dB/oct   narrow bandwidth [default if ov=1]</span>
+0069 <span class="comment">%             'v'   vorbis     s    2,15   -21dB     1.3     1.8  -18dB/oct   used in Vorbis</span>
+0070 <span class="comment">%             'V'   rsqvorbis  sq    2     -26dB     1.1     1.5   -6dB/oct   sqrt Vorbis</span>
+0071 <span class="comment">%</span>
+0072 <span class="comment">%             where wmode is the mode string for the v_windows call.</span>
+0073 <span class="comment">% Notes:</span>
+0074 <span class="comment">%</span>
+0075 <span class="comment">%  (1) The scaling preserves power in a 2-sided transform so that</span>
+0076 <span class="comment">%</span>
+0077 <span class="comment">%        p = mean(x.^2) ~=~ mean(sum(abs(yy).^2,2)) where yy=[y conj(y(:,nw-size(y,2)+1:-1:2))]</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">%      where yy is the double-sided spectrum. This equivalence is stochastic rather than exact.</span>
+0080 <span class="comment">%  (2) For perfect reconstruction (see [3]), the overlap factor, ov, must be an integer multiple</span>
+0081 <span class="comment">%      of one of the values listed above in the ov column for the selected window.</span>
+0082 <span class="comment">%  (3) Using the default parameters, perfect reconstruction will not be obtained for the first and</span>
+0083 <span class="comment">%      the last frames of the signal. Using the 'e' option will add padding frames to the start and</span>
+0084 <span class="comment">%      end of the signal so that the entire signal will be reconstructed perfectly.</span>
+0085 <span class="comment">%  (4) By default, padding at the start and end of the signal will avoid introducing a discontinuity</span>
+0086 <span class="comment">%      by using a time-reversed reflection of the input signal. Alternatively, the 'z' option will</span>
+0087 <span class="comment">%      pad with zeros and the 't' option will truncate the signal to fit into an exact number of frames.</span>
+0088 <span class="comment">%  (5) To avoid temporal aliasing in the time-frequency domain , an overlap factor of ov&gt;=4 is required for</span>
+0089 <span class="comment">%      most windows. Using an overlap factor of ov=2 (the default) halves the number of frames to process</span>
+0090 <span class="comment">%      but may result in aliasing for some signals although this is normally slight (see [1]).</span>
+0091 <span class="comment">%</span>
+0092 <span class="comment">% Refs: [1] J. B. Allen. Short term spectral analysis, synthesis, and modification by discrete Fourier transform.</span>
+0093 <span class="comment">%           IEEE Trans. Acoustics, Speech and Signal Processing, 25 (3): 235–238, June 1977.</span>
+0094 <span class="comment">%       [2]    R. Crochiere. A weighted overlap-add method of short-time fourier analysis/synthesis.</span>
+0095 <span class="comment">%           IEEE Trans. Acoustics, Speech and Signal Processing, 28 (1): 99–102, 1980.</span>
+0096 <span class="comment">%       [3]    J. Princen and A. Bradley. Analysis/synthesis filter bank design based on time domain aliasing cancellation.</span>
+0097 <span class="comment">%           IEEE Trans. Acoustics, Speech and Signal Processing, 34 (5): 1153–1161, 1986. doi: 10.1109/TASSP.1986.1164954.</span>
+0098 <span class="comment">%</span>
+0099 <span class="comment">% Revision History</span>
+0100 <span class="comment">%    2022-04-10 First version</span>
+0101 <span class="keyword">persistent</span> nw0 nt0 wi0 w0 wt wm wp
+0102 <span class="keyword">if</span> isempty(nw0)
+0103     nw0=0;
+0104     wt={<span class="string">'rectangle'</span>,<span class="string">'hamming'</span>,<span class="string">'hamming'</span>,<span class="string">'cos'</span>,<span class="string">'kaiser'</span>,<span class="string">'hanning'</span>,<span class="string">'rsqvorbis'</span>,<span class="string">'vorbis'</span>};
+0105     wm={<span class="string">''</span>,<span class="string">'sq'</span>,<span class="string">'s'</span>,<span class="string">'s'</span>,<span class="string">'boq'</span>,<span class="string">'s'</span>,<span class="string">'sq'</span>,<span class="string">'s'</span>};
+0106     wp=[0 0 0 1 5 0 0 0];
+0107 <span class="keyword">end</span>
+0108 sx=size(x);
+0109 <span class="keyword">if</span> sx(1)==1 &amp;&amp; length(sx)==2 <span class="comment">% transpose x if it is a row vector</span>
+0110     x=x.';
+0111     sx=size(x);
+0112 <span class="keyword">end</span>
+0113 nx=sx(1);                   <span class="comment">% number of samples</span>
+0114 nc=prod(sx(2:end));         <span class="comment">% total number of channels</span>
+0115 x=reshape(x,nx,nc);         <span class="comment">% make input data 2-dimensional</span>
+0116 <span class="keyword">if</span> nargin&lt;3 || ~numel(m)    <span class="comment">% no mode options specified</span>
+0117     m=<span class="string">''</span>;                   <span class="comment">% use default modes</span>
+0118 <span class="keyword">end</span>
+0119 <span class="keyword">if</span> isstruct(nw)             <span class="comment">% nw is structure from previous call to v_stftw</span>
+0120     so=nw;                  <span class="comment">% replicate into so since most fields will be identical</span>
+0121     wa=nw.wa;               <span class="comment">% analysis window</span>
+0122     nh=nw.nh;               <span class="comment">% frame hop (samples)</span>
+0123     po=nw.po;               <span class="comment">% padding option</span>
+0124     nt=nw.nt;               <span class="comment">% overwrite nt with length of transform</span>
+0125     me=nw.me;               <span class="comment">% 'e' option given</span>
+0126     ff=nw.ff;               <span class="comment">% first frame flag</span>
+0127     mf=nw.mf;
+0128     <span class="keyword">if</span> ~isempty(nw.xx)        <span class="comment">% there is a data tail from a previous call</span>
+0129         x=cat(1,nw.xx,x);     <span class="comment">% pre-append saved data</span>
+0130     <span class="keyword">end</span>
+0131     so.mx=so.mx+nx;          <span class="comment">% cumulative signal length (using original value of nx)</span>
+0132     sx=size(x);             <span class="comment">% recalculate sx (especially necessary if input argument x=[]</span>
+0133     nx=sx(1);               <span class="comment">% recalculate the number of samples</span>
+0134     nw=length(wa);          <span class="comment">% overwrite nw with the window length</span>
+0135 <span class="keyword">else</span>
+0136     <span class="keyword">if</span> nargin&lt;4 || ~numel(ov)
+0137         ov=2;               <span class="comment">% default overlap factor</span>
+0138     <span class="keyword">else</span>
+0139         ov=round(ov);         <span class="comment">% force integer overlap factor</span>
+0140     <span class="keyword">end</span>
+0141     nh=ceil(nw/ov);         <span class="comment">% force integer hop length</span>
+0142     nw=ov*nh;               <span class="comment">% recalculate DFT length</span>
+0143     wi=find(sum(repmat(m(:),1,8)==repmat(<span class="string">'RMmcknVv'</span>,length(m),1),1),1); <span class="comment">% check if m specifies the window</span>
+0144     <span class="keyword">if</span> isempty(wi)          <span class="comment">% if no window specified</span>
+0145         wi=1+(ov&gt;1)+(ov&gt;2); <span class="comment">% use 'R', 'M' or 'm'</span>
+0146     <span class="keyword">end</span>
+0147     <span class="comment">% sort out zero-padding</span>
+0148     <span class="keyword">if</span> nargin&lt;5             <span class="comment">% DFT length is not explicitly specified</span>
+0149         nt=nw;                  <span class="comment">% default transform length</span>
+0150         <span class="keyword">if</span> any(m==<span class="string">'i'</span>)          <span class="comment">% 'i' = multiply nt by 2 for increased frequency resolution</span>
+0151             nt=2*nt;
+0152         <span class="keyword">end</span>
+0153         <span class="keyword">if</span> any(m==<span class="string">'I'</span>)          <span class="comment">% 'I' = multiply nt by 4 for increased frequency resolution</span>
+0154             nt=4*nt;
+0155         <span class="keyword">end</span>
+0156         <span class="keyword">if</span> any(m==<span class="string">'u'</span>)          <span class="comment">% 'u' = round up nt to a power of 2 for increased frequency resolution</span>
+0157             [fw,pw]=log2(nt);
+0158             nt=pow2(pw-(fw==0.5));
+0159         <span class="keyword">end</span>
+0160     <span class="keyword">end</span>
+0161     me=any(m==<span class="string">'e'</span>);
+0162     <span class="keyword">if</span> nw==nw0 &amp;&amp; wi==wi0 &amp;&amp; nt==nt0    <span class="comment">% check if window already cached</span>
+0163         wa=w0;                          <span class="comment">% use cached version if available</span>
+0164     <span class="keyword">else</span>
+0165         wa = <a href="v_windows.html" class="code" title="function w = v_windows(wtype,n,mode,p,ov)">v_windows</a>(wt{wi},nw,wm{wi},wp(wi)); <span class="comment">% only need the parameter for 'c' and 'k' windows</span>
+0166         wa=wa/sqrt(sum(wa.^2)*nt);      <span class="comment">% scale to preserve power</span>
+0167         nw0=nw;                         <span class="comment">% save parameters of cached window</span>
+0168         nt0=nt;
+0169         wi0=wi;
+0170         w0=wa;                          <span class="comment">% save window in cache</span>
+0171     <span class="keyword">end</span>
+0172     <span class="comment">% sort out enframing details</span>
+0173     ff=1;                               <span class="comment">% flag to indicate the first frame</span>
+0174     po=find(sum(repmat(m(:),1,3)==repmat(<span class="string">'zrt'</span>,length(m),1),1),1); <span class="comment">% find padding option</span>
+0175     <span class="keyword">if</span> isempty(po)
+0176         po=2;                           <span class="comment">% default to po=2 ('r')</span>
+0177     <span class="keyword">end</span>
+0178     <span class="comment">% create so structure</span>
+0179     mf=0;
+0180     so.wa=wa;                       <span class="comment">% save analysis window</span>
+0181     so.po=po;                       <span class="comment">% save padding option for final frame</span>
+0182     so.nh=nh;                       <span class="comment">% save frame hop</span>
+0183     so.nt=nt;                       <span class="comment">% length of transform</span>
+0184     so.me=me;                       <span class="comment">% 'e' option given</span>
+0185     so.mx=nx;                       <span class="comment">% cumulative signal length</span>
+0186     so.mf=0;                        <span class="comment">% zero cumulative frames output so far (excluding prefix frames)</span>
+0187 <span class="keyword">end</span>
+0188 <span class="comment">% now do the STFT</span>
+0189 mp=any(m==<span class="string">'p'</span>);                     <span class="comment">% 'p' option given: this is not the last chunk</span>
+0190 f0=(1-nw/nh)*(me &amp;&amp; ff);            <span class="comment">% initial frame: either 0 or (1-ov)</span>
+0191 <span class="keyword">if</span> nx&gt;0                             <span class="comment">% there are some samples</span>
+0192     <span class="keyword">if</span> me &amp;&amp; ~mp                    <span class="comment">% include all frames that contain at least one sample</span>
+0193         f1=ceil(nx/nh)-1;           <span class="comment">% last frame that include at least one sample</span>
+0194     <span class="keyword">elseif</span> po&lt;3 &amp;&amp; ~mp              <span class="comment">% ensure all samples are in at least one frame</span>
+0195         f1=max(ceil((nx-nw)/nh),0);
+0196     <span class="keyword">else</span>                            <span class="comment">% only include full frames</span>
+0197         f1=floor((nx-nw)/nh);               <span class="comment">% last full frame (might be negative and/or &lt;f0)</span>
+0198     <span class="keyword">end</span>
+0199 <span class="keyword">else</span>                                        <span class="comment">% input signal is empty</span>
+0200     f1=-1;
+0201 <span class="keyword">end</span>
+0202 nf=max((f1-f0+1)*(f1&gt;=0),0);                <span class="comment">% number of frames to output</span>
+0203 <span class="keyword">if</span> nf&gt;0                                     <span class="comment">% if there are frames to output</span>
+0204     ff=0;                                   <span class="comment">% turn off first frame flag</span>
+0205     indx=repmat(nh*(f0:f1).',nw,1)+reshape(repmat(0:nw-1,nf,1),nf*nw,1);    <span class="comment">% index into x</span>
+0206     mk=indx&lt;0 | indx&gt;nx-1;                  <span class="comment">% mask for values outside 0:nx-1</span>
+0207     indx=nx+0.5-abs(mod(indx,2*nx)+0.5-nx); <span class="comment">% reflect values outside the range</span>
+0208     v=x(indx,:);                            <span class="comment">% create output</span>
+0209     <span class="keyword">if</span> po==1                                <span class="comment">% padding option was 'z'</span>
+0210         v(mk,:)=0;                          <span class="comment">% set padding values to zero</span>
+0211     <span class="keyword">end</span>
+0212     y=<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(reshape(v,[nf,nw,sx(2:end)]).*repmat(wa,[nf,1,sx(2:end)]),nt,2);  <span class="comment">% perform windowed DFT</span>
+0213 <span class="keyword">else</span>
+0214     y=zeros([0,nw,sx(2:end)]);
+0215 <span class="keyword">end</span>
+0216 <span class="keyword">if</span> nargout&gt;1                                <span class="comment">% need additional outputs</span>
+0217     <span class="keyword">if</span> nf&gt;0
+0218         tax=(f0+mf:f1+mf)*nh+0.5*(1+nw);    <span class="comment">% frame centre times (where input samples are 1,2,...)</span>
+0219     <span class="keyword">else</span>
+0220         tax=[];
+0221     <span class="keyword">end</span>
+0222     fax=(0:size(y,2)-1)/nt;                 <span class="comment">% bin centre frequencies (normalized by sample frequency)</span>
+0223     <span class="keyword">if</span> nf&gt;0
+0224         so.xx=x((f1+1)*nh+1:<span class="keyword">end</span>,:);            <span class="comment">% save data tail for next chunk (starts at sample nh+1 of the last frame in y)</span>
+0225     <span class="keyword">else</span>
+0226         so.xx=x;                            <span class="comment">% if nf==0 then data tail is entire signal (including any previous tail)</span>
+0227     <span class="keyword">end</span>
+0228     so.ff=ff;                               <span class="comment">% first frame flag</span>
+0229     so.mp=mp;                               <span class="comment">% flag indicating more chunks to follow</span>
+0230     so.mf=mf+nf+f0;                         <span class="comment">% add number of additional non-prefix frames output</span>
+0231     <span class="keyword">if</span> nargout&gt;4                            <span class="comment">% need group delay output</span>
+0232         <span class="keyword">if</span> nf&gt;0                             <span class="comment">% if there are frames to output</span>
+0233             gd=real(<a href="v_rfft.html" class="code" title="function y=v_rfft(x,n,d)">v_rfft</a>(reshape(v,[nf,nw,sx(2:end)]).*repmat(wa.*(0:nt-1),[nf,1,sx(2:end)]),nt,2)./y);  <span class="comment">% calculate group delay</span>
+0234         <span class="keyword">else</span>
+0235             gd=zeros([0,nw,sx(2:end)]);
+0236         <span class="keyword">end</span>
+0237     <span class="keyword">end</span>
+0238 <span class="keyword">end</span>
+0239 <span class="keyword">if</span> nf&gt;0 &amp;&amp; (~nargout || any(lower(m)==<span class="string">'s'</span>)) <span class="comment">% no outputs or 'sS' options so plot graphs</span>
+0240     ta=(f0+mf:f1+mf)*nh+0.5*(1+nw);
+0241     nv=size(y,2);
+0242     fa=(0:nv-1)/nt;
+0243     clf;
+0244     <span class="keyword">if</span> any(m==<span class="string">'S'</span>)
+0245         subplot(2,1,1);
+0246         yp=abs(reshape(y,[nf,nv,nc])).^2;   <span class="comment">% calculate power spectrum</span>
+0247         plot(ta,10*log10(reshape(sum(cat(2,yp,yp(:,2:floor((nt+1)/2),:)),2),nf,nc))); <span class="comment">% add in power from negative frequencies</span>
+0248         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0249         xlabel(<span class="string">'Sample Number'</span>);
+0250         ylabel(<span class="string">'Frame power (dB)'</span>);
+0251         subplot(2,1,2);
+0252         plot(fa,10*log10(reshape(mean(yp,1),nv,nc)));
+0253         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0254         xlabel(<span class="string">'Normalized Frequency'</span>);
+0255         ylabel(<span class="string">'Mean Power (dB)'</span>);
+0256     <span class="keyword">else</span>
+0257         imagesc(ta,fa,20*log10(abs(y(:,:,1)))'); <span class="comment">% plot only the first channel</span>
+0258         colorbar;
+0259         axis <span class="string">'xy'</span>;
+0260         ylabel(<span class="string">'Normalized Frequency'</span>);
+0261         xlabel(<span class="string">'Sample Number'</span>);
+0262         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Energy (dB)'</span>);
+0263         hold on;
+0264         clim=get(gca,<span class="string">'clim'</span>);
+0265         set(gca,<span class="string">'clim'</span>,[max(clim(1),clim(2)-40) clim(2)]);
+0266         ylim=get(gca,<span class="string">'ylim'</span>);
+0267         plot([0.5;0.5],ylim',<span class="string">':k'</span>);             <span class="comment">% indicate start of signal</span>
+0268         <span class="keyword">if</span> ~mp
+0269             plot([1;1]*(so.mx+0.5),ylim',<span class="string">':k'</span>); <span class="comment">% indicate end of signal</span>
+0270         <span class="keyword">end</span>
+0271         hold off
+0272     <span class="keyword">end</span>
+0273 <span class="keyword">end</span>
+0274</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

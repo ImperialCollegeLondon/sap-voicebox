@@ -27,35 +27,43 @@
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_PARAMSETCH update and check parameter values p=(d,q,m,c,t)
  Usage: (1) function x=func(y,q)
-            d=struct('a',1,'b',2,'c',3); % default parameters
-            p=v_paramsetch(d,q); % update selected parameters
+            d=struct('a',1,'b',2,'c',3);   % default parameters
+            p=v_paramsetch(d,q);           % update selected parameters
 
         (2) function x=func(y,q)
-            d=struct('a',1,'b',2,'c',3); % default parameters
-            c={'p.a&gt;0 &amp;&amp; p.a&lt;5','p.b&gt;0'};
-            p=v_paramsetch(d,q,'E',c); % check parameter ranges
+            d=struct('a',1,'b',2,'c',3);   % default parameters
+            c={'p.a&gt;0 &amp;&amp; p.a&lt;5','Message 1';'p.b&gt;0','b must be positive'};
+            p=v_paramsetch(d,q,'E',c);     % check parameter ranges
 
         (3) t={'a','description of parameter a';'c','and of parameter c'}
-            p=v_paramsetch(d,q,'l',c,t); % list values with optional descritions
-                                       % '-','*','+' indicates default, updated and new fields
+            p=v_paramsetch(d,q,'l',c,t);   % list values with optional descrpitions
+                                           % '-','=','*','+' indicates default, unchanged, updated and new fields
 
   Inputs:
        d  default parameter structure
        q  new parameter values either a struct or alternatively matrix with
-          each row a different variable in the same order as the fields of d
+          each row being the value of the variables in the same order as the
+          fields of d. If q is a matrix then all updated values will be row
+          vectors with the same number of elements.
        m  mode string: any combination of the following
            'a' include additional fields in q that are not in d
            'A' additional fields in q constitute an error
-           'e' print errors but don't exit
-           'E' print errors and exit
+           'e' print errors (but don't exit unless 'E' given as well)
+           'E' exit if there are any errors
            'l' list fields and their values (default if no output)
-       c  cell array with parameter checking conditions e.g. 'p.a&gt;3' (use p for structure name)
+       c  cell array with parameter checking conditions (use p for structure name) and error
+               message; one row per check. All results of command c{*,1) must be true.
+               e.g. {'p.a&gt;3' 'parameter a must be &gt; 3'; 'p.b&lt;2' 'parameter b must be &lt; 2'}
        t  cell array with descriptive text for each field in a new row. Either in
           the form t(:,*)={'field' 'description'} or a single column of
           descriptions in the same order as the fields of d
 
  Outputs:
-       p  output parameter structure</pre></div>
+       p  output parameter structure
+
+ Bugs/Suggestions:
+ (1) When printing include &quot;=&quot; to show an updated parameter has not changed (might waste a lot of computation)
+ (2) If input d has few entries, it would be faster to loop through d rather than q</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -77,163 +85,245 @@ This function is called by:
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function p=v_paramsetch(d,q,m,c,t)</a>
 0002 <span class="comment">%V_PARAMSETCH update and check parameter values p=(d,q,m,c,t)</span>
 0003 <span class="comment">% Usage: (1) function x=func(y,q)</span>
-0004 <span class="comment">%            d=struct('a',1,'b',2,'c',3); % default parameters</span>
-0005 <span class="comment">%            p=v_paramsetch(d,q); % update selected parameters</span>
+0004 <span class="comment">%            d=struct('a',1,'b',2,'c',3);   % default parameters</span>
+0005 <span class="comment">%            p=v_paramsetch(d,q);           % update selected parameters</span>
 0006 <span class="comment">%</span>
 0007 <span class="comment">%        (2) function x=func(y,q)</span>
-0008 <span class="comment">%            d=struct('a',1,'b',2,'c',3); % default parameters</span>
-0009 <span class="comment">%            c={'p.a&gt;0 &amp;&amp; p.a&lt;5','p.b&gt;0'};</span>
-0010 <span class="comment">%            p=v_paramsetch(d,q,'E',c); % check parameter ranges</span>
+0008 <span class="comment">%            d=struct('a',1,'b',2,'c',3);   % default parameters</span>
+0009 <span class="comment">%            c={'p.a&gt;0 &amp;&amp; p.a&lt;5','Message 1';'p.b&gt;0','b must be positive'};</span>
+0010 <span class="comment">%            p=v_paramsetch(d,q,'E',c);     % check parameter ranges</span>
 0011 <span class="comment">%</span>
 0012 <span class="comment">%        (3) t={'a','description of parameter a';'c','and of parameter c'}</span>
-0013 <span class="comment">%            p=v_paramsetch(d,q,'l',c,t); % list values with optional descritions</span>
-0014 <span class="comment">%                                       % '-','*','+' indicates default, updated and new fields</span>
+0013 <span class="comment">%            p=v_paramsetch(d,q,'l',c,t);   % list values with optional descrpitions</span>
+0014 <span class="comment">%                                           % '-','=','*','+' indicates default, unchanged, updated and new fields</span>
 0015 <span class="comment">%</span>
 0016 <span class="comment">%  Inputs:</span>
 0017 <span class="comment">%       d  default parameter structure</span>
 0018 <span class="comment">%       q  new parameter values either a struct or alternatively matrix with</span>
-0019 <span class="comment">%          each row a different variable in the same order as the fields of d</span>
-0020 <span class="comment">%       m  mode string: any combination of the following</span>
-0021 <span class="comment">%           'a' include additional fields in q that are not in d</span>
-0022 <span class="comment">%           'A' additional fields in q constitute an error</span>
-0023 <span class="comment">%           'e' print errors but don't exit</span>
-0024 <span class="comment">%           'E' print errors and exit</span>
-0025 <span class="comment">%           'l' list fields and their values (default if no output)</span>
-0026 <span class="comment">%       c  cell array with parameter checking conditions e.g. 'p.a&gt;3' (use p for structure name)</span>
-0027 <span class="comment">%       t  cell array with descriptive text for each field in a new row. Either in</span>
-0028 <span class="comment">%          the form t(:,*)={'field' 'description'} or a single column of</span>
-0029 <span class="comment">%          descriptions in the same order as the fields of d</span>
-0030 <span class="comment">%</span>
-0031 <span class="comment">% Outputs:</span>
-0032 <span class="comment">%       p  output parameter structure</span>
-0033 <span class="comment">%</span>
-0034 
-0035 <span class="comment">%      Copyright (C) Mike Brookes 2017</span>
-0036 <span class="comment">%      Version: $Id: v_paramsetch.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0019 <span class="comment">%          each row being the value of the variables in the same order as the</span>
+0020 <span class="comment">%          fields of d. If q is a matrix then all updated values will be row</span>
+0021 <span class="comment">%          vectors with the same number of elements.</span>
+0022 <span class="comment">%       m  mode string: any combination of the following</span>
+0023 <span class="comment">%           'a' include additional fields in q that are not in d</span>
+0024 <span class="comment">%           'A' additional fields in q constitute an error</span>
+0025 <span class="comment">%           'e' print errors (but don't exit unless 'E' given as well)</span>
+0026 <span class="comment">%           'E' exit if there are any errors</span>
+0027 <span class="comment">%           'l' list fields and their values (default if no output)</span>
+0028 <span class="comment">%       c  cell array with parameter checking conditions (use p for structure name) and error</span>
+0029 <span class="comment">%               message; one row per check. All results of command c{*,1) must be true.</span>
+0030 <span class="comment">%               e.g. {'p.a&gt;3' 'parameter a must be &gt; 3'; 'p.b&lt;2' 'parameter b must be &lt; 2'}</span>
+0031 <span class="comment">%       t  cell array with descriptive text for each field in a new row. Either in</span>
+0032 <span class="comment">%          the form t(:,*)={'field' 'description'} or a single column of</span>
+0033 <span class="comment">%          descriptions in the same order as the fields of d</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% Outputs:</span>
+0036 <span class="comment">%       p  output parameter structure</span>
 0037 <span class="comment">%</span>
-0038 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0039 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0040 <span class="comment">%</span>
-0041 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0042 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0043 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0044 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0045 <span class="comment">%   (at your option) any later version.</span>
-0046 <span class="comment">%</span>
-0047 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0048 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0049 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0050 <span class="comment">%   GNU General Public License for more details.</span>
-0051 <span class="comment">%</span>
-0052 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0053 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0054 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0055 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0056 p=d;                <span class="comment">% initialize to the default values</span>
-0057 numerr=0;           <span class="comment">% initialize error count</span>
-0058 dn=fieldnames(d);   <span class="comment">% default list of parameter fields</span>
-0059 ndn=length(dn);     <span class="comment">% number of default parameter fields</span>
-0060 dup=zeros(ndn,1);   <span class="comment">% update flags for default fields</span>
-0061 <span class="comment">% sort out input arguments</span>
-0062 <span class="keyword">if</span> nargin&lt;5
-0063     t={<span class="string">''</span> <span class="string">''</span>};      <span class="comment">% define an empty description array</span>
-0064     <span class="keyword">if</span> nargin&lt;4
-0065         c=cell(0);  <span class="comment">% define an empty check condition array</span>
-0066         <span class="keyword">if</span> nargin&lt;3
-0067             m=<span class="string">''</span>;   <span class="comment">% define an empty mode string</span>
-0068         <span class="keyword">end</span>
-0069     <span class="keyword">end</span>
-0070 <span class="keyword">end</span>
-0071 <span class="comment">% now update the selected fields</span>
-0072 <span class="keyword">if</span> nargin&gt;1 &amp;&amp; numel(q)&gt;0   <span class="comment">% if update argument exists</span>
-0073     <span class="keyword">if</span> isstruct(q)          <span class="comment">% if update argument is a structure</span>
-0074         qn=fieldnames(q);   <span class="comment">% field names to update</span>
-0075         addnew=any(m==<span class="string">'a'</span>); <span class="comment">% new fields should be added into p</span>
-0076         adderr=~addnew &amp;&amp; any(m==<span class="string">'A'</span>);         <span class="comment">% new fields constitute an error</span>
-0077         <span class="keyword">for</span> i=1:length(qn)
-0078             fi=qn{i};
-0079             old=isfield(p,fi); <span class="comment">% is this an existing field ?</span>
-0080             <span class="keyword">if</span> addnew || old
-0081                 p.(fi)=q.(fi);
-0082             <span class="keyword">end</span>
-0083             <span class="keyword">if</span> old
-0084                 dup(find(strcmp(fi,dn),1))=1; <span class="comment">% indicate field is updated</span>
-0085             <span class="keyword">end</span>
-0086             <span class="keyword">if</span> adderr &amp;&amp; ~old
-0087                 fprintf(2,<span class="string">'%s is an unknown parameter field\n'</span>,fi);
-0088                 numerr=numerr+1; <span class="comment">% increment error count</span>
-0089             <span class="keyword">end</span>
-0090         <span class="keyword">end</span>        
-0091     <span class="keyword">else</span>                            <span class="comment">% else update argument is a matrix</span>
-0092         nq=min(size(q,1),ndn);      <span class="comment">% number of fields to update</span>
-0093         dup(1:nq)=1;                <span class="comment">% indicate which fields are updated</span>
-0094         <span class="keyword">for</span> i=1:nq
-0095             p.(dn{i})=q(i,:);
-0096         <span class="keyword">end</span>
-0097         <span class="keyword">if</span> size(q,1)&gt;nq &amp;&amp; any(lower(m)==<span class="string">'e'</span>)
-0098             fprintf(2,<span class="string">'More than %d parameters specified\n'</span>,nq);
-0099             numerr=numerr+1;
-0100         <span class="keyword">end</span>
-0101     <span class="keyword">end</span>
-0102 <span class="keyword">end</span>
-0103 <span class="comment">% Apply parameter checks</span>
-0104 <span class="keyword">if</span> any(lower(m)==<span class="string">'e'</span>) &amp;&amp; numel(c)&gt;0
-0105     <span class="keyword">for</span> i=1:numel(c)
-0106         <span class="keyword">if</span> any(~eval(c{i}))
-0107             numerr=numerr+1;
-0108             fprintf(2,<span class="string">'Parameter check failed: %s\n'</span>,c{i});
-0109         <span class="keyword">end</span>
-0110     <span class="keyword">end</span>
-0111 <span class="keyword">end</span>
-0112 <span class="comment">% print out a list of the parameters if requested</span>
-0113 <span class="keyword">if</span> ~nargout || any(m==<span class="string">'l'</span>)
-0114     pn=fieldnames(p);
-0115     nf=length(pn);
-0116     st=size(t);
-0117     <span class="keyword">for</span> i=1:nf
-0118         fi=pn{i};
-0119         vi=p.(fi);
-0120         <span class="keyword">if</span> i&gt;ndn
-0121             cat=<span class="string">'+'</span>;
-0122         <span class="keyword">else</span>
-0123             cat=<span class="string">'-'</span>+(<span class="string">'*'</span>-<span class="string">'-'</span>)*dup(i);
-0124         <span class="keyword">end</span>
-0125         <span class="keyword">if</span> st(2)&gt;1
-0126             jti=find(strcmp(fi,t(:,1)),1);
-0127             <span class="keyword">if</span> ~isempty(jti)
-0128                 jti=t{jti,2}; <span class="comment">% description string</span>
-0129             <span class="keyword">end</span>
-0130         <span class="keyword">elseif</span> i&lt;=st(1)
-0131             jti=t{i,1}; <span class="comment">% description string</span>
-0132         <span class="keyword">else</span>
-0133             jti=[];
-0134         <span class="keyword">end</span>
-0135         <span class="keyword">if</span> isnumeric(vi) &amp;&amp; length(vi)==numel(vi) &amp;&amp; isreal(vi) <span class="comment">% can print on one line</span>
-0136             fit=fi;
-0137             <span class="keyword">if</span> size(vi,1)&gt;1
-0138                 fit=[fi <span class="string">''''</span>];
-0139             <span class="keyword">end</span>
-0140             fprintf(<span class="string">'%3d%c %s ='</span>,i,cat,fit);
-0141             fprintf(<span class="string">' %g'</span>,vi);
-0142             <span class="keyword">if</span> isempty(jti)
-0143                 fprintf(<span class="string">'\n'</span>);
-0144             <span class="keyword">else</span>
-0145                 fprintf(<span class="string">' = %s\n'</span>,jti);
-0146             <span class="keyword">end</span>
-0147         <span class="keyword">else</span>
-0148             fprintf(<span class="string">'%3d%c %s ='</span>,i,cat,fi);
-0149             <span class="keyword">if</span> isempty(jti)
-0150                 fprintf(<span class="string">'\n'</span>);
-0151             <span class="keyword">else</span>
-0152                 fprintf(<span class="string">' %s =\n'</span>,jti);
-0153             <span class="keyword">end</span>
-0154             disp(vi);
-0155         <span class="keyword">end</span>
-0156     <span class="keyword">end</span>
-0157 <span class="keyword">end</span>
-0158 <span class="keyword">if</span> numerr&gt;0 &amp;&amp; any(m==<span class="string">'E'</span>)
-0159     error(<span class="string">'%d error%c in parameter specification'</span>,numerr,(<span class="string">' '</span>+(numerr&gt;1)*(<span class="string">'s'</span>-<span class="string">' '</span>)));
-0160 <span class="keyword">end</span></pre></div>
+0038 <span class="comment">% Bugs/Suggestions:</span>
+0039 <span class="comment">% (1) When printing include &quot;=&quot; to show an updated parameter has not changed (might waste a lot of computation)</span>
+0040 <span class="comment">% (2) If input d has few entries, it would be faster to loop through d rather than q</span>
+0041 
+0042 <span class="comment">%      Copyright (C) Mike Brookes 2017</span>
+0043 <span class="comment">%      Version: $Id: v_paramsetch.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0046 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0049 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0050 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0051 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0052 <span class="comment">%   (at your option) any later version.</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0055 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0056 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0057 <span class="comment">%   GNU General Public License for more details.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0060 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0061 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0062 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0063 p=d;                                            <span class="comment">% initialize output structure to the default values</span>
+0064 numerr=0;                                       <span class="comment">% initialize error count</span>
+0065 dn=fieldnames(d);                               <span class="comment">% list of parameter default fields</span>
+0066 ndn=length(dn);                                 <span class="comment">% number of default parameter fields</span>
+0067 nq=0;                                           <span class="comment">% default value for size(q,1)</span>
+0068 <span class="comment">% handle common case efficiently with 1 or 2 input arguments and an output argument</span>
+0069 <span class="keyword">if</span> nargin&lt;=2 &amp;&amp; nargout&gt;0
+0070     <span class="keyword">if</span> nargin==2 &amp;&amp; numel(q)&gt;0                  <span class="comment">% if update argument exists</span>
+0071         <span class="keyword">if</span> isstruct(q)                          <span class="comment">% if update argument is a structure</span>
+0072             qn=fieldnames(q);                   <span class="comment">% field names to update</span>
+0073             nq=length(qn);                      <span class="comment">% number of fields to update</span>
+0074             <span class="keyword">if</span> nq&lt;ndn                           <span class="comment">% relatively few entries in q</span>
+0075                 <span class="keyword">for</span> i=1:nq                      <span class="comment">% loop through list of fields to update</span>
+0076                     fi=qn{i};                   <span class="comment">% get field name to update</span>
+0077                     <span class="keyword">if</span> isfield(p,fi);           <span class="comment">% is this an existing field ?</span>
+0078                         p.(fi)=q.(fi);          <span class="comment">% set new field value</span>
+0079                     <span class="keyword">end</span>
+0080                 <span class="keyword">end</span>
+0081             <span class="keyword">else</span>                                <span class="comment">% more entries in q than in d</span>
+0082                 <span class="keyword">for</span> i=1:ndn                     <span class="comment">% loop through list of existing fields</span>
+0083                     fi=dn{i};                   <span class="comment">% get field name to potentially update</span>
+0084                     <span class="keyword">if</span> isfield(q,fi);           <span class="comment">% is there a replacement value for this field ?</span>
+0085                         p.(fi)=q.(fi);          <span class="comment">% set new field value</span>
+0086                     <span class="keyword">end</span>
+0087                 <span class="keyword">end</span>
+0088             <span class="keyword">end</span>
+0089         <span class="keyword">else</span>                                    <span class="comment">% else update argument is a matrix</span>
+0090             nq=size(q,1);                       <span class="comment">% number of fields to update</span>
+0091             <span class="keyword">for</span> i=1:min(nq,ndn)
+0092                 p.(dn{i})=q(i,:);
+0093             <span class="keyword">end</span>
+0094         <span class="keyword">end</span>
+0095     <span class="keyword">end</span>
+0096 <span class="keyword">else</span>                                            <span class="comment">% we have &gt;2 arguments or else no output arguments</span>
+0097     <span class="comment">% sort out input arguments</span>
+0098     <span class="keyword">if</span> nargin&lt;5
+0099         t={<span class="string">''</span> <span class="string">''</span>};                              <span class="comment">% define an empty description array</span>
+0100         <span class="keyword">if</span> nargin&lt;4
+0101             c=cell(0,2);                        <span class="comment">% define an empty check condition array</span>
+0102             <span class="keyword">if</span> nargin&lt;3
+0103                 m=<span class="string">''</span>;                           <span class="comment">% define an empty check mode string</span>
+0104             <span class="keyword">end</span>
+0105         <span class="keyword">end</span>
+0106     <span class="keyword">end</span>
+0107     <span class="comment">% now update the selected fields</span>
+0108     adderr=any(m==<span class="string">'A'</span>);                         <span class="comment">% new fields constitute an error</span>
+0109     addnew=any(m==<span class="string">'a'</span>);                         <span class="comment">% new fields should be added into p</span>
+0110     printerr=any(m==<span class="string">'e'</span>);                       <span class="comment">% print error messages</span>
+0111     numerr=0;                                   <span class="comment">% initialize count of errors</span>
+0112     <span class="keyword">if</span> numel(q)&gt;0                               <span class="comment">% if update argument is non-empty</span>
+0113         <span class="keyword">if</span> isstruct(q)                          <span class="comment">% if update argument is a structure</span>
+0114             qn=fieldnames(q);                   <span class="comment">% field names to update</span>
+0115             nq=length(qn);                      <span class="comment">% number of fields to update</span>
+0116             <span class="keyword">if</span> addnew                           <span class="comment">% we are including all fields in q(n)</span>
+0117                 <span class="keyword">for</span> i=1:nq                      <span class="comment">% loop through list of fields to update</span>
+0118                     fi=qn{i};                   <span class="comment">% get field name to update</span>
+0119                     p.(fi)=q.(fi);              <span class="comment">% set new field value</span>
+0120                 <span class="keyword">end</span>
+0121             <span class="keyword">else</span>
+0122                 <span class="keyword">for</span> i=1:length(qn)              <span class="comment">% loop through list of fields to update</span>
+0123                     fi=qn{i};                   <span class="comment">% get field name to update</span>
+0124                     <span class="keyword">if</span> isfield(p,fi)            <span class="comment">% if this is an existing field ...</span>
+0125                         p.(fi)=q.(fi);          <span class="comment">% set new field value</span>
+0126                     <span class="keyword">elseif</span> adderr               <span class="comment">% if this is an non-existant field ...</span>
+0127                         numerr=numerr+1;        <span class="comment">% increment error count</span>
+0128                         <span class="keyword">if</span> printerr
+0129                             fprintf(2,<span class="string">'Unknown parameter: %s\n'</span>,fi);
+0130                         <span class="keyword">end</span>
+0131                     <span class="keyword">end</span>
+0132                 <span class="keyword">end</span>
+0133             <span class="keyword">end</span>
+0134         <span class="keyword">else</span>                                    <span class="comment">% else update argument is a matrix</span>
+0135             nq=size(q,1);                       <span class="comment">% number of fields to update</span>
+0136             <span class="keyword">for</span> i=1:min(nq,ndn)
+0137                 p.(dn{i})=q(i,:);
+0138             <span class="keyword">end</span>
+0139             <span class="keyword">if</span> nq&gt;ndn
+0140                 numerr=numerr+nq-ndn;
+0141                 <span class="keyword">if</span> printerr
+0142                     <span class="keyword">if</span>  nq==ndn+1
+0143                         fprintf(2,<span class="string">'1 extra parameter specified\n'</span>);
+0144                     <span class="keyword">else</span>
+0145                         fprintf(2,<span class="string">'%d extra parameters specified\n'</span>,nq-ndn);
+0146                     <span class="keyword">end</span>
+0147                 <span class="keyword">end</span>
+0148             <span class="keyword">end</span>
+0149         <span class="keyword">end</span>
+0150     <span class="keyword">end</span>
+0151     <span class="comment">% Apply parameter checks</span>
+0152     <span class="keyword">if</span> numel(c)&gt;0                               <span class="comment">% check if any checks are specified</span>
+0153         <span class="keyword">for</span> i=1:size(c,1)                       <span class="comment">% one check per row of c</span>
+0154             <span class="keyword">if</span> ~all(eval(c{i,1}),<span class="string">'all'</span>)               <span class="comment">% perform the check</span>
+0155                 numerr=numerr+1;
+0156                 <span class="keyword">if</span> size(c,1)==1
+0157                     fprintf(2,<span class="string">'Parameter check failed: %s\n'</span>,c{i});
+0158                 <span class="keyword">else</span>
+0159                     fprintf(2,c{i,2});
+0160                     fprintf(2,<span class="string">'\n'</span>);
+0161                 <span class="keyword">end</span>
+0162             <span class="keyword">end</span>
+0163         <span class="keyword">end</span>
+0164     <span class="keyword">end</span>
+0165     <span class="comment">% print out a list of the parameters if requested</span>
+0166     <span class="keyword">if</span> ~nargout || any(m==<span class="string">'l'</span>)
+0167            fprintf(<span class="string">'Key: - default value, = updated to default value, * updated to new value, + additional field\n'</span>);
+0168         pn=fieldnames(p);
+0169         nf=length(pn);                          <span class="comment">% length of updated structure</span>
+0170         st=size(t);
+0171         <span class="keyword">for</span> i=1:nf                              <span class="comment">% loop through field in output p</span>
+0172             fi=pn{i};                           <span class="comment">% field name</span>
+0173             vi=p.(fi);                          <span class="comment">% field value</span>
+0174             <span class="keyword">if</span> i&gt;ndn                            <span class="comment">% if this field was added to structure d</span>
+0175                 cat=<span class="string">'+'</span>;                        <span class="comment">% new field</span>
+0176             <span class="keyword">else</span>
+0177                 <span class="keyword">if</span> nq&gt;0 &amp;&amp; isstruct(q)          <span class="comment">% if update argument is a structure</span>
+0178                     <span class="keyword">if</span> isfield(q,fi)            <span class="comment">% was this field updated ?</span>
+0179                         <span class="keyword">if</span> isequal(p.(fi),d.(fi))
+0180                             cat=<span class="string">'='</span>;            <span class="comment">% updated to existing value</span>
+0181                         <span class="keyword">else</span>
+0182                             cat=<span class="string">'*'</span>;            <span class="comment">% updated to new value</span>
+0183                         <span class="keyword">end</span>
+0184                     <span class="keyword">else</span>                        <span class="comment">% not an updated field</span>
+0185                         cat=<span class="string">'-'</span>;                <span class="comment">% not updated</span>
+0186                     <span class="keyword">end</span>
+0187                 <span class="keyword">else</span>                            <span class="comment">% if update argument is a matrix</span>
+0188                     <span class="keyword">if</span> i&gt;nq                     <span class="comment">% beyond list of updated fields</span>
+0189                         cat=<span class="string">'-'</span>;                <span class="comment">% not updated</span>
+0190                     <span class="keyword">else</span>
+0191                         <span class="keyword">if</span> isequal(p.(fi),d.(fi))
+0192                             cat=<span class="string">'='</span>;            <span class="comment">% updated to existing value</span>
+0193                         <span class="keyword">else</span>
+0194                             cat=<span class="string">'*'</span>;            <span class="comment">% updated to new value</span>
+0195                         <span class="keyword">end</span>
+0196                     <span class="keyword">end</span>
+0197                 <span class="keyword">end</span>
+0198             <span class="keyword">end</span>
+0199             <span class="keyword">if</span> st(2)&gt;1                          <span class="comment">% description are field-based</span>
+0200                 jti=find(strcmp(fi,t(:,1)),1);  <span class="comment">% find description for this field</span>
+0201                 <span class="keyword">if</span> ~isempty(jti)
+0202                     jti=t{jti,2};               <span class="comment">% description string</span>
+0203                 <span class="keyword">end</span>
+0204             <span class="keyword">elseif</span> i&lt;=st(1)
+0205                 jti=t{i,1};                     <span class="comment">% description string</span>
+0206             <span class="keyword">else</span>
+0207                 jti=[];                         <span class="comment">% empty description</span>
+0208             <span class="keyword">end</span>
+0209             <span class="keyword">if</span> isnumeric(vi) &amp;&amp; length(vi)==numel(vi) &amp;&amp; isreal(vi) <span class="comment">% can print vector on one line</span>
+0210                 fit=fi;
+0211                 <span class="keyword">if</span> size(vi,1)&gt;1
+0212                     fit=[fi <span class="string">''''</span>]; <span class="comment">% transposed vector</span>
+0213                 <span class="keyword">end</span>
+0214                 fprintf(<span class="string">'%3d%c %s:'</span>,i,cat,fit);
+0215                 fprintf(<span class="string">' %g'</span>,vi);
+0216                 <span class="keyword">if</span> isempty(jti)
+0217                     fprintf(<span class="string">'\n'</span>);
+0218                 <span class="keyword">else</span>
+0219                     fprintf(<span class="string">' = %s\n'</span>,jti);
+0220                 <span class="keyword">end</span>
+0221             <span class="keyword">elseif</span> numel(vi)&lt;6
+0222                 fprintf(<span class="string">'%3d%c %s:'</span>,i,cat,fi);
+0223                 <span class="keyword">if</span> isempty(jti)
+0224                     fprintf(<span class="string">'\n'</span>);
+0225                 <span class="keyword">else</span>
+0226                     fprintf(<span class="string">' %s:\n'</span>,jti);
+0227                 <span class="keyword">end</span>
+0228                 disp(vi);
+0229             <span class="keyword">else</span>
+0230                 fprintf(<span class="string">'%3d%c %s: [large]'</span>,i,cat,fi);
+0231                 <span class="keyword">if</span> isempty(jti)
+0232                     fprintf(<span class="string">'\n'</span>);
+0233                 <span class="keyword">else</span>
+0234                     fprintf(<span class="string">' = %s\n'</span>,jti);
+0235                 <span class="keyword">end</span>
+0236             <span class="keyword">end</span>
+0237         <span class="keyword">end</span>
+0238     <span class="keyword">end</span>
+0239     <span class="keyword">if</span> numerr&gt;0 &amp;&amp; any(m==<span class="string">'E'</span>)
+0240         error(<span class="string">'%d error%c in parameter specification'</span>,numerr,(<span class="string">' '</span>+(numerr&gt;1)*(<span class="string">'s'</span>-<span class="string">' '</span>)));
+0241     <span class="keyword">end</span>
+0242 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

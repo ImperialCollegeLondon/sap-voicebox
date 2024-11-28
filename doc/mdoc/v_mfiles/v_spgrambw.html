@@ -27,7 +27,7 @@
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment">V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)
 
-  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options
+  Usage: (1) v_spgrambw(s,fs,'pJcw');                      % Plot spectrogram with my favourite set of options
 
          (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file
              v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with word transcription
@@ -157,7 +157,7 @@ This function is called by:
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [t,f,b]=v_spgrambw(s,fs,varargin)</a>
 0002 <span class="comment">%V_SPGRAMBW Draw spectrogram [T,F,B]=(s,fs,mode,bw,fmax,db,tinc,ann)</span>
 0003 <span class="comment">%</span>
-0004 <span class="comment">%  Usage: (1) v_spgrambw(s,fs,'pJcw')                       % Plot spectrogram with my favourite set of options</span>
+0004 <span class="comment">%  Usage: (1) v_spgrambw(s,fs,'pJcw');                      % Plot spectrogram with my favourite set of options</span>
 0005 <span class="comment">%</span>
 0006 <span class="comment">%         (2) [s,fs,wrd,phn]=v_readsph(filename);           % read a TIMIT file</span>
 0007 <span class="comment">%             v_spgrambw(s,fs,'pJcwat',[],[],[],[],wrd);    % plot spectrogram with word transcription</span>

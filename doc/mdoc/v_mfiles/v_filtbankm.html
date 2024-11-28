@@ -55,7 +55,7 @@
          g=v_irfft(sqrt(gp).*exp(1i*angle(f)));         % take the inverse DFT using the original phase to recover the time domain signal 
 
  Inputs:
-       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]
+       p   number of filters in filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]
         n   length of dft
         fs  sample rate in Hz
         fl  low end of the lowest filter in Hz (or in mel/erb/bark/log10 with 'h' option) [default = 0Hz or, if 'l' option given, 30Hz]
@@ -83,10 +83,10 @@
 
              'z' = Treat input power spectrum at 0Hz as an impulse rather than being diffuse
              'Z' = Treat input power spectrum at 0Hz as the sum of an impulse and a continuous component with the same amlitude as the adjacent bin
-             'q' = The first output filter gives the power of the impulse at 0Hz (regardless of the 'D' option). 'zq' ensures exact retention of DC component by zi*z
+             'q' = The first output filter gives the power of the impulse at 0Hz (regardless of the 'D' option). 'zq' ensures exact retention of DC component by xi*x
 
              'd' = input is power spectral density (power per Hz) instead of power
-             'D' = output is power spectral density (power per Hz) instead of power
+             'D' = output is power spectral density (power per Hz) instead of power (option 'dD' makes the rows of x sum to approximately 1)
 
              's' = single-sided input: do not add power from symmetric negative frequencies (i.e. non-DC/Nyquist inputs have already been doubled)
              'S' = single-sided output: include power from both positive and negative frequencies (this doubles the non-DC/Nyquist outputs)
@@ -95,21 +95,20 @@
              'g' = plot filter coefficients as graph
              'G' = plot filter coefficients as spectrogram image [default if no output arguments present]
 
-           Legacy options: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'
+           Legacy options, 'yYuU' are mapped as follows: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'
 
  Outputs:    x(p,k)  a sparse matrix containing the v_filterbank amplitudes
                     If the il and ih output arguments are included then k=ih-il+1 otherwise k=1+floor(n/2)
                    Note that, with the 'S' option, the peak filter values equal 2 to account for the energy in the negative FFT frequencies.
            cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)
            xi(k,p) [optional] sparse matrix that is an approximate inverse of x
-            il      the lowest fft bin with a non-zero coefficient
-            ih      the highest fft bin with a non-zero coefficient (Note: ih must be given if il is given and xi is omitted)
+            il,ih   the lowest and highest fft bins with non-zero coefficient 1&lt;=il,ih&lt;=1+n/2 (Note: you must specify *both* il and ih or neither)
 
  The input power will be preserved if the options 'xXS' are given
 
  The output of the routine is a sparse filterbank matrix. The vector output of the filterbank can then be obtained
- by pre-multiplying an input power spectrum vector by the filterbank matrix. The input and output vectors can optionally
- be in either the power domain or the power spectral density domain.
+ by pre-multiplying an input power spectrum vector (as a column vector) by the filterbank matrix. The input and
+ output vectors can optionally be in either the power domain or the power spectral density domain.
  The routine implements the filterbank in two conceptual stages (which are merged in the practical implementation):
 
  Stage 1:
@@ -191,7 +190,7 @@ This function is called by:
 0029 <span class="comment">%         g=v_irfft(sqrt(gp).*exp(1i*angle(f)));         % take the inverse DFT using the original phase to recover the time domain signal</span>
 0030 <span class="comment">%</span>
 0031 <span class="comment">% Inputs:</span>
-0032 <span class="comment">%       p   number of filters in v_filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]</span>
+0032 <span class="comment">%       p   number of filters in filterbank or the filter spacing in k-mel/bark/erb (see 'p' and 'P' options) [ceil(4.6*log10(fs))]</span>
 0033 <span class="comment">%        n   length of dft</span>
 0034 <span class="comment">%        fs  sample rate in Hz</span>
 0035 <span class="comment">%        fl  low end of the lowest filter in Hz (or in mel/erb/bark/log10 with 'h' option) [default = 0Hz or, if 'l' option given, 30Hz]</span>
@@ -219,10 +218,10 @@ This function is called by:
 0057 <span class="comment">%</span>
 0058 <span class="comment">%             'z' = Treat input power spectrum at 0Hz as an impulse rather than being diffuse</span>
 0059 <span class="comment">%             'Z' = Treat input power spectrum at 0Hz as the sum of an impulse and a continuous component with the same amlitude as the adjacent bin</span>
-0060 <span class="comment">%             'q' = The first output filter gives the power of the impulse at 0Hz (regardless of the 'D' option). 'zq' ensures exact retention of DC component by zi*z</span>
+0060 <span class="comment">%             'q' = The first output filter gives the power of the impulse at 0Hz (regardless of the 'D' option). 'zq' ensures exact retention of DC component by xi*x</span>
 0061 <span class="comment">%</span>
 0062 <span class="comment">%             'd' = input is power spectral density (power per Hz) instead of power</span>
-0063 <span class="comment">%             'D' = output is power spectral density (power per Hz) instead of power</span>
+0063 <span class="comment">%             'D' = output is power spectral density (power per Hz) instead of power (option 'dD' makes the rows of x sum to approximately 1)</span>
 0064 <span class="comment">%</span>
 0065 <span class="comment">%             's' = single-sided input: do not add power from symmetric negative frequencies (i.e. non-DC/Nyquist inputs have already been doubled)</span>
 0066 <span class="comment">%             'S' = single-sided output: include power from both positive and negative frequencies (this doubles the non-DC/Nyquist outputs)</span>
@@ -231,410 +230,406 @@ This function is called by:
 0069 <span class="comment">%             'g' = plot filter coefficients as graph</span>
 0070 <span class="comment">%             'G' = plot filter coefficients as spectrogram image [default if no output arguments present]</span>
 0071 <span class="comment">%</span>
-0072 <span class="comment">%           Legacy options: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'</span>
+0072 <span class="comment">%           Legacy options, 'yYuU' are mapped as follows: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'</span>
 0073 <span class="comment">%</span>
 0074 <span class="comment">% Outputs:    x(p,k)  a sparse matrix containing the v_filterbank amplitudes</span>
 0075 <span class="comment">%                    If the il and ih output arguments are included then k=ih-il+1 otherwise k=1+floor(n/2)</span>
 0076 <span class="comment">%                   Note that, with the 'S' option, the peak filter values equal 2 to account for the energy in the negative FFT frequencies.</span>
 0077 <span class="comment">%           cf(p)   the v_filterbank centre frequencies in Hz (or in mel/erb/bark/log10 with 'H' option)</span>
 0078 <span class="comment">%           xi(k,p) [optional] sparse matrix that is an approximate inverse of x</span>
-0079 <span class="comment">%            il      the lowest fft bin with a non-zero coefficient</span>
-0080 <span class="comment">%            ih      the highest fft bin with a non-zero coefficient (Note: ih must be given if il is given and xi is omitted)</span>
-0081 <span class="comment">%</span>
-0082 <span class="comment">% The input power will be preserved if the options 'xXS' are given</span>
-0083 <span class="comment">%</span>
-0084 <span class="comment">% The output of the routine is a sparse filterbank matrix. The vector output of the filterbank can then be obtained</span>
-0085 <span class="comment">% by pre-multiplying an input power spectrum vector by the filterbank matrix. The input and output vectors can optionally</span>
-0086 <span class="comment">% be in either the power domain or the power spectral density domain.</span>
-0087 <span class="comment">% The routine implements the filterbank in two conceptual stages (which are merged in the practical implementation):</span>
-0088 <span class="comment">%</span>
-0089 <span class="comment">% Stage 1:</span>
-0090 <span class="comment">% The discrete input spectrum is converted to a continuous power spectral density using linear interpolation in frequency.</span>
-0091 <span class="comment">% Each element of the input spectrum influences a frequency interval of width 2d where d is the input frequency bin width.</span>
-0092 <span class="comment">% The DC component of the input is treated specially in one of three ways: (a) it can be treated as a normal element that</span>
-0093 <span class="comment">% influences an interval (-d,+d) like the other elements [default]; (b) it can be treated as an impulse at DC ['z' option];</span>
-0094 <span class="comment">% (c) it can be treated as a mixture of an impulse and a normal component whose value equals that of the adjacent frequency</span>
-0095 <span class="comment">% bin ['Z' option].</span>
-0096 <span class="comment">%</span>
-0097 <span class="comment">% Stage 2:</span>
-0098 <span class="comment">% The filterbank outputs are calculated by integrating the product of the continuous spectrum and a filter weight that is</span>
-0099 <span class="comment">% triangular in the frequency domain. Optionally, the first filterbank preserves the DC impulse component of the continuous</span>
-0100 <span class="comment">% spectrum ['q' option].</span>
-0101 <span class="comment">%</span>
-0102 <span class="comment">% References:</span>
-0103 <span class="comment">%</span>
-0104 <span class="comment">% [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement</span>
-0105 <span class="comment">%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185-190, 1937.</span>
-0106 <span class="comment">% [2] S. Davis and P. Mermelstein. Comparison of parametric representations for</span>
-0107 <span class="comment">%     monosyllabic word recognition in continuously spoken sentences.</span>
-0108 <span class="comment">%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357-366, Aug. 1980.</span>
-0109 
-0110 <span class="comment">% Bugs/Suggestions</span>
-0111 <span class="comment">% (1) default frequencies won't work if the h option is specified</span>
-0112 <span class="comment">% (2) low default frequency is invalid if the 'l' option is specified</span>
-0113 <span class="comment">% (3) Add 'z' option to include a DC output as the first coefficient</span>
-0114 <span class="comment">% (4) Add 'Z' option to ignore the DC input component</span>
-0115 <span class="comment">% (5) Add 'i' option to calculate the inverse of x instead</span>
-0116 <span class="comment">% (6) Add option to choose the domain in which linear interpolation is performed</span>
-0117 
-0118 <span class="comment">%      Copyright (C) Mike Brookes 1997-2024</span>
-0119 <span class="comment">%      Version: $Id: v_filtbankm.m $</span>
-0120 <span class="comment">%</span>
-0121 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0122 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0123 <span class="comment">%</span>
-0124 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0125 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0126 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0127 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0128 <span class="comment">%   (at your option) any later version.</span>
-0129 <span class="comment">%</span>
-0130 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0131 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0132 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0133 <span class="comment">%   GNU General Public License for more details.</span>
-0134 <span class="comment">%</span>
-0135 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0136 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0137 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0138 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0079 <span class="comment">%            il,ih   the lowest and highest fft bins with non-zero coefficient 1&lt;=il,ih&lt;=1+n/2 (Note: you must specify *both* il and ih or neither)</span>
+0080 <span class="comment">%</span>
+0081 <span class="comment">% The input power will be preserved if the options 'xXS' are given</span>
+0082 <span class="comment">%</span>
+0083 <span class="comment">% The output of the routine is a sparse filterbank matrix. The vector output of the filterbank can then be obtained</span>
+0084 <span class="comment">% by pre-multiplying an input power spectrum vector (as a column vector) by the filterbank matrix. The input and</span>
+0085 <span class="comment">% output vectors can optionally be in either the power domain or the power spectral density domain.</span>
+0086 <span class="comment">% The routine implements the filterbank in two conceptual stages (which are merged in the practical implementation):</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">% Stage 1:</span>
+0089 <span class="comment">% The discrete input spectrum is converted to a continuous power spectral density using linear interpolation in frequency.</span>
+0090 <span class="comment">% Each element of the input spectrum influences a frequency interval of width 2d where d is the input frequency bin width.</span>
+0091 <span class="comment">% The DC component of the input is treated specially in one of three ways: (a) it can be treated as a normal element that</span>
+0092 <span class="comment">% influences an interval (-d,+d) like the other elements [default]; (b) it can be treated as an impulse at DC ['z' option];</span>
+0093 <span class="comment">% (c) it can be treated as a mixture of an impulse and a normal component whose value equals that of the adjacent frequency</span>
+0094 <span class="comment">% bin ['Z' option].</span>
+0095 <span class="comment">%</span>
+0096 <span class="comment">% Stage 2:</span>
+0097 <span class="comment">% The filterbank outputs are calculated by integrating the product of the continuous spectrum and a filter weight that is</span>
+0098 <span class="comment">% triangular in the frequency domain. Optionally, the first filterbank preserves the DC impulse component of the continuous</span>
+0099 <span class="comment">% spectrum ['q' option].</span>
+0100 <span class="comment">%</span>
+0101 <span class="comment">% References:</span>
+0102 <span class="comment">%</span>
+0103 <span class="comment">% [1] S. S. Stevens, J. Volkman, and E. B. Newman. A scale for the measurement</span>
+0104 <span class="comment">%     of the psychological magnitude of pitch. J. Acoust Soc Amer, 8: 185-190, 1937.</span>
+0105 <span class="comment">% [2] S. Davis and P. Mermelstein. Comparison of parametric representations for</span>
+0106 <span class="comment">%     monosyllabic word recognition in continuously spoken sentences.</span>
+0107 <span class="comment">%     IEEE Trans Acoustics Speech and Signal Processing, 28 (4): 357-366, Aug. 1980.</span>
+0108 
+0109 <span class="comment">% Bugs/Suggestions</span>
+0110 <span class="comment">% (1) default frequencies won't work if the h option is specified</span>
+0111 <span class="comment">% (2) low default frequency is invalid if the 'l' option is specified</span>
+0112 <span class="comment">% (3) Add option to choose the domain in which linear interpolation is performed</span>
+0113 
+0114 <span class="comment">%      Copyright (C) Mike Brookes 1997-2024</span>
+0115 <span class="comment">%      Version: $Id: v_filtbankm.m $</span>
+0116 <span class="comment">%</span>
+0117 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0118 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0119 <span class="comment">%</span>
+0120 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0121 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0122 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0123 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0124 <span class="comment">%   (at your option) any later version.</span>
+0125 <span class="comment">%</span>
+0126 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0127 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0128 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0129 <span class="comment">%   GNU General Public License for more details.</span>
+0130 <span class="comment">%</span>
+0131 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0132 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0133 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0134 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0135 
+0136 <span class="comment">% Notes:</span>
+0137 <span class="comment">% (1) In the comments, &quot;FFT bin_0&quot; assumes DC = bin 0 whereas &quot;FFT bin_1&quot; means DC = bin 1nfout</span>
+0138 <span class="comment">% (2) &quot;input&quot; and &quot;output&quot; need to be interchanged if the 'i' option is given</span>
 0139 
-0140 <span class="comment">% Notes:</span>
-0141 <span class="comment">% (1) In the comments, &quot;FFT bin_0&quot; assumes DC = bin 0 whereas &quot;FFT bin_1&quot; means DC = bin 1nfout</span>
-0142 <span class="comment">% (2) &quot;input&quot; and &quot;output&quot; need to be interchanged if the 'i' option is given</span>
-0143 
-0144 <span class="keyword">if</span> nargin&lt;6 || isempty(w)               <span class="comment">% if no mode option, w, is specified</span>
-0145     w=<span class="string">'f'</span>;                              <span class="comment">% default mode option: 'f' = linear output frequency scale</span>
-0146 <span class="keyword">end</span>
-0147 wr=max(any(repmat(<span class="string">'lebm'</span>,length(w),1)==repmat(w',1,4),1).*(1:4));           <span class="comment">% output warping: 0=linear,1=log,2=erbrate,3=bark,4=mel</span>
-0148 ww=any(repmat(<span class="string">'ncChHxXyYpPzZqdDuUsSgGw'</span>,length(w),1)==repmat(w',1,23),1);    <span class="comment">% decode all other options</span>
-0149 <span class="comment">% ww elements: 1=n,2=c,3=C,4=h,5=H,6=x,7=X,8=y,9=Y,10=p,11=P,12=z,13=Z,14=q,15=d,16=D,17=u,18=U,19=s,20=S,21=g,22=G,23=w</span>
-0150 <span class="comment">% Convert legacy option codes: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'</span>
-0151 ww(6)=ww(6) || (ww(8) ~= ww(9));        <span class="comment">% convert 'y' or 'Y' (but not both) to 'x'; extend low frequencies</span>
-0152 ww(7)=ww(7) || ww(8);                   <span class="comment">% convert 'y' to 'X'; extend high frequencies</span>
-0153 ww(15)=ww(15) || ww(17);                <span class="comment">% convert 'u' to 'd'; input is also in power spectral density</span>
-0154 ww(16)=ww(16) || ww(17) || ww(18);      <span class="comment">% convert 'u' or 'U' to 'd'; output is in power spectral density</span>
-0155 flhconv=repmat(wr&gt;0 &amp;&amp; ~ww(4),1,2);     <span class="comment">% flag indicating need to convert filterbank limits from Hz to mel/erb/bark/log10</span>
-0156 <span class="keyword">if</span> nargin &lt; 4 || isempty(fl)
-0157     fl=30*(wr==1);                      <span class="comment">% lower limit is 0 Hz unless 'l' option specified, in which case it is 30 Hz</span>
-0158     flhconv(1)=wr&gt;0;
+0140 <span class="keyword">if</span> nargin&lt;6 || isempty(w)               <span class="comment">% if no mode option, w, is specified</span>
+0141     w=<span class="string">'f'</span>;                              <span class="comment">% default mode option: 'f' = linear output frequency scale</span>
+0142 <span class="keyword">end</span>
+0143 wr=max(any(repmat(<span class="string">'lebm'</span>,length(w),1)==repmat(w',1,4),1).*(1:4));           <span class="comment">% output warping: 0=linear,1=log,2=erbrate,3=bark,4=mel</span>
+0144 ww=any(repmat(<span class="string">'ncChHxXyYpPzZqdDuUsSgGw'</span>,length(w),1)==repmat(w',1,23),1);    <span class="comment">% decode all other options</span>
+0145 <span class="comment">% ww elements: 1=n,2=c,3=C,4=h,5=H,6=x,7=X,8=y,9=Y,10=p,11=P,12=z,13=Z,14=q,15=d,16=D,17=u,18=U,19=s,20=S,21=g,22=G,23=w</span>
+0146 <span class="comment">% Convert legacy option codes: 'y'='xX', 'Y'='x', 'yY'='X', 'u'='dD', 'U'='D'</span>
+0147 ww(6)=ww(6) || (ww(8) ~= ww(9));        <span class="comment">% convert 'y' or 'Y' (but not both) to 'x'; extend low frequencies</span>
+0148 ww(7)=ww(7) || ww(8);                   <span class="comment">% convert 'y' to 'X'; extend high frequencies</span>
+0149 ww(15)=ww(15) || ww(17);                <span class="comment">% convert 'u' to 'd'; input is also in power spectral density</span>
+0150 ww(16)=ww(16) || ww(17) || ww(18);      <span class="comment">% convert 'u' or 'U' to 'd'; output is in power spectral density</span>
+0151 flhconv=repmat(wr&gt;0 &amp;&amp; ~ww(4),1,2);     <span class="comment">% flag indicating need to convert filterbank limits from Hz to mel/erb/bark/log10</span>
+0152 <span class="keyword">if</span> nargin &lt; 4 || isempty(fl)
+0153     fl=30*(wr==1);                      <span class="comment">% lower limit is 0 Hz unless 'l' option specified, in which case it is 30 Hz</span>
+0154     flhconv(1)=wr&gt;0;
+0155 <span class="keyword">end</span>
+0156 <span class="keyword">if</span> nargin &lt; 5 || isempty(fh)
+0157     fh=0.5*fs;                          <span class="comment">% max freq is the nyquist frequency</span>
+0158     flhconv(2)=wr&gt;0;
 0159 <span class="keyword">end</span>
-0160 <span class="keyword">if</span> nargin &lt; 5 || isempty(fh)
-0161     fh=0.5*fs;                          <span class="comment">% max freq is the nyquist frequency</span>
-0162     flhconv(2)=wr&gt;0;
-0163 <span class="keyword">end</span>
-0164 <span class="comment">%</span>
-0165 <span class="comment">% Sort out input frequency bins</span>
-0166 <span class="comment">%</span>
-0167 <span class="keyword">if</span> numel(n)&gt;1
-0168     error(<span class="string">'non-standard input frequency spacing no longer supported'</span>);
-0169 <span class="keyword">else</span>                                <span class="comment">% n gives dft length</span>
-0170     nf=1+floor(n/2);                <span class="comment">% number of input positive-frequency bins from DFT</span>
-0171     df=fs/n;                        <span class="comment">% input frequency bin spacing</span>
-0172 <span class="keyword">end</span>
-0173 <span class="comment">%</span>
-0174 <span class="comment">% Sort out output frequency bins</span>
-0175 <span class="comment">%</span>
-0176 mflh=[fl fh];                       <span class="comment">% low and high limits of filterbank triangular filters</span>
-0177 <span class="keyword">if</span> any(flhconv)                     <span class="comment">% convert mflh from Hz to mel/erb/... unless already converted via 'h' option</span>
-0178     <span class="keyword">switch</span> wr
-0179         <span class="keyword">case</span> 1                      <span class="comment">% 'l' = log scaled</span>
-0180             <span class="keyword">if</span> fl&lt;=0
-0181                 error(<span class="string">'Low frequency limit must be &gt;0 for ''l'' log10-frequency option'</span>);
-0182             <span class="keyword">end</span>
-0183             mflh(flhconv)=log10(mflh(flhconv));         <span class="comment">% convert frequency limits into log10 Hz</span>
-0184         <span class="keyword">case</span> 2                                          <span class="comment">% 'e' = erb-rate scaled</span>
-0185             mflh(flhconv)=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(mflh(flhconv));     <span class="comment">% convert frequency limits into erb-rate</span>
-0186         <span class="keyword">case</span> 3                                          <span class="comment">% 'b' = bark scaled</span>
-0187             mflh(flhconv)=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(mflh(flhconv));    <span class="comment">% convert frequency limits into bark</span>
-0188         <span class="keyword">case</span> 4                                          <span class="comment">% 'm' = mel scaled</span>
-0189             mflh(flhconv)=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(mflh(flhconv));     <span class="comment">% convert frequency limits into mel</span>
-0190     <span class="keyword">end</span>
+0160 <span class="comment">%</span>
+0161 <span class="comment">% Sort out input frequency bins</span>
+0162 <span class="comment">%</span>
+0163 <span class="keyword">if</span> numel(n)&gt;1
+0164     error(<span class="string">'non-standard input frequency spacing no longer supported'</span>);
+0165 <span class="keyword">else</span>                                <span class="comment">% n gives dft length</span>
+0166     nf=1+floor(n/2);                <span class="comment">% number of input positive-frequency bins from DFT</span>
+0167     df=fs/n;                        <span class="comment">% input frequency bin spacing</span>
+0168 <span class="keyword">end</span>
+0169 <span class="comment">%</span>
+0170 <span class="comment">% Sort out output frequency bins</span>
+0171 <span class="comment">%</span>
+0172 mflh=[fl fh];                       <span class="comment">% low and high limits of filterbank triangular filters</span>
+0173 <span class="keyword">if</span> any(flhconv)                     <span class="comment">% convert mflh from Hz to mel/erb/... unless already converted via 'h' option</span>
+0174     <span class="keyword">switch</span> wr
+0175         <span class="keyword">case</span> 1                      <span class="comment">% 'l' = log scaled</span>
+0176             <span class="keyword">if</span> fl&lt;=0
+0177                 error(<span class="string">'Low frequency limit must be &gt;0 for ''l'' log10-frequency option'</span>);
+0178             <span class="keyword">end</span>
+0179             mflh(flhconv)=log10(mflh(flhconv));         <span class="comment">% convert frequency limits into log10 Hz</span>
+0180         <span class="keyword">case</span> 2                                          <span class="comment">% 'e' = erb-rate scaled</span>
+0181             mflh(flhconv)=<a href="v_frq2erb.html" class="code" title="function [erb,bnd] = v_frq2erb(frq)">v_frq2erb</a>(mflh(flhconv));     <span class="comment">% convert frequency limits into erb-rate</span>
+0182         <span class="keyword">case</span> 3                                          <span class="comment">% 'b' = bark scaled</span>
+0183             mflh(flhconv)=<a href="v_frq2bark.html" class="code" title="function [b,c] = v_frq2bark(f,m)">v_frq2bark</a>(mflh(flhconv));    <span class="comment">% convert frequency limits into bark</span>
+0184         <span class="keyword">case</span> 4                                          <span class="comment">% 'm' = mel scaled</span>
+0185             mflh(flhconv)=<a href="v_frq2mel.html" class="code" title="function [mel,mr] = v_frq2mel(frq)">v_frq2mel</a>(mflh(flhconv));     <span class="comment">% convert frequency limits into mel</span>
+0186     <span class="keyword">end</span>
+0187 <span class="keyword">end</span>
+0188 melrng=mflh(2)-mflh(1);                                 <span class="comment">% filterbank range in Hz/mel/erb/...</span>
+0189 <span class="keyword">if</span> isempty(p)
+0190     p=ceil(4.6*log10(2*(nf-1)*df));                     <span class="comment">% default number of output filters</span>
 0191 <span class="keyword">end</span>
-0192 melrng=mflh(2)-mflh(1);                                 <span class="comment">% filterbank range in Hz/mel/erb/...</span>
-0193 <span class="keyword">if</span> isempty(p)
-0194     p=ceil(4.6*log10(2*(nf-1)*df));                     <span class="comment">% default number of output filters</span>
+0192 puc=ww(11) || (p&lt;1) &amp;&amp; ~ww(10);                         <span class="comment">% input p specifies the filter spacing rather than the number of filters</span>
+0193 <span class="keyword">if</span> puc
+0194     p=round(melrng/(p*1000))+ww(2)+ww(3)-1+ww(14);      <span class="comment">% p now gives the number of filters (excluding DC impulse)</span>
 0195 <span class="keyword">end</span>
-0196 puc=ww(11) || (p&lt;1) &amp;&amp; ~ww(10);                         <span class="comment">% input p specifies the filter spacing rather than the number of filters</span>
-0197 <span class="keyword">if</span> puc
-0198     p=round(melrng/(p*1000))+ww(2)+ww(3)-1+ww(14);      <span class="comment">% p now gives the number of filters (excluding DC impulse)</span>
-0199 <span class="keyword">end</span>
-0200 melinc=melrng/(p+ww(2)+ww(3)+1-ww(14));                 <span class="comment">% inter-filter increment in mel</span>
-0201 mflh=mflh+[-ww(2) ww(3)]*melinc;                        <span class="comment">% update mflh to include the full width of all filters</span>
-0202 <span class="comment">%</span>
-0203 <span class="comment">% Calculate the output centre frequencies in Hz including dummy end points</span>
-0204 <span class="comment">%</span>
-0205 pmq=p-ww(14);                                       <span class="comment">% number of filters excluding the one for the DC impulse</span>
-0206 cf=mflh(1)+(0:pmq+1)*melinc;                        <span class="comment">% centre frequencies in mel/erb/... including dummy ends</span>
-0207 cf(2:end)=max(cf(2:end),0);                         <span class="comment">% only the first point can be negative [*** doesn't make sense for log scale ***]</span>
-0208 <span class="keyword">switch</span> wr                                           <span class="comment">% convert centre frequencies to Hz from mel/erb/...</span>
-0209     <span class="keyword">case</span> 1                                          <span class="comment">% 'l' = log scaled</span>
-0210         mb=10.^(cf);
-0211     <span class="keyword">case</span> 2                                          <span class="comment">% 'e' = erb-rate scaled</span>
-0212         mb=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(cf);
-0213     <span class="keyword">case</span> 3                                          <span class="comment">% 'b' = bark scaled</span>
-0214         mb=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(cf);
-0215     <span class="keyword">case</span> 4                                          <span class="comment">% 'm' = mel scaled</span>
-0216         mb=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(cf);
-0217     <span class="keyword">otherwise</span>                                       <span class="comment">% [default] = linear scaled; no conversion needed</span>
-0218         mb=cf;
-0219 <span class="keyword">end</span>
-0220 <span class="comment">%</span>
-0221 <span class="comment">% sort out 2-sided input frequencies</span>
-0222 <span class="comment">%</span>
-0223 fin=(-nf:nf)*df;                                    <span class="comment">% reflect negative frequencies excluding DC</span>
-0224 nfin=length(fin);                                   <span class="comment">% length of extended input frequency list         [nfin=2*nf+1]</span>
-0225 <span class="comment">%</span>
-0226 <span class="comment">% now sort out the list of output frequencies</span>
-0227 <span class="comment">%</span>
-0228 fout=mb;                                            <span class="comment">% output centre frequencies in Hz including dummy values at each end</span>
-0229 highex=ww(7) &amp;&amp; (fout(end-1)&lt;fin(end));             <span class="comment">% extend at high end if 'X' specified and final centre frequency &lt; Nyquist</span>
-0230 <span class="keyword">if</span> ww(6)                                            <span class="comment">% ww(6)='x': extend first filter at low end to DC</span>
-0231     fout=[0 0 fout(2:end)];                         <span class="comment">% ... add two dummy values at DC instead of previous single dummy value</span>
-0232 <span class="keyword">end</span>
-0233 <span class="keyword">if</span> highex                                           <span class="comment">% extend last filter at high end to Nyquist</span>
-0234     fout=[fout(1:end-1) fin(end) fin(end)];         <span class="comment">% ... add two dummy values at Nyquist instead of previous single dummy value</span>
-0235 <span class="keyword">end</span>
-0236 fout=min(fout,fs/2);                                <span class="comment">% limit output filters to Nyquist frequency</span>
-0237 nfout=length(fout);                                 <span class="comment">% number of output filters including one or two dummy points at each end</span>
-0238 foutin=[fout fin];
-0239 nfall=length(foutin);                               <span class="comment">% = nfout + nfin</span>
-0240 wleft=[0 fout(2:nfout)-fout(1:nfout-1) 0 fin(2:nfin)-fin(1:nfin-1)]; <span class="comment">% width of lower triangle attached to each node</span>
-0241 wright=[wleft(2:end) 0];                            <span class="comment">% width of upper triangle attached to each node</span>
-0242 ffact=[0 ones(1,nfout-2) 0 0 ones(1,2*nf-1) 0];     <span class="comment">% valid triangle posts</span>
-0243 ffact(wleft+wright==0)=0;                           <span class="comment">% disable null width triangles (*** probably unnecessary if all frequencies are distinct ***)</span>
-0244 [fall,ifall]=sort(foutin);                          <span class="comment">% fall is sorted frequencies with fall=foutin(ifall)</span>
-0245 jfall=zeros(1,nfall);                               <span class="comment">% create inverse index ...</span>
-0246 infall=1:nfall;                                     <span class="comment">% ...</span>
-0247 jfall(ifall)=infall;                                <span class="comment">% ... inverse-index satisfying foutin=fall(jfall)</span>
-0248 ffact(ifall([1:max(jfall(1),jfall(nfout+1))-2 min(jfall(nfout),jfall(nfall))+2:nfall]))=0;  <span class="comment">% zap input nodes that lie outside the output filters</span>
-0249 nxto=cumsum(ifall&lt;=nfout);                          <span class="comment">% next output node to the right (or equal) to each node</span>
-0250 nxti=cumsum(ifall&gt;nfout);                           <span class="comment">% number of input nodes to the left (or equal) to each node</span>
-0251 nxtr=min(nxti+1+nfout,nfall);                       <span class="comment">% next input node to the right of each value (or nfall if none)</span>
-0252 nxtr(ifall&gt;nfout)=1+nxto(ifall&gt;nfout);              <span class="comment">% next post to the right of opposite input/output type (using sorted indexes)</span>
-0253 nxtr=nxtr(jfall);                                   <span class="comment">% next post to the right of opposite input/output type (converted to unsorted indices) or if none: nfall or (nfout+1)</span>
-0254 <span class="comment">%</span>
-0255 <span class="comment">% The interpolated spectrum at any frequency can be expressed as the sum of the values at the adjacent input bins</span>
-0256 <span class="comment">% multiplied by triangular weights that decreases from 1 to 0 between the two bins. The value at an output bin</span>
-0257 <span class="comment">% is equal to the integral of the interpolated spectrum multiplied by a triangular weight that decreases from</span>
-0258 <span class="comment">% 1 to 0 either side of the output bin. Thus, if all input/output bins are sorted into ascending order, the</span>
-0259 <span class="comment">% interval between two adjacent bins contains four partial triangles (a.k.a. trapeziums): two &quot;lower&quot; triangles</span>
-0260 <span class="comment">% that increase with frequency and two &quot;upper&quot; triangles that decrease with frequency. We need to integrate the</span>
-0261 <span class="comment">% resultant four input-output trapezium products and add the integrals onto the sum for the appropriate output bins.</span>
-0262 <span class="comment">% Each triangle has a &quot;post&quot; at one end and is zero at the other end; we enumerate the triangle pairs by pairing</span>
-0263 <span class="comment">% all input and output triangles with the first available triangle of the other type (i.e. output or input) whose</span>
-0264 <span class="comment">% rightmost node is to the right of the entire first triangle.</span>
-0265 <span class="comment">%</span>
-0266 <span class="comment">% The general result for integrating the product of two trapesiums with</span>
-0267 <span class="comment">% heights (a,b) and (c,d) over a width x is (ad+bc+2bd+2ac)*x/6</span>
-0268 <span class="comment">%</span>
-0269 <span class="comment">% integrate product of lower triangles whose posts (and rightmost nodes) are ix1 and jx1</span>
-0270 <span class="comment">%</span>
-0271 msk0=(ffact&gt;0);                                     <span class="comment">% posts with a non-zero magnitude</span>
-0272 msk=msk0 &amp; (ffact(nxtr)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
-0273 ix1=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
-0274 jx1=nxtr(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
-0275 vfgx=foutin(ix1)-foutin(jx1-1);                     <span class="comment">% portion of triangle attached to rightmost post that lies to the left of the leftmost post</span>
-0276 yx=min(wleft(ix1),vfgx);                            <span class="comment">% integration length. Maybe more efficient: dfall=diff(fall); yx=dfall(jfall(ix1)-1)</span>
-0277 wx1=ffact(ix1).*ffact(jx1).*yx.*(wleft(ix1).*vfgx-yx.*(0.5*(wleft(ix1)+vfgx)-yx/3))./(wleft(ix1).*wleft(jx1)+(yx==0));
-0278 
-0279 <span class="comment">% integrate product of upper triangles whose posts are ix2 and jx2 and whose rightmost nodes are ix2+1 and jx2+1</span>
-0280 
-0281 nxtu=max([nxtr(2:end)-1 0],1);                      <span class="comment">% post of the upper triangle of opposite type whose rightmost end is to the right of this triangle's rightmost end</span>
-0282 msk=msk0 &amp; (ffact(nxtu)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
-0283 ix2=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
-0284 jx2=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
-0285 vfgx=foutin(ix2+1)-foutin(jx2);                     <span class="comment">% length of left triangle to the right of the right post</span>
-0286 yx=min(wright(ix2),vfgx);                           <span class="comment">% integration length</span>
-0287 yx(foutin(jx2+1)&lt;foutin(ix2+1))=0;                  <span class="comment">% zap invalid triangles where the rightmost ends are in the wrong order</span>
-0288 wx2=ffact(ix2).*ffact(jx2).*yx.^2.*((0.5*(wright(jx2)-vfgx)+yx/3))./(wright(ix2).*wright(jx2)+(yx==0));
-0289 
-0290 <span class="comment">% integrate lower triangle and upper triangle that ends to its right</span>
-0291 
-0292 nxtu=max(nxtr-1,1);                                 <span class="comment">% post of the upper triangle of opposite type whose rightmost end is to the right of this triangle's post</span>
-0293 msk=msk0 &amp; (ffact(nxtu)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
-0294 ix3=infall(msk);                                    <span class="comment">% unsorted indices of lower triangle</span>
-0295 jx3=nxtu(msk);                                      <span class="comment">% unsorted indices of upper triangle</span>
-0296 vfgx=foutin(ix3)-foutin(jx3);                       <span class="comment">% length of upper triangle to the left of the lower post</span>
-0297 yx=min(wleft(ix3),vfgx);                            <span class="comment">% integration length</span>
-0298 yx(foutin(jx3+1)&lt;foutin(ix3))=0;                    <span class="comment">% zap invalid triangles where the rightmost ends are in the wrong order</span>
-0299 wx3=ffact(ix3).*ffact(jx3).*yx.*(wleft(ix3).*(wright(jx3)-vfgx)+yx.*(0.5*(wleft(ix3)-wright(jx3)+vfgx)-yx/3))./(wleft(ix3).*wright(jx3)+(yx==0));
-0300 
-0301 <span class="comment">% integrate upper triangle and lower triangle that starts to its right</span>
-0302 
-0303 nxtu=[nxtr(2:end) 1];
-0304 msk=msk0 &amp; (ffact(nxtu)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
-0305 ix4=infall(msk);                                    <span class="comment">% unsorted indices of upper triangle</span>
-0306 jx4=nxtu(msk);                                      <span class="comment">% unsorted indices of lower triangle</span>
-0307 vfgx=foutin(ix4+1)-foutin(jx4-1);                   <span class="comment">% length of upper triangle to the left of the lower post</span>
-0308 yx=min(wright(ix4),vfgx);                           <span class="comment">% integration length</span>
-0309 wx4=ffact(ix4).*ffact(jx4).*yx.^2.*(0.5*vfgx-yx/3)./(wright(ix4).*wleft(jx4)+(yx==0));
-0310 <span class="comment">%</span>
-0311 <span class="comment">% now assemble the matrix</span>
+0196 melinc=melrng/(p+ww(2)+ww(3)+1-ww(14));                 <span class="comment">% inter-filter increment in mel</span>
+0197 mflh=mflh+[-ww(2) ww(3)]*melinc;                        <span class="comment">% update mflh to include the full width of all filters</span>
+0198 <span class="comment">%</span>
+0199 <span class="comment">% Calculate the output centre frequencies in Hz including dummy end points</span>
+0200 <span class="comment">%</span>
+0201 pmq=p-ww(14);                                       <span class="comment">% number of filters excluding the one for the DC impulse</span>
+0202 cf=mflh(1)+(0:pmq+1)*melinc;                        <span class="comment">% centre frequencies in mel/erb/... including dummy ends</span>
+0203 cf(2:end)=max(cf(2:end),0);                         <span class="comment">% only the first point can be negative [*** doesn't make sense for log scale ***]</span>
+0204 <span class="keyword">switch</span> wr                                           <span class="comment">% convert centre frequencies to Hz from mel/erb/...</span>
+0205     <span class="keyword">case</span> 1                                          <span class="comment">% 'l' = log scaled</span>
+0206         mb=10.^(cf);
+0207     <span class="keyword">case</span> 2                                          <span class="comment">% 'e' = erb-rate scaled</span>
+0208         mb=<a href="v_erb2frq.html" class="code" title="function [frq,bnd] = v_erb2frq(erb)">v_erb2frq</a>(cf);
+0209     <span class="keyword">case</span> 3                                          <span class="comment">% 'b' = bark scaled</span>
+0210         mb=<a href="v_bark2frq.html" class="code" title="function [f,c] = v_bark2frq(b,m)">v_bark2frq</a>(cf);
+0211     <span class="keyword">case</span> 4                                          <span class="comment">% 'm' = mel scaled</span>
+0212         mb=<a href="v_mel2frq.html" class="code" title="function [frq,mr] = v_mel2frq(mel)">v_mel2frq</a>(cf);
+0213     <span class="keyword">otherwise</span>                                       <span class="comment">% [default] = linear scaled; no conversion needed</span>
+0214         mb=cf;
+0215 <span class="keyword">end</span>
+0216 <span class="comment">%</span>
+0217 <span class="comment">% sort out 2-sided input frequencies</span>
+0218 <span class="comment">%</span>
+0219 fin=(-nf:nf)*df;                                    <span class="comment">% reflect negative frequencies excluding DC</span>
+0220 nfin=length(fin);                                   <span class="comment">% length of extended input frequency list         [nfin=2*nf+1]</span>
+0221 <span class="comment">%</span>
+0222 <span class="comment">% now sort out the list of output frequencies</span>
+0223 <span class="comment">%</span>
+0224 fout=mb;                                            <span class="comment">% output centre frequencies in Hz including dummy values at each end</span>
+0225 highex=ww(7) &amp;&amp; (fout(end-1)&lt;fin(end));             <span class="comment">% extend at high end if 'X' specified and final centre frequency &lt; Nyquist</span>
+0226 <span class="keyword">if</span> ww(6)                                            <span class="comment">% ww(6)='x': extend first filter at low end to DC</span>
+0227     fout=[0 0 fout(2:end)];                         <span class="comment">% ... add two dummy values at DC instead of previous single dummy value</span>
+0228 <span class="keyword">end</span>
+0229 <span class="keyword">if</span> highex                                           <span class="comment">% extend last filter at high end to Nyquist</span>
+0230     fout=[fout(1:end-1) fin(end) fin(end)];         <span class="comment">% ... add two dummy values at Nyquist instead of previous single dummy value</span>
+0231 <span class="keyword">end</span>
+0232 fout=min(fout,fs/2);                                <span class="comment">% limit output filters to Nyquist frequency</span>
+0233 nfout=length(fout);                                 <span class="comment">% number of output filters including one or two dummy points at each end</span>
+0234 foutin=[fout fin];
+0235 nfall=length(foutin);                               <span class="comment">% = nfout + nfin</span>
+0236 wleft=[0 fout(2:nfout)-fout(1:nfout-1) 0 fin(2:nfin)-fin(1:nfin-1)]; <span class="comment">% width of lower triangle attached to each node</span>
+0237 wright=[wleft(2:end) 0];                            <span class="comment">% width of upper triangle attached to each node</span>
+0238 ffact=[0 ones(1,nfout-2) 0 0 ones(1,2*nf-1) 0];     <span class="comment">% valid triangle posts</span>
+0239 ffact(wleft+wright==0)=0;                           <span class="comment">% disable null width triangles (*** probably unnecessary if all frequencies are distinct ***)</span>
+0240 [fall,ifall]=sort(foutin);                          <span class="comment">% fall is sorted frequencies with fall=foutin(ifall)</span>
+0241 jfall=zeros(1,nfall);                               <span class="comment">% create inverse index ...</span>
+0242 infall=1:nfall;                                     <span class="comment">% ...</span>
+0243 jfall(ifall)=infall;                                <span class="comment">% ... inverse-index satisfying foutin=fall(jfall)</span>
+0244 ffact(ifall([1:max(jfall(1),jfall(nfout+1))-2 min(jfall(nfout),jfall(nfall))+2:nfall]))=0;  <span class="comment">% zap input nodes that lie outside the output filters</span>
+0245 nxto=cumsum(ifall&lt;=nfout);                          <span class="comment">% next output node to the right (or equal) to each node</span>
+0246 nxti=cumsum(ifall&gt;nfout);                           <span class="comment">% number of input nodes to the left (or equal) to each node</span>
+0247 nxtr=min(nxti+1+nfout,nfall);                       <span class="comment">% next input node to the right of each value (or nfall if none)</span>
+0248 nxtr(ifall&gt;nfout)=1+nxto(ifall&gt;nfout);              <span class="comment">% next post to the right of opposite input/output type (using sorted indexes)</span>
+0249 nxtr=nxtr(jfall);                                   <span class="comment">% next post to the right of opposite input/output type (converted to unsorted indices) or if none: nfall or (nfout+1)</span>
+0250 <span class="comment">%</span>
+0251 <span class="comment">% The interpolated spectrum at any frequency can be expressed as the sum of the values at the adjacent input bins</span>
+0252 <span class="comment">% multiplied by triangular weights that decreases from 1 to 0 between the two bins. The value at an output bin</span>
+0253 <span class="comment">% is equal to the integral of the interpolated spectrum multiplied by a triangular weight that decreases from</span>
+0254 <span class="comment">% 1 to 0 either side of the output bin. Thus, if all input/output bins are sorted into ascending order, the</span>
+0255 <span class="comment">% interval between two adjacent bins contains four partial triangles (a.k.a. trapeziums): two &quot;lower&quot; triangles</span>
+0256 <span class="comment">% that increase with frequency and two &quot;upper&quot; triangles that decrease with frequency. We need to integrate the</span>
+0257 <span class="comment">% resultant four input-output trapezium products and add the integrals onto the sum for the appropriate output bins.</span>
+0258 <span class="comment">% Each triangle has a &quot;post&quot; at one end and is zero at the other end; we enumerate the triangle pairs by pairing</span>
+0259 <span class="comment">% all input and output triangles with the first available triangle of the other type (i.e. output or input) whose</span>
+0260 <span class="comment">% rightmost node is to the right of the entire first triangle.</span>
+0261 <span class="comment">%</span>
+0262 <span class="comment">% The general result for integrating the product of two trapesiums with</span>
+0263 <span class="comment">% heights (a,b) and (c,d) over a width x is (ad+bc+2bd+2ac)*x/6</span>
+0264 <span class="comment">%</span>
+0265 <span class="comment">% integrate product of lower triangles whose posts (and rightmost nodes) are ix1 and jx1</span>
+0266 <span class="comment">%</span>
+0267 msk0=(ffact&gt;0);                                     <span class="comment">% posts with a non-zero magnitude</span>
+0268 msk=msk0 &amp; (ffact(nxtr)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
+0269 ix1=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
+0270 jx1=nxtr(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
+0271 vfgx=foutin(ix1)-foutin(jx1-1);                     <span class="comment">% portion of triangle attached to rightmost post that lies to the left of the leftmost post</span>
+0272 yx=min(wleft(ix1),vfgx);                            <span class="comment">% integration length. Maybe more efficient: dfall=diff(fall); yx=dfall(jfall(ix1)-1)</span>
+0273 wx1=ffact(ix1).*ffact(jx1).*yx.*(wleft(ix1).*vfgx-yx.*(0.5*(wleft(ix1)+vfgx)-yx/3))./(wleft(ix1).*wleft(jx1)+(yx==0));
+0274 
+0275 <span class="comment">% integrate product of upper triangles whose posts are ix2 and jx2 and whose rightmost nodes are ix2+1 and jx2+1</span>
+0276 
+0277 nxtu=max([nxtr(2:end)-1 0],1);                      <span class="comment">% post of the upper triangle of opposite type whose rightmost end is to the right of this triangle's rightmost end</span>
+0278 msk=msk0 &amp; (ffact(nxtu)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
+0279 ix2=infall(msk);                                    <span class="comment">% unsorted indices of leftmost post of pair</span>
+0280 jx2=nxtu(msk);                                      <span class="comment">% unsorted indices of rightmost post of pair</span>
+0281 vfgx=foutin(ix2+1)-foutin(jx2);                     <span class="comment">% length of left triangle to the right of the right post</span>
+0282 yx=min(wright(ix2),vfgx);                           <span class="comment">% integration length</span>
+0283 yx(foutin(jx2+1)&lt;foutin(ix2+1))=0;                  <span class="comment">% zap invalid triangles where the rightmost ends are in the wrong order</span>
+0284 wx2=ffact(ix2).*ffact(jx2).*yx.^2.*((0.5*(wright(jx2)-vfgx)+yx/3))./(wright(ix2).*wright(jx2)+(yx==0));
+0285 
+0286 <span class="comment">% integrate lower triangle and upper triangle that ends to its right</span>
+0287 
+0288 nxtu=max(nxtr-1,1);                                 <span class="comment">% post of the upper triangle of opposite type whose rightmost end is to the right of this triangle's post</span>
+0289 msk=msk0 &amp; (ffact(nxtu)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
+0290 ix3=infall(msk);                                    <span class="comment">% unsorted indices of lower triangle</span>
+0291 jx3=nxtu(msk);                                      <span class="comment">% unsorted indices of upper triangle</span>
+0292 vfgx=foutin(ix3)-foutin(jx3);                       <span class="comment">% length of upper triangle to the left of the lower post</span>
+0293 yx=min(wleft(ix3),vfgx);                            <span class="comment">% integration length</span>
+0294 yx(foutin(jx3+1)&lt;foutin(ix3))=0;                    <span class="comment">% zap invalid triangles where the rightmost ends are in the wrong order</span>
+0295 wx3=ffact(ix3).*ffact(jx3).*yx.*(wleft(ix3).*(wright(jx3)-vfgx)+yx.*(0.5*(wleft(ix3)-wright(jx3)+vfgx)-yx/3))./(wleft(ix3).*wright(jx3)+(yx==0));
+0296 
+0297 <span class="comment">% integrate upper triangle and lower triangle that starts to its right</span>
+0298 
+0299 nxtu=[nxtr(2:end) 1];
+0300 msk=msk0 &amp; (ffact(nxtu)&gt;0);                         <span class="comment">% select triangle pairs with both posts having non-zero magnitudes</span>
+0301 ix4=infall(msk);                                    <span class="comment">% unsorted indices of upper triangle</span>
+0302 jx4=nxtu(msk);                                      <span class="comment">% unsorted indices of lower triangle</span>
+0303 vfgx=foutin(ix4+1)-foutin(jx4-1);                   <span class="comment">% length of upper triangle to the left of the lower post</span>
+0304 yx=min(wright(ix4),vfgx);                           <span class="comment">% integration length</span>
+0305 wx4=ffact(ix4).*ffact(jx4).*yx.^2.*(0.5*vfgx-yx/3)./(wright(ix4).*wleft(jx4)+(yx==0));
+0306 <span class="comment">%</span>
+0307 <span class="comment">% now assemble the matrix</span>
+0308 <span class="comment">%</span>
+0309 iox=sort([ix1 ix2 ix3 ix4;jx1 jx2 jx3 jx4]);        <span class="comment">% iox(1,:) are output posts, iox(2,:) are input posts</span>
+0310 msk=iox(2,:)&lt;=(nfall+nfout)/2;                      <span class="comment">% find references to negative input frequencies</span>
+0311 iox(2,msk)=(nfall+nfout+1)-iox(2,msk);              <span class="comment">% convert negative frequencies to positive</span>
 0312 <span class="comment">%</span>
-0313 iox=sort([ix1 ix2 ix3 ix4;jx1 jx2 jx3 jx4]);        <span class="comment">% iox(1,:) are output posts, iox(2,:) are input posts</span>
-0314 msk=iox(2,:)&lt;=(nfall+nfout)/2;                      <span class="comment">% find references to negative input frequencies</span>
-0315 iox(2,msk)=(nfall+nfout+1)-iox(2,msk);              <span class="comment">% convert negative frequencies to positive</span>
-0316 <span class="comment">%</span>
-0317 <span class="comment">% Sort out output gains:</span>
-0318 <span class="comment">% If output is power then output gain is 1; if output is power/Hz then output gain is 1/area of output filter</span>
-0319 <span class="comment">%</span>
-0320 <span class="keyword">if</span> ww(6)                                            <span class="comment">% ww(6)='x': if lowest filter extended to DC, we added a dummy point at 0Hz, so</span>
-0321     iox(1,iox(1,:)==2)=3;                           <span class="comment">% merge lowest two output nodes</span>
-0322 <span class="keyword">end</span>
-0323 <span class="keyword">if</span> highex                                           <span class="comment">% if highest filter extended, we added a dummy point at Nyquist, so</span>
-0324     iox(1,iox(1,:)==nfout-1)=nfout-2;               <span class="comment">% merge highest two output nodes</span>
-0325 <span class="keyword">end</span>
-0326 x=sparse(iox(1,:)-1-ww(6),max(iox(2,:)-nfout-nf,1),[wx1 wx2 wx3 wx4],pmq,nf);   <span class="comment">% forward transformation matrix without input/output gains</span>
-0327 gout=full(sum(x,2));                                <span class="comment">% area of each output integral</span>
-0328 goutd=sparse(1:pmq,1:pmq,(gout+(gout==0)).^(-1));   <span class="comment">% create sparse diagonal matrix of output gains</span>
-0329 gouti=full(sum(x(:,1+ww(12):end),2));                                <span class="comment">% area of each output integral excluding DC if 'z' option given</span>
-0330     goutid=sparse(1:pmq,1:pmq,(gouti+(gouti==0)).^(-1));   <span class="comment">% create sparse diagonal matrix of output gains</span>
-0331 <span class="comment">%</span>
-0332 <span class="comment">% Sort out input gains:</span>
-0333 <span class="comment">% If input is power then input gain is 1/area; if input is power/Hz then input gain is 1</span>
-0334 <span class="comment">%</span>
-0335 gin=fin(3:nfin)-fin(1:nfin-2);                              <span class="comment">% full width of input interpolation filters</span>
-0336 gin=2*(gin+(gin==0)).^(-1);                                 <span class="comment">% input gain equals 1/area</span>
-0337 ginsi=repmat(1+ww(19),1,nf-2);                        <span class="comment">% 's' option means all inputs except DC and Nyquist have been doubled</span>
-0338 ginsd=sparse(1:nf,1:nf,[1-ww(12) ginsi.^(-1) 1]);                        <span class="comment">% ... cancel this out with additional input scaling for forward transform</span>
-0339 ginsid=sparse(1:nf,1:nf,[2*(1-ww(12)) ginsi 2]);     <span class="comment">% and back again for inverse transform</span>
-0340 gind=sparse(1:nf,1:nf,gin(end-nf+1:end));                   <span class="comment">% input gains</span>
-0341 <span class="comment">%</span>
-0342 <span class="comment">% Now create the x and xi matrices</span>
-0343 <span class="comment">%</span>
-0344 <span class="keyword">switch</span> 2*ww(16)+ww(15)
-0345     <span class="keyword">case</span> 0                          <span class="comment">% '': input and output are both power</span>
-0346         xi=ginsid*x'*goutid;
-0347         x=x*(gind*ginsd);
-0348     <span class="keyword">case</span> 1                          <span class="comment">% 'd': input is power/Hz, output is power</span>
-0349         xi=(ginsid*gind)*x'*goutid;
-0350         x=x*ginsd;
-0351     <span class="keyword">case</span> 2                          <span class="comment">% 'D': input is power, output is power/Hz</span>
-0352         xi=ginsid*x';
-0353         x=goutd*x*(gind*ginsd);
-0354     <span class="keyword">case</span> 3                              <span class="comment">% 'dD': input and output are both power/Hz</span>
-0355         xi=(ginsid*gind)*x';
-0356         x=goutd*x*ginsd;
+0313 <span class="comment">% Sort out output gains:</span>
+0314 <span class="comment">% If output is power then output gain is 1; if output is power/Hz then output gain is 1/area of output filter</span>
+0315 <span class="comment">%</span>
+0316 <span class="keyword">if</span> ww(6)                                            <span class="comment">% ww(6)='x': if lowest filter extended to DC, we added a dummy point at 0Hz, so</span>
+0317     iox(1,iox(1,:)==2)=3;                           <span class="comment">% merge lowest two output nodes</span>
+0318 <span class="keyword">end</span>
+0319 <span class="keyword">if</span> highex                                           <span class="comment">% if highest filter extended, we added a dummy point at Nyquist, so</span>
+0320     iox(1,iox(1,:)==nfout-1)=nfout-2;               <span class="comment">% merge highest two output nodes</span>
+0321 <span class="keyword">end</span>
+0322 x=sparse(iox(1,:)-1-ww(6),max(iox(2,:)-nfout-nf,1),[wx1 wx2 wx3 wx4],pmq,nf);   <span class="comment">% forward transformation matrix without input/output gains</span>
+0323 gout=full(sum(x,2));                                <span class="comment">% area of each output integral</span>
+0324 goutd=sparse(1:pmq,1:pmq,(gout+(gout==0)).^(-1));   <span class="comment">% create sparse diagonal matrix of output gains</span>
+0325 gouti=full(sum(x(:,1+ww(12):end),2));                                <span class="comment">% area of each output integral excluding DC if 'z' option given</span>
+0326     goutid=sparse(1:pmq,1:pmq,(gouti+(gouti==0)).^(-1));   <span class="comment">% create sparse diagonal matrix of output gains</span>
+0327 <span class="comment">%</span>
+0328 <span class="comment">% Sort out input gains:</span>
+0329 <span class="comment">% If input is power then input gain is 1/area; if input is power/Hz then input gain is 1</span>
+0330 <span class="comment">%</span>
+0331 gin=fin(3:nfin)-fin(1:nfin-2);                              <span class="comment">% full width of input interpolation filters</span>
+0332 gin=2*(gin+(gin==0)).^(-1);                                 <span class="comment">% input gain equals 1/area</span>
+0333 ginsi=repmat(1+ww(19),1,nf-2);                              <span class="comment">% 's' option means all inputs except DC and Nyquist have been doubled</span>
+0334 ginsd=sparse(1:nf,1:nf,[1-ww(12) ginsi.^(-1) 1]);           <span class="comment">% ... cancel this out with additional input scaling for forward transform</span>
+0335 ginsid=sparse(1:nf,1:nf,[2*(1-ww(12)) ginsi 2]);            <span class="comment">% and back again for inverse transform</span>
+0336 gind=sparse(1:nf,1:nf,gin(end-nf+1:end));                   <span class="comment">% input gains</span>
+0337 <span class="comment">%</span>
+0338 <span class="comment">% Now create the x and xi matrices</span>
+0339 <span class="comment">%</span>
+0340 <span class="keyword">switch</span> 2*ww(16)+ww(15)
+0341     <span class="keyword">case</span> 0                                                  <span class="comment">% '': input and output are both power</span>
+0342         xi=ginsid*x'*goutid;
+0343         x=x*(gind*ginsd);
+0344     <span class="keyword">case</span> 1                                                  <span class="comment">% 'd': input is power/Hz, output is power</span>
+0345         xi=(ginsid*gind)*x'*goutid;
+0346         x=x*ginsd;
+0347     <span class="keyword">case</span> 2                                                  <span class="comment">% 'D': input is power, output is power/Hz</span>
+0348         xi=ginsid*x';
+0349         x=goutd*x*(gind*ginsd);
+0350     <span class="keyword">case</span> 3                                                  <span class="comment">% 'dD': input and output are both power/Hz</span>
+0351         xi=(ginsid*gind)*x';
+0352         x=goutd*x*ginsd;
+0353 <span class="keyword">end</span>
+0354 <span class="keyword">if</span> ww(20)                                                   <span class="comment">% 'S': double outputs to include negative frequency energy</span>
+0355     x=2*x;
+0356     xi=0.5*xi;
 0357 <span class="keyword">end</span>
-0358 <span class="keyword">if</span> ww(20)                               <span class="comment">% 'S': double outputs to include negative frequency energy</span>
-0359     x=2*x;
-0360     xi=0.5*xi;
+0358 <span class="keyword">if</span> ww(13)                                                   <span class="comment">% 'Z': DC input is an impulse plus a diffuse component</span>
+0359     x(:,2)=x(:,2)+x(:,1)*ginsd(2,2);                        <span class="comment">% power of diffuse component at DC is equal to that opf adjacent bin corrected for 's' option</span>
+0360     x(:,1)=0;                                               <span class="comment">% Eliminate references to DC input in forward transform only</span>
 0361 <span class="keyword">end</span>
-0362 <span class="keyword">if</span> ww(13)                               <span class="comment">% 'Z': DC input is an impulse plus a diffuse component</span>
-0363     x(:,2)=x(:,2)+x(:,1)*ginsd(2,2);    <span class="comment">% power of diffuse component at DC is equal to that opf adjacent bin corrected for 's' option</span>
-0364     x(:,1)=0;                           <span class="comment">% Eliminate references to DC input in forward transform only</span>
-0365 <span class="keyword">end</span>
-0366 <span class="keyword">if</span> ww(14)                               <span class="comment">% 'q': we need an extra output that replicates the DC component</span>
-0367     <span class="keyword">if</span> ww(12)                           <span class="comment">% 'z': DC input is an impulse</span>
-0368         x=[sparse(1,1,1,1,nf); x];
-0369         xi=[sparse(1,1,1,nf,1) xi];
-0370     <span class="keyword">elseif</span> ww(13)                       <span class="comment">% 'Z': DC input is an impulse plus a diffuse component</span>
-0371         x=[sparse([1 1],[1 2],[1 -ginsd(2,2)],1,nf); x]; <span class="comment">% impulse component is DC input minus adjacent bin corrected for 's' option</span>
-0372         xi=[sparse(1,1,1,nf,1) xi];
-0373     <span class="keyword">else</span>
-0374         x=[sparse(1,nf); x];            <span class="comment">% '': DC input is diffuse as normal</span>
-0375         xi=[sparse(nf,1) xi];
-0376     <span class="keyword">end</span>
-0377 <span class="keyword">end</span>
-0378 <span class="comment">%</span>
-0379 <span class="comment">% sort out the output argument options</span>
-0380 <span class="comment">%</span>
-0381 <span class="keyword">if</span> ~ww(5)                                   <span class="comment">% output cf in Hz instead of mel/erb/...</span>
-0382     cf=[zeros(1,ww(14)) mb(2:pmq+1)];       <span class="comment">% ... and include an initial 0 if 'q' option (ww(14)==1)</span>
-0383 <span class="keyword">else</span>                                        <span class="comment">% keep cf in mel/erb/...</span>
-0384     <span class="keyword">if</span> ww(14)                               <span class="comment">% 'q' (ww(14)==1): we need an extra output for the DC component</span>
-0385         <span class="keyword">if</span> wr==1                            <span class="comment">% log-scaled so ...</span>
-0386             cf=[-Inf cf(2:p)];              <span class="comment">% ... DC corresponds to -Inf</span>
-0387         <span class="keyword">else</span>                                <span class="comment">% not log-scaled ...</span>
-0388             cf=[0 cf(2:p)];                 <span class="comment">% ... DC corresponds to 0</span>
-0389         <span class="keyword">end</span>
-0390     <span class="keyword">else</span>                                    <span class="comment">% no 'q' option (ww(14)==0) ...</span>
-0391         cf=cf(2:p+1);                       <span class="comment">% ... just remove dummy end frequencies</span>
-0392     <span class="keyword">end</span> 
-0393 <span class="keyword">end</span>
-0394 <span class="keyword">if</span> ww(1)                                    <span class="comment">% round outputs to the centre of gravity bin</span>
-0395     sx2=sum(x,2);                           <span class="comment">% sum of each row</span>
-0396     msk=full(sx2~=0);
-0397     vxc=zeros(pmq,1);
-0398     vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));   <span class="comment">% find centre of gravity of each row</span>
-0399     x=sparse(1:pmq,vxc,sx2,pmq,nf);             <span class="comment">% put all the weight into the centre of gravity bin</span>
-0400 <span class="keyword">end</span>
-0401 il=1; <span class="comment">% default range is entire x maxtrix</span>
-0402 ih=nf;
-0403 <span class="keyword">if</span> nargout &gt; 3                                  <span class="comment">% if il and/or ih output arguments are specified ...</span>
-0404     <span class="keyword">if</span> nargout==4                               <span class="comment">% xi has been omitted ...</span>
-0405     msk=full(any(x&gt;0,1));                       <span class="comment">% find non-zero columns in x</span>
-0406     <span class="keyword">else</span>                                        <span class="comment">% xi output included</span>
-0407         msk=full(any(x&gt;0,1) | any(xi&gt;0,2)');    <span class="comment">% find non-zero columns in x or rows in xi</span>
-0408     <span class="keyword">end</span>
-0409     il=find(msk,1);                             <span class="comment">% il is first non-zero column</span>
-0410     <span class="keyword">if</span> ~numel(il)                               <span class="comment">% if x is all zeros ...</span>
-0411         il=1;                                   <span class="comment">% ... set il and ih to 1</span>
-0412         ih=1;                              
-0413     <span class="keyword">elseif</span> nargout &gt;3
-0414         ih=find(msk,1,<span class="string">'last'</span>);                  <span class="comment">% ih is last non-zero column</span>
-0415     <span class="keyword">end</span>
-0416     x=x(:,il:ih);                               <span class="comment">% remove redundant columns from x</span>
-0417     <span class="keyword">if</span> nargout==4                               <span class="comment">% xi has been omitted ...</span>
-0418         xi=il;                                  <span class="comment">% shift the il and ih outputs up by one position</span>
-0419         il=ih;
-0420     <span class="keyword">else</span>
-0421         xi=xi(il:ih,:);                         <span class="comment">% remove redundant rows from xi</span>
-0422     <span class="keyword">end</span>
-0423 <span class="keyword">elseif</span> ww(23)                                   <span class="comment">% ww(23)='w': use whole dft</span>
-0424     x=[x sparse(p,n-nf)];                       <span class="comment">% append zeros onto x</span>
-0425     xi=[xi; xi(n-nf+1:-1:2,:)];                 <span class="comment">% reflect elements other than the DC and Nyquist</span>
-0426 <span class="keyword">end</span>
-0427 <span class="comment">%</span>
-0428 <span class="comment">% plot results if no output arguments or 'g','G' options given</span>
-0429 <span class="comment">%</span>
-0430 <span class="keyword">if</span> ~nargout || ww(21) || ww(22)                 <span class="comment">% plot idealized filters</span>
-0431     ww(22)=~ww(21);                             <span class="comment">% 'G' option is the default unless 'g' is specified</span>
-0432     finax=(il-1:ih-1)*df;                       <span class="comment">% input frequency axis</span>
-0433     newfig=0;
-0434     <span class="keyword">if</span>  ww(21)
-0435         plot(finax,x(:,il:ih)'); 
-0436         hold on  
-0437         plot(finax,sum(x,1),<span class="string">'--k'</span>);
-0438         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
-0439         plot(repmat(mb(2:end-1),2,1),get(gca,<span class="string">'ylim'</span>),<span class="string">':k'</span>);
-0440         hold off
-0441         title([<span class="string">'filtbankm: mode = '''</span> w <span class="string">''''</span>]);
-0442         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0443         ylabel(<span class="string">'Weight'</span>);
-0444         newfig=1;
-0445     <span class="keyword">end</span>
-0446     <span class="keyword">if</span>  ww(22)
-0447         <span class="keyword">if</span> newfig
-0448             figure;
-0449         <span class="keyword">end</span>
-0450         imagesc(finax,1:pmq,x);
-0451         axis <span class="string">'xy'</span>
-0452         colorbar;
-0453         hold on
-0454         ylim=get(gca,<span class="string">'ylim'</span>);
-0455         plot(repmat(mb(2:end-1),2,1),ylim,<span class="string">':w'</span>);
-0456         hold off
-0457         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Weight'</span>);
-0458         <span class="keyword">switch</span> wr
-0459             <span class="keyword">case</span> 1
-0460                 type=<span class="string">'Log-spaced'</span>;
-0461             <span class="keyword">case</span> 2
-0462                 type=<span class="string">'Erb-spaced'</span>;
-0463             <span class="keyword">case</span> 3
-0464                 type=<span class="string">'Bark-spaced'</span>;
-0465             <span class="keyword">case</span> 4
-0466                 type=<span class="string">'Mel-spaced'</span>;
-0467             <span class="keyword">otherwise</span>
-0468                 type=<span class="string">'Linear-spaced'</span>;
-0469         <span class="keyword">end</span>
-0470         ylabel([type <span class="string">' Filter'</span>]);
-0471         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
-0472         title([<span class="string">'filtbankm: mode = '''</span> w <span class="string">''''</span>]);
-0473     <span class="keyword">end</span>
-0474 
-0475 <span class="keyword">end</span></pre></div>
+0362 <span class="keyword">if</span> ww(14)                                                   <span class="comment">% 'q': we need an extra output that replicates the DC component</span>
+0363     <span class="keyword">if</span> ww(12)                                               <span class="comment">% 'z': DC input is an impulse</span>
+0364         x=[sparse(1,1,1,1,nf); x];
+0365         xi=[sparse(1,1,1,nf,1) xi];
+0366     <span class="keyword">elseif</span> ww(13)                                           <span class="comment">% 'Z': DC input is an impulse plus a diffuse component</span>
+0367         x=[sparse([1 1],[1 2],[1 -ginsd(2,2)],1,nf); x];    <span class="comment">% impulse component is DC input minus adjacent bin corrected for 's' option</span>
+0368         xi=[sparse(1,1,1,nf,1) xi];
+0369     <span class="keyword">else</span>
+0370         x=[sparse(1,nf); x];                                <span class="comment">% '': DC input is diffuse as normal</span>
+0371         xi=[sparse(nf,1) xi];
+0372     <span class="keyword">end</span>
+0373 <span class="keyword">end</span>
+0374 <span class="comment">%</span>
+0375 <span class="comment">% sort out the output argument options</span>
+0376 <span class="comment">%</span>
+0377 <span class="keyword">if</span> ~ww(5)                                                   <span class="comment">% output cf in Hz instead of mel/erb/...</span>
+0378     cf=[zeros(1,ww(14)) mb(2:pmq+1)];                       <span class="comment">% ... and include an initial 0 if 'q' option (ww(14)==1)</span>
+0379 <span class="keyword">else</span>                                                        <span class="comment">% keep cf in mel/erb/...</span>
+0380     <span class="keyword">if</span> ww(14)                                               <span class="comment">% 'q' (ww(14)==1): we need an extra output for the DC component</span>
+0381         <span class="keyword">if</span> wr==1                                            <span class="comment">% log-scaled so ...</span>
+0382             cf=[-Inf cf(2:p)];                              <span class="comment">% ... DC corresponds to -Inf</span>
+0383         <span class="keyword">else</span>                                                <span class="comment">% not log-scaled                 ...</span>
+0384             cf=[0 cf(2:p)];                                 <span class="comment">% ... DC corresponds to 0</span>
+0385         <span class="keyword">end</span>
+0386     <span class="keyword">else</span>                                                    <span class="comment">% no 'q' option (ww(14)==0) ...</span>
+0387         cf=cf(2:p+1);                                       <span class="comment">% ... just remove dummy end frequencies</span>
+0388     <span class="keyword">end</span> 
+0389 <span class="keyword">end</span>
+0390 <span class="keyword">if</span> ww(1)                                                    <span class="comment">% round outputs to the centre of gravity bin</span>
+0391     sx2=sum(x,2);                                           <span class="comment">% sum of each row</span>
+0392     msk=full(sx2~=0);
+0393     vxc=zeros(pmq,1);
+0394     vxc(msk)=round((x(msk,:)*(1:nf)')./sx2(msk));           <span class="comment">% find centre of gravity of each row</span>
+0395     x=sparse(1:pmq,vxc,sx2,pmq,nf);                         <span class="comment">% put all the weight into the centre of gravity bin</span>
+0396 <span class="keyword">end</span>
+0397 il=1; <span class="comment">% default range is entire x maxtrix</span>
+0398 ih=nf;
+0399 <span class="keyword">if</span> nargout &gt; 3                                  <span class="comment">% if il and/or ih output arguments are specified ...</span>
+0400     <span class="keyword">if</span> nargout==4                               <span class="comment">% xi has been omitted ...</span>
+0401     msk=full(any(x&gt;0,1));                       <span class="comment">% find non-zero columns in x</span>
+0402     <span class="keyword">else</span>                                        <span class="comment">% xi output included</span>
+0403         msk=full(any(x&gt;0,1) | any(xi&gt;0,2)');    <span class="comment">% find non-zero columns in x or rows in xi</span>
+0404     <span class="keyword">end</span>
+0405     il=find(msk,1);                             <span class="comment">% il is first non-zero column</span>
+0406     <span class="keyword">if</span> ~numel(il)                               <span class="comment">% if x is all zeros ...</span>
+0407         il=1;                                   <span class="comment">% ... set il and ih to 1</span>
+0408         ih=1;                              
+0409     <span class="keyword">elseif</span> nargout &gt;3
+0410         ih=find(msk,1,<span class="string">'last'</span>);                  <span class="comment">% ih is last non-zero column</span>
+0411     <span class="keyword">end</span>
+0412     x=x(:,il:ih);                               <span class="comment">% remove redundant columns from x</span>
+0413     <span class="keyword">if</span> nargout==4                               <span class="comment">% xi has been omitted ...</span>
+0414         xi=il;                                  <span class="comment">% shift the il and ih outputs up by one position</span>
+0415         il=ih;
+0416     <span class="keyword">else</span>
+0417         xi=xi(il:ih,:);                         <span class="comment">% remove redundant rows from xi</span>
+0418     <span class="keyword">end</span>
+0419 <span class="keyword">elseif</span> ww(23)                                   <span class="comment">% ww(23)='w': use whole dft</span>
+0420     x=[x sparse(p,n-nf)];                       <span class="comment">% append zeros onto x</span>
+0421     xi=[xi; xi(n-nf+1:-1:2,:)];                 <span class="comment">% reflect elements other than the DC and Nyquist</span>
+0422 <span class="keyword">end</span>
+0423 <span class="comment">%</span>
+0424 <span class="comment">% plot results if no output arguments or 'g','G' options given</span>
+0425 <span class="comment">%</span>
+0426 <span class="keyword">if</span> ~nargout || ww(21) || ww(22)                 <span class="comment">% plot idealized filters</span>
+0427     ww(22)=~ww(21);                             <span class="comment">% 'G' option is the default unless 'g' is specified</span>
+0428     finax=(il-1:ih-1)*df;                       <span class="comment">% input frequency axis</span>
+0429     newfig=0;
+0430     <span class="keyword">if</span>  ww(21)
+0431         plot(finax,x(:,il:ih)'); 
+0432         hold on  
+0433         plot(finax,sum(x,1),<span class="string">'--k'</span>);
+0434         <a href="v_axisenlarge.html" class="code" title="function v_axisenlarge(f,h)">v_axisenlarge</a>([-1 -1.05]);
+0435         plot(repmat(mb(2:end-1),2,1),get(gca,<span class="string">'ylim'</span>),<span class="string">':k'</span>);
+0436         hold off
+0437         title([<span class="string">'filtbankm: mode = '''</span> w <span class="string">''''</span>]);
+0438         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0439         ylabel(<span class="string">'Weight'</span>);
+0440         newfig=1;
+0441     <span class="keyword">end</span>
+0442     <span class="keyword">if</span>  ww(22)
+0443         <span class="keyword">if</span> newfig
+0444             figure;
+0445         <span class="keyword">end</span>
+0446         imagesc(finax,1:pmq,x);
+0447         axis <span class="string">'xy'</span>
+0448         colorbar;
+0449         hold on
+0450         ylim=get(gca,<span class="string">'ylim'</span>);
+0451         plot(repmat(mb(2:end-1),2,1),ylim,<span class="string">':w'</span>);
+0452         hold off
+0453         <a href="v_cblabel.html" class="code" title="function c=v_cblabel(l,h)">v_cblabel</a>(<span class="string">'Weight'</span>);
+0454         <span class="keyword">switch</span> wr
+0455             <span class="keyword">case</span> 1
+0456                 type=<span class="string">'Log-spaced'</span>;
+0457             <span class="keyword">case</span> 2
+0458                 type=<span class="string">'Erb-spaced'</span>;
+0459             <span class="keyword">case</span> 3
+0460                 type=<span class="string">'Bark-spaced'</span>;
+0461             <span class="keyword">case</span> 4
+0462                 type=<span class="string">'Mel-spaced'</span>;
+0463             <span class="keyword">otherwise</span>
+0464                 type=<span class="string">'Linear-spaced'</span>;
+0465         <span class="keyword">end</span>
+0466         ylabel([type <span class="string">' Filter'</span>]);
+0467         xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0468         title([<span class="string">'filtbankm: mode = '''</span> w <span class="string">''''</span>]);
+0469     <span class="keyword">end</span>
+0470 
+0471 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

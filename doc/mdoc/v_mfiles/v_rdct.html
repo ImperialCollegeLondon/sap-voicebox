@@ -34,9 +34,9 @@
 
  Outputs: y(n,k)   Output data
 
- This routine is equivalent to multiplying by the matrix
+ This routine is equivalent to pre-multiplying x by the matrix
 
-   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)
+   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n-0.5)*pi/n)
 
  Default values of the scaling factors are A=sqrt(2N) and B=1 which
  results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).
@@ -73,9 +73,9 @@ This function is called by:
 0008 <span class="comment">%</span>
 0009 <span class="comment">% Outputs: y(n,k)   Output data</span>
 0010 <span class="comment">%</span>
-0011 <span class="comment">% This routine is equivalent to multiplying by the matrix</span>
+0011 <span class="comment">% This routine is equivalent to pre-multiplying x by the matrix</span>
 0012 <span class="comment">%</span>
-0013 <span class="comment">%   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n)*pi/n)</span>
+0013 <span class="comment">%   v_rdct(eye(n)) = diag([sqrt(2)*B/A repmat(2/A,1,n-1)]) * cos((0:n-1)'*(0.5:n-0.5)*pi/n)</span>
 0014 <span class="comment">%</span>
 0015 <span class="comment">% Default values of the scaling factors are A=sqrt(2N) and B=1 which</span>
 0016 <span class="comment">% results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).</span>
