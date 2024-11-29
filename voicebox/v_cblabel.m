@@ -1,6 +1,14 @@
 function c=v_cblabel(l,h)
 %V_CBLABEL add a label to a colorbar c=(l,h)
 %
+% Usage: (1) imagesc(...)
+%            colorbar;
+%            v_cblabel('Colorbar label');       % label closest colorbar to the current axis
+%
+%        (2) imagesc(...)
+%            ch=colorbar;
+%            v_cblabel('Colorbar label',ch);    % label the explicitly specified colorbar
+%
 % Inputs:
 %
 %     L        Label string for colorbar
@@ -44,25 +52,25 @@ switch get(h,'Type')
         if strcmpi(get(h,'Tag'),'colorbar')
             c=h;
         else
-            while ~strcmp(get(h,'Type'),'figure')
-                h=get(h,'Parent');      % find parent figure
+            cg=h.Position*t;                              % coordinates of the centre of requested axis
+            while ~strcmp(get(h,'Type'),'figure')           % loop to find ancestor of h of type figure
+                h=get(h,'Parent');                          % find parent figure
                 if h==0
-                    error('cannot find parent figure');
+                    error('cannot find ancestor figure');
                 end
             end
-            cx=findobj(h,'tag','Colorbar');
+            cx=findobj(h,'tag','Colorbar');                 % find all colorbars on this figure
             nc=length(cx);
             switch nc
                 case 0
                     error('There is no colour bar on this figure')
                 case 1
                     c=cx(1);
-                otherwise                                   % find the nearest colorbar to the centre of current graph
-                    cg=(gca().Position*t);                  % coordinates of the centre of current graph
+                otherwise                                   % find the nearest colorbar to the centre of requested axis                  
                     c=cx(1);                                % select the first colorbar
-                    d=sum((c.Position*t-cg).^2);            % squared distance to centre of current graph
+                    d=sum((c.Position*t-cg).^2);            % squared distance to centre of requested axis
                     for ic=2:nc                             % loop through each colorbar
-                        di=sum((cx(ic).Position*t-cg).^2);  % squared distance to centre of current graph
+                        di=sum((cx(ic).Position*t-cg).^2);  % squared distance to centre of requested axis
                         if di<d                             % if this colorbar is nearer
                             c=cx(ic);                       % ... select this colorbar
                             d=di;                           % ... and save the squared distance
@@ -79,7 +87,7 @@ switch get(h,'Type')
             case 1
                 c=cx(1);
             otherwise                                   % find the nearest colorbar to the centre of current graph
-                cg=(gca().Position*t);                  % coordinates of the centre of current graph
+                cg=gca().Position*t;                    % coordinates of the centre of current graph
                 c=cx(1);                                % select the first colorbar
                 d=sum((c.Position*t-cg).^2);            % squared distance to centre of current graph
                 for ic=2:nc                             % loop through each colorbar
@@ -93,6 +101,6 @@ switch get(h,'Type')
     case 'colorbar'
         c=h;
     otherwise
-        error('h argument must be colorbar, axis or figure handle');
+        error(['h argument must be colorbar, axis or figure handle but is ''' get(h,'Type') '''']);
 end
 set(get(c,'ylabel'),'string',l);
