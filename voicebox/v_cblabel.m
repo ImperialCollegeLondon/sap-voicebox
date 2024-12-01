@@ -1,9 +1,9 @@
 function c=v_cblabel(l,h)
-%V_CBLABEL add a label to a colorbar c=(l,h)
+%V_CBLABEL add a label to a colorbar C=(L,H)
 %
 % Usage: (1) imagesc(...)
 %            colorbar;
-%            v_cblabel('Colorbar label');       % label closest colorbar to the current axis
+%            v_cblabel('Colorbar label');       % label the closest colorbar to the current axis
 %
 %        (2) imagesc(...)
 %            ch=colorbar;
@@ -11,15 +11,15 @@ function c=v_cblabel(l,h)
 %
 % Inputs:
 %
-%     L        Label string for colorbar
-%     H        Handle of the colorbar, axis or figure [default = current figure]
+%     l        Label string for colorbar
+%     h        Handle of the colorbar, axis or figure [default = current axis]
 %
 % Outputs:
 %
-%     C        Handle of the colorbar
+%     c        Handle of the colorbar
 %
 %
-%      Copyright (C) Mike Brookes 2000-2009
+%      Copyright (C) Mike Brookes 2000-2024
 %      Version: $Id: v_cblabel.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
