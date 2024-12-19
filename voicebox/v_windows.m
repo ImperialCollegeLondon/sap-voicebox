@@ -152,10 +152,10 @@ function w = v_windows(wtype,n,mode,p,ov)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent wnam wnami wnamp
 if isempty(wnam)
-    wnam={'rectangle','hanning','hamming','harris3','harris4','blackman',...
+    wnam={'rectangle','hann','hamming','harris3','harris4','blackman',...
         'vorbis','rsqvorbis','triangle','cos','kaiser','gaussian',...
-        'cauchy','dolph','tukey','r','n','m','3','4','b','v','w','t','c','k','g','y','d','u'};
-    wnami=[1:15 1:15];
+        'cauchy','dolph','tukey','hanning','vonhann','r','n','m','3','4','b','v','w','t','c','k','g','y','d','u'};
+    wnami=[1:15 2 2 1:15];
     wnamp=[0 0 0 0 0 0 0 0 1 1 1 1 1 1 1]; % parameters required
 end
 kk=[-1 1 1 -1; 0 0 2 -2; 0 1 2 -1;    % mode  w,  h,  c  [normal windows]
