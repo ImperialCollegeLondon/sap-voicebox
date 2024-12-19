@@ -1,13 +1,21 @@
 function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)
 %V_STFTW converts a time-domain signal into the time-frequency domain with the Short-time Fourier Transform [Y,SO,T,F]=(X,NW,M,OV)
-%  Usage:  (1) [y,so]=v_stftw(x,nw); % default parameters: m='rM', ov=2
-%              % ...                 % time-frequency domain processing goes here
-%              z=v_istftw(y,so);     % z is the same as x except for the first and last half-frames
+%  Usage:  (1) %%%%%% square-root-Hamming window with 50% overlap [Default options] %%%%%%
+%              [y,so]=v_stftw(x,nw);                % default parameters: m='rM', ov=2
+%              ...                                  % time-frequency domain processing goes here
+%              ...                                  % y only contains positive frequencies, so size(y,2)=floor(1+nw/2)
+%              z=v_istftw(y,so);                    % z is the same as x except for the first and last half-frames
 %
-%          (2) [y,so]=v_stftw(x,nw,'en',4);         % Hanning window with ov=4
+%          (2) %%%%%% Hann window with 75% overlap, zero-pad start/end of signal %%%%%%
+%              [y,so]=v_stftw(x,nw,'en',4);         % Hanning window with ov=4
+%              ...                                  % time-frequency domain processing goes here
 %              z=v_istftw(y,so);                    % z is the same as x everywhere due to 'e' option
 %
-%          (3) [y,so]=v_stftw([],nw,'pn',4);      	% initialise v_stftw state variable, so
+%          (3) %%%%%% Plot Spectrogram if called without outputs %%%%%%
+%              v_stftw(x,nw);                       % Plot spectrogram of first channel
+%
+%          (4) %%%%%% Real-time STFT-domain processing %%%%%%
+%              [y,so]=v_stftw([],nw,'pn',4);      	% initialise v_stftw state variable, so
 %              io=[];                               % initialise v_istftw state variable, io
 %              while true                           % loop forever
 %                % ... [acquire input chunk x]     	% acquire new chunk of input samples
@@ -16,10 +24,10 @@ function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)
 %                [z,io]=v_istftw(y,so,io);         	% convert back to time domain
 %                % ... [output chunk z];            % output chunk of processed samples
 %              end
+
 %
-%          (4) v_stftw(x,nw);                        % Plot spectrogram of first channel
-%
-%          (5) [y1,so]=v_stftw(x(1:1000),nw,'ep'); 	 % convert chunk 1 of 3
+%          (5) %%%%%% Optionally process a long signal in chunks %%%%%%
+%              [y1,so]=v_stftw(x(1:1000),nw,'ep'); 	 % convert chunk 1 of 3
 %              [y2,so]=v_stftw(x(1001:2000),so,'p'); % Options other than 'p' will be remembered
 %              [y3,so]=v_stftw(x(2001:end),so);      % Omit 'p' for final chunk (which can have x=[] if desired)
 %              y=[y1; y2; y3];                       % Concatenate to get complete T-F data
@@ -36,16 +44,16 @@ function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)
 %          nt       Optional DFT length (normally >=nw). [Default is nw as modified by 'i','I','u' options]
 %
 % Outputs: y(tf,k,...)  output STFT (frame=tf, freq=k). Number of frequencies is normally floor(1+nw/2) from DC to Nyquist
-%          so           structure used in subsequent call as the nw argument to
-%                       alllow processing in chunks. Also used in v_istftw
+%          so           structure (see below for details) used in the inverse transformation, v_istftw(), and also as the
+%                       nw argument in a subsequent call to v_stftw() when processing a long signal in multiple chunks.
 %          tax          sample numbers corresponding to the centre of each frame; divide by fs to get times
 %          fax          normalized centre frequencies of each bin (multiply by fs for actual frequencies)
 %          gd(tf,k,...) group delay in samples. A impulse at x(i,n+1) will give gd(i,:)=n. Will be infinite wherever y()=0.
 %
-% The mode string, m, is a character string containing a combination of the following options and a window code (see below):
+% The mode string, m, is a character string containing a combination of the following options and a window-code (see below):
 %
 %             'p'   x is a partial signal which will be followed by another chunk (prevents paddding of the final frame)
-
+%
 %             'r'   pad final frame with reflected data if necessary [default]
 %             'z'   pad final frame with zeros if necessary
 %             't'   truncate data to an exact number of frames
@@ -58,18 +66,34 @@ function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)
 %             's'   plot spectrogram of first channel (default if no outputs)
 %             'S'   plot mean spectra and mean power waveforms of all channels
 %
-%            Code Window      wmode  ov   Sidelobe  3dB-BW  6dB-BW  Falloff    Comment
+%            window-code   Window   mode-string  overlaps   Sidelobe  3dB-BW  6dB-BW  Falloff    Comment
 %
-%             'c'   cos(1)     s   2,3,5   -23dB     1.2     1.6  -12dB/oct   used in MP3
-%             'k'   kaiser(5)  boq   2     -23dB     1.2     1.7   -6dB/oct   used in AAC
-%             'm'   hamming    s   3,4,5   -43dB     1.3     1.8   -6dB/oct   low sidelobes [default if ov>2]
-%             'M'   hamming    sq  2,3,5   -24dB     1.1     1.5   -6dB/oct   sqrt Hamming  [default if ov=2]
-%             'n'   hanning    s   3,4,5   -31dB     1.4     2.0  -18dB/oct   rapid falloff
-%             'R'   rectangle        1     -13dB     0.9     1.2   -6dB/oct   narrow bandwidth [default if ov=1]
-%             'v'   vorbis     s    2,15   -21dB     1.3     1.8  -18dB/oct   used in Vorbis
-%             'V'   rsqvorbis  sq    2     -26dB     1.1     1.5   -6dB/oct   sqrt Vorbis
+%                'c'      cos(1)        s         2,3,5      -23dB     1.2     1.6  -12dB/oct   used in MP3
+%                'k'      kaiser(5)     boq         2        -23dB     1.2     1.7   -6dB/oct   used in AAC
+%                'm'      hamming       s         3,4,5      -43dB     1.3     1.8   -6dB/oct   low sidelobes [default if ov>2]
+%                'M'      hamming       sq        2,3,5      -24dB     1.1     1.5   -6dB/oct   sqrt Hamming  [default if ov=2]
+%                'n'      hann          s         3,4,5      -31dB     1.4     2.0  -18dB/oct   rapid falloff
+%                'R'      rectangle                 1        -13dB     0.9     1.2   -6dB/oct   narrow bandwidth [default if ov=1]
+%                'v'      vorbis        s           2        -21dB     1.3     1.8  -18dB/oct   used in Vorbis
+%                'V'      rsqvorbis     sq          2        -26dB     1.1     1.5   -6dB/oct   sqrt of raised and squared Vorbis
 %
-%             where wmode is the mode string for the v_windows call.
+%                 where mode-string is the mode input to the v_windows call. For perfect reconstruction,
+%                 the ov input must be a multiple of one of the numbers listed in the overlaps column.
+%                 To see more details of a specific window, execute:
+%                      v_windows(window-code,55440,mode-string,param);   % Note: use window-code='w' for rsqvorbis
+%
+% The contents of the so output structure are:
+%
+%           so.mx           cumulative number of input samples
+%           so.mf           cumulative number of full frames output so far (excluding 'e' option prefix frames)
+%           so.nt           length of Fourier transform
+%           so.nh           frame hop in samples
+%           so.wa(1,nw)     analysis window (e.g. Rectangular or Hamming)
+%           so.po           index of final-frame padding option: 1='z', 2='r', 3='t'
+%           so.me           true iff 'e' option given i.e. signal is zero-padded at start and end
+%           so.ff           true iff no frames have yet been output
+%           so.mp           true iff 'p' option given i.e. there are additional chunks to follow
+%
 % Notes:
 %
 %  (1) The scaling preserves power in a 2-sided transform so that
@@ -101,7 +125,7 @@ function [y,so,tax,fax,gd]=v_stftw(x,nw,m,ov,nt)
 persistent nw0 nt0 wi0 w0 wt wm wp
 if isempty(nw0)
     nw0=0;
-    wt={'rectangle','hamming','hamming','cos','kaiser','hanning','rsqvorbis','vorbis'};
+    wt={'rectangle','hamming','hamming','cos','kaiser','hann','rsqvorbis','vorbis'};
     wm={'','sq','s','s','boq','s','sq','s'};
     wp=[0 0 0 1 5 0 0 0];
 end
