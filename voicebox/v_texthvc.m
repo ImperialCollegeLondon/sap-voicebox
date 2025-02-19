@@ -95,7 +95,7 @@ switch nargin
         else
             if p(2)==upper(p(2))
                 if strcmpi(get(gca,'yscale'),'log')
-                    y=exp(log(get(gca,'ylim'))*[1-y; y])
+                    y=exp(log(get(gca,'ylim'))*[1-y; y]);
                 else
                     y=get(gca,'ylim')*[1-y; y];
                 end
