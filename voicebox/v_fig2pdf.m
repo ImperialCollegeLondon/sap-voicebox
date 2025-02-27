@@ -11,10 +11,10 @@ function v_fig2pdf(h,s,p,f)
 %             v_figbolden(figsize);
 %             if emf, v_fig2pdf(figdir), end
 %
-% Inputs: h   optional figure handle [use [] or omit for the current figure]
-%         s   file name which can include <m> for the top level
-%                 mfile name and <n> for figure number [use '[]' for '<m>_<n>']
-%                 '.' suppresses the save, if s ends in '/' or '\', then '<m>_<n>' is appended
+% Inputs: h   optional figure handle [Use [] or omit or gcf for the current figure]
+%         s   file name which can include <m> for the top level mfile name and <n>
+%             for the figure number. If s ends in '/' or '\', then '<m>_<n>' is appended.
+%             Use s='.' to suppress the save. [Use '[]' for s='<m>_<n>']
 %         p   call v_figbolden(p) before printing the figure (use p=0 for v_figbolden default)
 %         f   output format; a combination of the following: [default 'p']
 %               'p'  pdf
