@@ -1,5 +1,5 @@
 function w = v_windows(wtype,n,mode,p,ov)
-%V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,H)
+%V_WINDOWS Generate a standard windowing function (TYPE,N,MODE,P,OV)
 % Usage: (1) w=v_windows(3,n)';         % same as w=hamming(n);
 %        (2) w=v_windows(3,n,'l')';     % same as w=hanning(n,'periodic');
 %        (3) w=v_windows(2,n)';         % same as w=hanning(n);
@@ -9,6 +9,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 % Inputs:   WTYPE  is a string or integer specifying the window type (see below)
 %           N      is the number of output points to generate (actually FLOOR(N))
 %                  and also determines the period of the underlying window [default 256]
+%                  Alternatively, with the 'v' or 'V' options, a vector of positions within the window
 %           MODE   is a string specifying various options (see below)
 %           P      is a vector of parameters required for some window types
 %           OV     is the overlap in samples between succesive windows (must be H<=N/2 and
@@ -76,6 +77,8 @@ function w = v_windows(wtype,n,mode,p,ov)
 %                  w = The whole window is included [default]
 %                  c = The first sample starts in the centre of the window
 %                  h = The first sample starts half a sample beyond the centre
+%                  v = The n input is a vector of window positions where window goes from -1 to +1
+%                  V = The n input is a vector of window positions where window goes from 0 to +1
 %
 %         convolve with rectangle
 %                  o = convolve w(n) with a rectangle of length N-H [default floor(N/2)]
@@ -183,53 +186,65 @@ k=1+3*max(mm)-min(mm);              % min(mm) gives whole/half window, max(mm) g
 if k<4
     k=k+12*any(wtype==[2 6 7 9 10 15]); % if window is zero at ends add 12 to default to the 'n' option
 end
-if any(mode=='o')                   % need to convolve with rectangle
-    if nargin<5 || ~numel(h)
-        ov=floor(n/2);
+% determine the sample points
+if any(lower(mode)=='v')
+    ov=0; % do not convolve with rectangle
+    if wtype==14
+        error('cannot use ''v'' option with dolph window');
     end
-    n=n-ov+1;                       % shorten baseline window
+    if any(mode=='v')
+        v=mod(n(:)'+1,2)-1; % input N is winodw position in range -1 to +1
+    else
+        v=2*mod(n(:)',1)-1;  % input N is winodw position in range 0 to +1
+    end
+    n=length(v);
 else
-    ov=0;
+    if any(mode=='o')                   % need to convolve with rectangle
+        if nargin<5 || ~numel(h)
+            ov=floor(n/2);
+        end
+        n=n-ov+1;                       % shorten baseline window
+    else
+        ov=0;
+    end
+    % the number of points corresponding to a full period is (kk(k,3)*n+kk(k,4))
+    fn=floor(n);
+    kp=(kk(k,3)*n+kk(k,4)); % number of points corresponding to a full period
+    ks=kk(k,1)*fn+kk(k,2);
+    v=((0:2:2*fn-2)+ks)/kp;
 end
 
-% determine the sample points
-% the number of points corresponding to a full period is (kk(k,3)*n+kk(k,4))
-fn=floor(n);
-kp=(kk(k,3)*n+kk(k,4)); % number of points corresponding to a full period
-ks=kk(k,1)*fn+kk(k,2);
-v=((0:2:2*fn-2)+ks)/kp;
-
-% now make the window
+% now make the window; v has positions int he range -1 to 1
 
 switch wtype
     case 1 % 'rectangle'
-        w = ones(size(v));     
+        w = ones(size(v));
     case 2 % 'hanning'
-        w = 0.5+0.5*cos(pi*v);             
+        w = 0.5+0.5*cos(pi*v);
     case 3 % 'hamming'
-        w = 0.54+0.46*cos(pi*v);        
+        w = 0.54+0.46*cos(pi*v);
     case 4 % 'harris3'
-        w = 0.42323 + 0.49755*cos(pi*v) + 0.07922*cos(2*pi*v);        
+        w = 0.42323 + 0.49755*cos(pi*v) + 0.07922*cos(2*pi*v);
     case 5 % 'harris4'
-        w = 0.35875 + 0.48829*cos(pi*v) + 0.14128*cos(2*pi*v) + 0.01168*cos(3*pi*v);        
+        w = 0.35875 + 0.48829*cos(pi*v) + 0.14128*cos(2*pi*v) + 0.01168*cos(3*pi*v);
     case 6 % 'blackman'
-        w = 0.42+0.5*cos(pi*v) + 0.08*cos(2*pi*v);        
+        w = 0.42+0.5*cos(pi*v) + 0.08*cos(2*pi*v);
     case 7 % 'vorbis'
-        w = sin(0.25*pi*(1+cos(pi*v)));        
+        w = sin(0.25*pi*(1+cos(pi*v)));
     case 8 % 'rsqvorbis'
-        w = 0.571-0.429*cos(0.5*pi*(1+cos(pi*v)));        
+        w = 0.571-0.429*cos(0.5*pi*(1+cos(pi*v)));
     case 9 % 'triangle'
         if nargin<4, p=1; end;
         w = 1-abs(v).^p(1);
     case 10 % 'cos'
         if nargin<4, p=1; end;
-        w = cos(0.5*pi*v).^p(1);        
+        w = cos(0.5*pi*v).^p(1);
     case 11 % 'kaiser'
         if nargin<4, p=8; end;
-        w=besseli(0,p*sqrt(1-v.^2))/besseli(0,p(1));        
+        w=besseli(0,p*sqrt(1-v.^2))/besseli(0,p(1));
     case 12 % 'gaussian'
         if nargin<4, p=3; end;
-        w=exp(-0.5*p(1)^2*(v.*v));     
+        w=exp(-0.5*p(1)^2*(v.*v));
     case 13 % 'cauchy'
         if nargin<4, p=1; end;
         w = (1+(p(1)*v).^2).^-1;
@@ -241,7 +256,8 @@ switch wtype
         else
             w=chebwin(kp+1,abs(p(1)));
             w=w((1:fn)+round((ks+kp)/2));
-        end        
+        end
+        w=w(:)'; % convert to row vector
     case 15 % 'tukey'
         if nargin<4, p=0.5; end;
         if p(1)>0
@@ -249,7 +265,7 @@ switch wtype
             w = 0.5+0.5*cos(pi*max(1+(abs(v)-1)/p(1),0));
         else
             w = ones(size(v));
-        end    
+        end
     otherwise
         error(sprintf('Unknown window type: %s', wtype));
 end;
