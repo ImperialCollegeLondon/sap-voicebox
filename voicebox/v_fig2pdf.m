@@ -126,14 +126,17 @@ if ~strcmp(s,'.')
     sp=[s  '.pdf'];
     print('-dpdf',sp);
     %     set(gcf,'PaperPosition',[0.6350 6.3500 20.3200 12]);
-    system(['pdfcrop ' sp ' ' sp]); % needs MikTeX installed
+    [cst,cou]=system(['pdfcrop ' sp ' ' sp]); % needs MikTeX installed
+    if cst
+        error('pdfcrop command failed');
+    end
     if any(f=='s')
-        system(['pdf2ps ' sp ' ' s '.ps']);
+        [cst,cou]=system(['pdf2ps ' sp ' ' s '.ps']);
     end
     if any(f=='e')
-        system(['pdf2ps ' sp ' ' s '.eps']);
+        [cst,cou]=system(['pdf2ps ' sp ' ' s '.eps']);
     end
     if ~any(f=='p')
-        system(['del ' sp]);
+        [cst,cou]=system(['del ' sp]);
     end
 end
