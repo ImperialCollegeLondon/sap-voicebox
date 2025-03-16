@@ -1,5 +1,5 @@
 function [no,ni,nc]=v_rootstab(p)
-%V_ROOTSTAB calculates the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)
+%V_ROOTSTAB determines the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)
 %
 %  Inputs:  p   Polynomial with real or complex coefficients
 %
@@ -12,7 +12,28 @@ function [no,ni,nc]=v_rootstab(p)
 % Refs:
 %   [1] Messaoud Benidir. On the root distribution of general polynomials with respect to the unit circle.
 %       Signal Processing, 53 (1): 75–82, August 1996. ISSN 0165-1684. doi: 10.1016/0165-1684(96)00077-1.
+
+%      Copyright (C) Mike Brookes 2025
 %
+%   VOICEBOX is a MATLAB toolbox for speech processing.
+%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   This program is free software; you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation; either version 2 of the License, or
+%   (at your option) any later version.
+%
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You can obtain a copy of the GNU General Public License from
+%   http://www.gnu.org/copyleft/gpl.html or by writing to
+%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 no=0;                                       % initialize count of roots outside unit circle
 nc=0;                                       % initialize count of roots on the unit circle
 if all(p==0)                                % p is all zero
@@ -50,7 +71,7 @@ else
             p=conj(q(end:-1:1));            % flip q
             no=no+np-length(p);             % increement count of zeros outside unit circle
         else
-            p=q(1:find(q~=0,1,'last'));     % trim trailing zeros from q
+            p=q(1:find(q~=0,1,'last'));     % trim trailing zeros from q and take as p
         end
         np=length(p);                       % 1+order(p)
     end
