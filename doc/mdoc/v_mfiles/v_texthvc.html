@@ -165,7 +165,7 @@ This function is called by:
 0095         <span class="keyword">else</span>
 0096             <span class="keyword">if</span> p(2)==upper(p(2))
 0097                 <span class="keyword">if</span> strcmpi(get(gca,<span class="string">'yscale'</span>),<span class="string">'log'</span>)
-0098                     y=exp(log(get(gca,<span class="string">'ylim'</span>))*[1-y; y])
+0098                     y=exp(log(get(gca,<span class="string">'ylim'</span>))*[1-y; y]);
 0099                 <span class="keyword">else</span>
 0100                     y=get(gca,<span class="string">'ylim'</span>)*[1-y; y];
 0101                 <span class="keyword">end</span>
