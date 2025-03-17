@@ -5,13 +5,14 @@ function [no,ni,nc]=v_rootstab(p)
 %
 % Outputs: no   Number of roots outside the unit circle
 %          ni   Number of roots inside the unit circle
-%          nc   Number of roots on the unit circle
+%          nc   Number of roots lying on the unit circle
 %
-% This routine uses the algorithm given in [1]. Note that rounding errors may cause roots that lie on the unit circle to migrate to either inside or outside.
+% This routine uses the algorithm given in [1]. Rounding errors may cause roots that lie on the unit circle to migrate to either inside or outside.
 %
 % Refs:
 %   [1] Messaoud Benidir. On the root distribution of general polynomials with respect to the unit circle.
 %       Signal Processing, 53 (1): 75–82, August 1996. ISSN 0165-1684. doi: 10.1016/0165-1684(96)00077-1.
+%       [ Note error in equation (52) which should read k^ = +k - Q(0)/(conj(c0)*(1/c - c)) ]
 
 %      Copyright (C) Mike Brookes 2025
 %
