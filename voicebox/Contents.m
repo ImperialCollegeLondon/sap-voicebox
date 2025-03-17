@@ -122,6 +122,7 @@
 %   v_lpcconv       - Arbitrary conversion between LPC representations
 %   v_lpcifilt      - inverse filter a speech signal
 %   v_lpcrand       - create random stable filters
+%   v_rootstab      - determines the  number of polynomial roots outside, inside and on the unit circle
 %   v_lpcrr2am      - Matrix with all LPC filters up to order p
 %   v_lpcstable     - check for stability and force stable filters
 %   v_lpc--2--      - Convert between alternative LPC representation
@@ -256,8 +257,6 @@
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% === Unclassified ===
-%   v_rangelim    - 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 1998-2022 Mike Brookes
