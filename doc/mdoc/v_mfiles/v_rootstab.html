@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_rootstab</title>
   <meta name="keywords" content="v_rootstab">
-  <meta name="description" content="V_ROOTSTAB calculates the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)">
+  <meta name="description" content="V_ROOTSTAB determines the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -19,13 +19,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>V_ROOTSTAB calculates the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)</strong></div>
+<div class="box"><strong>V_ROOTSTAB determines the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [no,ni,nc]=v_rootstab(p) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">V_ROOTSTAB calculates the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)
+<div class="fragment"><pre class="comment">V_ROOTSTAB determines the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)
 
   Inputs:  p   Polynomial with real or complex coefficients
 
@@ -56,7 +56,7 @@ This function is called by:
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [no,ni,nc]=v_rootstab(p)</a>
-0002 <span class="comment">%V_ROOTSTAB calculates the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)</span>
+0002 <span class="comment">%V_ROOTSTAB determines the  number of polynomial roots outside, inside and on the unit circle [NO,NI,NC]=v_rootstab(P)</span>
 0003 <span class="comment">%</span>
 0004 <span class="comment">%  Inputs:  p   Polynomial with real or complex coefficients</span>
 0005 <span class="comment">%</span>
@@ -69,53 +69,74 @@ This function is called by:
 0012 <span class="comment">% Refs:</span>
 0013 <span class="comment">%   [1] Messaoud Benidir. On the root distribution of general polynomials with respect to the unit circle.</span>
 0014 <span class="comment">%       Signal Processing, 53 (1): 75–82, August 1996. ISSN 0165-1684. doi: 10.1016/0165-1684(96)00077-1.</span>
-0015 <span class="comment">%</span>
-0016 no=0;                                       <span class="comment">% initialize count of roots outside unit circle</span>
-0017 nc=0;                                       <span class="comment">% initialize count of roots on the unit circle</span>
-0018 <span class="keyword">if</span> all(p==0)                                <span class="comment">% p is all zero</span>
-0019     ni=0;
-0020 <span class="keyword">else</span>
-0021     p=p(:).';                               <span class="comment">% force to be a row vector</span>
-0022     p=p(find(p~=0,1):end);                  <span class="comment">% trim leading zeros</span>
-0023     np=length(p);                           <span class="comment">% initial 1+order(p)</span>
-0024     np0=np;                                 <span class="comment">% save initial order for calculating ni later</span>
-0025     npd=0;                                  <span class="comment">% initialize saved order for calculating nc</span>
-0026     <span class="keyword">while</span> length(p)&gt;1
-0027         p=p/sqrt(p*p');                     <span class="comment">% normalize p each loop</span>
-0028         pf=conj(p(np:-1:1));                <span class="comment">% flipped version of p</span>
-0029         k=-p(np)/pf(np);
-0030         q=p+k*pf;                           <span class="comment">% null out the constant coefficient</span>
-0031         q(np)=0;                            <span class="comment">% force exact zero in case of rounding errors</span>
-0032         <span class="keyword">if</span> all(q==0)
-0033             p=p(1:end-1).*(np-1:-1:1);      <span class="comment">% take derivative</span>
-0034             <span class="keyword">if</span> npd==0
-0035                 npd=np;                     <span class="comment">% save current 1+order(p)</span>
-0036                 nod=no;                     <span class="comment">% save current count of roots outside unit circle</span>
-0037             <span class="keyword">end</span>
-0038         <span class="keyword">elseif</span> q(1)==0                      <span class="comment">% if |k|=1 and q~=0</span>
-0039             q=q(1:find(q~=0,1,<span class="string">'last'</span>));     <span class="comment">% trim trailing zeros from q</span>
-0040             dr=-q(end)/(pf(end)*k);         <span class="comment">% direction we will move normalized k in</span>
-0041             <span class="keyword">if</span> abs(real(dr))&gt;abs(imag(dr)) 
-0042                 cf=abs(real(dr));           <span class="comment">% increase or decrease real part by 0.5</span>
-0043             <span class="keyword">else</span>
-0044                 cf=0.25*abs(imag(dr));      <span class="comment">% increase or decrease imag part by 2</span>
-0045             <span class="keyword">end</span>
-0046             c=sqrt(1+cf^2)-cf;             <span class="comment">% choose c in range (0,1)</span>
-0047             p=p/c+k*c*pf+[zeros(1,np-length(q)) q];
-0048         <span class="keyword">elseif</span> abs(k)&gt;1
-0049             q=q(1:find(q~=0,1,<span class="string">'last'</span>));     <span class="comment">% trim trailing zeros from q</span>
-0050             p=conj(q(end:-1:1));            <span class="comment">% flip q</span>
-0051             no=no+np-length(p);             <span class="comment">% increement count of zeros outside unit circle</span>
-0052         <span class="keyword">else</span>
-0053             p=q(1:find(q~=0,1,<span class="string">'last'</span>));     <span class="comment">% trim trailing zeros from q</span>
-0054         <span class="keyword">end</span>
-0055         np=length(p);                       <span class="comment">% 1+order(p)</span>
-0056     <span class="keyword">end</span>
-0057     <span class="keyword">if</span> npd&gt;0
-0058         nc=npd-1-2*(no-nod);
-0059     <span class="keyword">end</span>
-0060     ni=np0-1-nc-no;
-0061 <span class="keyword">end</span></pre></div>
+0015 
+0016 <span class="comment">%      Copyright (C) Mike Brookes 2025</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0019 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0022 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0023 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
+0024 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
+0025 <span class="comment">%   (at your option) any later version.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0028 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0029 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0030 <span class="comment">%   GNU General Public License for more details.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
+0033 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
+0034 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 
+0037 no=0;                                       <span class="comment">% initialize count of roots outside unit circle</span>
+0038 nc=0;                                       <span class="comment">% initialize count of roots on the unit circle</span>
+0039 <span class="keyword">if</span> all(p==0)                                <span class="comment">% p is all zero</span>
+0040     ni=0;
+0041 <span class="keyword">else</span>
+0042     p=p(:).';                               <span class="comment">% force to be a row vector</span>
+0043     p=p(find(p~=0,1):end);                  <span class="comment">% trim leading zeros</span>
+0044     np=length(p);                           <span class="comment">% initial 1+order(p)</span>
+0045     np0=np;                                 <span class="comment">% save initial order for calculating ni later</span>
+0046     npd=0;                                  <span class="comment">% initialize saved order for calculating nc</span>
+0047     <span class="keyword">while</span> length(p)&gt;1
+0048         p=p/sqrt(p*p');                     <span class="comment">% normalize p each loop</span>
+0049         pf=conj(p(np:-1:1));                <span class="comment">% flipped version of p</span>
+0050         k=-p(np)/pf(np);
+0051         q=p+k*pf;                           <span class="comment">% null out the constant coefficient</span>
+0052         q(np)=0;                            <span class="comment">% force exact zero in case of rounding errors</span>
+0053         <span class="keyword">if</span> all(q==0)
+0054             p=p(1:end-1).*(np-1:-1:1);      <span class="comment">% take derivative</span>
+0055             <span class="keyword">if</span> npd==0
+0056                 npd=np;                     <span class="comment">% save current 1+order(p)</span>
+0057                 nod=no;                     <span class="comment">% save current count of roots outside unit circle</span>
+0058             <span class="keyword">end</span>
+0059         <span class="keyword">elseif</span> q(1)==0                      <span class="comment">% if |k|=1 and q~=0</span>
+0060             q=q(1:find(q~=0,1,<span class="string">'last'</span>));     <span class="comment">% trim trailing zeros from q</span>
+0061             dr=-q(end)/(pf(end)*k);         <span class="comment">% direction we will move normalized k in</span>
+0062             <span class="keyword">if</span> abs(real(dr))&gt;abs(imag(dr)) 
+0063                 cf=abs(real(dr));           <span class="comment">% increase or decrease real part by 0.5</span>
+0064             <span class="keyword">else</span>
+0065                 cf=0.25*abs(imag(dr));      <span class="comment">% increase or decrease imag part by 2</span>
+0066             <span class="keyword">end</span>
+0067             c=sqrt(1+cf^2)-cf;             <span class="comment">% choose c in range (0,1)</span>
+0068             p=p/c+k*c*pf+[zeros(1,np-length(q)) q];
+0069         <span class="keyword">elseif</span> abs(k)&gt;1
+0070             q=q(1:find(q~=0,1,<span class="string">'last'</span>));     <span class="comment">% trim trailing zeros from q</span>
+0071             p=conj(q(end:-1:1));            <span class="comment">% flip q</span>
+0072             no=no+np-length(p);             <span class="comment">% increement count of zeros outside unit circle</span>
+0073         <span class="keyword">else</span>
+0074             p=q(1:find(q~=0,1,<span class="string">'last'</span>));     <span class="comment">% trim trailing zeros from q and take as p</span>
+0075         <span class="keyword">end</span>
+0076         np=length(p);                       <span class="comment">% 1+order(p)</span>
+0077     <span class="keyword">end</span>
+0078     <span class="keyword">if</span> npd&gt;0
+0079         nc=npd-1-2*(no-nod);
+0080     <span class="keyword">end</span>
+0081     ni=np0-1-nc-no;
+0082 <span class="keyword">end</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
