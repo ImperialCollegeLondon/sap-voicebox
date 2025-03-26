@@ -1,11 +1,13 @@
 function ss=v_lpczz2ss(zz)
-%V_LPCZZ2SS Convert z-place poles to s-plane poles SS=(ZZ)
+%V_LPCZZ2SS Convert z-plane poles to s-plane poles SS=(ZZ)
 %the s-plane is in units of Normalized Hz and so the imaginary part
 % of each ss() value is in the range +-0.5
 %
 % If you multiply ss by the sample frequency, a formant with
 % frequency f and bandwidth b will give an s-plane pole-pair
-% of approximately -b/2 +- j f
+% of approximately -b/2 +-j*f
+%
+% The inverse function is zz=v_lpcss2zz(ss)
 
 
 %      Copyright (C) Mike Brookes 1997
