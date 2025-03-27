@@ -1,20 +1,19 @@
-function zz=v_lpcss2zz(ss,nreal)
-%V_LPCSS2ZZ Convert s-plane poles to z-plane poles ZZ=(SS)
-% the s-plane is in units of Normalized Hz and so the imaginary part
-% of each ss() value should be in the range +-0.5
+function zz=v_lpcss2zz(ss,nr)
+%V_LPCSS2ZZ Convert s-plane poles to z-plane poles ZZ=(SS,NR)
 %
-% If you multiply ss by the sample frequency, a formant with
-% frequency f and bandwidth b will give an s-plane pole-pair
-% of approximately -b/2 +-j*f
+%  Inputs: ss(n,q)  n frames each with q complex-valued pole positions in normalized-Hz units.
+%                   A formant with frequency f (in range 0 to 0.5) and bandwidth b will give an
+%                   s-plane pole-pair of approximately (-b/2 +-j*f)/fs where fs is the sample frequency.
+%          nr       Optional argument specifying how many of the q poles should *not* be
+%                   supplemented by including their conjugate pair. The conjugates of poles nr+1:q
+%                   will be appended to ss as additional columns. As a special case, nr=-1
+%                   will include the conjugate of any column containing a non-real number.
 %
-% The second [optional] argument gives then number of real s-plane poles.
-% If this argument is given, then ss will be replaced
-% by [ss(:,1:nreal) ss(:,nreal+1:end) conj(ss(:,nreal+1:end))].
+% Outputs: zz(n,p)  z-plane poles. If nr is omitted, then p=q; if nr>=0, then p=2*q-nr.
 %
 % The inverse function is zz=v_lpczz2ss(zz)
 
-%      Copyright (C) Mike Brookes 1997
-%      Version: $Id: v_lpcss2zz.m 10865 2018-09-21 17:22:45Z dmb $
+%      Copyright (C) Mike Brookes 1997-2025
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
@@ -34,8 +33,20 @@ function zz=v_lpcss2zz(ss,nreal)
 %   http://www.gnu.org/copyleft/gpl.html or by writing to
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin>1 && nreal<size(ss,2)
-    ss=[real(ss(:,1:nreal)) ss(:,nreal+1:end) conj(ss(:,nreal+1:end))];
+if nargin>1 && nr<size(ss,2)
+    if nr>=0
+        ss=[ss conj(ss(:,nr+1:end))];
+    else
+        ss=[ss conj(ss(:,any(imag(ss)~=0,1)))];
+    end
 end
 zz=exp(2*pi*ss);
+if ~nargout
+    q=(0:200)*2*pi/200;
+    plot(real(zz.'),imag(zz.'),'x',cos(q),sin(q),':k',[-1.05 0; 1.05 0],[0 -1.05; 0 1.05],':k');
+    axis([-1.05 1.05 -1.05 1.05]);
+    axis equal;
+    xlabel('Real');
+    ylabel('Imag');
+end
 
