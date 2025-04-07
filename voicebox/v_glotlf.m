@@ -34,10 +34,16 @@ function [u,q]=v_glotlf(d,t,p)
 %             Note that the equation for the return phase in Fig. 2 of [1] is wrong; the correct equation is given in (11).
 %             The value of epsilon in this equation is chosen to ensure the flow derivative, Ug'(t), integrates to zero.
 %
+%   In the source-tract model of speech production [2, Ch.3], the glottal flow waveform passes through the vocal tract filter
+%   (typically an all-pole LPC filter) and then a lip-radiation filter (typically a differentiator: R(z)=1-1/z) which converts
+%   volume flow at the lips to pressure. If the filters are quasi-constant, their order may be interchanged and the speech
+%   pressure waveform obtained by applying the vocal tract filter to the first derivative of the glottal flow waveform.
+%
 % Bug: this signal has not been low-pass filtered and will therefore be aliased [this is a bug]
 %
 % References
 % [1]	G. Fant, J. Liljencrants, and Q. Lin. A four-parameter model of glottal flow. STL-QPSR, 26 (4): 1-13, 1985.
+% [2]   L. R. Rabiner and R. W. Schafer. Digital Processing of Speech Signals. Prentice-Hall, 1978. ISBN 0-13-213603-1.
 
 %      Copyright (C) Mike Brookes 1998-2017
 %      Version: $Id: v_glotlf.m 10865 2018-09-21 17:22:45Z dmb $
