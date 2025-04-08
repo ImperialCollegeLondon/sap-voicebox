@@ -28,7 +28,7 @@ function [u,q]=v_glotlf(d,t,p)
 %                q.tp       time of peak in Ug                       [0.48]
 %                q.te       time of peak negative value in Ug'       [0.6]
 %                q.ta       initial slope of return phase is Ee/ta   [0.045]
-%                q.tc=1     cycle end tiem (always 1)                [1]
+%                q.tc=1     cycle end time (always 1)                [1]
 %
 %             Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]          
 %             Note that the equation for the return phase in Fig. 2 of [1] is wrong; the correct equation is given in (11).
