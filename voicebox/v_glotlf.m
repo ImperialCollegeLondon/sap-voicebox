@@ -92,19 +92,23 @@ wa=pi/(te*(1-p(3)));            % omega_g from [1]
 a=-log(-p(2)*sin(wa*te))/te;    % alpha from [1]
 inta=e0*((wa/tan(wa*te)-a)/p(2)+wa)/(a^2+wa^2); % integral of first portion of waveform (0<t<te)
 
-% if inta<0 we should reduce p(2)
-% if inta>0.5*p(2)*(1-te) we should increase p(2)
+% if inta<0 we must reduce p(2) since the integral of the second part of the waveform is always negative
+% if inta>0.5*p(2)*(1-te) we must increase p(2)
 
 rb0=p(2)*inta;  % initial time constant neglects the offset; correct if rb<<(1-te)
 rb=rb0;         % rb is closure time constant = 1/epsilon in [1]
 
 % Use Newton to determine closure time constant, rb, that flow starts and ends at zero.
-
-for i=1:4
+thresh=1e-9; % convergence threshold
+for i=1:6 % maximum of 6 iterations (usually fewer)
     kk=1-exp(mtc/rb);
     err=rb+mtc*(1/kk-1)-rb0;
     derr=1-(1-kk)*(mtc/rb/kk)^2;
     rb=rb-err/derr;               % rb is closure time constant = 1/epsilon in [1]
+    if abs(err)<thresh, break, end
+end
+if abs(err)>thresh % print error if unable to find a value of rb that gives a zero integral for U'(t)
+    error('Requested glottal waveform parameters are not feasible');
 end
 e1=1/(p(2)*(1-exp(mtc/rb)));
 ta=tt<te;
@@ -159,7 +163,7 @@ if ~nargout
         plot([te te+q.ta te+q.ta],[-q.Ee 0 ylim(2)],':k');
         v_texthvc(te,0,' te','rtk');
         v_texthvc(te+q.ta,0,' te+ta','lbk');
-        v_texthvc(0,-q.Ee,' �Ee','lbk');
+        v_texthvc(0,-q.Ee,' Ee','lbk');
         v_texthvc(0,q.Ei,' Ei','ltk');
     elseif d==2
         plot(xlim,[1;1]*q.Ee/q.ta,':k');
