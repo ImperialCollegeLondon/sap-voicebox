@@ -10,7 +10,7 @@ function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
 %
 %        (4) [d,dbfg]=v_gaussmixb(mf,vf,wf);          % Calculate Bhattacharyya divergence between compnents of f. d=0 always in this case.
 %
-%        (5) v_gaussmixb(mf,vf,wf,mg,vg,wg);          % Plot gra[hs of distributions (dimension p must equal 1)
+%        (5) v_gaussmixb(mf,vf,wf,mg,vg,wg);          % Plot graphs of distributions (dimension p must equal 1)
 %
 % Inputs: with kf & kg mixtures, p data dimensions
 %
