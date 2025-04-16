@@ -415,7 +415,7 @@ if nr>0
                     gg(:,:,i)=repmat(gam,1,npg);
                 case 'x'            % 'x' = prior SNR (nc)
                     gg(:,:,i)=repmat(x,1,npg);
-                case 'g'            % 'G' = raw gain (nc)
+                case 'G'            % 'G' = raw gain (nc)
                     gg(:,:,i)=repmat(gr,1,npg);
                 case 'g'            % 'g' = final gain (nc)
                     gg(:,:,i)=repmat(g,1,npg);
