@@ -29,6 +29,7 @@ function [u,q]=v_glotlf(d,t,p)
 %                q.te       time of peak negative value in Ug'       [0.6]
 %                q.ta       initial slope of return phase is Ee/ta   [0.045]
 %                q.tc=1     cycle end time (always 1)                [1]
+%                q.Utc      Integral of Ug' over one cycle           [approx 0]
 %
 %             Values are shown in brackets for the default input parameters: p=[0.6 0.1 0.2]          
 %             Note that the equation for the return phase in Fig. 2 of [1] is wrong; the correct equation is given in (11).
@@ -85,29 +86,29 @@ end
 
 % Calculate the parameters in terms of ugd(t), the glottal flow derivative
 
-te=p(1);                        % t_e from [1]. ugd(te) is the negative peak.
-mtc=te-1;                       % -1 times duration of return phase
-e0=1;                           % E0 from [1]
-wa=pi/(te*(1-p(3)));            % omega_g from [1]
-a=-log(-p(2)*sin(wa*te))/te;    % alpha from [1]
+te=p(1);                                % t_e from [1]. ugd(te) is the negative peak.
+mtc=te-1;                               % -1 times duration of return phase
+e0=1;                                   % E0 from [1]
+wa=pi/(te*(1-p(3)));                    % omega_g from [1]
+a=-log(-p(2)*sin(wa*te))/te;            % alpha from [1]
 inta=e0*((wa/tan(wa*te)-a)/p(2)+wa)/(a^2+wa^2); % integral of first portion of waveform (0<t<te)
 
-% convergence is only possible if 0 <= inta <= 0.5*(1-te)/p(2)
+% convergence is only possible if 0 <= inta <= 0.5*(1-te)/p(2) as ta varies between 0 and 1-te
 % if inta<0 we must reduce p(2); if inta>0.5*(1-te)/p(2) we must increase p(2)
 
-rb0=p(2)*inta;  % initial time constant neglects the offset; correct if rb<<(1-te)
-rb=rb0;         % rb is closure time constant = 1/epsilon in [1]
+rb0=p(2)*inta;                          % initial time constant neglects the offset; correct if rb<<(1-te)
+rb=rb0;                                 % rb is closure time constant = 1/epsilon in [1]
 
 % Use Newton to determine closure time constant, rb, so that flow starts and ends at zero.
-thresh=1e-9; % convergence threshold
-for i=1:15 % maximum of 6 iterations (usually fewer)
-    kk=1-exp(mtc/rb);
+thresh=1e-9;                            % convergence threshold
+for i=1:15                              % maximum of 15 iterations (usually fewer)
+    kk=1-exp(mtc/rb);                   % kk = ta/rb = ta * epsilon in [1]
     err=rb+mtc*(1/kk-1)-rb0;
     derr=1-(1-kk)*(mtc/rb/kk)^2;
-    rb=rb-err/derr;               % rb is closure time constant = 1/epsilon in [1]
+    rb=rb-err/derr;                     % rb is closure time constant = 1/epsilon in [1]
     if abs(err)<thresh, break, end
 end
-if abs(err)>thresh % print error if unable to find a value of rb that gives a zero integral for U'(t)
+if abs(err)>thresh                      % print error if unable to find a value of rb that gives a zero integral for U'(t)
     error('Requested glottal waveform parameters are not feasible');
 end
 e1=1/(p(2)*(1-exp(mtc/rb)));
@@ -133,17 +134,18 @@ if nargout~=1
     tp=pi/wa;                           % time of peak in Ug      
     q.Up=e0*wa*(exp(a*tp)+1)/(a^2+wa^2); % peak value of Ug occurs at tp   
     q.E0=1;                             % gain in open phase (always 1) 
-    q.Ei=e0*exp(a*ti).*sin(wa*ti);      % peak value of Ug' occurs at ti 
-    q.Ee=1/p(2);                        % note ugd(te)=-Ee
+    q.Ei=e0*exp(a*ti).*sin(wa*ti);      % max value of Ug': Ug'(ti)=Ei
+    q.Ee=1/p(2);                        % negated min value of Ug': Ug'(te)=-Ee
     q.alpha=a;                          % exponent coefficient in open phase    
     q.epsilon=1/rb;                     % exponent coefficient in return phase
-    q.omega=wa;                         % angular frequency in open phase (=pi/tp)
+    q.omega=wa;                         % angular frequency in open phase (omega = pi/tp)
     q.t0=0;                             % start of cycle  
-    q.ti=ti;                            % time of peak in Ug'   
-    q.tp=tp;                            % time of peak in Ug      
-    q.te=te;                            % time of peak negative value in Ug' 
-    q.ta=rb/(p(2)*e1);                  % initial slope of return phase is Ee/ta
-    q.tc=1;                             % end of cycle  
+    q.ti=ti;                            % time of peak in Ug': Ug'(ti)=Ei   
+    q.tp=tp;                            % time of peak in Ug : Ug(tp)=Up     
+    q.te=te;                            % time of peak negative value in Ug': Ug'(te)=-Ee
+    q.ta=rb/(p(2)*e1);                  % initial slope of return phase is Ug''(te)=-Ee/ta
+    q.tc=1;                             % end of cycle 
+    q.Utc=-err/p(2);                    % integral of Ug' (should always be zero)
 end
 if ~nargout
     plot(t,u,'-b',[t(1) t(end)],[0 0],':k');
