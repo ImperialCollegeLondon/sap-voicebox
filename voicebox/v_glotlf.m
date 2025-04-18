@@ -92,15 +92,15 @@ wa=pi/(te*(1-p(3)));            % omega_g from [1]
 a=-log(-p(2)*sin(wa*te))/te;    % alpha from [1]
 inta=e0*((wa/tan(wa*te)-a)/p(2)+wa)/(a^2+wa^2); % integral of first portion of waveform (0<t<te)
 
-% if inta<0 we must reduce p(2) since the integral of the second part of the waveform is always negative
-% if inta>0.5*p(2)*(1-te) we must increase p(2)
+% convergence is only possible if 0 <= inta <= 0.5*(1-te)/p(2)
+% if inta<0 we must reduce p(2); if inta>0.5*(1-te)/p(2) we must increase p(2)
 
 rb0=p(2)*inta;  % initial time constant neglects the offset; correct if rb<<(1-te)
 rb=rb0;         % rb is closure time constant = 1/epsilon in [1]
 
-% Use Newton to determine closure time constant, rb, that flow starts and ends at zero.
+% Use Newton to determine closure time constant, rb, so that flow starts and ends at zero.
 thresh=1e-9; % convergence threshold
-for i=1:6 % maximum of 6 iterations (usually fewer)
+for i=1:15 % maximum of 6 iterations (usually fewer)
     kk=1-exp(mtc/rb);
     err=rb+mtc*(1/kk-1)-rb0;
     derr=1-(1-kk)*(mtc/rb/kk)^2;
@@ -146,7 +146,7 @@ if nargout~=1
     q.tc=1;                             % end of cycle  
 end
 if ~nargout
-    plot(tt,u,'-b',[tt(1) tt(end)],[0 0],':k');
+    plot(t,u,'-b',[t(1) t(end)],[0 0],':k');
     v_axisenlarge([-1 -1.05]);
     xlim=get(gca,'xlim');
     ylim=get(gca,'ylim');
