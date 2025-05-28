@@ -55,3 +55,5 @@ if any(khi)
         i(khi)=ny;
     end
 end
+i=reshape(i,size(x));           % force shape to match x
+f=reshape(f,size(x));           % force shape to match x
