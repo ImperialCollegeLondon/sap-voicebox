@@ -20,7 +20,7 @@ function [i,f]=v_interval(x,y,m)
 %                       'N' set i(j)=f(j)=NaNj
 %                       'Z' set i(j)=ny and f(j)>1
 %
-% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1))
+% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]
 %           f(nx)   f(j)=(x(j)-y(i(j)))/(y(i(j)+1))-y(i(j))) is the fractional position of x(j) within the interval.
 %                   Note that f(j) lies in the range [0,1) provided that y(1) <= x(j) < y(ny)
 %
