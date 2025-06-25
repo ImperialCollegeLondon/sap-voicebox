@@ -36,7 +36,7 @@ function s=v_sprintsi(x,d,w,u)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent f f0 emin emax
 if isempty(f)
-    f='yzafpnum kMGTPEZY';      % list of SI multipliers
+    f='qryzafpnum kMGTPEZYRQ';      % list of SI multipliers
     f0=find(f==' ');            % position of space in list of SI multipliers
     emin=3-3*f0;                % lowest power of 10 in f
     emax=3*(length(f)-f0);      % highest power of 10 in f
@@ -45,7 +45,7 @@ if nargin<4                     % if no unit string specified
     u=' ';                      % default unit string is a space
 end
 if nargin<3 || isempty(w)       % if no width is specified
-    w=0;                        % default is 0, i.e. eliminate trainling zeros
+    w=0;                        % default is 0, i.e. eliminate trailing zeros
 end
 if nargin<2 || isempty(d)
     d=-3;                       % default precision is 3 significant figures
