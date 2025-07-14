@@ -26,18 +26,18 @@ function [m,v,w]=v_gaussmixt(m1,v1,w1,m2,v2,w2)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published by
-%   the Free Software Foundation; either version 2 of the License, or
+%   it under the terms of the GNU Lesser General Public License as published by
+%   the Free Software Foundation; either version 3 of the License, or
 %   (at your option) any later version.
 %
 %   This program is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
+%   GNU Lesser General Public License for more details.
 %
-%   You can obtain a copy of the GNU General Public License from
-%   http://www.gnu.org/copyleft/gpl.html or by writing to
-%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+%   You can obtain a copy of the GNU Lesser General Public License from
+%   https://www.gnu.org/licenses/ .
+%    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent r13 r21 r22 r31 r312 r112 r1223 r321 ch1h r122 r124
 if isempty(r21)
