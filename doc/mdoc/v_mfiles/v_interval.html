@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_interval</title>
+  <meta name="keywords" content="v_interval">
+  <meta name="description" content="V_INTERVAL Classify X values into a set of contiguous intervals with boundaries from Y [I,F]=(X,Y,M)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_interval
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_INTERVAL Classify X values into a set of contiguous intervals with boundaries from Y [I,F]=(X,Y,M)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [i,f]=v_interval(x,y,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_INTERVAL Classify X values into a set of contiguous intervals with boundaries from Y [I,F]=(X,Y,M)
+
+ Usage:    x=[1.6 2 3.8 0 6.5];    % test values (not necessarily monotonic)
+           y=[1 2 3 5 6];          % define boundaries of four unequal intervals (y must be increasing)
+       [i,f]=v_interval(x,y);      % classify into intervals using default options 'eE'
+                                   %    i=[1 2 3 1 4] and f=[0.6 0 0.4 -1 1.5]
+
+  Inputs:  x(nx)   Vector of test values
+           y(ny)   Vector of monotonically increasing interval boundaries: interval i is [ y(i) , y(i+1) )
+           m(nx)   string of mode options
+                   if x(j)&lt;y(1)
+                       'e' extrapolate: set i(j)=1 and f(j)&lt;0 [default]
+                       'c' clip: set i(j)=1 and f(j)=0
+                       'n' NaN: set i(j)=f(j)=NaN
+                       'z' zero: set i(j)=0 and f(j)&lt;0
+                   if x(j)&gt;=y(ny)
+                       'E' set i(j)=ny-1 and f(j)&gt;1 [default]
+                       'C' set i(j)=ny-1 and f(j)=1
+                       'N' set i(j)=f(j)=NaNj
+                       'Z' set i(j)=ny and f(j)&gt;1
+
+ Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]
+           f(nx)   f(j)=(x(j)-y(i(j)))/(y(i(j)+1))-y(i(j))) is the fractional position of x(j) within the interval.
+                   Note that f(j) lies in the range [0,1) provided that y(1) &lt;= x(j) &lt; y(ny)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_sort.html" class="code" title="function [b,i,j]=v_sort(varargin)">v_sort</a>	V_SORT   Sort in ascending or descending order including an inverse index.</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [i,f]=v_interval(x,y,m)</a>
+0002 <span class="comment">%V_INTERVAL Classify X values into a set of contiguous intervals with boundaries from Y [I,F]=(X,Y,M)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:    x=[1.6 2 3.8 0 6.5];    % test values (not necessarily monotonic)</span>
+0005 <span class="comment">%           y=[1 2 3 5 6];          % define boundaries of four unequal intervals (y must be increasing)</span>
+0006 <span class="comment">%       [i,f]=v_interval(x,y);      % classify into intervals using default options 'eE'</span>
+0007 <span class="comment">%                                   %    i=[1 2 3 1 4] and f=[0.6 0 0.4 -1 1.5]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs:  x(nx)   Vector of test values</span>
+0010 <span class="comment">%           y(ny)   Vector of monotonically increasing interval boundaries: interval i is [ y(i) , y(i+1) )</span>
+0011 <span class="comment">%           m(nx)   string of mode options</span>
+0012 <span class="comment">%                   if x(j)&lt;y(1)</span>
+0013 <span class="comment">%                       'e' extrapolate: set i(j)=1 and f(j)&lt;0 [default]</span>
+0014 <span class="comment">%                       'c' clip: set i(j)=1 and f(j)=0</span>
+0015 <span class="comment">%                       'n' NaN: set i(j)=f(j)=NaN</span>
+0016 <span class="comment">%                       'z' zero: set i(j)=0 and f(j)&lt;0</span>
+0017 <span class="comment">%                   if x(j)&gt;=y(ny)</span>
+0018 <span class="comment">%                       'E' set i(j)=ny-1 and f(j)&gt;1 [default]</span>
+0019 <span class="comment">%                       'C' set i(j)=ny-1 and f(j)=1</span>
+0020 <span class="comment">%                       'N' set i(j)=f(j)=NaNj</span>
+0021 <span class="comment">%                       'Z' set i(j)=ny and f(j)&gt;1</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]</span>
+0024 <span class="comment">%           f(nx)   f(j)=(x(j)-y(i(j)))/(y(i(j)+1))-y(i(j))) is the fractional position of x(j) within the interval.</span>
+0025 <span class="comment">%                   Note that f(j) lies in the range [0,1) provided that y(1) &lt;= x(j) &lt; y(ny)</span>
+0026 <span class="comment">%</span>
+0027 <span class="keyword">if</span> nargin&lt;3
+0028     m=<span class="string">''</span>;
+0029 <span class="keyword">end</span>
+0030 [d,e,r]=<a href="v_sort.html" class="code" title="function [b,i,j]=v_sort(varargin)">v_sort</a>([x(:)']);        <span class="comment">% find order of x values</span>
+0031 [d,e,j]=<a href="v_sort.html" class="code" title="function [b,i,j]=v_sort(varargin)">v_sort</a>([y(:)' x(:)']);
+0032 ny=numel(y);
+0033 k=j(ny+1:end)-r;                <span class="comment">% next lower element of y for each x (in range [0,ny])</span>
+0034 i=max(min(k,ny-1),1);           <span class="comment">% force to lie in range [1,ny-1]</span>
+0035 f=(x-y(i))./(y(i+1)-y(i));      <span class="comment">% fractional position within the interval</span>
+0036 klo=k&lt;1;
+0037 <span class="keyword">if</span> any(klo)
+0038     <span class="keyword">if</span> any(m==<span class="string">'c'</span>)
+0039         f(klo)=0;
+0040     <span class="keyword">elseif</span> any(m==<span class="string">'n'</span>)
+0041         i(klo)=NaN;
+0042         f(klo)=NaN;
+0043     <span class="keyword">elseif</span> any(m==<span class="string">'z'</span>)
+0044         i(klo)=0;
+0045     <span class="keyword">end</span>
+0046 <span class="keyword">end</span>
+0047 khi=k&gt;=ny;
+0048 <span class="keyword">if</span> any(khi)
+0049     <span class="keyword">if</span> any(m==<span class="string">'C'</span>)
+0050         f(khi)=1;
+0051     <span class="keyword">elseif</span> any(m==<span class="string">'N'</span>)
+0052         i(khi)=NaN;
+0053         f(khi)=NaN;
+0054     <span class="keyword">elseif</span> any(m==<span class="string">'Z'</span>)
+0055         i(khi)=ny;
+0056     <span class="keyword">end</span>
+0057 <span class="keyword">end</span>
+0058 i=reshape(i,size(x));           <span class="comment">% force shape to match x</span>
+0059 f=reshape(f,size(x));           <span class="comment">% force shape to match x</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

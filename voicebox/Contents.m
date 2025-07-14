@@ -241,6 +241,7 @@
 %   v_gammalns      - Calculates log(gamma(x)) for signed real-valued x
 %   v_horizdiff     - Estimate the horizontal difference between two functions of x
 %   v_hypergeom1f1  - Confluent Hypergeometric function or Kummer's M function
+%   v_interval      - Classify data into a set of contiguous intervals
 %   v_logsum        - Calculates log(sum(exp(x))) without overflow/underflow
 %   v_minspane      - calculate the minimum (or shortest) spanning tree
 %   v_mintrace      - find a row permutation to minimize the trace of a matrix

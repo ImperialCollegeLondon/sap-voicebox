@@ -4,7 +4,7 @@
 <head>
   <title>Description of v_lpcss2zz</title>
   <meta name="keywords" content="v_lpcss2zz">
-  <meta name="description" content="V_LPCSS2ZZ Convert s-place poles to z-plane poles ZZ=(SS)">
+  <meta name="description" content="V_LPCSS2ZZ Convert s-plane poles to z-plane poles ZZ=(SS,NR)">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -19,19 +19,25 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>V_LPCSS2ZZ Convert s-place poles to z-plane poles ZZ=(SS)</strong></div>
+<div class="box"><strong>V_LPCSS2ZZ Convert s-plane poles to z-plane poles ZZ=(SS,NR)</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function zz=v_lpcss2zz(ss) </strong></div>
+<div class="box"><strong>function zz=v_lpcss2zz(ss,nr) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment">V_LPCSS2ZZ Convert s-place poles to z-plane poles ZZ=(SS)
-the s-plane is in units of Normalized Hz and so the imaginary part
- of each ss() value is in the range +-0.5
+<div class="fragment"><pre class="comment">V_LPCSS2ZZ Convert s-plane poles to z-plane poles ZZ=(SS,NR)
 
- If you multiply ss by the sample frequency, a formant with
- frequency f and bandwidth b will give an s-plane pole-pair
- of approximately -b/2 +- j f</pre></div>
+  Inputs: ss(n,q)  n frames each with q complex-valued pole positions in normalized-Hz units.
+                   A formant with frequency f (in range 0 to 0.5) and bandwidth b will give an
+                   s-plane pole-pair of approximately (-b/2 +-j*f)/fs where fs is the sample frequency.
+          nr       Optional argument specifying how many of the q poles should *not* be
+                   supplemented by including their conjugate pair. The conjugates of poles nr+1:q
+                   will be appended to ss as additional columns. As a special case, nr=-1
+                   will include the conjugate of any column containing a non-real number.
+
+ Outputs: zz(n,p)  z-plane poles. If nr is omitted, then p=q; if nr&gt;=0, then p=2*q-nr.
+
+ The inverse function is zz=v_lpczz2ss(zz)</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -49,38 +55,58 @@ This function is called by:
 
 
 <h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function zz=v_lpcss2zz(ss)</a>
-0002 <span class="comment">%V_LPCSS2ZZ Convert s-place poles to z-plane poles ZZ=(SS)</span>
-0003 <span class="comment">%the s-plane is in units of Normalized Hz and so the imaginary part</span>
-0004 <span class="comment">% of each ss() value is in the range +-0.5</span>
-0005 <span class="comment">%</span>
-0006 <span class="comment">% If you multiply ss by the sample frequency, a formant with</span>
-0007 <span class="comment">% frequency f and bandwidth b will give an s-plane pole-pair</span>
-0008 <span class="comment">% of approximately -b/2 +- j f</span>
-0009 
-0010 <span class="comment">%      Copyright (C) Mike Brookes 1997</span>
-0011 <span class="comment">%      Version: $Id: v_lpcss2zz.m 10865 2018-09-21 17:22:45Z dmb $</span>
-0012 <span class="comment">%</span>
-0013 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
-0014 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
-0015 <span class="comment">%</span>
-0016 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0017 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
-0018 <span class="comment">%   it under the terms of the GNU General Public License as published by</span>
-0019 <span class="comment">%   the Free Software Foundation; either version 2 of the License, or</span>
-0020 <span class="comment">%   (at your option) any later version.</span>
-0021 <span class="comment">%</span>
-0022 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
-0023 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-0024 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-0025 <span class="comment">%   GNU General Public License for more details.</span>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function zz=v_lpcss2zz(ss,nr)</a>
+0002 <span class="comment">%V_LPCSS2ZZ Convert s-plane poles to z-plane poles ZZ=(SS,NR)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs: ss(n,q)  n frames each with q complex-valued pole positions in normalized-Hz units.</span>
+0005 <span class="comment">%                   A formant with frequency f (in range 0 to 0.5) and bandwidth b will give an</span>
+0006 <span class="comment">%                   s-plane pole-pair of approximately (-b/2 +-j*f)/fs where fs is the sample frequency.</span>
+0007 <span class="comment">%          nr       Optional argument specifying how many of the q poles should *not* be</span>
+0008 <span class="comment">%                   supplemented by including their conjugate pair. The conjugates of poles nr+1:q</span>
+0009 <span class="comment">%                   will be appended to ss as additional columns. As a special case, nr=-1</span>
+0010 <span class="comment">%                   will include the conjugate of any column containing a non-real number.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Outputs: zz(n,p)  z-plane poles. If nr is omitted, then p=q; if nr&gt;=0, then p=2*q-nr.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% The inverse function is zz=v_lpczz2ss(zz)</span>
+0015 
+0016 <span class="comment">%      Copyright (C) Mike Brookes 1997-2025</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0019 <span class="comment">%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0022 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0023 <span class="comment">%   it under the terms of the GNU Lesser General Public License as published by</span>
+0024 <span class="comment">%   the Free Software Foundation; either version 3 of the License, or</span>
+0025 <span class="comment">%   (at your option) any later version.</span>
 0026 <span class="comment">%</span>
-0027 <span class="comment">%   You can obtain a copy of the GNU General Public License from</span>
-0028 <span class="comment">%   http://www.gnu.org/copyleft/gpl.html or by writing to</span>
-0029 <span class="comment">%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.</span>
-0030 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0031 
-0032 zz=exp(2*pi*ss);</pre></div>
+0027 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0028 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0029 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0030 <span class="comment">%   GNU Lesser General Public License for more details.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   You can obtain a copy of the GNU Lesser General Public License from</span>
+0033 <span class="comment">%   https://www.gnu.org/licenses/ .</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0036 <span class="keyword">if</span> nargin&gt;1 &amp;&amp; nr&lt;size(ss,2)
+0037     <span class="keyword">if</span> nr&gt;=0
+0038         ss=[ss conj(ss(:,nr+1:end))];
+0039     <span class="keyword">else</span>
+0040         ss=[ss conj(ss(:,any(imag(ss)~=0,1)))];
+0041     <span class="keyword">end</span>
+0042 <span class="keyword">end</span>
+0043 zz=exp(2*pi*ss);
+0044 <span class="keyword">if</span> ~nargout
+0045     q=(0:200)*2*pi/200;
+0046     plot(real(zz.'),imag(zz.'),<span class="string">'x'</span>,cos(q),sin(q),<span class="string">':k'</span>,[-1.05 0; 1.05 0],[0 -1.05; 0 1.05],<span class="string">':k'</span>);
+0047     axis([-1.05 1.05 -1.05 1.05]);
+0048     axis equal;
+0049     xlabel(<span class="string">'Real'</span>);
+0050     ylabel(<span class="string">'Imag'</span>);
+0051 <span class="keyword">end</span>
+0052</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
