@@ -4,7 +4,7 @@ function [y,s,v]=v_rotqrmean(q)
 % Inputs:   q(4,n)    normalized real quaternion array
 %
 % Outputs:  y(4,1)    normalized mean quaternion
-%           s(1,n)    sign vector such that y=q*s', y=y/sqrt(y.'*y)
+%           s(1,n)    sign vector such that t=q*s', y=t/sqrt(t.'*t)
 %           v         average squared deviation from the mean quaternion
 %
 % Since quaternions represent a rotation only to within a sign ambiguity
