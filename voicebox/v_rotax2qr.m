@@ -33,7 +33,7 @@ function q=v_rotax2qr(a,t)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if all(a==0)
     a=[1;0;0];

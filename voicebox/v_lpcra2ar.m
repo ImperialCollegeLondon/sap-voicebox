@@ -41,7 +41,7 @@ function ar=v_lpcra2ar(ra,tol)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent p0 i1 i2 j1 j2
 if nargin<2

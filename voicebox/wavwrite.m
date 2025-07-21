@@ -35,7 +35,7 @@ function wavwrite(y,fs,n,fn)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin<3
     v_writewav(y,8000,fs,'p'); % default is 8kHz, 16 bit

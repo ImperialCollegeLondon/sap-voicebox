@@ -38,7 +38,7 @@ function [kx,ky,nxy,mxy,sxy]=v_txalign(x,y,maxt,nsd)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % d(*,i): i=1 cumulative cost if not the second of a pair

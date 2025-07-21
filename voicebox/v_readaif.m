@@ -68,7 +68,7 @@ function [y,fs,wmode,fidx]=v_readaif(filename,mode,nmax,nskip)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin<1 error('Usage: [y,fs,wmode,fidx]=READAIFF(filename,mode,nmax,nskip)'); end

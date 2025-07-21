@@ -32,7 +32,7 @@ function [y,zo]=v_filterbank(b,a,x,gd)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 nf=size(b,1);           % number of filters
 nz=max(size(b,2),size(a,2))-1;  % size of state  needed

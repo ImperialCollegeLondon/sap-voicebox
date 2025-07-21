@@ -37,7 +37,7 @@ function [m,v,w]=v_gaussmixt(m1,v1,w1,m2,v2,w2)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent r13 r21 r22 r31 r312 r112 r1223 r321 ch1h r122 r124
 if isempty(r21)

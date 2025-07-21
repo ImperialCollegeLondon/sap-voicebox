@@ -44,7 +44,7 @@ function [y,fs,h]=v_readcnx(filename,mode)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ix=[17 71; 18 0; 19 0; 10 0; 12 0; 13 77; 15 -1; 16 0; ];

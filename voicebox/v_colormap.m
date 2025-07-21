@@ -95,7 +95,7 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 persistent maps nams mcal modes nmap nszs pows la lb lc lci laci lk lq yv
 if isempty(maps)

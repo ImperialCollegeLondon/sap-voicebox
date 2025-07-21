@@ -99,7 +99,7 @@ function [x,mc,mn,mx]=v_melbankm(p,n,fs,fl,fh,w)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Note, in the comments, "FFT bin_0" assumes DC = bin 0 whereas "FFT bin_1" assumes DC = bin 1

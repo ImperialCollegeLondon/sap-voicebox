@@ -29,7 +29,7 @@ function [cc,c0]=v_lpcpf2cc(pf,np,f)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [nf,nq]=size(pf);
 if nargin<2 || ~numel(np) np=nq-1; end

@@ -124,7 +124,7 @@ function [ss,gg,tt,ff,zo]=v_specsub(si,fsz,pp)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if numel(si)>length(si)
     error('Input speech signal must be a vector not a matrix');

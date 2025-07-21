@@ -97,7 +97,7 @@ function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %     25+4     m*      use * external models [default 1]

@@ -61,7 +61,7 @@ function tok=v_regexfiles(regex,root,m)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % root='Z:/dmb/data\speech/timit/TRAIN/DR1';
 % regex='^FD.*\.wav$';

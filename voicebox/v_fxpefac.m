@@ -49,7 +49,7 @@ function [fx,tx,pv,fv]=v_fxpefac(s,fs,tinc,m,pp)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 persistent w_u m_u v_u w_v m_v v_v dpwtdef

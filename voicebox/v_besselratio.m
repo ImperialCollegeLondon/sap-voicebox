@@ -41,7 +41,7 @@ function y=v_besselratio(x,v,p)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 wm=[1 1 2 4 10 20 14 21 16 22 18 23 20 25];  % lower bound for initial v as a function of p
 nm=[1 1 1 1 1 1 2 2 3 3 4 4 5 5];            % number of iterations as a function of p

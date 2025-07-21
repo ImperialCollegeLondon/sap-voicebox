@@ -44,7 +44,7 @@ function s=v_lpcconv(from,to,x,y,np)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 nm=['aa';'am';'ao';'ar';'cc';'db';'dl';'ff';'fq';'im';'is';'la';'lo';'ls';'pf';'ra';'rf';'rr';'ss';'zz';];

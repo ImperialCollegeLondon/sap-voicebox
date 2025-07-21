@@ -63,7 +63,7 @@ function [y,ty]=v_correlogram(x,inc,nw,nlag,m,fs)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 memsize=v_voicebox('memsize'); 	% set memory size to use
 [nx,nc]=size(x);                % number of sampes and channels

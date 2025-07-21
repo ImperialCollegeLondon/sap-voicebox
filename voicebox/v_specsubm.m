@@ -41,7 +41,7 @@ function [ss,po]=v_specsubm(s,fs,p)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin<3 po=[0.04 0.1 0.032 1.5 0.08 400 4 4 1.5 0.02 4].'; else po=p; end

@@ -67,7 +67,7 @@ function [d,dbfg]=v_gaussmixb(mf,vf,wf,mg,vg,wg,nx)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 maxiter=15;                                                     % maximum iterations for upper bound calculation
 pruneth=0.2;                                                    % prune threshold for importance sampling (prob that any excluded mixture would have been chosen)

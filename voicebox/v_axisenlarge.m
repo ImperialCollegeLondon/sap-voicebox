@@ -29,7 +29,7 @@ function v_axisenlarge(f,h)
 %
 %   You can obtain a copy of the GNU Lesser General Public License from
 %   https://www.gnu.org/licenses/ .
-%    
+%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fpt=[1 1 1 1 1 1; 1 1 2 2 2 2; 1 1 2 2 3 3; 1 2 3 4 3 4; 1 2 3 4 5 5; 1 2 3 4 5 6];
 if nargin<2 || ~numel(h)
