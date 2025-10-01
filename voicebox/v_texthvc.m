@@ -16,6 +16,7 @@ function h=v_texthvc(x,y,t,p,q,r)
 %               vertical reference point,   v: t=top, p=cap, c or m=middle, l=baseline, b=bottom
 %               colour,                     c: rgbcmykw
 %          q  alternative colour specification as [r g b] each in range 0 to 1
+%          r  obselete (included only for legacy compatibility)
 %
 % If the horizontal or vertical reference point is given as a capital
 % letter, the corresponding position is normalized to the axis range
