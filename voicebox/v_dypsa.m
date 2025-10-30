@@ -422,8 +422,6 @@ qrmax=floor(fs/dy_fxmin);
 
 %Cost and tracking r = current, q = previous, p = preprevious
 cost=zeros(Ncand, dy_nbest); cost(:,:)=inf;    %Cost matrix, one row for each candidate
-maxcost=zeros(Ncand,1); maxcost(:,:)=inf;   %Maximum cost in each row
-imaxcost=ones(Ncand,1);                     %Index of maximum cost
 
 prev = ones(Ncand, dy_nbest);                  %index of previous, q candidates
 ind = ones(Ncand, dy_nbest);                   %index of p in row q (from prev)
