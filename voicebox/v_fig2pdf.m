@@ -124,11 +124,11 @@ if ~strcmp(s,'.')
         f='p'; % default is pdf
     end
     sp=[s  '.pdf'];
-    print('-dpdf',sp);
+    print('-bestfit','-dpdf',sp);
     %     set(gcf,'PaperPosition',[0.6350 6.3500 20.3200 12]);
     [cst,cou]=system(['pdfcrop ' sp ' ' sp]); % needs MikTeX installed
     if cst
-        error('pdfcrop command failed');
+        error('pdfcrop command failed; check MikTeX package is installed');
     end
     if any(f=='s')
         [cst,cou]=system(['pdf2ps ' sp ' ' s '.ps']);
