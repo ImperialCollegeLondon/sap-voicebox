@@ -14,7 +14,7 @@ function h=v_texthvc(x,y,t,p,q,r)
 %          p  3-character text string, 'hvc' specifying:
 %               horizontal reference point, h: l=left, c or m=middle, r=right
 %               vertical reference point,   v: t=top, p=cap, c or m=middle, l=baseline, b=bottom
-%               colour,                     c: rgbcmykw
+%               colour,                     c: in 'rgbcmykw'
 %          q  alternative colour specification as [r g b] each in range 0 to 1
 %          r  obselete (included only for legacy compatibility)
 %
