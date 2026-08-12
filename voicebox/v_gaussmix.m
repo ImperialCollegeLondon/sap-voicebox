@@ -42,12 +42,12 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 %     V(k,p)   Mixture variances, one row per mixture. (omitted if L==0)
 %       or V(p,p,k) if full covariance matrices in use (i.e. either 'v' option or V0(p,p,k) specified)
 %     W(k,1)   Mixture weights, one per mixture. The weights will sum to unity. (omitted if L==0)
-%     G       Average log probability of the input data points.
+%     G        Average log probability of the input data points.
 %     F        Fisher's Discriminant measures how well the data divides into classes.
-%              It is the ratio of the between-mixture variance to the average mixture variance: a
-%              high value means the classes (mixtures) are well separated.
+%                   It is the ratio of the between-mixture variance to the average mixture variance: a
+%                   high value means the classes (mixtures) are well separated.
 %     PP(n,1)  Log probability of each data point
-%     GG(l+1,1) Average log probabilities at the beginning of each iteration and at the end
+%     GG(l+1,1) Average log probabilities at the beginning of each iteration and at the end of the last
 %
 % The fitting procedure uses one of several initialization methods to create an initial guess
 % for the mixture centres and then uses the EM (expectation-maximization) algorithm to refine
@@ -62,6 +62,7 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 %              'm'    Move-means (dog-rabbit) algorithm
 %     (3) Allow updating of weights-only, not means/variances
 %     (4) Allow freezing of means and/or variances
+%     (5) Allow initialization of means only
 
 %      Copyright (C) Mike Brookes 2000-2009
 %      Version: $Id: v_gaussmix.m 10865 2018-09-21 17:22:45Z dmb $
@@ -84,25 +85,25 @@ function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)
 %   https://www.gnu.org/licenses/ .
 %    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[n,p]=size(x); % n = number of training values, p = dimension of data vector
+[n,p]=size(x);                      % n = number of training values, p = dimension of data vector
 wn=ones(n,1);
-memsize=v_voicebox('memsize');    % set memory size to use
-if isempty(c)
+memsize=v_voicebox('memsize');      % set memory size to use
+if isempty(c)                       % no minimum variance is specified
     c=1/n^2;
 else
-    c=c(1);         % just to prevent legacy code failing
+    c=c(1);                         % just to prevent legacy code failing
 end
-fulliv=0;           % initial variance is not full
+fulliv=0;                           % initial variance is not full
 if isempty(l)
-    l=100+1e-4;         % max loop count + stopping threshold
+    l=100+1e-4;                     % max loop count + stopping threshold
 end
 if nargin<5 || isempty(v0) || ischar(v0)             % no initial values specified for m0, v0, w0
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %  No initialvalues given, so we must use k-means or equivalent
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %  No initial values given, so we must use k-means or equivalent  %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if nargin<6
         if nargin<5 || isempty(v0)
-            v0='hf';                 % default initialization mode: hf
+            v0='hf';                % default initialization mode: hf
         end
         wx=wn;                      % no data point weights
     else
@@ -157,7 +158,7 @@ if nargin<5 || isempty(v0) || ischar(v0)             % no initial values specifi
             end
         elseif any(v0=='p')                     % Initialize using a random partition
             j=ceil(rand(n,1)*k);                % allocate to random clusters
-            j(v_rnsubset(k,n))=1:k;               % but force at least one point per cluster
+            j(v_rnsubset(k,n))=1:k;             % but force at least one point per cluster
             for i=1:k
                 m(i,:)=mean(xs(j==i,:),1);
             end
@@ -172,52 +173,54 @@ if nargin<5 || isempty(v0) || ischar(v0)             % no initial values specifi
         if any(v0=='s')
             xs=(x-mx0(wn,:))./sx0(wn,:);      % scale data now if not done previously
         end
-        v=zeros(k,p);                   % diagonal covariances
-        w=zeros(k,1);
+        v=zeros(k,p);                   % initialise diagonal covariances
+        w=zeros(k,1);                   % initialise mixture weights
         for i=1:k
             ni=sum(j==i);               % number assigned to this centre
             w(i)=(ni+1)/(n+k);          % weight of this mixture
-            if ni
-                v(i,:)=sum((xs(j==i,:)-repmat(m(i,:),ni,1)).^2,1)/ni;
-            else
-                v(i,:)=zeros(1,p);
+            if ni                       % if any data points are assined to this mixture
+                v(i,:)=sum((xs(j==i,:)-repmat(m(i,:),ni,1)).^2,1)/ni; % initialize mixture variance
+            else                        % else if no points assigned to this mixture
+                v(i,:)=zeros(1,p);      % set mixture variance to zero (will be set to the global floor later)
             end
         end
     end
 else
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    % use initial values given as input parameters
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % use initial values given as input parameters %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if nargin<7
-        wx=wn;              % no data point weights
+        wx=wn;                          % no data point weights specified so use uniform weights
     end
-    wx=wx(:)/sum(wx); % normalize weights and force a column vector 
-    mx0=wx'*x;         % calculate mean of input data in each dimension
-    vx0=wx'*x.^2-mx0.^2; % calculate variance of input data in each dimension
+    wx=wx(:)/sum(wx);                   % normalize weights and force a column vector 
+    mx0=wx'*x;                          % calculate mean of input data in each dimension
+    vx0=wx'*x.^2-mx0.^2;                % calculate variance of input data in each dimension
     sx0=sqrt(vx0);
-    sx0(sx0==0)=1;      % do not divide by zero when scaling
+    sx0(sx0==0)=1;                      % do not divide by zero when scaling
     [k,p]=size(m0);
-    xs=(x-mx0(wn,:))./sx0(wn,:);          % scale the data
-    m=(m0-mx0(ones(k,1),:))./sx0(ones(k,1),:);          % and the means
+    xs=(x-mx0(wn,:))./sx0(wn,:);                    % scale the data
+    m=(m0-mx0(ones(k,1),:))./sx0(ones(k,1),:);      % and the means
     v=v0;
     w=w0;
-    fv=ndims(v)>2 || size(v,1)>k;                       % full covariance matrix is supplied
-    if fv
-        mk=eye(p)==0;                                    % off-diagonal elements
-        fulliv=any(v(repmat(mk,[1 1 k]))~=0);            % check if any are non-zero
-        if ~fulliv
-            v=reshape(v(repmat(~mk,[1 1 k])),p,k)'./repmat(sx0.^2,k,1);   % just pick out and scale the diagonal elements for now
+    fv=ndims(v)>2 || size(v,1)>k;                   % full covariance matrix is supplied: v(p,p,k)
+    if fv                                           % if full covariance matrix is supplied
+        mk=eye(p)==0;                               % create mask for off-diagonal elements
+        fulliv=any(v(repmat(mk,[1 1 k]))~=0);       % check if any are non-zero
+        if ~fulliv                                  % supplied full covariance matrices are actually diagonal
+            v=reshape(v(repmat(~mk,[1 1 k])),p,k)'./repmat(sx0.^2,k,1);     % just pick out and scale the diagonal elements for now
         else
-            v=v./repmat(sx0'*sx0,[1 1 k]);              % scale the full covariance matrix
+            v=v./repmat(sx0'*sx0,[1 1 k]);          % scale the full covariance matrix for each mixture
         end
+    else                                            % diagonal covariance matrix is supplied: v(k,p)
+        v = v ./ repmat(sx0.^2,k,1);                % scale the diagonal covariance matrix for each mixture
     end
 end
 if length(wx)~=n
     error('%d datapoints but %d weights',n,length(wx));
 end
 lsx=sum(log(sx0));
-xsw=xs.*repmat(wx,1,p); % weighted data points
-if ~fulliv          % initializing with diagonal covariance if v0 is either unspecified or diagonal
+xsw=xs.*repmat(wx,1,p);                             % weighted data points
+if ~fulliv                                          % initializing with diagonal covariance if v0 is either unspecified or diagonal
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Diagonal Covariance matrices  %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
