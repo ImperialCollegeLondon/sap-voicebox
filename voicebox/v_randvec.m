@@ -6,7 +6,7 @@ function [x,kx]=v_randvec(n,m,c,w,mode)
 %           M(K,P)   is the mean vectors (one row per mixture)
 %           C(K,P)   are diagonal covariances (one row per mixture)
 %        or C(P,P,K) are full covariance matrices (one per mixture)
-%           W(K)     are the mixture weights (or omit if all mixtures have equal weight)
+%           W(K)     are the mixture weights (need not sum to 1) (or omit if all mixtures have equal weight)
 %           MODE     character string specifying options:
 %                       g = real gaussian [default]
 %                       c = complex gaussian
