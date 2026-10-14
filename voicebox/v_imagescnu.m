@@ -51,3 +51,4 @@ paty=[y(iy);y(iy);y(iy+1);y(iy+1)];
 clf;
 patch(patx,paty,v(:),'EdgeColor', 'none');
 axis([x(1) x(nx+1) y(1) y(ny+1)]);
+axis ij; % to conform to imagesc()
