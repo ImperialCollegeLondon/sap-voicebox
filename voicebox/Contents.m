@@ -206,6 +206,7 @@
 %   v_fig2emf       - Make a figure bold and save as a windows metafile
 %   v_fig2pdf       - Make a figure bold and save as pdf, eps or ps
 %   v_frac2bin      - Convert numbers to fixed-point binary strings
+%   v_imagescnu     - Plot an image with non-uniform rectangular patches
 %   v_lambda2rgb    - convert wavelength to XYZ or RGB colour triplets
 %   v_sprintsi      - Print a value with an SI multiplier
 %   v_sprintcpx     - Print a complex number with real and imaginary parts
@@ -258,6 +259,8 @@
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% === Unclassified ===
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 1998-2022 Mike Brookes
