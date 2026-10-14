@@ -509,165 +509,163 @@ This function is called by:
 0422 
 0423 <span class="comment">%Cost and tracking r = current, q = previous, p = preprevious</span>
 0424 cost=zeros(Ncand, dy_nbest); cost(:,:)=inf;    <span class="comment">%Cost matrix, one row for each candidate</span>
-0425 maxcost=zeros(Ncand,1); maxcost(:,:)=inf;   <span class="comment">%Maximum cost in each row</span>
-0426 imaxcost=ones(Ncand,1);                     <span class="comment">%Index of maximum cost</span>
-0427 
-0428 prev = ones(Ncand, dy_nbest);                  <span class="comment">%index of previous, q candidates</span>
-0429 ind = ones(Ncand, dy_nbest);                   <span class="comment">%index of p in row q (from prev)</span>
-0430 qbest = [zeros(Ncand,1), ones(Ncand,2)]; <span class="comment">% the minimum cost in any previous q [cost,q,i]</span>
+0425 
+0426 prev = ones(Ncand, dy_nbest);                  <span class="comment">%index of previous, q candidates</span>
+0427 ind = ones(Ncand, dy_nbest);                   <span class="comment">%index of p in row q (from prev)</span>
+0428 qbest = [zeros(Ncand,1), ones(Ncand,2)]; <span class="comment">% the minimum cost in any previous q [cost,q,i]</span>
+0429 
+0430 Cfn=<a href="#_sub7" class="code" title="subfunction Cfn=fnrg(gcic,frob,fs)">fnrg</a>(gcic(:,1),fnwav,fs);  <span class="comment">%Frob.Energy Cost</span>
 0431 
-0432 Cfn=<a href="#_sub7" class="code" title="subfunction Cfn=fnrg(gcic,frob,fs)">fnrg</a>(gcic(:,1),fnwav,fs);  <span class="comment">%Frob.Energy Cost</span>
-0433 
-0434 <span class="comment">%Add start and end state</span>
-0435 <span class="comment">% === should probably delete candidates that are too close to either end of the input</span>
-0436 <span class="comment">% === why do we ever need the additional one at the tail end ?</span>
-0437 gcic=[[gcic(1,1)-qrmax-2 0];gcic;[gcic(<span class="keyword">end</span>,1)+qrmax+2 0]];
-0438 Cfn=[0 Cfn 0];
-0439 Ch = [0 Ch 0];
+0432 <span class="comment">%Add start and end state</span>
+0433 <span class="comment">% === should probably delete candidates that are too close to either end of the input</span>
+0434 <span class="comment">% === why do we ever need the additional one at the tail end ?</span>
+0435 gcic=[[gcic(1,1)-qrmax-2 0];gcic;[gcic(<span class="keyword">end</span>,1)+qrmax+2 0]];
+0436 Cfn=[0 Cfn 0];
+0437 Ch = [0 Ch 0];
+0438 
+0439 <span class="comment">% first do parallelized version</span>
 0440 
-0441 <span class="comment">% first do parallelized version</span>
-0442 
-0443 
-0444 <span class="comment">% rather complicated window specification is for compatibility with DYPSA 2</span>
-0445 <span class="comment">% === +1 below is for compatibility - probably a bug</span>
-0446 wavix=(-floor(nxc/2):floor(nxc/2)+1)';                 <span class="comment">% indexes for segments [nx2,1]</span>
-0447 nx2=length(wavix);
-0448 sqnx2=sqrt(nx2);
-0449 g_cr=dy_wener*Cfn+dy_wslope*Ch+wproj*(1-gcic(:,2))';  <span class="comment">% fixed costs</span>
-0450 
-0451 g_n=gcic(:,1)';                  <span class="comment">% gci sample number [1,Ncand+2]</span>
-0452 g_pr=gcic(:,2)';                 <span class="comment">% unprojected flag [1,Ncand+2]</span>
-0453 g_sqm=zeros(1,Ncand+1);         <span class="comment">% stores: sqrt(nx2) * mean for speech similarity waveform</span>
-0454 g_sd=zeros(1,Ncand+1);         <span class="comment">% stores: 1/(Std deviation * sqrt(nx2)) for speech similarity waveform</span>
-0455 f_pq=zeros((Ncand+1)*dy_nbest,1);   <span class="comment">% (q-p) period for each node</span>
-0456 f_c=repmat(Inf,(Ncand+1)*dy_nbest,1);    <span class="comment">% cumulative cost for each node - initialise to inf</span>
-0457 f_c(1)=0;                       <span class="comment">% initial cost of zero for starting node</span>
-0458 <span class="comment">% f_costs=zeros(Ncand*dy_nbest,6);   % === debugging only remember costs of candidate</span>
-0459 f_f=ones((Ncand+1)*dy_nbest,1);    <span class="comment">% previous node in path</span>
-0460 f_fb=ones((Ncand+1),1);    <span class="comment">% points back to best end-of-spurt node</span>
-0461 fbestc=0;                       <span class="comment">% cost of best end-of-spurt node</span>
-0462 
-0463 qmin=2;
-0464 <span class="keyword">for</span> r=2:Ncand+1   
-0465 <span class="comment">%     if r==86</span>
-0466 <span class="comment">%         r;</span>
-0467 <span class="comment">%     end</span>
-0468     r_n=g_n(r);             <span class="comment">% sample number of r = current candidate</span>
-0469     rix=dy_nbest*(r-1)+(1:dy_nbest);    <span class="comment">% index range within node variables</span>
-0470     
-0471     <span class="comment">% determine the range of feasible q candidates</span>
-0472     qmin0=qmin;
-0473     qmin=find(g_n(qmin0-1:r-1)&lt;r_n-qrmax);      <span class="comment">% qmin is the nearest candidate that is &gt;qrmax away</span>
-0474     qmin=qmin(end)+qmin0-1;             <span class="comment">% convert to absolute index of first viable candidate</span>
-0475     qmax=find(g_n(qmin-1:r-1)&lt;=r_n-qrmin);      <span class="comment">% qmax is the nearest candidate that is &gt;=qrmin away</span>
-0476     qmax=qmax(end)+qmin-2;
-0477     
+0441 
+0442 <span class="comment">% rather complicated window specification is for compatibility with DYPSA 2</span>
+0443 <span class="comment">% === +1 below is for compatibility - probably a bug</span>
+0444 wavix=(-floor(nxc/2):floor(nxc/2)+1)';                 <span class="comment">% indexes for segments [nx2,1]</span>
+0445 nx2=length(wavix);
+0446 sqnx2=sqrt(nx2);
+0447 g_cr=dy_wener*Cfn+dy_wslope*Ch+wproj*(1-gcic(:,2))';  <span class="comment">% fixed costs</span>
+0448 
+0449 g_n=gcic(:,1)';                  <span class="comment">% gci sample number [1,Ncand+2]</span>
+0450 g_pr=gcic(:,2)';                 <span class="comment">% unprojected flag [1,Ncand+2]</span>
+0451 g_sqm=zeros(1,Ncand+1);         <span class="comment">% stores: sqrt(nx2) * mean for speech similarity waveform</span>
+0452 g_sd=zeros(1,Ncand+1);         <span class="comment">% stores: 1/(Std deviation * sqrt(nx2)) for speech similarity waveform</span>
+0453 f_pq=zeros((Ncand+1)*dy_nbest,1);   <span class="comment">% (q-p) period for each node</span>
+0454 f_c=repmat(Inf,(Ncand+1)*dy_nbest,1);    <span class="comment">% cumulative cost for each node - initialise to inf</span>
+0455 f_c(1)=0;                       <span class="comment">% initial cost of zero for starting node</span>
+0456 <span class="comment">% f_costs=zeros(Ncand*dy_nbest,6);   % === debugging only remember costs of candidate</span>
+0457 f_f=ones((Ncand+1)*dy_nbest,1);    <span class="comment">% previous node in path</span>
+0458 f_fb=ones((Ncand+1),1);    <span class="comment">% points back to best end-of-spurt node</span>
+0459 fbestc=0;                       <span class="comment">% cost of best end-of-spurt node</span>
+0460 
+0461 qmin=2;
+0462 <span class="keyword">for</span> r=2:Ncand+1   
+0463 <span class="comment">%     if r==86</span>
+0464 <span class="comment">%         r;</span>
+0465 <span class="comment">%     end</span>
+0466     r_n=g_n(r);             <span class="comment">% sample number of r = current candidate</span>
+0467     rix=dy_nbest*(r-1)+(1:dy_nbest);    <span class="comment">% index range within node variables</span>
+0468     
+0469     <span class="comment">% determine the range of feasible q candidates</span>
+0470     qmin0=qmin;
+0471     qmin=find(g_n(qmin0-1:r-1)&lt;r_n-qrmax);      <span class="comment">% qmin is the nearest candidate that is &gt;qrmax away</span>
+0472     qmin=qmin(end)+qmin0-1;             <span class="comment">% convert to absolute index of first viable candidate</span>
+0473     qmax=find(g_n(qmin-1:r-1)&lt;=r_n-qrmin);      <span class="comment">% qmax is the nearest candidate that is &gt;=qrmin away</span>
+0474     qmax=qmax(end)+qmin-2;
+0475     
+0476     
+0477     <span class="comment">% calculate waveform similarity cost measure statistics</span>
 0478     
-0479     <span class="comment">% calculate waveform similarity cost measure statistics</span>
-0480     
-0481     sr=s(r_n+wavix);        <span class="comment">% note s MUST be a column vector so sr is also</span>
-0482     wsum=sum(sr);
-0483     g_sqm(r)=wsum/sqnx2;                <span class="comment">% mean * sqrt(nx2)</span>
-0484     g_sd(r)=1/sqrt(sr.'*sr-wsum^2/nx2);   <span class="comment">% 1/(Std deviation * sqrt(nx2))</span>
+0479     sr=s(r_n+wavix);        <span class="comment">% note s MUST be a column vector so sr is also</span>
+0480     wsum=sum(sr);
+0481     g_sqm(r)=wsum/sqnx2;                <span class="comment">% mean * sqrt(nx2)</span>
+0482     g_sd(r)=1/sqrt(sr.'*sr-wsum^2/nx2);   <span class="comment">% 1/(Std deviation * sqrt(nx2))</span>
+0483     
+0484     <span class="comment">% now process the candidates</span>
 0485     
-0486     <span class="comment">% now process the candidates</span>
-0487     
-0488     <span class="keyword">if</span> qmin&lt;=qmax
-0489         qix=qmin:qmax;      <span class="comment">% q index</span>
-0490         nq=length(qix);
-0491         <span class="comment">% === should integrate the -0.5 into dy_wxcorr</span>
-0492         <span class="comment">% === the factor (nx2-1)/(nx2-2) is to compensate for a bug in swsc()</span>
-0493         q_cas=-0.5*(nx2-1)/(nx2-2)*dy_wxcorr*(sum(s(repmat(g_n(qix),nx2,1)+repmat(wavix,1,nq)).*repmat(sr,1,nq),1)-g_sqm(qix)*g_sqm(r)).*g_sd(qix)*g_sd(r);
-0494         <span class="comment">% compare: i=35; Ca=swsc(g_n(qix(i)),g_n(r),s,fs); [i qix(i) r  g_n(qix(i)) g_n(r) dy_wxcorr*Ca q_cas(i)]</span>
+0486     <span class="keyword">if</span> qmin&lt;=qmax
+0487         qix=qmin:qmax;      <span class="comment">% q index</span>
+0488         nq=length(qix);
+0489         <span class="comment">% === should integrate the -0.5 into dy_wxcorr</span>
+0490         <span class="comment">% === the factor (nx2-1)/(nx2-2) is to compensate for a bug in swsc()</span>
+0491         q_cas=-0.5*(nx2-1)/(nx2-2)*dy_wxcorr*(sum(s(repmat(g_n(qix),nx2,1)+repmat(wavix,1,nq)).*repmat(sr,1,nq),1)-g_sqm(qix)*g_sqm(r)).*g_sd(qix)*g_sd(r);
+0492         <span class="comment">% compare: i=35; Ca=swsc(g_n(qix(i)),g_n(r),s,fs); [i qix(i) r  g_n(qix(i)) g_n(r) dy_wxcorr*Ca q_cas(i)]</span>
+0493         
+0494         <span class="comment">% now calculate pitch deviation cost</span>
 0495         
-0496         <span class="comment">% now calculate pitch deviation cost</span>
-0497         
-0498         fix = 1+(qmin-1)*dy_nbest:qmax*dy_nbest;    <span class="comment">% node index range</span>
-0499         f_qr=repmat(r_n-g_n(qix),dy_nbest,1);    <span class="comment">% (r-p) period for each node</span>
-0500         f_pr=f_qr(:)+f_pq(fix);
-0501         <span class="comment">% === could absorb the 2 into sv2i</span>
-0502         f_nx=2-2*f_pr./(f_pr+abs(f_qr(:)-f_pq(fix)));
-0503         f_cp=dy_wpitch*(0.5-exp(sv2i*f_nx.^2));
-0504         <span class="comment">% === fudge to match dypsa2.4 - could more efficiently be added</span>
-0505         <span class="comment">% === onto the cost of a talkspurt end</span>
-0506         <span class="comment">% === should be a v_voicebox parameter anyway</span>
-0507         f_cp(f_pq(fix)==0)=dy_cspurt*dy_wpitch;
+0496         fix = 1+(qmin-1)*dy_nbest:qmax*dy_nbest;    <span class="comment">% node index range</span>
+0497         f_qr=repmat(r_n-g_n(qix),dy_nbest,1);    <span class="comment">% (r-p) period for each node</span>
+0498         f_pr=f_qr(:)+f_pq(fix);
+0499         <span class="comment">% === could absorb the 2 into sv2i</span>
+0500         f_nx=2-2*f_pr./(f_pr+abs(f_qr(:)-f_pq(fix)));
+0501         f_cp=dy_wpitch*(0.5-exp(sv2i*f_nx.^2));
+0502         <span class="comment">% === fudge to match dypsa2.4 - could more efficiently be added</span>
+0503         <span class="comment">% === onto the cost of a talkspurt end</span>
+0504         <span class="comment">% === should be a v_voicebox parameter anyway</span>
+0505         f_cp(f_pq(fix)==0)=dy_cspurt*dy_wpitch;
+0506         
+0507         <span class="comment">% now find the N-best paths</span>
 0508         
-0509         <span class="comment">% now find the N-best paths</span>
-0510         
-0511         [r_cnb,nbix]=sort(f_c(fix)+f_cp+reshape(repmat(q_cas,dy_nbest,1),nq*dy_nbest,1));
-0512         f_c(rix)=r_cnb(1:dy_nbest)+g_cr(r);     <span class="comment">% costs</span>
-0513         f_f(rix)=nbix(1:dy_nbest)+(qmin-1)*dy_nbest;       <span class="comment">% traceback nodes</span>
-0514         f_pq(rix)=f_qr(nbix(1:dy_nbest));       <span class="comment">% previous period</span>
-0515         <span class="comment">% === f_costs is only for debugging</span>
-0516 <span class="comment">%         r;</span>
-0517 <span class="comment">%         f_costs(rix,1)=f_c(fix(nbix(1:dy_nbest)));</span>
-0518 <span class="comment">%         f_costs(rix,2)=wproj*(1-gcic(r,2));</span>
-0519 <span class="comment">%         f_costs(rix,3)=f_cp(nbix(1:dy_nbest));</span>
-0520 <span class="comment">%         f_costs(rix,4)=dy_wener*Cfn(r);</span>
-0521 <span class="comment">%         f_costs(rix,5)=dy_wslope*Ch(r);</span>
-0522 <span class="comment">%         f_costs(rix,6)=reshape(q_cas(1+floor((nbix(1:dy_nbest)-1)/dy_nbest)),dy_nbest,1);</span>
-0523         
-0524         <span class="comment">% check cost of using this candidate as the start of a new spurt</span>
-0525         <span class="comment">% ==== the qmin&gt;2 condition is for compatibility with v_dypsa 2 and</span>
-0526         <span class="comment">% prevents any spurts starting until at least qrmax past the first</span>
-0527         <span class="comment">% gci. This is probably a bug (see again below)</span>
-0528         iNb=rix(end);        
-0529         <span class="keyword">if</span> (qmin&gt;2) &amp;&amp; (f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2))&lt;f_c(iNb))        <span class="comment">% compare with worst of Nbest paths</span>
-0530             f_f(iNb)=f_fb(qmin-1);
-0531             <span class="comment">% === for now we exclude the energy and phase-slope costs for compatibility with dypsa2</span>
-0532             <span class="comment">% === this is probably a bug</span>
-0533             f_c(iNb)=f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2));     <span class="comment">% replace worst of the costs with start voicespurt cost</span>
-0534             f_pq(iNb)=0;                    <span class="comment">% false pq period</span>
-0535         <span class="keyword">end</span>
-0536         <span class="keyword">if</span> f_c(rix(1))&lt;fbestc
-0537             f_fb(r)=rix(1);                          <span class="comment">% points to the node with lowest end-of-spurt cost</span>
-0538             <span class="comment">% === should compensate for the pitch period cost incurred at the start of the next spurt</span>
-0539             <span class="comment">% === note that a node can never be a one-node voicespurt on its own unless dy_nbest=1</span>
-0540             <span class="comment">% since the start voices[purt option replaced the worst Nbest cost. This is probably good but</span>
-0541             <span class="comment">% is a bit inconsistent.</span>
-0542             fbestc=f_c(rix(1));
-0543         <span class="keyword">else</span>
-0544             f_fb(r)=f_fb(r-1);
-0545         <span class="keyword">end</span>
-0546     <span class="keyword">else</span>            <span class="comment">% no viable candidates - must be the start of a voicespurt if anything</span>
-0547         <span class="comment">% === for now we exclude the energy and phase-slope costs for compatibility with dypsa2</span>
-0548         <span class="comment">% === this is probably a bug</span>
-0549         <span class="comment">% ==== the qmin&gt;2 condition is for compatibility with v_dypsa 2 and</span>
-0550         <span class="comment">% prevents any spurts starting until at least qrmax past the first</span>
-0551         <span class="comment">% gci. This is probably a bug (see again above)</span>
-0552         <span class="keyword">if</span> (qmin&gt;2)
-0553             f_c(rix(1))=f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2));  <span class="comment">% cost of new voicespurt</span>
-0554             f_f(rix)=f_fb(qmin-1);                              <span class="comment">% traceback to previous talkspurt end</span>
-0555             f_pq(rix)=0;                                        <span class="comment">% previous period</span>
-0556         <span class="keyword">end</span>
-0557         f_fb(r)=f_fb(r-1);                                  <span class="comment">% cannot be the end of a voicespurt</span>
-0558     <span class="keyword">end</span>
-0559 <span class="keyword">end</span>
+0509         [r_cnb,nbix]=sort(f_c(fix)+f_cp+reshape(repmat(q_cas,dy_nbest,1),nq*dy_nbest,1));
+0510         f_c(rix)=r_cnb(1:dy_nbest)+g_cr(r);     <span class="comment">% costs</span>
+0511         f_f(rix)=nbix(1:dy_nbest)+(qmin-1)*dy_nbest;       <span class="comment">% traceback nodes</span>
+0512         f_pq(rix)=f_qr(nbix(1:dy_nbest));       <span class="comment">% previous period</span>
+0513         <span class="comment">% === f_costs is only for debugging</span>
+0514 <span class="comment">%         r;</span>
+0515 <span class="comment">%         f_costs(rix,1)=f_c(fix(nbix(1:dy_nbest)));</span>
+0516 <span class="comment">%         f_costs(rix,2)=wproj*(1-gcic(r,2));</span>
+0517 <span class="comment">%         f_costs(rix,3)=f_cp(nbix(1:dy_nbest));</span>
+0518 <span class="comment">%         f_costs(rix,4)=dy_wener*Cfn(r);</span>
+0519 <span class="comment">%         f_costs(rix,5)=dy_wslope*Ch(r);</span>
+0520 <span class="comment">%         f_costs(rix,6)=reshape(q_cas(1+floor((nbix(1:dy_nbest)-1)/dy_nbest)),dy_nbest,1);</span>
+0521         
+0522         <span class="comment">% check cost of using this candidate as the start of a new spurt</span>
+0523         <span class="comment">% ==== the qmin&gt;2 condition is for compatibility with v_dypsa 2 and</span>
+0524         <span class="comment">% prevents any spurts starting until at least qrmax past the first</span>
+0525         <span class="comment">% gci. This is probably a bug (see again below)</span>
+0526         iNb=rix(end);        
+0527         <span class="keyword">if</span> (qmin&gt;2) &amp;&amp; (f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2))&lt;f_c(iNb))        <span class="comment">% compare with worst of Nbest paths</span>
+0528             f_f(iNb)=f_fb(qmin-1);
+0529             <span class="comment">% === for now we exclude the energy and phase-slope costs for compatibility with dypsa2</span>
+0530             <span class="comment">% === this is probably a bug</span>
+0531             f_c(iNb)=f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2));     <span class="comment">% replace worst of the costs with start voicespurt cost</span>
+0532             f_pq(iNb)=0;                    <span class="comment">% false pq period</span>
+0533         <span class="keyword">end</span>
+0534         <span class="keyword">if</span> f_c(rix(1))&lt;fbestc
+0535             f_fb(r)=rix(1);                          <span class="comment">% points to the node with lowest end-of-spurt cost</span>
+0536             <span class="comment">% === should compensate for the pitch period cost incurred at the start of the next spurt</span>
+0537             <span class="comment">% === note that a node can never be a one-node voicespurt on its own unless dy_nbest=1</span>
+0538             <span class="comment">% since the start voices[purt option replaced the worst Nbest cost. This is probably good but</span>
+0539             <span class="comment">% is a bit inconsistent.</span>
+0540             fbestc=f_c(rix(1));
+0541         <span class="keyword">else</span>
+0542             f_fb(r)=f_fb(r-1);
+0543         <span class="keyword">end</span>
+0544     <span class="keyword">else</span>            <span class="comment">% no viable candidates - must be the start of a voicespurt if anything</span>
+0545         <span class="comment">% === for now we exclude the energy and phase-slope costs for compatibility with dypsa2</span>
+0546         <span class="comment">% === this is probably a bug</span>
+0547         <span class="comment">% ==== the qmin&gt;2 condition is for compatibility with v_dypsa 2 and</span>
+0548         <span class="comment">% prevents any spurts starting until at least qrmax past the first</span>
+0549         <span class="comment">% gci. This is probably a bug (see again above)</span>
+0550         <span class="keyword">if</span> (qmin&gt;2)
+0551             f_c(rix(1))=f_c(f_fb(qmin-1))+wproj*(1-gcic(r,2));  <span class="comment">% cost of new voicespurt</span>
+0552             f_f(rix)=f_fb(qmin-1);                              <span class="comment">% traceback to previous talkspurt end</span>
+0553             f_pq(rix)=0;                                        <span class="comment">% previous period</span>
+0554         <span class="keyword">end</span>
+0555         f_fb(r)=f_fb(r-1);                                  <span class="comment">% cannot be the end of a voicespurt</span>
+0556     <span class="keyword">end</span>
+0557 <span class="keyword">end</span>
+0558 
+0559 <span class="comment">% now do the traceback</span>
 0560 
-0561 <span class="comment">% now do the traceback</span>
+0561 gci = zeros(1,Ncand+1);
 0562 
-0563 gci = zeros(1,Ncand+1);
-0564 
-0565 <span class="comment">% === for compatibility with dypsa2, we force the penultimate candidate to be accepted</span>
-0566 <span class="comment">% === should be: i=f_fb(Ncand+1) but instead we pick the best of the penultimate candidate</span>
-0567 i=rix(1)-dy_nbest;
-0568 <span class="keyword">if</span> f_c(i-dy_nbest+1)&lt;f_c(i)     <span class="comment">% check if start of a talkspurt</span>
-0569     i=i-dy_nbest+1;
-0570 <span class="keyword">end</span>
-0571 k=1;
-0572 <span class="keyword">while</span> i&gt;1
-0573     j=1+floor((i-1)/dy_nbest);          <span class="comment">% convert node number to candidate number</span>
-0574     gci(k)=g_n(j);
-0575     i=f_f(i);
-0576     k=k+1;
-0577 <span class="keyword">end</span>
-0578 gci=gci(k-1:-1:1);           <span class="comment">% put into ascending order</span>
-0579 
+0563 <span class="comment">% === for compatibility with dypsa2, we force the penultimate candidate to be accepted</span>
+0564 <span class="comment">% === should be: i=f_fb(Ncand+1) but instead we pick the best of the penultimate candidate</span>
+0565 i=rix(1)-dy_nbest;
+0566 <span class="keyword">if</span> f_c(i-dy_nbest+1)&lt;f_c(i)     <span class="comment">% check if start of a talkspurt</span>
+0567     i=i-dy_nbest+1;
+0568 <span class="keyword">end</span>
+0569 k=1;
+0570 <span class="keyword">while</span> i&gt;1
+0571     j=1+floor((i-1)/dy_nbest);          <span class="comment">% convert node number to candidate number</span>
+0572     gci(k)=g_n(j);
+0573     i=f_f(i);
+0574     k=k+1;
+0575 <span class="keyword">end</span>
+0576 gci=gci(k-1:-1:1);           <span class="comment">% put into ascending order</span>
+0577 
+0578 
+0579 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
 0580 
-0581 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
-0582 
-0583</pre></div>
+0581</pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>

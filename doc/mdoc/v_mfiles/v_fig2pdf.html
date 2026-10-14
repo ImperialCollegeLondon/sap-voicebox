@@ -194,11 +194,11 @@ This function is called by:
 0124         f=<span class="string">'p'</span>; <span class="comment">% default is pdf</span>
 0125     <span class="keyword">end</span>
 0126     sp=[s  <span class="string">'.pdf'</span>];
-0127     print(<span class="string">'-dpdf'</span>,sp);
+0127     print(<span class="string">'-bestfit'</span>,<span class="string">'-dpdf'</span>,sp);
 0128     <span class="comment">%     set(gcf,'PaperPosition',[0.6350 6.3500 20.3200 12]);</span>
 0129     [cst,cou]=system([<span class="string">'pdfcrop '</span> sp <span class="string">' '</span> sp]); <span class="comment">% needs MikTeX installed</span>
 0130     <span class="keyword">if</span> cst
-0131         error(<span class="string">'pdfcrop command failed'</span>);
+0131         error(<span class="string">'pdfcrop command failed; check MikTeX package is installed'</span>);
 0132     <span class="keyword">end</span>
 0133     <span class="keyword">if</span> any(f==<span class="string">'s'</span>)
 0134         [cst,cou]=system([<span class="string">'pdf2ps '</span> sp <span class="string">' '</span> s <span class="string">'.ps'</span>]);

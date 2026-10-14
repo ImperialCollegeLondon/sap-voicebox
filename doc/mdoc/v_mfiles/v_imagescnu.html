@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_imagescnu</title>
+  <meta name="keywords" content="v_imagescnu">
+  <meta name="description" content="Plot image with non-uniform rectangular patches">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_imagescnu
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Plot image with non-uniform rectangular patches</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function v_imagescnu(x,y,v,db) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Plot image with non-uniform rectangular patches
+
+  Usage:   v_imagescnu(log10(1:2:9),pow2(1:4),rand(5,3));
+
+  Inputs:  x(nx) or x(nx+1)    x-axis patch centres or boundaries
+           y(ny) or y(ny+1)    y-axis patch centres or boundaries
+           v(nx,ny)            Values to plot
+           db                  dB range to plot relative to peak (+ve for mag, -ve for power, 0 [default] for linear)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function v_imagescnu(x,y,v,db)</a>
+0002 <span class="comment">% Plot image with non-uniform rectangular patches</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Usage:   v_imagescnu(log10(1:2:9),pow2(1:4),rand(5,3));</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%  Inputs:  x(nx) or x(nx+1)    x-axis patch centres or boundaries</span>
+0007 <span class="comment">%           y(ny) or y(ny+1)    y-axis patch centres or boundaries</span>
+0008 <span class="comment">%           v(nx,ny)            Values to plot</span>
+0009 <span class="comment">%           db                  dB range to plot relative to peak (+ve for mag, -ve for power, 0 [default] for linear)</span>
+0010 <span class="comment">%</span>
+0011 <span class="keyword">if</span> nargin&lt;4
+0012     db=0;               <span class="comment">% default to linear scale</span>
+0013 <span class="keyword">end</span>
+0014 [nx,ny]=size(v);
+0015 x=x(:)';                <span class="comment">% make x a row vector</span>
+0016 y=y(:)';                <span class="comment">% make y a row vector</span>
+0017 <span class="keyword">if</span> length(x)==nx
+0018     <span class="keyword">if</span> nx==1
+0019         x=-0.5:0.5;
+0020     <span class="keyword">else</span>
+0021         x=0.5*[3*x(1)-x(2) x(1:nx-1)+x(2:nx) 3*x(nx)-x(nx-1)];
+0022     <span class="keyword">end</span>
+0023 <span class="keyword">elseif</span> length(x)~=nx+1
+0024     error(<span class="string">'size(v)=(%d,%d) so length(x) must be %d or %d'</span>,nx,ny,nx,nx+1);
+0025 <span class="keyword">end</span>
+0026 <span class="keyword">if</span> any(x(2:nx+1)-x(1:nx)&lt;=0)
+0027     error(<span class="string">'x values must be monotonically increasing'</span>);
+0028 <span class="keyword">end</span>
+0029 <span class="keyword">if</span> length(y)==ny
+0030     <span class="keyword">if</span> ny==1
+0031         y=-0.5:0.5;
+0032     <span class="keyword">else</span>
+0033         y=0.5*[3*y(1)-y(2) y(1:ny-1)+y(2:ny) 3*y(ny)-y(ny-1)];
+0034     <span class="keyword">end</span>
+0035 <span class="keyword">elseif</span> length(y)~=ny+1
+0036     error(<span class="string">'size(v)=(%d,%d) so length(y) must be %d or %d'</span>,nx,ny,ny,ny+1);
+0037 <span class="keyword">end</span>
+0038 <span class="keyword">if</span> any(y(2:ny+1)-y(1:ny)&lt;=0)
+0039     error(<span class="string">'y values must be monotonically increasing'</span>);
+0040 <span class="keyword">end</span>
+0041 <span class="keyword">if</span> db~=0
+0042     v=abs(v);
+0043     dbmul=(db&gt;0)*10+10;
+0044     v=dbmul*log10(max(v,max(v(:))*10^(-abs(db)/dbmul)));
+0045 <span class="keyword">end</span>
+0046 ix=reshape(repmat((1:nx)',1,ny),1,nx*ny);
+0047 iy=reshape(repmat(1:ny,nx,1),1,nx*ny);
+0048 patx=[x(ix);x(ix+1);x(ix+1);x(ix)];
+0049 paty=[y(iy);y(iy);y(iy+1);y(iy+1)];
+0050 clf;
+0051 patch(patx,paty,v(:),<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0052 axis([x(1) x(nx+1) y(1) y(ny+1)]);</pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
