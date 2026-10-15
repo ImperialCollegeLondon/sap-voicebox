@@ -419,7 +419,7 @@ This function is called by:
 0332 <span class="comment">% perform group delay calculation</span>
 0333 
 0334 gw=2*floor(dy_gwlen*fs/2)+1;            <span class="comment">% force window length to be odd</span>
-0335 ghw=window(<span class="string">'hamming'</span>,gw,<span class="string">'s'</span>);
+0335 ghw=window(<span class="string">'hamming'</span>,gw); <span class="comment">% was ghw=window('hamming',gw,'s'); but this gives an error because 's' could be 'symmetric' or 'single'</span>
 0336 ghw = ghw(:);                           <span class="comment">% force to be a column (dmb thinks window gives a row - and he should know as he wrote it!)</span>
 0337 ghwn=ghw'.*(gw-1:-2:1-gw)/2;            <span class="comment">% weighted window: zero in middle</span>
 0338 
@@ -431,7 +431,7 @@ This function is called by:
 0344 toff=(gw-1)/2;
 0345 fw=2*floor(dy_fwlen*fs/2)+1;            <span class="comment">% force window length to be odd</span>
 0346 <span class="keyword">if</span> fw&gt;1
-0347     daw=window(<span class="string">'hamming'</span>,fw,<span class="string">'s'</span>);
+0347     daw=window(<span class="string">'hamming'</span>,fw);  <span class="comment">% was daw=window('hamming',fw,'s'); but this gives an error because 's' could be 'symmetric' or 'single'</span>
 0348     y=filter(daw,1,y)/sum(daw);         <span class="comment">% low pass filter</span>
 0349     toff=toff-(fw-1)/2;
 0350 <span class="keyword">end</span>

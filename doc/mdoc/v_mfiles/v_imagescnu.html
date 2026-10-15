@@ -27,13 +27,13 @@
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Plot image with non-uniform rectangular patches
 
-  Usage:   v_imagescnu(log10(1:2:9),pow2(1:3),reshape(1:15,3,5));
-           colorbar;
+  Usage:   (1) v_imagescnu(log10(1:2:9),(1:3).^2,reshape(1:15,3,5));   % log x, quadratic y
+               colorbar; axis xy;                                      % add colorbar + invert y-axis
 
   Inputs:  x(nx) or x(nx+1)    x-axis patch centres or boundaries
            y(ny) or y(ny+1)    y-axis patch centres or boundaries
-           v(ny,nx)            Values to plot
-           db                  dB range to plot relative to peak (+ve for mag, -ve for power, 0 [default] for linear)</pre></div>
+           v(ny,nx)            Values to plot (if db is non-zero then abs(v) will be displayed)
+           db                  dB range to plot relative to peak (+ve for mag, -ve for power, 0 [default] for linear scale)</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -54,57 +54,59 @@ This function is called by:
 <div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function v_imagescnu(x,y,v,db)</a>
 0002 <span class="comment">% Plot image with non-uniform rectangular patches</span>
 0003 <span class="comment">%</span>
-0004 <span class="comment">%  Usage:   v_imagescnu(log10(1:2:9),pow2(1:3),reshape(1:15,3,5));</span>
-0005 <span class="comment">%           colorbar;</span>
+0004 <span class="comment">%  Usage:   (1) v_imagescnu(log10(1:2:9),(1:3).^2,reshape(1:15,3,5));   % log x, quadratic y</span>
+0005 <span class="comment">%               colorbar; axis xy;                                      % add colorbar + invert y-axis</span>
 0006 <span class="comment">%</span>
 0007 <span class="comment">%  Inputs:  x(nx) or x(nx+1)    x-axis patch centres or boundaries</span>
 0008 <span class="comment">%           y(ny) or y(ny+1)    y-axis patch centres or boundaries</span>
-0009 <span class="comment">%           v(ny,nx)            Values to plot</span>
-0010 <span class="comment">%           db                  dB range to plot relative to peak (+ve for mag, -ve for power, 0 [default] for linear)</span>
+0009 <span class="comment">%           v(ny,nx)            Values to plot (if db is non-zero then abs(v) will be displayed)</span>
+0010 <span class="comment">%           db                  dB range to plot relative to peak (+ve for mag, -ve for power, 0 [default] for linear scale)</span>
 0011 <span class="comment">%</span>
 0012 <span class="keyword">if</span> nargin&lt;4
-0013     db=0;               <span class="comment">% default to linear scale</span>
+0013     db=0;                                   <span class="comment">% default to linear scale</span>
 0014 <span class="keyword">end</span>
 0015 [ny,nx]=size(v);
-0016 x=x(:)';                <span class="comment">% make x a row vector</span>
-0017 y=y(:)';                <span class="comment">% make y a row vector</span>
-0018 <span class="keyword">if</span> length(x)==nx
-0019     <span class="keyword">if</span> nx==1
-0020         x=-0.5:0.5;
+0016 x=x(:)';                                    <span class="comment">% make x a row vector</span>
+0017 y=y(:)';                                    <span class="comment">% make y a row vector</span>
+0018 <span class="keyword">if</span> length(x)==nx                            <span class="comment">% need to convert from column-centres to column-edges</span>
+0019     <span class="keyword">if</span> nx==1                                <span class="comment">% if only one column ...</span>
+0020         x=x-0.5:x+0.5;                      <span class="comment">% ... make it of unit width</span>
 0021     <span class="keyword">else</span>
-0022         x=0.5*[3*x(1)-x(2) x(1:nx-1)+x(2:nx) 3*x(nx)-x(nx-1)];
+0022         x=0.5*[3*x(1)-x(2) x(1:nx-1)+x(2:nx) 3*x(nx)-x(nx-1)];  <span class="comment">% place column-edges midway between centres</span>
 0023     <span class="keyword">end</span>
-0024 <span class="keyword">elseif</span> length(x)~=nx+1
+0024 <span class="keyword">elseif</span> length(x)~=nx+1                      <span class="comment">% error unless length(x) = either nx or nx+1</span>
 0025     error(<span class="string">'size(v)=(%d,%d) so length(x) must be %d or %d'</span>,ny,nx,nx,nx+1);
 0026 <span class="keyword">end</span>
-0027 <span class="keyword">if</span> any(x(2:nx+1)-x(1:nx)&lt;=0)
+0027 <span class="keyword">if</span> any(x(2:nx+1)-x(1:nx)&lt;=0)                <span class="comment">% check that x is monotonically increasing</span>
 0028     error(<span class="string">'x values must be monotonically increasing'</span>);
 0029 <span class="keyword">end</span>
-0030 <span class="keyword">if</span> length(y)==ny
-0031     <span class="keyword">if</span> ny==1
-0032         y=-0.5:0.5;
+0030 <span class="keyword">if</span> length(y)==ny                            <span class="comment">% need to convert from row-centres to row-edges</span>
+0031     <span class="keyword">if</span> ny==1                                <span class="comment">% if only one row ...</span>
+0032         y=y-0.5:y+0.5;                      <span class="comment">% ... make it of unit width</span>
 0033     <span class="keyword">else</span>
-0034         y=0.5*[3*y(1)-y(2) y(1:ny-1)+y(2:ny) 3*y(ny)-y(ny-1)];
+0034         y=0.5*[3*y(1)-y(2) y(1:ny-1)+y(2:ny) 3*y(ny)-y(ny-1)];  <span class="comment">% place row-edges midway between centres</span>
 0035     <span class="keyword">end</span>
-0036 <span class="keyword">elseif</span> length(y)~=ny+1
+0036 <span class="keyword">elseif</span> length(y)~=ny+1                      <span class="comment">% error unless length(y) = either ny or ny+1</span>
 0037     error(<span class="string">'size(v)=(%d,%d) so length(y) must be %d or %d'</span>,ny,nx,ny,ny+1);
 0038 <span class="keyword">end</span>
-0039 <span class="keyword">if</span> any(y(2:ny+1)-y(1:ny)&lt;=0)
+0039 <span class="keyword">if</span> any(y(2:ny+1)-y(1:ny)&lt;=0)                <span class="comment">% check that y is monotonically increasing</span>
 0040     error(<span class="string">'y values must be monotonically increasing'</span>);
 0041 <span class="keyword">end</span>
-0042 <span class="keyword">if</span> db~=0
-0043     v=abs(v);
-0044     dbmul=(db&gt;0)*10+10;
-0045     v=dbmul*log10(max(v,max(v(:))*10^(-abs(db)/dbmul)));
+0042 <span class="keyword">if</span> db~=0                                    <span class="comment">% db nonzero means a log colour scale</span>
+0043     v=abs(v); 
+0044     dbmul=(db&gt;0)*10+10;                     <span class="comment">% db multiplier is 10 for power (db&lt;0) or 20 for magnitude (db&gt;0)</span>
+0045     v=dbmul*log10(max(v,max(v(:))*10^(-abs(db)/dbmul)));    <span class="comment">% clip data to a range of abs(db)</span>
 0046 <span class="keyword">end</span>
-0047 ix=reshape(repmat(1:nx,ny,1),1,nx*ny);
-0048 iy=reshape(repmat((1:ny),1,nx),1,nx*ny);
-0049 patx=[x(ix);x(ix+1);x(ix+1);x(ix)];
-0050 paty=[y(iy);y(iy);y(iy+1);y(iy+1)];
-0051 clf;
-0052 patch(patx,paty,v(:),<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
-0053 axis([x(1) x(nx+1) y(1) y(ny+1)]);
-0054 axis ij; <span class="comment">% to conform to imagesc()</span></pre></div>
+0047 ix=reshape(repmat(1:nx,ny,1),1,nx*ny);      <span class="comment">% x index of each patch (column-major order)</span>
+0048 iy=reshape(repmat((1:ny),1,nx),1,nx*ny);    <span class="comment">% y index of each patch (column-major order)</span>
+0049 patx=[x(ix);x(ix+1);x(ix+1);x(ix)];         <span class="comment">% x-coordinates of patch corners in order low-left, low-right, high-right, high-left(one patch per column)</span>
+0050 paty=[y(iy);y(iy);y(iy+1);y(iy+1)];         <span class="comment">% y-coordinates of patch corners in order low-left, low-right, high-right, high-left(one patch per column)</span>
+0051 <span class="keyword">if</span> ~ishold
+0052     cla;                                    <span class="comment">% clear the axes unless hold is turned on</span>
+0053 <span class="keyword">end</span>
+0054 patch(patx,paty,v(:),<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);  <span class="comment">% plot the patches</span>
+0055 axis([x(1) x(nx+1) y(1) y(ny+1)]);          <span class="comment">% define the axis limits</span>
+0056 axis ij;                                    <span class="comment">% orient image to conform to imagesc()</span></pre></div>
 
 <hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
