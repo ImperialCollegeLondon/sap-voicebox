@@ -1,8 +1,8 @@
 function [b,i,j]=v_sort(varargin)
 %V_SORT   Sort in ascending or descending order including an inverse index.
 %
-% This routine performes the same function as sort but includes an additional
-% output, j, which is the same size as b and i and gives an inverse index .
+% This routine performs the same function as sort but includes an additional
+% output, j, which is the same size as b and i and gives an inverse index.
 % If the input is a column vector, a, then b=a(i) and a=b(j).
 %
 % The routine does not currently accept the "dim" argument to sort and the
