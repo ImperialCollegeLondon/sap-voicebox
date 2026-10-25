@@ -38,7 +38,7 @@ function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)
 %               'y'  lowest filter remains at 1 down to 0 frequency and
 %			   	     highest filter remains at 1 up to nyquist freqency
 %
-%		       If 'ty' or 'ny' is specified, the total power in the fft is preserved.
+%		       If 'ty' or 'ny' is specified, the total power in the windowed-fft is preserved by the Mel filterbank.
 %
 % Outputs:	c     mel cepstrum output: one frame per row. Log energy, if requested, is the
 %                 first element of each row followed by the delta and then the delta-delta
@@ -50,6 +50,8 @@ function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)
 % BUGS: (1) should have power limit as 1e-16 rather than 1e-6 (or possibly a better way of choosing this)
 %           and put into VOICEBOX
 %       (2) get v_rdct to change the data length (properly) instead of doing it explicitly (wrongly)
+%       (3) units are a bit arbitrary: cepstral coeffs are log_e of either power or magnitude while
+%           deltas are the change per frame.
 
 %      Copyright (C) Mike Brookes 1997
 %      Version: $Id: v_melcepst.m 10865 2018-09-21 17:22:45Z dmb $
@@ -89,23 +91,23 @@ if nargin<9
 end
 
 if isempty(w)
-   w='M';
+   w='M';                               % default time-domain window is Hamming
 end
 if any(w=='R')
-   [z,tc]=v_enframe(s,n,inc);
+   [z,tc]=v_enframe(s,n,inc);           % time-domain window is rectangular
 elseif any (w=='N')
-   [z,tc]=enframe(s,0.5-0.5*cos(2*pi*(1:n)'/(n+1)),inc); % Hanning window
+   [z,tc]=enframe(s,0.5-0.5*cos(2*pi*(1:n)'/(n+1)),inc);        % Hanning window
 else
-   [z,tc]=enframe(s,0.54-0.46*cos(2*pi*(0:n-1)'/(n-1)),inc); % Hamming window
+   [z,tc]=enframe(s,0.54-0.46*cos(2*pi*(0:n-1)'/(n-1)),inc);    % Hamming window [default]
 end
 f=rfft(z.');
-[m,a,b]=v_melbankm(p,n,fs,fl,fh,w);
+[m,a,b]=v_melbankm(p,n,fs,fl,fh,w);     % mel filterbank matrix
 pw=f(a:b,:).*conj(f(a:b,:));
-pth=max(pw(:))*1E-20;
+pth=max(pw(:))*1E-20;                   % power threshold for log
 if any(w=='p')
    y=log(max(m*pw,pth));
 else
-   ath=sqrt(pth);
+   ath=sqrt(pth);                       % magnitude threshold for log
    y=log(max(m*abs(f(a:b,:)),ath));
 end
 c=rdct(y).';
@@ -131,12 +133,12 @@ if any(w=='D')
   vf=(4:-1:-4)/60;
   af=(1:-1:-1)/2;
   ww=ones(5,1);
-  cx=[c(ww,:); c; c(nf*ww,:)];
-  vx=reshape(filter(vf,1,cx(:)),nf+10,nc);
-  vx(1:8,:)=[];
-  ax=reshape(filter(af,1,vx(:)),nf+2,nc);
-  ax(1:2,:)=[];
-  vx([1 nf+2],:)=[];
+  cx=[c(ww,:); c; c(nf*ww,:)];                  % replicate 5 frames at each end (delay += 5)
+  vx=reshape(filter(vf,1,cx(:)),nf+10,nc);      % delta filter (delay += 4)
+  vx(1:8,:)=[];                                 % delay += -8
+  ax=reshape(filter(af,1,vx(:)),nf+2,nc);       % delta-delta filter (delay += 1 to ax only)
+  ax(1:2,:)=[];                                 % delay += -2 to ax only
+  vx([1 nf+2],:)=[];                            % delay += -1 to vx only
   if any(w=='d')
      c=[c vx ax];
   else
@@ -145,7 +147,7 @@ if any(w=='D')
 elseif any(w=='d')
   vf=(4:-1:-4)/60;
   ww=ones(4,1);
-  cx=[c(ww,:); c; c(nf*ww,:)];
+  cx=[c(ww,:); c; c(nf*ww,:)];                  % replicate 4 frames at each end
   vx=reshape(filter(vf,1,cx(:)),nf+8,nc);
   vx(1:8,:)=[];
   c=[c vx];
