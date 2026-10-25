@@ -6,7 +6,7 @@ function [i,f]=v_interval(x,y,m)
 %       [i,f]=v_interval(x,y);      % classify into intervals using default options 'eE'
 %                                   %    i=[1 2 3 1 4] and f=[0.6 0 0.4 -1 1.5]
 %
-%  Inputs:  x(nx)   Vector of test values
+%  Inputs:  x(nx)   Vector (or matrix) of test values
 %           y(ny)   Vector of monotonically increasing interval boundaries: interval i is [ y(i) , y(i+1) )
 %           m(nx)   string of mode options
 %                   if x(j)<y(1)
@@ -20,9 +20,9 @@ function [i,f]=v_interval(x,y,m)
 %                       'N' set i(j)=f(j)=NaNj
 %                       'Z' set i(j)=ny and f(j)>1
 %
-% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]
+% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]. i() has the same shape as x().
 %           f(nx)   f(j)=(x(j)-y(i(j)))/(y(i(j)+1))-y(i(j))) is the fractional position of x(j) within the interval.
-%                   Note that f(j) lies in the range [0,1) provided that y(1) <= x(j) < y(ny)
+%                    f() has the same shape as x(). Note that f(j) lies in the range [0,1) provided that y(1) <= x(j) < y(ny)
 %
 
 %	   Copyright (C) Mike Brookes 2025
@@ -54,7 +54,7 @@ end
 ny=numel(y);
 k=j(ny+1:end)-r;                % next lower element of y for each x (in range [0,ny])
 i=max(min(k,ny-1),1);           % force to lie in range [1,ny-1]
-f=(x-y(i))./(y(i+1)-y(i));      % fractional position within the interval
+f=(x(:)'-y(i))./(y(i+1)-y(i));      % fractional position within the interval
 klo=k<1;
 if any(klo)
     if any(m=='c')
