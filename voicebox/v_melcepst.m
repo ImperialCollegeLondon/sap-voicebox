@@ -10,7 +10,7 @@ function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)
 %     fs  sample rate in Hz (default 11025)
 %     w   mode string (see below)
 %     nc  number of cepstral coefficients excluding 0'th coefficient [default 12]
-%     p   number of filters in v_filterbank [default: floor(3*log(fs)) =  approx 2.1 per ocatave]
+%     p   number of filters in v_filterbank [default: floor(3*log(fs)) =  approx 2.1 per octave]
 %     n   length of frame in samples [default power of 2 < (0.03*fs)]
 %     inc frame increment [default n/2]
 %     fl  low end of the lowest filter as a fraction of fs [default = 0]
@@ -36,7 +36,7 @@ function [c,tc]=v_melcepst(s,fs,w,nc,p,n,inc,fl,fh)
 %
 %               'z'  highest and lowest filters taper down to zero (default)
 %               'y'  lowest filter remains at 1 down to 0 frequency and
-%			   	     highest filter remains at 1 up to nyquist freqency
+%			   	     highest filter remains at 1 up to nyquist frequency
 %
 %		       If 'ty' or 'ny' is specified, the total power in the windowed-fft is preserved by the Mel filterbank.
 %
