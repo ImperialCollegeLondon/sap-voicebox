@@ -20,7 +20,7 @@ function [i,f]=v_interval(x,y,m)
 %                       'N' set i(j)=f(j)=NaNj
 %                       'Z' set i(j)=ny and f(j)>1
 %
-% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]. i() has the same shape as x().
+% Outputs:  i(nx)   Input x(j) lies in the interval  [y(i(j)),y(i(j)+1)]. i() has the same shape as x() and is in the range [1,ny-1] unless 'z' or 'Z' given.
 %           f(nx)   f(j)=(x(j)-y(i(j)))/(y(i(j)+1))-y(i(j))) is the fractional position of x(j) within the interval.
 %                    f() has the same shape as x(). Note that f(j) lies in the range [0,1) provided that y(1) <= x(j) < y(ny)
 %
@@ -49,31 +49,32 @@ function [i,f]=v_interval(x,y,m)
 if nargin<3
     m='';
 end
-[d,e,r]=v_sort([x(:)']);        % find order of x values
-[d,e,j]=v_sort([y(:)' x(:)']);
+y=y(:);                             % force y to be a column vector
+[d,e,r]=v_sort([x(:)]);             % find order of x values
+[d,e,j]=v_sort([y; x(:)]);
 ny=numel(y);
-k=j(ny+1:end)-r;                % next lower element of y for each x (in range [0,ny])
-i=max(min(k,ny-1),1);           % force to lie in range [1,ny-1]
-f=(x(:)'-y(i))./(y(i+1)-y(i));      % fractional position within the interval
+k=j(ny+1:end)-r;                    % next lower element of y for each x (in range [0,ny])
+i=max(min(k,ny-1),1);               % force to lie in range [1,ny-1]
+f=(x(:)-y(i))./(y(i+1)-y(i));       % fractional position within the interval
 klo=k<1;
-if any(klo)
-    if any(m=='c')
-        f(klo)=0;
-    elseif any(m=='n')
-        i(klo)=NaN;
+if any(klo)                         % If any x's are < y(1) ...
+    if any(m=='c')                  % ... 'c' = clip: set i=ny-1 and f=0    
+        f(klo)=0;              
+    elseif any(m=='n')              % ... 'n' = NaN: set i=NaN and f=NaN
+        i(klo)=NaN;               
         f(klo)=NaN;
-    elseif any(m=='z')
+    elseif any(m=='z')              % ... 'z' = zero: set i=0 and f<0
         i(klo)=0;
     end
 end
-khi=k>=ny;
-if any(khi)
-    if any(m=='C')
+khi=k>=ny;                      
+if any(khi)                         % If any x's are > y(end) ...
+    if any(m=='C')                  % ... 'C' = clip: set i=1 and f=0   
         f(khi)=1;
-    elseif any(m=='N')
+    elseif any(m=='N')              % ... 'N' = NaN: set i=NaN and f=NaN
         i(khi)=NaN;
         f(khi)=NaN;
-    elseif any(m=='Z')
+    elseif any(m=='Z')              % ... 'Z' = zero: set i=ny and f>1
         i(khi)=ny;
     end
 end
