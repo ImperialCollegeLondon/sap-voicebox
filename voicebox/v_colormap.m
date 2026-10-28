@@ -75,6 +75,7 @@ function [rgb,y,l]=v_colormap(map,m,n,p)
 
 % Bugs/Suggestions:
 %  (1) Should allow an optional "target" input (like colormap(0) does).
+%  (2) For bipolar maps it would be good to be able to define where the zero is (or to force the 'clim' range symmetrical) 
 
 %      Copyright (C) Mike Brookes 2012-2018
 %      Version: $Id: v_colormap.m 10866 2018-09-21 17:32:44Z dmb $
