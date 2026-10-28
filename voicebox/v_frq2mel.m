@@ -1,5 +1,7 @@
 function [mel,mr] = v_frq2mel(frq)
 %V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
+%
+% Usage: (1)  
 %	[mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)
 %	to the corresponding values on the Mel scale which corresponds
 %	to the perceived pitch of a tone.
@@ -51,18 +53,22 @@ function [mel,mr] = v_frq2mel(frq)
 %   https://www.gnu.org/licenses/ .
 %    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-persistent k c kr cr
+persistent k c kr logkcr
 if isempty(k)
     c=700;                              % corner frequency in Hz
-    cr=1/c;
     k=1000/log(1+1000/c);               % useful constant: 1127.01048
     kr=1/k;
+    logkcr=log(k/c);
 end
-af=abs(frq);
-mel = sign(frq).*log(1+af*cr)*k;
-mr=(c+af)*kr;
+mr=kr*(c+abs(frq));                     % Mel rate in Hz/Mel
+mel=sign(frq).*(log(mr)+logkcr)*k;
 if ~nargout
+    subplot(2,1,2);
+    plot(frq,mr,'-x');
+    xlabel(['Frequency (' v_xticksi 'Hz)']);
+    ylabel(['Mel-Rate (' v_yticksi 'Hz/Mel)']);
+    subplot(2,1,1);
     plot(frq,mel,'-x');
     xlabel(['Frequency (' v_xticksi 'Hz)']);
-    ylabel(['Frequency (' v_yticksi 'Mel)']);
+    ylabel(['Mel-Freq (' v_yticksi 'Mel)']);
 end
