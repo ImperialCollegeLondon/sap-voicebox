@@ -16,7 +16,7 @@ function [mel,mr] = v_frq2mel(frq)
 %     [1] J. Makhoul and L. Cosell. "Lpcw: An lpc vocoder with
 %         linear predictive spectral warping", In Proc IEEE Intl
 %         Conf Acoustics, Speech and Signal Processing, volume 1,
-%         pages 466�469, 1976. doi: 10.1109/ICASSP.1976.1170013.
+%         pages 466-469, 1976. doi: 10.1109/ICASSP.1976.1170013.
 %	  [2] S. S. Stevens & J. Volkman "The relation of pitch to
 %		  frequency", American J of Psychology, V 53, p329 1940
 %	  [3] C. G. M. Fant, "Acoustic description & classification
@@ -51,13 +51,16 @@ function [mel,mr] = v_frq2mel(frq)
 %   https://www.gnu.org/licenses/ .
 %    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-persistent k
+persistent k c kr cr
 if isempty(k)
-    k=1000/log(1+1000/700); %  1127.01048
+    c=700;                              % corner frequency in Hz
+    cr=1/c;
+    k=1000/log(1+1000/c);               % useful constant: 1127.01048
+    kr=1/k;
 end
 af=abs(frq);
-mel = sign(frq).*log(1+af/700)*k;
-mr=(700+af)/k;
+mel = sign(frq).*log(1+af*cr)*k;
+mr=(c+af)*kr;
 if ~nargout
     plot(frq,mel,'-x');
     xlabel(['Frequency (' v_xticksi 'Hz)']);
