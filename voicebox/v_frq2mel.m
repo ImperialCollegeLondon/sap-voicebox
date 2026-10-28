@@ -1,15 +1,17 @@
 function [mel,mr] = v_frq2mel(frq)
-%V_FRQ2ERB  Convert Hertz to Mel frequency scale MEL=(FRQ)
+%V_FRQ2MEL  Convert Hertz to Mel frequency scale MEL=(FRQ)
 %
-% Usage: (1)  
-%	[mel,mr] = v_frq2mel(frq) converts a vector of frequencies (in Hz)
-%	to the corresponding values on the Mel scale which corresponds
-%	to the perceived pitch of a tone.
-%   mr gives the corresponding gradients in Hz/mel.
-
-%	The relationship between mel and frq is given by [1]:
+% Usage: (1) v_frq2mel(-20000:400:20000); % plot Mel and Mel-rate versus frequency 
 %
-%	m = ln(1 + f/700) * 1000 / ln(1+1000/700)
+%  Input:   frq     Scalar, vector or matrix of frequency values in Hz
+%
+% Outputs:  mel     Corresponding values in Mel (same shape as frq)
+%           mr      Corresponding gradients in Hz/Mel (linear function of frequency)
+%
+%	The Mel scale corresponds to the perceived pitch of a pure tome. The relationship
+%   between mel and frq is given by [1]:
+%
+%	            m = ln(1 + f/700) * 1000 / ln(1+1000/700)
 %
 %  	This means that m(1000) = 1000
 %
