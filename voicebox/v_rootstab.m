@@ -17,7 +17,7 @@ function [no,ni,nc]=v_rootstab(p)
 %      Copyright (C) Mike Brookes 2025
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify

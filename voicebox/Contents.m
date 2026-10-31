@@ -267,7 +267,7 @@
 %   Version: $Id: Contents.m 10863 2018-09-21 15:39:23Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/v_voicebox/v_voicebox.html
+%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify

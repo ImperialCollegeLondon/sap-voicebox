@@ -82,7 +82,7 @@ function fidx=v_writewav(d,fs,filename,mode,nskip,mask,mad)
 %      Version: $Id: v_writewav.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify

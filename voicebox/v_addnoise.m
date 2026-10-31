@@ -55,7 +55,7 @@ function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa)
 %      Version: $Id: v_addnoise.m 10461 2018-03-29 13:30:51Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify

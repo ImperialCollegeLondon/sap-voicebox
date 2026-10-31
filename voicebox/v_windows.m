@@ -136,7 +136,7 @@ function w = v_windows(wtype,n,mode,p,ov)
 %      Version: $Id: v_windows.m 10477 2018-06-03 16:16:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify

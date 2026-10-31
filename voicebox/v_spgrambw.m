@@ -24,7 +24,7 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %             v_spgrambw(sf,[fs/ninc 0.5*(nwin+1)/fs fs/nwin],'Jc',bw);  % Plot spectrum array
 %
 %         For examples of the many options available see:
-%         http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/tutorial/spgrambw/spgram_tut.pdf
+%         https://imperialcollegelondon.github.io/sap-voicebox/tutorial/spgrambw/spgram_tut.pdf
 %
 %  Inputs:  S         speech signal, or single-sided power spectrum array, S(NT,NF), in power per Hz
 %           FS        sample fequency (Hz) or [FS T1] where T1 is the time of the first sample
@@ -107,7 +107,7 @@ function [t,f,b]=v_spgrambw(s,fs,varargin)
 %      Version: $Id: v_spgrambw.m 10865 2018-09-21 17:22:45Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify
