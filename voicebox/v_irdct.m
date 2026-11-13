@@ -1,16 +1,24 @@
 function x=v_irdct(y,n,a,b)
 %V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N) 
-% Data is truncated/padded to length N.
+%
+%  Inputs: y(m,k)   Real-valued input data; transform will be applied to each column 
+%          n        Transform length. x will be zero-padded or truncated to length n [default: m]
+%          a        Input scale factor [default: sqrt(2*n)]
+%          b        Input scale factor for DC term [default: 1]
+%
+% Outputs: x(n,k)   Output data
 %
 % This routine is equivalent to pre-multiplying y by the matrix
 %
-%    irdct(eye(n)) = cos((0.5:n-0.5)'*(0:n-1)*pi/n)*diag([sqrt(0.5)*a/b repmat(a,1,n-1)])/n
+%    v_irdct(eye(n)) = cos((0.5:n-0.5)'*(0:n-1)*pi/n)*diag([sqrt(0.5)*a/b repmat(a,1,n-1)])/n
 %
 %
 % Default values of the scaling factors are A=sqrt(2N) and B=1 which
 % results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2). 
-% If b~=1 then the columns are no longer orthogonal.
-% See also RCDT
+% A=N and B=sqrt(0.5) means that the synthesis functions are unscaled cosine waves.
+% If B=1 then the rows are orthogonal.
+%
+% See v_rdct for the forward transform
 
 %      Copyright (C) Mike Brookes 1998
 %      Version: $Id: v_irdct.m 10865 2018-09-21 17:22:45Z dmb $

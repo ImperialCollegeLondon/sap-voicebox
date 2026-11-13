@@ -16,7 +16,7 @@ function y=v_rdct(x,n,a,b)
 % results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).
 % If b~=1 then the columns are no longer orthogonal.
 %
-% see IRDCT for the inverse transform
+% see v_irdct for the inverse transform
 
 % Bugs/Suggestions:
 %   (1) in line 51 we should maybe do truncation after transform and not before
