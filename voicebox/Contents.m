@@ -202,6 +202,11 @@
 % Printing and Display functions
 %   v_axisenlarge   - Selectively enlarge figure axis for clarity
 %   v_cblabel       - Add a label onto the colorbar
+%   v_clipline      - Clip an infinite line to a bounding rectangle and optionally plot
+%   v_cliplseg      - Clip a line segment to a bounding rectangle and optionally plot 
+%   v_clippoint     - Determine if a point is within a bounding rectangle and optionally plot 
+%   v_conic         - Calculate conic parameters and/or plot conic
+%   v_conicline     - Determine the intersection points of a line and a conic  
 %   v_figbolden     - Make a figure bold and adjust colours for printing clearly
 %   v_fig2emf       - Make a figure bold and save as a windows metafile
 %   v_fig2pdf       - Make a figure bold and save as pdf, eps or ps
@@ -259,8 +264,6 @@
 %   v_zerotrim      - Remove empty trailing rows and columns
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% === Unclassified ===
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 1998-2022 Mike Brookes
