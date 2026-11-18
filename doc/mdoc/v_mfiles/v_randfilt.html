@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_randfilt</title>
+  <meta name="keywords" content="v_randfilt">
+  <meta name="description" content="V_RANDFILT Generate filtered gaussian noise without initial transient">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_randfilt
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_RANDFILT Generate filtered gaussian noise without initial transient</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_RANDFILT Generate filtered gaussian noise without initial transient
+
+  Inputs: pb(1,:)  Numerator polynomial of discrete time filter
+          pa(1,:)  Denominator polynomial of discrete time filter
+          ny       Number of output samples required
+          zi       Optional initial filter state
+
+ Outputs: y(ny,1)  Filtered Gaussian noise
+          zf       final filter state (can be used to extend the noise sequence)
+          u        The state covariance matrix, &lt;zf*zf'&gt;, is u*u'
+          p        Is the expected value of y(i)^2
+
+ zf and zi are the output and optional input state as defined in filter() as given below.
+ If zi is not specified, random numbers with the correct covariance will be used.
+ output u*u' is the state covariance matrix for filter(). Output p is the
+ mean power of the output signal y.
+
+ The state space representation of filter() is z=Az+Bx, y=Cz+Dx where
+       A=[-pa(2:k); eye(k-2) zeros(k-2,1)].'
+       B=[pb(2:k)-pb(1)*pa(2:k)].'
+       C=[1 zeros(1,k-2)]
+       D=pb(1)
+ and k is the order of the filter, pa(1)=1 and pa and pb are zero-padded to length k+1.
+
+ Refs:
+ [1]    D. M. Brookes. Coloured noise generation without filter startup transient.
+       IEE Electronics Lett., 37 (4): 255–256, Feb. 2001. doi: 10.1049/el:20010144.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_addnoise.html" class="code" title="function [z,p,fso]=v_addnoise(s,fsx,snr,m,nb,fsa)">v_addnoise</a>	V_ADDNOISE Add noise at a chosen SNR [z,p,fso]=(s,fsx,snr,m,nb,fsa)</li>
+<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li>
+<li><a href="v_usasi.html" class="code" title="function x=v_usasi(n,fs)">v_usasi</a>	V_USASI generates N samples of USASI noise at sample frequency FS X=(N,FS)</li>
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,zf,u,p]=v_randfilt(pb,pa,ny,zi)</a>
+0002 <span class="comment">%V_RANDFILT Generate filtered gaussian noise without initial transient</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs: pb(1,:)  Numerator polynomial of discrete time filter</span>
+0005 <span class="comment">%          pa(1,:)  Denominator polynomial of discrete time filter</span>
+0006 <span class="comment">%          ny       Number of output samples required</span>
+0007 <span class="comment">%          zi       Optional initial filter state</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs: y(ny,1)  Filtered Gaussian noise</span>
+0010 <span class="comment">%          zf       final filter state (can be used to extend the noise sequence)</span>
+0011 <span class="comment">%          u        The state covariance matrix, &lt;zf*zf'&gt;, is u*u'</span>
+0012 <span class="comment">%          p        Is the expected value of y(i)^2</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% zf and zi are the output and optional input state as defined in filter() as given below.</span>
+0015 <span class="comment">% If zi is not specified, random numbers with the correct covariance will be used.</span>
+0016 <span class="comment">% output u*u' is the state covariance matrix for filter(). Output p is the</span>
+0017 <span class="comment">% mean power of the output signal y.</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% The state space representation of filter() is z=Az+Bx, y=Cz+Dx where</span>
+0020 <span class="comment">%       A=[-pa(2:k); eye(k-2) zeros(k-2,1)].'</span>
+0021 <span class="comment">%       B=[pb(2:k)-pb(1)*pa(2:k)].'</span>
+0022 <span class="comment">%       C=[1 zeros(1,k-2)]</span>
+0023 <span class="comment">%       D=pb(1)</span>
+0024 <span class="comment">% and k is the order of the filter, pa(1)=1 and pa and pb are zero-padded to length k+1.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Refs:</span>
+0027 <span class="comment">% [1]    D. M. Brookes. Coloured noise generation without filter startup transient.</span>
+0028 <span class="comment">%       IEE Electronics Lett., 37 (4): 255–256, Feb. 2001. doi: 10.1049/el:20010144.</span>
+0029 
+0030 <span class="comment">%      Copyright (C) Mike Brookes 1997-2021</span>
+0031 <span class="comment">%      Version: $Id: v_randfilt.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0034 <span class="comment">%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0038 <span class="comment">%   it under the terms of the GNU Lesser General Public License as published by</span>
+0039 <span class="comment">%   the Free Software Foundation; either version 3 of the License, or</span>
+0040 <span class="comment">%   (at your option) any later version.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0043 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0044 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0045 <span class="comment">%   GNU Lesser General Public License for more details.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   You can obtain a copy of the GNU Lesser General Public License from</span>
+0048 <span class="comment">%   https://www.gnu.org/licenses/ .</span>
+0049 <span class="comment">%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 <span class="comment">% first normalize the denominator polynomial if necessary</span>
+0053 
+0054 <span class="keyword">if</span> pa(1)~=1
+0055     pb=pb/pa(1); pa=pa/pa(1);
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="comment">% check to see if we must generate zi</span>
+0059 
+0060 <span class="keyword">if</span> nargin&lt;4 | nargout&gt;2
+0061     lb=length(pb);
+0062     la=length(pa);
+0063 
+0064     k=max(la,lb)-1;     <span class="comment">% filter order</span>
+0065     n=la-1;             <span class="comment">% denominator order</span>
+0066     ii=k+1-n:k;
+0067 
+0068     <span class="comment">% form controllability matrix</span>
+0069 
+0070     q=zeros(k,k);
+0071     [z,q(:,1)]=filter(pb,pa,1);
+0072     <span class="keyword">for</span> i=2:k [z,q(:,i)]=filter(pb,pa,0,q(:,i-1)); <span class="keyword">end</span>
+0073 
+0074     <span class="comment">% we generate m through the step-down procedure</span>
+0075     s=randn(k,1);
+0076     <span class="keyword">if</span> n
+0077         m=zeros(n,n);
+0078         g=pa;
+0079         <span class="keyword">for</span> i=1:n
+0080             g=(g(1)*g(1:end-1)-g(end)*g(end:-1:2))/sqrt((g(1)-g(end))*(g(1)+g(end)));
+0081             m(i,i:n)=g;
+0082         <span class="keyword">end</span>
+0083         s(ii)=triu(toeplitz(pa(1:n)))*(m\s(ii));
+0084         <span class="keyword">if</span> nargout&gt;2
+0085             u=q;
+0086             u(:,ii)=q(:,ii)*triu(toeplitz(pa(1:n)))/m;
+0087         <span class="keyword">end</span>
+0088     <span class="keyword">else</span>
+0089         <span class="keyword">if</span> nargout&gt;2
+0090             u=q;
+0091         <span class="keyword">end</span>
+0092     <span class="keyword">end</span>
+0093     <span class="keyword">if</span> nargin &lt; 4
+0094         <span class="keyword">if</span> k
+0095             zi=q*s;
+0096         <span class="keyword">else</span>
+0097             zi=[];
+0098         <span class="keyword">end</span>
+0099     <span class="keyword">end</span>
+0100 <span class="keyword">end</span>
+0101 <span class="keyword">if</span> nargout&gt;2
+0102     <span class="keyword">if</span> ~numel(u)
+0103         p=pb(1).^2;
+0104     <span class="keyword">else</span>
+0105         p=u(1,:)*u(1,:)'+pb(1).^2;
+0106     <span class="keyword">end</span>
+0107 <span class="keyword">end</span>
+0108 <span class="keyword">if</span> nargin&gt;2 &amp;&amp; ny&gt;0
+0109     [y,zf]=filter(pb,pa,randn(ny,1),zi);
+0110 <span class="keyword">else</span>
+0111     zf=zi;
+0112     y=[];
+0113 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

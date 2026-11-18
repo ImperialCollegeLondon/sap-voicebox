@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_besratinv0</title>
+  <meta name="keywords" content="v_besratinv0">
+  <meta name="description" content="V_BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_besratinv0
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function k=v_besratinv0(r) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> V_BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)
+
+  Inputs: r    Input argument in range [0,1] (scalar or matrix)
+
+ Outputs: k    Ouput satisfying r=v_besselratio(k,0)=I1(k)/I0(k) (same shape as r)
+
+ This routine is a translation of VKAPPA(R) from [2] which is described in [1] and is the
+ inverse of r=v_besselratio(k,0). The precision is 8 siginficant digits.
+ If the angle q has a von Mises distribution  (a.k.a. Tikhonov distributon) with mean m and
+ concentration parameter k, then E(exp(jq)) = I1(k)/I0(k) exp(jm) so k=besratinv0(abs(E(exp(jq)))).
+
+ Refs:
+  [1]    G. W. Hill. Evaluation and inversion of the ratios of Modified Bessel functions, I1(x)/I0(x)
+       and I1.5(x)/I0.5(x). ACM Transactions on Mathematical Software, 7(2): 199–208, June 1981.
+  [2]    G. W. Hill. Algorithm 571: Statistics for von Mises’ and Fisher’s distributions of directions:
+       I1(x)/I0(x) and I1.5(x)/I0.5(x) and their inverses [s14].
+       ACM Transactions on Mathematical Software, 7(2): 233–238, June 1981. doi: 10.1145/355945.355953.
+
+ Revision History:
+ 2022/04/21    Original Version</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>	V_BESSELRATIO calculate the Bessel function ratio besseli(v+1,x)./besseli(v,x)</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function k=v_besratinv0(r)</a>
+0002 <span class="comment">% V_BESRATINV0 Inverse function of the Modified Bessel Ratio I1(k)/I0(k)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs: r    Input argument in range [0,1] (scalar or matrix)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Outputs: k    Ouput satisfying r=v_besselratio(k,0)=I1(k)/I0(k) (same shape as r)</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% This routine is a translation of VKAPPA(R) from [2] which is described in [1] and is the</span>
+0009 <span class="comment">% inverse of r=v_besselratio(k,0). The precision is 8 siginficant digits.</span>
+0010 <span class="comment">% If the angle q has a von Mises distribution  (a.k.a. Tikhonov distributon) with mean m and</span>
+0011 <span class="comment">% concentration parameter k, then E(exp(jq)) = I1(k)/I0(k) exp(jm) so k=besratinv0(abs(E(exp(jq)))).</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Refs:</span>
+0014 <span class="comment">%  [1]    G. W. Hill. Evaluation and inversion of the ratios of Modified Bessel functions, I1(x)/I0(x)</span>
+0015 <span class="comment">%       and I1.5(x)/I0.5(x). ACM Transactions on Mathematical Software, 7(2): 199–208, June 1981.</span>
+0016 <span class="comment">%  [2]    G. W. Hill. Algorithm 571: Statistics for von Mises’ and Fisher’s distributions of directions:</span>
+0017 <span class="comment">%       I1(x)/I0(x) and I1.5(x)/I0.5(x) and their inverses [s14].</span>
+0018 <span class="comment">%       ACM Transactions on Mathematical Software, 7(2): 233–238, June 1981. doi: 10.1145/355945.355953.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Revision History:</span>
+0021 <span class="comment">% 2022/04/21    Original Version</span>
+0022 
+0023 k=zeros(size(r));       <span class="comment">% space for outputs</span>
+0024 m1=r&lt;=0.85;             <span class="comment">% Use different algorithms for r&lt;=0.85 and r&gt;0.85</span>
+0025 a=r(m1);
+0026 <span class="keyword">if</span> ~isempty(a)          <span class="comment">% r&lt;=0.85 =&gt; Use adjusted inverse Taylor Series</span>
+0027     y=2./(1-a);
+0028     x=a.*a;
+0029     s=(((a-5.6076).*a+5.0797).*a-4.6494).*y.*x-1;           <span class="comment">% Eqn (7) from [1]</span>
+0030     s=((((s.*x+15).*x+60).*x/360+1).*x-2).*a./(x-1);        <span class="comment">% Eqn before (7) from [1]</span>
+0031     m2=a&gt;=0.642;
+0032     b=a(m2);
+0033     <span class="keyword">if</span> ~isempty(b)
+0034         z=y(m2);
+0035         y=((0.00048.*z-0.1589).*z+0.744).*z-4.2932;         <span class="comment">% Two Eqns after (9) in [1]; -dk/dr</span>
+0036         t=s(m2);
+0037         t=(<a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>(t,0,9)-b).*y+t;                    <span class="comment">% 1st Newton-Raphson Iteration for 0.642&lt;r&lt;=0.85</span>
+0038         m3=b&gt;=0.75;
+0039         c=b(m3);
+0040         <span class="keyword">if</span> ~isempty(c)
+0041             u=t(m3);
+0042             t(m3)=(<a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>(u,0,9)-c).*y(m3)+u;        <span class="comment">% 2nd Newton Iteration-Raphson for 0.75&lt;=r&lt;=0.85</span>
+0043         <span class="keyword">end</span>
+0044         s(m2)=t;        <span class="comment">% update the outputs for values needing Newton iterations</span>
+0045     <span class="keyword">end</span>
+0046     k(m1)=s;            <span class="comment">% update the outputs for values 0&lt;=r&lt;=0.85</span>
+0047 <span class="keyword">end</span>
+0048 a=r(~m1);
+0049 <span class="keyword">if</span> ~isempty(a) <span class="comment">% r&gt;0.85 =&gt; Use continued fraction approximation</span>
+0050     y=2./(1-a);
+0051     x=zeros(size(a));
+0052     m2=a&gt;0.95;
+0053     x(m2)=32./(120*a(m2)-131.5+y(m2));                      <span class="comment">% Eqn (8b) from [1] for 0.95&lt;=r&lt;=1</span>
+0054     x(~m2)=(-2326*a(~m2)+4317.5526).*a(~m2)-2001.035224;    <span class="comment">% Eqn (8c) from [1] for 0.85&lt;r&lt;0.95 (sign-corrected)</span>
+0055     s=(y+1+3./(y-5-12./(y-10-x)))*0.25;
+0056     m2=a&lt;0.95;
+0057     b=a(m2);
+0058     <span class="keyword">if</span> ~isempty(b)
+0059         z=y(m2);
+0060         y=((0.00048.*z-0.1589).*z+0.744).*z-4.2932;         <span class="comment">% Two Eqns after (9) in [1]; -dk/dr</span>
+0061         t=s(m2);
+0062         t=(<a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>(t,0,9)-b).*y+t;                    <span class="comment">% 1st Newton-Raphson Iteration for 0.85&lt;r&lt;=0.95</span>
+0063         m3=b&lt;=0.875;
+0064         c=b(m3);
+0065         <span class="keyword">if</span> ~isempty(c)
+0066             u=t(m3);
+0067             t(m3)=(<a href="v_besselratio.html" class="code" title="function y=v_besselratio(x,v,p)">v_besselratio</a>(u,0,9)-c).*y(m3)+u;        <span class="comment">% 2nd Newton-Raphson Iteration for 0.85&lt;r&lt;=0.875</span>
+0068         <span class="keyword">end</span>
+0069         s(m2)=t;        <span class="comment">% update the outputs for values needing Newton iterations</span>
+0070     <span class="keyword">end</span>
+0071     k(~m1)=s;           <span class="comment">% update the outputs for values 0.85&lt;r&lt;=1</span>
+0072 <span class="keyword">end</span>
+0073 <span class="keyword">if</span> ~nargout &amp;&amp; sum(isfinite(k))&gt;1
+0074     plot(r,k);
+0075     ylabel(<span class="string">'k'</span>);
+0076     xlabel(<span class="string">'r = I_1(k)/I_0(k)'</span>);
+0077 <span class="keyword">end</span>
+0078 
+0079</pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

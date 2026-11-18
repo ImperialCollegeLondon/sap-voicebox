@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_voicebox_update</title>
+  <meta name="keywords" content="v_voicebox_update">
+  <meta name="description" content="V_VOICEBOX_UPDATE update v_voicebox calls by prefixing with 'v_'">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_voicebox_update
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_VOICEBOX_UPDATE update v_voicebox calls by prefixing with 'v_'</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function n=v_voicebox_update(fn,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_VOICEBOX_UPDATE update v_voicebox calls by prefixing with 'v_'
+  Inputs: fn   file or folder name to update [default: current folder]
+          m    'r' to search recursively through the folder tree
+               's' silent mode: do not print out statistics
+               'v' verbose: list files as they are updated
+               'V' extra verbose: list files even if not updated
+               'b' do not backup old file
+
+ Outputs: n    number of files updated
+
+ This routine is not all that smart. Words that match the function names
+ included in the 'vbn' list below will be updated even if they are inside
+ strings (except for the last string on a line). Local variables that
+ share the name of a v_voicebox function will also be modified.
+
+ vbp lists function names that may have an argument list
+ vbn lists function names that may be called without arguments</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_regexfiles.html" class="code" title="function tok=v_regexfiles(regex,root,m)">v_regexfiles</a>	V_REGEXFILES recursively searches for files matching a pattern tok=(regex,root)</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function n=v_voicebox_update(fn,m)</a>
+0002 <span class="comment">%V_VOICEBOX_UPDATE update v_voicebox calls by prefixing with 'v_'</span>
+0003 <span class="comment">%  Inputs: fn   file or folder name to update [default: current folder]</span>
+0004 <span class="comment">%          m    'r' to search recursively through the folder tree</span>
+0005 <span class="comment">%               's' silent mode: do not print out statistics</span>
+0006 <span class="comment">%               'v' verbose: list files as they are updated</span>
+0007 <span class="comment">%               'V' extra verbose: list files even if not updated</span>
+0008 <span class="comment">%               'b' do not backup old file</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Outputs: n    number of files updated</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% This routine is not all that smart. Words that match the function names</span>
+0013 <span class="comment">% included in the 'vbn' list below will be updated even if they are inside</span>
+0014 <span class="comment">% strings (except for the last string on a line). Local variables that</span>
+0015 <span class="comment">% share the name of a v_voicebox function will also be modified.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% vbp lists function names that may have an argument list</span>
+0018 <span class="comment">% vbn lists function names that may be called without arguments</span>
+0019 vbp=<span class="string">'activlev|activlevg|atan2sc|axisenlarge|bark2frq|berk2prob|besselratio|besselratioi|bitsprec|cblabel|ccwarpf|cent2frq|cep2pow|choosenk|choosrnk|convfft|correlogram|distchar|distchpf|disteusq|distisar|distispf|distitar|distitpf|ditherq|dlyapsq|dualdiag|dypsa|enframe|entropy|erb2frq|estnoiseg|estnoisem|ewgrpdel|fig2emf|fig2pdf|figbolden|filtbankm|filterbank|finishat|fopenmkd|frac2bin|fram2wav|frq2bark|frq2cent|frq2erb|frq2mel|frq2midi|fxpefac|fxrapt|gammabank|gammalns|gausprod|gaussmix|gaussmixd|gaussmixg|gaussmixk|gaussmixm|gaussmixp|gaussmixt|glotlf|glotros|gmmlpdf|histndim|hostipinfo|huffman|hypergeom1f1|imagehomog|importsii|irdct|irfft|kmeanhar|kmeanlbg|lambda2rgb|ldatrace|lin2pcma|lin2pcmu|lognmpdf|logsum|lpcaa2ao|lpcaa2dl|lpcaa2rf|lpcao2rf|lpcar2am|lpcar2cc|lpcar2db|lpcar2ff|lpcar2fm|lpcar2im|lpcar2ls|lpcar2pf|lpcar2pp|lpcar2ra|lpcar2rf|lpcar2rr|lpcar2zz|lpcauto|lpcbwexp|lpccc2ar|lpccc2cc|lpccc2db|lpccc2ff|lpccc2pf|lpcconv|lpccovar|lpccw2zz|lpcdb2pf|lpcdl2aa|lpcff2pf|lpcfq2zz|lpcifilt|lpcim2ar|lpcis2rf|lpcla2rf|lpclo2rf|lpcls2ar|lpcpf2cc|lpcpf2ff|lpcpf2rr|lpcpp2cw|lpcpp2pz|lpcpz2zz|lpcra2ar|lpcra2pf|lpcra2pp|lpcrand|lpcrf2aa|lpcrf2ao|lpcrf2ar|lpcrf2is|lpcrf2la|lpcrf2lo|lpcrf2rr|lpcrr2am|lpcrr2ar|lpcss2zz|lpcstable|lpczz2ar|lpczz2cc|lpczz2ss|m2htmlpwd|maxfilt|maxgauss|meansqtf|mel2frq|melbankm|melcepst|midi2frq|minspane|mintrace|modspect|momfilt|mos2pesq|nearnonz|normcdflog|overlapadd|paramsetch|pcma2lin|pcmu2lin|pdfmoments|peak2dquad|permutes|pesq2mos|phon2sone|polygonarea|polygonwind|polygonxline|potsband|pow2cep|prob2berk|psycdigit|psycest|psycestu|psychofunc|qrabs|qrdivide|qrdotdiv|qrdotmult|qrmult|qrpermute|quadpeak|randfilt|randiscr|randvec|rdct|readaif|readau|readcnx|readflac|readhtk|readsfs|readsph|readwav|rectifyhomog|regexfiles|rfft|rhartley|rnsubset|rotation|rotax2qr|roteu2qr|roteu2ro|rotmc2qc|rotmr2qr|rotpl2ro|rotqc2mc|rotqc2qr|rotqr2ax|rotqr2eu|rotqr2mr|rotqr2qc|rotqr2ro|rotqrmean|rotqrvec|rotro2eu|rotro2pl|rotro2qr|rsfft|sapisynth|schmitt|sigalign|skew3d|snrseg|sone2phon|soundspeed|specsub|specsubm|spendred|spgrambw|sphrharm|sprintcpx|sprintsi|ssubmmse|ssubmmsev|stdspectrum|stoi2prob|teager|texthvc|tilefigs|txalign|unixwhich|upolyhedron|usasi|vadsohn|voicebox|vonmisespdf|wavread|wavwrite|winenvar|writehtk|writewav|xticksi|xyzticksi|yticksi|zerocros|zerotrim|zoomfft'</span>;
+0020 <span class="keyword">if</span> nargin&lt;2 || isempty(m)
+0021     m=<span class="string">''</span>;
+0022 <span class="keyword">end</span>
+0023 lm=lower(m);
+0024 <span class="keyword">if</span> nargin&lt;1 || isempty(fn)
+0025     fn=<span class="string">'.'</span>; <span class="comment">% do files in current folder</span>
+0026 <span class="keyword">end</span>
+0027 <span class="keyword">if</span> exist(fn,<span class="string">'dir'</span>)
+0028     ff=<a href="v_regexfiles.html" class="code" title="function tok=v_regexfiles(regex,root,m)">v_regexfiles</a>(<span class="string">'\.m$'</span>,fn,char(<span class="string">'n'</span>+(<span class="string">'r'</span>-<span class="string">'n'</span>)*any(m==<span class="string">'r'</span>)));
+0029 <span class="keyword">elseif</span> exist(fn,<span class="string">'file'</span>)
+0030     ff={fn};
+0031 <span class="keyword">else</span>
+0032     error(<span class="string">'first argument must be a file or folder name'</span>);
+0033 <span class="keyword">end</span>
+0034 n=0;
+0035 <span class="keyword">for</span> i=1:length(ff)
+0036     fid=fopen(ff{i},<span class="string">'rt'</span>);
+0037     s=fread(fid,<span class="string">'*char'</span>)';
+0038     fclose(fid);
+0039     t=regexprep(s,[<span class="string">'\&lt;('</span> vbp <span class="string">')\&gt;(?![^''\n]*''[^''\n]*\n)'</span>],<span class="string">'v_$1'</span>); <span class="comment">% keyword unless followed by a single quote somewhere on the same line</span>
+0040     <span class="keyword">if</span> numel(t)&gt;numel(s)
+0041         <span class="keyword">if</span> ~any(m==<span class="string">'b'</span>)
+0042             <span class="keyword">if</span> ~movefile(ff{i},[ff{i} <span class="string">'.old'</span>])
+0043                 error(sprintf(<span class="string">'Cannot rename %s\n'</span>,ff{i}));
+0044             <span class="keyword">end</span>
+0045         <span class="keyword">end</span>
+0046         fid=fopen(ff{i},<span class="string">'wt'</span>);
+0047         <span class="keyword">if</span> fid&lt;0
+0048             error(sprintf(<span class="string">'Cannot write to %s\n'</span>,ff{i}));
+0049         <span class="keyword">end</span>
+0050         fwrite(fid,t,<span class="string">'*char'</span>);
+0051         fclose(fid);
+0052         n=n+1;
+0053         <span class="keyword">if</span> any(lm==<span class="string">'v'</span>)
+0054             nch=floor((length(t)-length(s))/2);
+0055             <span class="keyword">if</span> nch&gt;1
+0056                 fprintf(1,<span class="string">'%d changes in %s\n'</span>,nch,ff{i});
+0057             <span class="keyword">else</span>
+0058                 fprintf(1,<span class="string">'%d change in %s\n'</span>,nch,ff{i});
+0059             <span class="keyword">end</span>
+0060         <span class="keyword">end</span>
+0061     <span class="keyword">elseif</span> any(m==<span class="string">'V'</span>)
+0062         fprintf(1,<span class="string">'No changes in %s\n'</span>,ff{i});
+0063     <span class="keyword">end</span>
+0064 <span class="keyword">end</span>
+0065 <span class="keyword">if</span> ~any(m==<span class="string">'s'</span>)
+0066     <span class="keyword">if</span> any(lm==<span class="string">'v'</span>) &amp;&amp; n&gt;0
+0067         fprintf(1,<span class="string">'===========\n'</span>);
+0068     <span class="keyword">end</span>
+0069     <span class="keyword">if</span> length(ff)&gt;1
+0070         fprintf(1,<span class="string">'%d of %d files updated\n'</span>,n,length(ff));
+0071     <span class="keyword">else</span>
+0072         fprintf(1,<span class="string">'%d of %d file updated\n'</span>,n,length(ff));
+0073     <span class="keyword">end</span>
+0074 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_irdct</title>
+  <meta name="keywords" content="v_irdct">
+  <meta name="description" content="V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_irdct
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function x=v_irdct(y,n,a,b) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N) 
+
+  Inputs: y(m,k)   Real-valued input data; transform will be applied to each column 
+          n        Transform length. x will be zero-padded or truncated to length n [default: m]
+          a        Input scale factor [default: sqrt(2*n)]
+          b        Input scale factor for DC term [default: 1]
+
+ Outputs: x(n,k)   Output data
+
+ This routine is equivalent to pre-multiplying y by the matrix
+
+    v_irdct(eye(n)) = cos((0.5:n-0.5)'*(0:n-1)*pi/n)*diag([sqrt(0.5)*a/b repmat(a,1,n-1)])/n
+
+
+ Default values of the scaling factors are A=sqrt(2N) and B=1 which
+ results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2). 
+ A=N and B=sqrt(0.5) means that the synthesis functions are unscaled cosine waves.
+ If B=1 then the rows are orthogonal.
+
+ See v_rdct for the forward transform</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_lpcdl2aa.html" class="code" title="function aa=v_lpcdl2aa(dl)">v_lpcdl2aa</a>	V_LPCDL2AA dct of log area to area coefficients AA=(DL)</li>
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function x=v_irdct(y,n,a,b)</a>
+0002 <span class="comment">%V_IRDCT    Inverse discrete cosine transform of real data X=(Y,N)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  Inputs: y(m,k)   Real-valued input data; transform will be applied to each column</span>
+0005 <span class="comment">%          n        Transform length. x will be zero-padded or truncated to length n [default: m]</span>
+0006 <span class="comment">%          a        Input scale factor [default: sqrt(2*n)]</span>
+0007 <span class="comment">%          b        Input scale factor for DC term [default: 1]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Outputs: x(n,k)   Output data</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% This routine is equivalent to pre-multiplying y by the matrix</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%    v_irdct(eye(n)) = cos((0.5:n-0.5)'*(0:n-1)*pi/n)*diag([sqrt(0.5)*a/b repmat(a,1,n-1)])/n</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Default values of the scaling factors are A=sqrt(2N) and B=1 which</span>
+0017 <span class="comment">% results in an orthogonal matrix. Other common values are A=1 or N and/or B=1 or sqrt(2).</span>
+0018 <span class="comment">% A=N and B=sqrt(0.5) means that the synthesis functions are unscaled cosine waves.</span>
+0019 <span class="comment">% If B=1 then the rows are orthogonal.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% See v_rdct for the forward transform</span>
+0022 
+0023 <span class="comment">%      Copyright (C) Mike Brookes 1998</span>
+0024 <span class="comment">%      Version: $Id: v_irdct.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0027 <span class="comment">%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0030 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0031 <span class="comment">%   it under the terms of the GNU Lesser General Public License as published by</span>
+0032 <span class="comment">%   the Free Software Foundation; either version 3 of the License, or</span>
+0033 <span class="comment">%   (at your option) any later version.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0036 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0037 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0038 <span class="comment">%   GNU Lesser General Public License for more details.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   You can obtain a copy of the GNU Lesser General Public License from</span>
+0041 <span class="comment">%   https://www.gnu.org/licenses/ .</span>
+0042 <span class="comment">%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.</span>
+0043 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0044 
+0045 fl=size(y,1)==1;
+0046 <span class="keyword">if</span> fl y=y(:); <span class="keyword">end</span>
+0047 [m,k]=size(y);
+0048 <span class="keyword">if</span> nargin&lt;4 b=1;
+0049     <span class="keyword">if</span> nargin&lt;3 a=sqrt(2*m);
+0050         <span class="keyword">if</span> nargin&lt;2 n=m;
+0051         <span class="keyword">end</span>
+0052     <span class="keyword">end</span>
+0053 <span class="keyword">end</span>
+0054 <span class="keyword">if</span> n&gt;m y=[y; zeros(n-m,k)];
+0055 <span class="keyword">elseif</span> n&lt;m y(n+1:m,:)=[];
+0056 <span class="keyword">end</span>
+0057 
+0058 x=zeros(n,k);
+0059 w=ones(1,k);
+0060 m=fix((n+1)/2);
+0061 p=n-m;
+0062 z=0.5*exp((0.5i*pi/n)*(1:p)).';
+0063 u=(y(2:p+1,:)-1i*y(n:-1:m+1,:)).*z(:,w)*a;
+0064 y=[y(1,:)*sqrt(0.5)*a/b; u(1:m-1,:)];
+0065 <span class="keyword">if</span> m==p
+0066     z=-0.5i*exp((2i*pi/n)*(0:m-1)).';
+0067     y=(z(:,w)+0.5).*(conj(flipud(u))-y)+y;
+0068     z=ifft(y,[],1);
+0069     u=real(z);
+0070     y=imag(z);
+0071     q=m/2;
+0072     h=rem(m,2)/2;
+0073     x(1:4:n,:)=u(1:q+h,:);
+0074     x(2:4:n,:)=y(m:-1:q+1-h,:);
+0075     x(3:4:n,:)=y(1:q-h,:);
+0076     x(4:4:n,:)=u(m:-1:q+1+h,:);
+0077 <span class="keyword">else</span>
+0078     z=real(ifft([y; conj(flipud(u))]));
+0079     x(1:2:n,:)=z(1:m,:);
+0080     x(2:2:n,:)=z(n:-1:m+1,:);
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="keyword">if</span> fl x=x.'; <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

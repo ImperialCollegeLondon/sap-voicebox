@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_earnoise</title>
+  <meta name="keywords" content="v_earnoise">
+  <meta name="description" content="V_EARNOISE Add noise to simulate the hearing threshold of a listener [Y,X,V]=(S,FS,M,SPL)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_earnoise
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_EARNOISE Add noise to simulate the hearing threshold of a listener [Y,X,V]=(S,FS,M,SPL)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [y,x,v]=v_earnoise(s,fs,m,spl) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_EARNOISE Add noise to simulate the hearing threshold of a listener [Y,X,V]=(S,FS,M,SPL)
+
+ Usage: (1) y=v_earnoise(s,fs);            % scale the speech to 62.35 dB SPL, add &quot;internal ear noise&quot; and then filter
+        (2) spl=62.35;                     % this code does the same but with explicit signal scaling
+            x=10^(0.05*spl)*v_activlev(s,fs,'n')
+            y=v_earnoise(x,fs,'u');
+        (3) v_earnoise(s,fs);              % If outputs are omitted, a graph is plotted showing SNR spectrrum
+        (4) y=v_earnoise(s,fs,[],50);      % scale the speech to 50 dB SPL instead of the default 62.35
+        (5) y=v_earnoise(s,fs,'n',spl);    % Assume the input signal, s, has already been scaled to 0 dB (saves computation)
+
+  Inputs:  s(n,c)  speech signal: n samples with one channel per column
+           fs      sample frequency in Hz
+           m       mode string as shown below [default '??']
+                     'n' Input s has been normalized to 0 dB (e.g. with the 'n' option of v_activlev.m)
+                     'u' Input s is already scaled correctly in SPL (so ignore the spl input argument)
+           spl       target active speech level in db SPL [default: 62.35]
+
+ Outputs:  y(n,c)  filtered speech signal with added noise which simulates the ear input signal
+           x(n,c)  filtered input speech signal
+           v(n,c)  noise added to filtered speech signal
+
+ This function adds ficticious &quot;internal ear noise&quot; onto an audio signal to simulate the effects of the
+ frequency-dependent hearing threshold of a normal listener. To avoid having to add very high noise
+ levels at low and high frequencies, it instead filters the input signal by the inverse of the desired
+ noise spectrum and then adds white noise with 0 dB power spectral density. The noise spectrum is taken
+ from Table 1 of [1] (which derived it from [2]) and, at a particular frequency, equals the pure-tone
+ hearing threshold minus 10*log10(R) where R is the critical ratio. The critical ratio, R, is the power
+ of a pure tone divided by the power spectral density of a white noise that just masks it; this ratio is
+ approximately independent of level.
+
+ By default the input speech for the strongest channel is scaled to correspond to a normal speaking level
+ at 1 metre from the lips (62.35 dB from [1]). The speech level at the centre of the listener's head  can
+ alternatively be specified explicitly in dB SPL using the spl input parameter. For distant sources, the
+ level should be reduced by 20*log10(dist) where dist is the distance in metres between the speaker's
+ lips and the centre of the listener's head. The same scaling is used for all channels.
+
+ This function assumes normal hearing; to account for hearing loss, use the 'u' option (as in usage
+ example 2 above) and apply a filter to x that reduces the signal level by the hearing loss at each
+ frequency. For example, if the hearing loss is 20 dB at all frequencies, then x should be multiplied by 0.1.
+
+ Refs: [1]    ANSI. Methods for the calculation of the speech intelligibility index.
+               ANSI Standard S3.5-1997 (R2007), American National Standards Institute, 1997.
+       [2]    C. V. Pavlovic. Derivation of primary parameters and procedures for use in speech
+               intelligibility predictions. J. Acoust. Soc. Amer., 82: 413–422, 1987.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>	V_ACTIVLEV Measure active speech level as in ITU-T P.56 [LEV,AF,FSO]=(sp,FS,MODE)</li>
+<li><a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>	V_ENFRAME split signal up into (overlapping) frames: one per row. [F,T]=(X,WIN,HOP)</li>
+<li><a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>	V_STDSPECTRUM Generate standard acoustic/speech spectra in s- or z-domain [B,A,SI,SN]=(S,M,F,N,ZI,BS,AS)</li>
+<li><a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a>	V_XTIXKSI labels the x-axis of a plot using SI multipliers S=(AH)</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [y,x,v]=v_earnoise(s,fs,m,spl)</a>
+0002 <span class="comment">%V_EARNOISE Add noise to simulate the hearing threshold of a listener [Y,X,V]=(S,FS,M,SPL)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) y=v_earnoise(s,fs);            % scale the speech to 62.35 dB SPL, add &quot;internal ear noise&quot; and then filter</span>
+0005 <span class="comment">%        (2) spl=62.35;                     % this code does the same but with explicit signal scaling</span>
+0006 <span class="comment">%            x=10^(0.05*spl)*v_activlev(s,fs,'n')</span>
+0007 <span class="comment">%            y=v_earnoise(x,fs,'u');</span>
+0008 <span class="comment">%        (3) v_earnoise(s,fs);              % If outputs are omitted, a graph is plotted showing SNR spectrrum</span>
+0009 <span class="comment">%        (4) y=v_earnoise(s,fs,[],50);      % scale the speech to 50 dB SPL instead of the default 62.35</span>
+0010 <span class="comment">%        (5) y=v_earnoise(s,fs,'n',spl);    % Assume the input signal, s, has already been scaled to 0 dB (saves computation)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%  Inputs:  s(n,c)  speech signal: n samples with one channel per column</span>
+0013 <span class="comment">%           fs      sample frequency in Hz</span>
+0014 <span class="comment">%           m       mode string as shown below [default '??']</span>
+0015 <span class="comment">%                     'n' Input s has been normalized to 0 dB (e.g. with the 'n' option of v_activlev.m)</span>
+0016 <span class="comment">%                     'u' Input s is already scaled correctly in SPL (so ignore the spl input argument)</span>
+0017 <span class="comment">%           spl       target active speech level in db SPL [default: 62.35]</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Outputs:  y(n,c)  filtered speech signal with added noise which simulates the ear input signal</span>
+0020 <span class="comment">%           x(n,c)  filtered input speech signal</span>
+0021 <span class="comment">%           v(n,c)  noise added to filtered speech signal</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% This function adds ficticious &quot;internal ear noise&quot; onto an audio signal to simulate the effects of the</span>
+0024 <span class="comment">% frequency-dependent hearing threshold of a normal listener. To avoid having to add very high noise</span>
+0025 <span class="comment">% levels at low and high frequencies, it instead filters the input signal by the inverse of the desired</span>
+0026 <span class="comment">% noise spectrum and then adds white noise with 0 dB power spectral density. The noise spectrum is taken</span>
+0027 <span class="comment">% from Table 1 of [1] (which derived it from [2]) and, at a particular frequency, equals the pure-tone</span>
+0028 <span class="comment">% hearing threshold minus 10*log10(R) where R is the critical ratio. The critical ratio, R, is the power</span>
+0029 <span class="comment">% of a pure tone divided by the power spectral density of a white noise that just masks it; this ratio is</span>
+0030 <span class="comment">% approximately independent of level.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% By default the input speech for the strongest channel is scaled to correspond to a normal speaking level</span>
+0033 <span class="comment">% at 1 metre from the lips (62.35 dB from [1]). The speech level at the centre of the listener's head  can</span>
+0034 <span class="comment">% alternatively be specified explicitly in dB SPL using the spl input parameter. For distant sources, the</span>
+0035 <span class="comment">% level should be reduced by 20*log10(dist) where dist is the distance in metres between the speaker's</span>
+0036 <span class="comment">% lips and the centre of the listener's head. The same scaling is used for all channels.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% This function assumes normal hearing; to account for hearing loss, use the 'u' option (as in usage</span>
+0039 <span class="comment">% example 2 above) and apply a filter to x that reduces the signal level by the hearing loss at each</span>
+0040 <span class="comment">% frequency. For example, if the hearing loss is 20 dB at all frequencies, then x should be multiplied by 0.1.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% Refs: [1]    ANSI. Methods for the calculation of the speech intelligibility index.</span>
+0043 <span class="comment">%               ANSI Standard S3.5-1997 (R2007), American National Standards Institute, 1997.</span>
+0044 <span class="comment">%       [2]    C. V. Pavlovic. Derivation of primary parameters and procedures for use in speech</span>
+0045 <span class="comment">%               intelligibility predictions. J. Acoust. Soc. Amer., 82: 413–422, 1987.</span>
+0046 <span class="comment">%</span>
+0047 <span class="keyword">persistent</span> fs0 a b
+0048 <span class="keyword">if</span> isempty(fs0) || fs~=fs0
+0049     [b,a]=<a href="v_stdspectrum.html" class="code" title="function [b,a,si,sn]=v_stdspectrum(s,m,f,n,zi,bs,as)">v_stdspectrum</a>(7,<span class="string">'z'</span>,fs);              <span class="comment">% inverse internal noise spectrum filter</span>
+0050     fs0=fs;
+0051 <span class="keyword">end</span>
+0052 [ns,nc]=size(s);
+0053 <span class="keyword">if</span> nc&gt;ns
+0054     error(<span class="string">'s input has more columns (channels) than rows (samples)'</span>);
+0055 <span class="keyword">end</span>
+0056 <span class="keyword">if</span> nargin&lt;3 || isempty(m)
+0057     m=<span class="string">' '</span>;
+0058 <span class="keyword">end</span>
+0059 <span class="keyword">if</span> nargin&lt;4 || isempty(spl)
+0060     spl=62.35;
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span> any(m==<span class="string">'n'</span>) || any(m==<span class="string">'u'</span>)
+0063     <span class="keyword">if</span> any(m==<span class="string">'n'</span>)
+0064         dboff=spl;
+0065     <span class="keyword">else</span>
+0066         dboff=0;
+0067     <span class="keyword">end</span>
+0068 <span class="keyword">else</span>
+0069     <span class="keyword">if</span> nc&gt;1
+0070         sal=zeros(1,nc);
+0071         <span class="keyword">for</span> i=1:nc
+0072             sal(i)=<a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>(s(:,i),fs,<span class="string">'d'</span>);
+0073         <span class="keyword">end</span>
+0074         dboff=spl-max(sal);               <span class="comment">% gain to apply to speech signal in dB</span>
+0075     <span class="keyword">else</span>
+0076         dboff=spl-<a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>(s,fs,<span class="string">'d'</span>);               <span class="comment">% gain to apply to speech signal in dB</span>
+0077     <span class="keyword">end</span>
+0078 <span class="keyword">end</span>
+0079 x=10^(0.05*dboff)*filter(b,a,s);
+0080 v=sqrt(0.5*fs)*randn(size(s)); <span class="comment">% Add noise at 0 dB power spectral density</span>
+0081 y=x+v;
+0082 <span class="keyword">if</span> ~nargout
+0083     nfft=2*round(10e-3*fs/2);                       <span class="comment">% FFT length is even number approximately 5 ms long</span>
+0084     fax=(0:nfft/2)*fs/nfft; <span class="comment">% frequency axis for plot</span>
+0085     win=hamming(nfft);
+0086     sal=zeros(1,nc);
+0087     <span class="keyword">for</span> i=1:nc
+0088         sal(i)=<a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>(s(:,i),fs,<span class="string">'d'</span>)+dboff;
+0089     <span class="keyword">end</span>
+0090     [salmax,imax]=max(sal);
+0091     [salmax,af,fso,vad]=<a href="v_activlev.html" class="code" title="function [lev,af,fso,vad]=v_activlev(sp,fs,mode)">v_activlev</a>(s(:,imax),fs,<span class="string">'d'</span>);          <span class="comment">% Get VAD from highest power input sigal</span>
+0092     fvad=sum(<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(vad,nfft,nfft/2),2)&gt;nfft/2;  <span class="comment">% frames with mostly speech in them</span>
+0093     minmax=[Inf -Inf];
+0094     leg=cell(nc,1);
+0095     gsnr=zeros(nc,1);
+0096     cols=<span class="string">'brgcmyk'</span>;
+0097     <span class="keyword">for</span> i=1:nc
+0098         col=cols(1+mod(i-1,length(cols)));
+0099         px=<a href="v_enframe.html" class="code" title="function [f,t,w]=v_enframe(x,win,hop,m,fs)">v_enframe</a>(x(:,i),win,nfft/2,<span class="string">'sdp'</span>,fs);        <span class="comment">% computer first half of PSD</span>
+0100         psxm=mean(px(fvad,:),1);
+0101         psxmdb=db(psxm,<span class="string">'p'</span>);
+0102         minmax=[min(minmax(1),min(psxmdb)) max(minmax(2),max(psxmdb))];
+0103         gsnr(i)=db(mean(psxm),<span class="string">'p'</span>);
+0104         semilogx(fax,psxmdb,[col <span class="string">'-'</span>]);
+0105         hold on
+0106         leg{i}=sprintf(<span class="string">'Chan %d: %+.1f dB SPL'</span>,i,sal(i));
+0107     <span class="keyword">end</span>
+0108     <span class="keyword">for</span> i=1:nc
+0109         col=cols(1+mod(i-1,length(cols)));
+0110         semilogx(fax([2 end]),gsnr([i i]),[col <span class="string">'--'</span>]);
+0111     <span class="keyword">end</span>
+0112     snrrange=60;
+0113     ylim=[max(minmax(1),minmax(2)-snrrange) minmax(2)]*[1.05 -0.05; -0.05 1.05];
+0114     set(gca,<span class="string">'ylim'</span>,ylim,<span class="string">'xlim'</span>,[100 fs/2]);
+0115     <span class="keyword">if</span> ylim(1)&lt;0 &amp;&amp; ylim(2)&gt;0
+0116         semilogx(fax([2 end]),[0 0],<span class="string">'k:'</span>);
+0117     <span class="keyword">end</span>
+0118     hold off
+0119     grid on;
+0120     legend(leg,<span class="string">'location'</span>,<span class="string">'best'</span>)
+0121     xlabel([<span class="string">'Frequency ('</span> <a href="v_xticksi.html" class="code" title="function s=v_xticksi(ah)">v_xticksi</a> <span class="string">'Hz)'</span>]);
+0122     ylabel(<span class="string">'SNR (dB)'</span>)
+0123     title(<span class="string">'Hearing threshold equivalent SNR'</span>);
+0124 <span class="keyword">end</span></pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

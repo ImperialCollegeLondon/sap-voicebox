@@ -1,0 +1,380 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_psycestu</title>
+  <meta name="keywords" content="v_psycestu">
+  <meta name="description" content="V_PSYCESTU estimate unimodal psychometric function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_psycestu
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_PSYCESTU estimate unimodal psychometric function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [xx,ii,m,v]=v_psycestu(iq,x,r,xp) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_PSYCESTU estimate unimodal psychometric function
+
+ Usage: [xx,ii,m,v]=v_psycestu(-n,p,q,xp) % initialize n models
+        [xx,ii,m,v]=v_psycestu(i,x,r)     % supply a trial result to v_psycest
+                    v_psycestu(i)         % plot pdf of model i
+              [p,q]=psychestu(0)        % output model parameters (or print them if no outputs)
+
+ Inputs:
+         -n        minus the number of models
+          p(:,n)   parameters for each model
+                      1  miss [0.04]
+                      2  guess [0.1]
+                      3,4  SNR at peak: [min max] [-20 20]
+                      5,6  normalized semi-width: [min max] [0 20]
+                      7,8  low side slope: [min max] [0.03 0.3]
+                      9,10  high side slope: [min max] [0.03 0.3]
+          q(:)     parameters common to all models (vector or struct)
+                      1  q.nxslh  size of pdf array: [nx ns nl nh] [20 21 19 18]
+                      2  q.nh  number of probe SNR values to evaluate [30]
+                      3  q.cs  weighting of pdf factors [1 1 1 1]
+                      5  q.dh  minimum step size in dB for probe SNRs [0.2]
+                      6  q.sl  min slopes threshold [0.02]
+                      7  q.kp  number of std deviations of the pdfs to keep [4]
+                      8  q.hg  amount to grow expected gains in ni trials [1.3]
+          xp{n}(:) list of available probe SNR values
+          i        model probed
+          x        probe SNR value used
+          r        response: 0=wrong, 1=right.
+
+ Outputs:
+          xx       recommended probe SNR
+          ii       recommended model to probe next
+          m(4,n,3) estimated srt and slope of all models
+                   m(:,:,1:3) are respectively the mean, mode (MAP) and marginal mode estimates
+          v(4,n)   estimated diagonal covariance matrix entries:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>	V_PEAK2DQUAD find quadratically-interpolated peak in a N-D array</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_psycdigit.html" class="code" title="function [m,v]=v_psycdigit(proc,r,mode,p,q,xp,noise,fn,dfile,ofile)">v_psycdigit</a>	V_PSYCDIGIT measures psychometric function using TIDIGITS stimuli</li>
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="#_sub1" class="code">function y=linres(x,d,a,b)</a></li>
+</ul>
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [xx,ii,m,v]=v_psycestu(iq,x,r,xp)</a>
+0002 <span class="comment">%V_PSYCESTU estimate unimodal psychometric function</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: [xx,ii,m,v]=v_psycestu(-n,p,q,xp) % initialize n models</span>
+0005 <span class="comment">%        [xx,ii,m,v]=v_psycestu(i,x,r)     % supply a trial result to v_psycest</span>
+0006 <span class="comment">%                    v_psycestu(i)         % plot pdf of model i</span>
+0007 <span class="comment">%              [p,q]=psychestu(0)        % output model parameters (or print them if no outputs)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs:</span>
+0010 <span class="comment">%         -n        minus the number of models</span>
+0011 <span class="comment">%          p(:,n)   parameters for each model</span>
+0012 <span class="comment">%                      1  miss [0.04]</span>
+0013 <span class="comment">%                      2  guess [0.1]</span>
+0014 <span class="comment">%                      3,4  SNR at peak: [min max] [-20 20]</span>
+0015 <span class="comment">%                      5,6  normalized semi-width: [min max] [0 20]</span>
+0016 <span class="comment">%                      7,8  low side slope: [min max] [0.03 0.3]</span>
+0017 <span class="comment">%                      9,10  high side slope: [min max] [0.03 0.3]</span>
+0018 <span class="comment">%          q(:)     parameters common to all models (vector or struct)</span>
+0019 <span class="comment">%                      1  q.nxslh  size of pdf array: [nx ns nl nh] [20 21 19 18]</span>
+0020 <span class="comment">%                      2  q.nh  number of probe SNR values to evaluate [30]</span>
+0021 <span class="comment">%                      3  q.cs  weighting of pdf factors [1 1 1 1]</span>
+0022 <span class="comment">%                      5  q.dh  minimum step size in dB for probe SNRs [0.2]</span>
+0023 <span class="comment">%                      6  q.sl  min slopes threshold [0.02]</span>
+0024 <span class="comment">%                      7  q.kp  number of std deviations of the pdfs to keep [4]</span>
+0025 <span class="comment">%                      8  q.hg  amount to grow expected gains in ni trials [1.3]</span>
+0026 <span class="comment">%          xp{n}(:) list of available probe SNR values</span>
+0027 <span class="comment">%          i        model probed</span>
+0028 <span class="comment">%          x        probe SNR value used</span>
+0029 <span class="comment">%          r        response: 0=wrong, 1=right.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Outputs:</span>
+0032 <span class="comment">%          xx       recommended probe SNR</span>
+0033 <span class="comment">%          ii       recommended model to probe next</span>
+0034 <span class="comment">%          m(4,n,3) estimated srt and slope of all models</span>
+0035 <span class="comment">%                   m(:,:,1:3) are respectively the mean, mode (MAP) and marginal mode estimates</span>
+0036 <span class="comment">%          v(4,n)   estimated diagonal covariance matrix entries:</span>
+0037 <span class="keyword">persistent</span> pp qq fl fh fxs tx ts tl th
+0038 <span class="keyword">if</span> iq&lt;0
+0039     <span class="keyword">if</span> iq~=-1
+0040         error(<span class="string">'Cannot yet have multiple models'</span>);
+0041     <span class="keyword">end</span>
+0042     pp=x;
+0043     qq=r;
+0044     pp(7:2:9)=max(pp(7:2:9),qq.sl);  <span class="comment">% enforce the minimum slope</span>
+0045 <span class="keyword">end</span>
+0046 nxslh=qq.nxslh;  <span class="comment">% make local copies of some useful values</span>
+0047 nx=nxslh(1);
+0048 ns=nxslh(2);
+0049 nl=nxslh(3);
+0050 nh=nxslh(4);
+0051 la=pp(1);
+0052 gu=pp(2);
+0053 <span class="keyword">if</span> iq&lt;0
+0054     <span class="comment">% reserve space for pdfs</span>
+0055     fl=ones(nx,nl,ns);
+0056     fh=ones(nx,nh,ns);
+0057     fxs=ones(nx,1,ns); <span class="comment">% marginal x-s distribution</span>
+0058     <span class="comment">% define initial ranges</span>
+0059     tx=linspace(pp(3),pp(4),nx)';
+0060     ts=linspace(pp(5),pp(6),ns)';
+0061     tl=linspace(log(pp(7)),log(pp(8)),nl)';
+0062     th=linspace(log(pp(9)),log(pp(10)),nh)';
+0063 <span class="keyword">elseif</span> iq&gt;0 &amp;&amp; nargin==3
+0064     <span class="keyword">if</span> iq~=1
+0065         error(<span class="string">'Cannot yet have multiple models'</span>);
+0066     <span class="keyword">end</span>
+0067     r0=r==0;
+0068     <span class="comment">% Update the pdf arrays</span>
+0069     mskx=tx&gt;x; <span class="comment">% find which tx values are &gt;x</span>
+0070     nxm=sum(mskx);
+0071     ets=reshape(exp(-ts),[1 1 ns]);
+0072     sd0=1+ets.^2;
+0073     sm0=2*ets;
+0074     <span class="keyword">if</span> any(mskx)
+0075         fl(mskx,:,:)=fl(mskx,:,:).*(r0+(1-2*r0)*(gu+(1-gu-la)*(repmat(sd0,[nxm,nl,1])+repmat(sm0,[nxm,nl,1]).*repmat(cosh((tx(mskx)-x)*exp(tl')),[1 1 ns])).^(-1)));
+0076     <span class="keyword">end</span>
+0077     <span class="keyword">if</span> ~all(mskx)
+0078         fh(~mskx,:,:)=fh(~mskx,:,:).*(r0+(1-2*r0)*(gu+(1-gu-la)*(repmat(sd0,[nx-nxm,nh,1])+repmat(sm0,[nx-nxm,nh,1]).*repmat(cosh((x-tx(~mskx))*exp(th')),[1 1 ns])).^(-1)));
+0079     <span class="keyword">end</span>
+0080 <span class="keyword">else</span> <span class="comment">% iq=0</span>
+0081     xx=pp;
+0082     ii=qq;
+0083 <span class="keyword">end</span>
+0084 
+0085 <span class="comment">% Normalize the pdf arrays</span>
+0086 
+0087 sfl=sum(fl,2);  <span class="comment">% sum over slope variable</span>
+0088 fl=fl./sfl(:,ones(nl,1),:); <span class="comment">% normalize each x-s plane</span>
+0089 sfh=sum(fh,2);
+0090 fh=fh./sfh(:,ones(nh,1),:); <span class="comment">% normalize each x-s plane</span>
+0091 fxs=fxs.*sfl.*sfh;          <span class="comment">% Marginal x-s distribution</span>
+0092 fxs=fxs/sum(fxs(:));        <span class="comment">% Normalize to 1</span>
+0093 
+0094 <span class="comment">% calculate marginal distributions</span>
+0095 
+0096 px=squeeze(sum(fxs,3));
+0097 ps=squeeze(sum(fxs,1));
+0098 pl=reshape(permute(fl,[2 1 3]),nl,nx*ns)*fxs(:);
+0099 ph=reshape(permute(fh,[2 1 3]),nh,nx*ns)*fxs(:);
+0100 
+0101 <span class="comment">% calculate means, modes and entropies</span>
+0102 
+0103 m=zeros(4,1,3);
+0104 m(:,1,1)=[tx'*px ts'*ps tl'*pl th'*ph]';
+0105 vraw=[tx'.^2*px ts'.^2*ps tl'.^2*pl th'.^2*ph]'-m(:,1,1).^2;
+0106 <span class="comment">% h=[(tx(1)-tx(2))*px'*log(px) (ts(1)-ts(2))*ps'*log(ps) (tl(1)-tl(2))*pl'*log(pl) (th(1)-th(2))*ph'*log(ph)]';</span>
+0107 <span class="comment">% calculate joint mode</span>
+0108 [flm,iflm]=max(fl,[],2);
+0109 [fhm,ifhm]=max(fh,[],2);
+0110 fxsm=fxs.*flm.*fhm;
+0111 [pxpk,i]=max(fxsm(:)); <span class="comment">% find global mode</span>
+0112 j=1+floor((i-1)/nx);
+0113 i=i-nx*(j-1);
+0114 jl=iflm(i,1,j);
+0115 jh=ifhm(i,1,j);
+0116 <span class="comment">% could use quadratic interpolation but it seems a bit flaky for 4-D</span>
+0117 <span class="comment">% if all([i j jl jh]&gt;1) &amp;&amp; all([i j jl jh]&lt;[nx ns nl nh])</span>
+0118 <span class="comment">%     [dum,ij]=v_quadpeak(repmat(fxs(i-1:i+1,1,j-1:j+1),[1 3 1 3]).*repmat(fl(i-1:i+1,jl-1:jl+1,j-1:j+1),[1 1 1 3]).*permute(repmat(fh(i-1:i+1,jh-1:jh+1,j-1:j+1),[1 1 1 3]),[1 4 3 2]));</span>
+0119 <span class="comment">% end</span>
+0120 m(:,1,2)=[tx(i) ts(j) tl(jl) th(jh)]'; <span class="comment">% replicate mean for now</span>
+0121 <span class="comment">% calculate marginal modes</span>
+0122 [pxpk,i]=max(px);                          <span class="comment">% marginal mode in x</span>
+0123 <span class="keyword">if</span> i&gt;1 &amp;&amp; i&lt;nx                           <span class="comment">% use quadratic interpolation if possible</span>
+0124     [dum,j]=<a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>(px(i-1:i+1));
+0125     i=i+j-2;
+0126 <span class="keyword">end</span>
+0127 xmm=(2-i)*tx(1)+(i-1)*tx(2);             <span class="comment">% marginal mode in x</span>
+0128 
+0129 [pxpk,i]=max(ps);                          <span class="comment">% marginal mode in sw</span>
+0130 <span class="keyword">if</span> i&gt;1 &amp;&amp; i&lt;ns                           <span class="comment">% use quadratic interpolation if possible</span>
+0131     [dum,j]=<a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>(ps(i-1:i+1));
+0132     i=i+j-2;
+0133 <span class="keyword">end</span>
+0134 smm=(2-i)*ts(1)+(i-1)*ts(2);             <span class="comment">% marginal mode in sw</span>
+0135 
+0136 [pxpk,i]=max(pl);                          <span class="comment">% marginal mode in l</span>
+0137 <span class="keyword">if</span> i&gt;1 &amp;&amp; i&lt;nl                           <span class="comment">% use quadratic interpolation if possible</span>
+0138     [dum,j]=<a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>(pl(i-1:i+1));
+0139     i=i+j-2;
+0140 <span class="keyword">end</span>
+0141 lmm=(2-i)*tl(1)+(i-1)*tl(2);             <span class="comment">% marginal mode in l</span>
+0142 
+0143 [pxpk,i]=max(ph);                          <span class="comment">% marginal mode in h</span>
+0144 <span class="keyword">if</span> i&gt;1 &amp;&amp; i&lt;nh                           <span class="comment">% use quadratic interpolation if possible</span>
+0145     [dum,j]=<a href="v_quadpeak.html" class="code" title="function [v,x,t,m,ze]=v_quadpeak(z)">v_quadpeak</a>(ph(i-1:i+1));
+0146     i=i+j-2;
+0147 <span class="keyword">end</span>
+0148 hmm=(2-i)*th(1)+(i-1)*th(2);             <span class="comment">% marginal mode in h</span>
+0149 m(:,1,3)=[xmm smm lmm hmm]';
+0150 m(3:4,:,:)=exp(m(3:4,:,:));              <span class="comment">% convert log slopes to slopes</span>
+0151 mfact=(m(3,1,:)+m(4,1,:))./(m(3,1,:).*m(4,1,:));
+0152 m(2,1,:)=m(2,1,:).*mfact;  <span class="comment">% convert normalized semi-width to width</span>
+0153 v=[vraw(1); vraw(2)*mfact(1).^2; vraw(3:4).*m(3:4,1,1).^2]; <span class="comment">% calculate variances</span>
+0154 
+0155 <span class="comment">% figure(21); plot(tx,px,m([1 1]),[0 1.05*max(px)]); title('SNR at peak');</span>
+0156 <span class="comment">% figure(22); plot(ts,ps,m([2 2]),[0 1.05*max(ps)]); title('semi-width');</span>
+0157 <span class="comment">% figure(23); plot(tl,pl,log(m([3 3])),[0 1.05*max(pl)]); title('lower log slope');</span>
+0158 <span class="comment">% figure(24); plot(th,ph,log(m([4 4])),[0 1.05*max(ph)]); title('upper log slope');</span>
+0159 <span class="keyword">if</span> ~nargout &amp;&amp; iq==1  <span class="comment">% plot pdf</span>
+0160     subplot(121)
+0161     imagesc(tx,ts,squeeze(fxs)');
+0162     axis <span class="string">'xy'</span>
+0163     xlabel(<span class="string">'Peak position (dB)'</span>);
+0164     ylabel(<span class="string">'Normalized semi-width (dB)'</span>);
+0165     subplot(122)
+0166     imagesc(th,tl,reshape(permute(fl,[2 1 3]),nl,nx*ns)*reshape(permute(fh.*fxs(:,ones(nh,1),:),[1 3 2]),nx*ns,nh));
+0167         axis <span class="string">'xy'</span>
+0168         xlabel(<span class="string">'Ln down slope (ln prob/dB)'</span>);
+0169          ylabel(<span class="string">'Ln up slope (ln prob/dB)'</span>);
+0170 <span class="keyword">end</span>
+0171 <span class="comment">% now determine the next recommended probe SNR</span>
+0172 
+0173 <span class="keyword">if</span> iq~=0
+0174 xt=tx;  <span class="comment">% for now we just try all the tx values</span>
+0175 nxt=numel(xt);
+0176 ets=reshape(exp(-ts),[1 1 ns]);
+0177 sd0=1+ets.^2;
+0178 sm0=2*ets;
+0179 hh=zeros(nxt,1);  <span class="comment">% store for entropies</span>
+0180 <span class="keyword">for</span> i=1:nxt
+0181     y=xt(i);        <span class="comment">% y = probe value</span>
+0182     mskx=tx&gt;y; <span class="comment">% find which tx values are &gt;y</span>
+0183     nxm=sum(mskx);
+0184     flm=gu+(1-gu-la)*(repmat(sd0,[nxm,nl,1])+repmat(sm0,[nxm,nl,1]).*repmat(cosh((tx(mskx)-y)*exp(tl')),[1 1 ns])).^(-1);
+0185     fhm=gu+(1-gu-la)*(repmat(sd0,[nx-nxm,nh,1])+repmat(sm0,[nx-nxm,nh,1]).*repmat(cosh((y-tx(~mskx))*exp(th')),[1 1 ns])).^(-1);
+0186     <span class="comment">% calculate probs conditional on r=1</span>
+0187     fl1=fl;
+0188     fh1=fh;
+0189     fl1(mskx,:,:)=fl1(mskx,:,:).*flm;
+0190     fh1(~mskx,:,:)=fh1(~mskx,:,:).*fhm;
+0191     sfl1=sum(fl1,2);  <span class="comment">% sum over slope variable</span>
+0192     fl1=fl1./sfl1(:,ones(nl,1),:); <span class="comment">% normalize each x-s plane</span>
+0193     sfh1=sum(fh1,2);
+0194     fh1=fh1./sfh1(:,ones(nh,1),:); <span class="comment">% normalize each x-s plane</span>
+0195     fxs1=fxs.*sfl1.*sfh1;          <span class="comment">% Marginal x-s distribution</span>
+0196     pr=sum(fxs1(:)); <span class="comment">% P(r=1 | y)</span>
+0197     fxs1=fxs1/pr;        <span class="comment">% Normalize to 1</span>
+0198     px1=squeeze(sum(fxs1,3));
+0199     ps1=squeeze(sum(fxs1,1));
+0200     pl1=reshape(permute(fl1,[2 1 3]),nl,nx*ns)*fxs1(:);
+0201     ph1=reshape(permute(fh1,[2 1 3]),nh,nx*ns)*fxs1(:);
+0202     <span class="comment">% calculate probs conditional on r=0</span>
+0203     fl0=fl;
+0204     fh0=fh;
+0205     fl0(mskx,:,:)=fl0(mskx,:,:).*(1-flm);
+0206     fh0(~mskx,:,:)=fh0(~mskx,:,:).*(1-fhm);
+0207     sfl0=sum(fl0,2);  <span class="comment">% sum over slope variable</span>
+0208     fl0=fl0./sfl0(:,ones(nl,1),:); <span class="comment">% normalize each x-s plane</span>
+0209     sfh0=sum(fh0,2);
+0210     fh0=fh0./sfh0(:,ones(nh,1),:); <span class="comment">% normalize each x-s plane</span>
+0211     fxs0=fxs.*sfl0.*sfh0;          <span class="comment">% Marginal x-s distribution</span>
+0212     fxs0=fxs0/(1-pr);        <span class="comment">% Normalize to 1</span>
+0213     px0=squeeze(sum(fxs0,3));
+0214     ps0=squeeze(sum(fxs0,1));
+0215     pl0=reshape(permute(fl0,[2 1 3]),nl,nx*ns)*fxs0(:);
+0216     ph0=reshape(permute(fh0,[2 1 3]),nh,nx*ns)*fxs0(:);
+0217     <span class="comment">% now calculate the entropies</span>
+0218     h1=[(tx(1)-tx(2))*px1'*log(px1) (ts(1)-ts(2))*ps1'*log(ps1) (tl(1)-tl(2))*pl1'*log(pl1) (th(1)-th(2))*ph1'*log(ph1)]';
+0219     h0=[(tx(1)-tx(2))*px0'*log(px0) (ts(1)-ts(2))*ps0'*log(ps0) (tl(1)-tl(2))*pl0'*log(pl0) (th(1)-th(2))*ph0'*log(ph0)]';
+0220     hh(i)=qq.cs*(pr*h1+(1-pr)*h0);
+0221 <span class="keyword">end</span>
+0222 [hmin,ih]=min(hh);
+0223 xx=xt(ih);
+0224 ii=1;
+0225 <span class="keyword">end</span>
+0226 
+0227 <span class="comment">% now rescale the pdf arrays</span>
+0228 
+0229 <span class="comment">% sraw=sqrt(vraw);  % std deviations</span>
+0230 <span class="comment">% clim=[tx(1) tx(end); ts(1) ts(end); tl(1) tl(end); th(1) th(end)]  % current axis limits</span>
+0231 <span class="comment">% minlim=clim*[3 1; 0 2]/3; % always keep at least the middle third of the existing array</span>
+0232 <span class="comment">% maxlim=clim*[2 0; 1 3]/3;</span>
+0233 <span class="comment">% pra=min(max(repmat(m(:,1,1),1,2)+qq.kp*sraw*[-1 1],minlim),maxlim);</span>
+0234 
+0235 plow=max(min(0.1*gu,0.001),1e-6);
+0236 
+0237 pcx=cumsum(px);
+0238 tmp=linspace(tx(max(find(pcx&gt;plow,1)-1,1)),tx(find(pcx&gt;(1-plow),1)),nx)';
+0239 fxs=<a href="#_sub1" class="code" title="subfunction y=linres(x,d,a,b)">linres</a>(fxs,1,tx,tmp);
+0240 fl=<a href="#_sub1" class="code" title="subfunction y=linres(x,d,a,b)">linres</a>(fl,1,tx,tmp);
+0241 fh=<a href="#_sub1" class="code" title="subfunction y=linres(x,d,a,b)">linres</a>(fh,1,tx,tmp);
+0242 tx=tmp;
+0243 <span class="comment">%</span>
+0244 pcx=cumsum(ps);
+0245 tmp=linspace(ts(max(find(pcx&gt;plow,1)-1,1)),ts(find(pcx&gt;(1-plow),1)),ns)';
+0246 fxs=<a href="#_sub1" class="code" title="subfunction y=linres(x,d,a,b)">linres</a>(fxs,3,ts,tmp);
+0247 fl=<a href="#_sub1" class="code" title="subfunction y=linres(x,d,a,b)">linres</a>(fl,3,ts,tmp);
+0248 fh=<a href="#_sub1" class="code" title="subfunction y=linres(x,d,a,b)">linres</a>(fh,3,ts,tmp);
+0249 ts=tmp;
+0250 <span class="comment">%</span>
+0251 <span class="comment">% For now, we do not update the slope distributions</span>
+0252 <span class="comment">%</span>
+0253 <span class="comment">% tmp=linspace(pra(3,1),pra(3,2),nl)';</span>
+0254 <span class="comment">% fl=linres(fl,2,tl,tmp);</span>
+0255 <span class="comment">% tl=tmp;</span>
+0256 <span class="comment">%</span>
+0257 <span class="comment">% tmp=linspace(pra(4,1),pra(4,2),nh)';</span>
+0258 <span class="comment">% fh=linres(fh,2,th,tmp);</span>
+0259 <span class="comment">% th=tmp;</span>
+0260 
+0261 <a name="_sub1" href="#_subfunctions" class="code">function y=linres(x,d,a,b)</a>
+0262 <span class="comment">% linear resample x along dimension d from grid a to b</span>
+0263 sz=size(x);
+0264 n=sz(d);
+0265 p=[d:numel(sz) 1:d-1];
+0266 sz2=prod(sz)/n;
+0267 z=reshape(permute(x,p),n,sz2);  <span class="comment">% put the target dimension in column 1</span>
+0268 na=numel(a);
+0269 nb=numel(b);
+0270 [xx,ix]=sort([a(:); b(:)]);
+0271 jx=zeros(1,na+nb);
+0272 jx(ix)=(1:na+nb);
+0273 <span class="comment">% ja=jx(1:na)-(1:na); % last new point &lt; each old point</span>
+0274 jb=jx(na+1:end)-(1:nb); <span class="comment">% last old point &lt; each new point</span>
+0275 y=zeros(nb,size(z,2));
+0276 y(jb==0,:)=z(ones(sum(jb==0),1),:);  <span class="comment">% replicated entries</span>
+0277 y(jb==na,:)=z(na*ones(sum(jb==na),1),:);
+0278 mk=(jb&gt;0) &amp; (jb&lt;na);  <span class="comment">% interpolation mask</span>
+0279 jmk=jb(mk);
+0280 f=((b(mk)-a(jmk))./(a(1+jmk)-a(jmk)));
+0281 fc=1-f;
+0282 y(mk,:)=z(jmk,:).*fc(:,ones(1,sz2))+z(1+jmk,:).*f(:,ones(1,sz2));
+0283 sz(d)=nb;
+0284 y=ipermute(reshape(y,sz(p)),p);
+0285 
+0286 
+0287 
+0288 
+0289 
+0290</pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

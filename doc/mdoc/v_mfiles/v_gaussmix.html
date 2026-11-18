@@ -1,0 +1,595 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_gaussmix</title>
+  <meta name="keywords" content="v_gaussmix">
+  <meta name="description" content="V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_gaussmix
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)
+
+ Usage:
+    (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances
+    (2) [m,v,w]=gaussmix(x,[],[],k,'v');    % create GMM with k mixtures and full covariances
+
+ Inputs: n data values, k mixtures, p parameters, l loops
+
+     X(n,p)   Input data vectors, one per row.
+     C(1)     Minimum variance of normalized data (Use [] to take default value of n^-2)
+     L        The integer portion of l gives a maximum loop count. The fractional portion gives
+              an optional stopping threshold. Iteration will cease if the increase in
+              log likelihood density per data point is less than this value. Thus l=10.001 will
+              stop after 10 iterations or when the increase in log likelihood falls below
+              0.001.
+              As a special case, if L=0, then the first three outputs are omitted.
+              Use [] to take default value of 100.0001
+     M0       Number of mixtures required (or initial mixture means, M0(k,p), - see below)
+     V0       Initialization mode:
+                'f'    Initialize with K randomly selected data points [default]
+                'p'    Initialize with centroids and variances of random partitions
+                'k'    k-means algorithm ('kf' and 'kp' determine initialization)
+                'h'    k-harmonic means algorithm ('hf' and 'hp' determine initialization) [default]
+                's'    use unscaled data during initialization phase instead of scaling it first
+                'm'    M0(k,p) contains the initial centres
+                'v'    full covariance matrices
+              Mode 'hf' [the default] generally gives the best results but 'f' is faster and often OK
+     W0(n,1)  Data point weights (need not sum to unity)
+
+   Alternatively, initial values for M0, V0 and W0 can be given  explicitly:
+
+     M0(k,p)       Initial mixture means, one row per mixture.
+     V0(k,p)       Initial mixture variances, one row per mixture.
+      or V0(p,p,k)    one full-covariance matrix per mixture
+     W0(k,1)       Initial mixture weights, one per mixture. The weights must sum to unity.
+     WX(n,1)       Data point weights (need not sum to unity)
+
+ Outputs: (Note that M, V and W are omitted if L==0)
+
+     M(k,p)   Mixture means, one row per mixture. (omitted if L==0)
+     V(k,p)   Mixture variances, one row per mixture. (omitted if L==0)
+       or V(p,p,k) if full covariance matrices in use (i.e. either 'v' option or V0(p,p,k) specified)
+     W(k,1)   Mixture weights, one per mixture. The weights will sum to unity. (omitted if L==0)
+     G        Average log probability of the input data points.
+     F        Fisher's Discriminant measures how well the data divides into classes.
+                   It is the ratio of the between-mixture variance to the average mixture variance: a
+                   high value means the classes (mixtures) are well separated.
+     PP(n,1)  Log probability of each data point
+     GG(l+1,1) Average log probabilities at the beginning of each iteration and at the end of the last
+
+ The fitting procedure uses one of several initialization methods to create an initial guess
+ for the mixture centres and then uses the EM (expectation-maximization) algorithm to refine
+ the guess. Although the EM algorithm is deterministic, the initialization procedures use
+ random numbers and so the routine will not give identical answers if you call it multiple
+ times with the same input data. See v_randvec() for generating GMM data vectors.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>	V_KMEANHAR Vector quantisation using K-harmonic means algorithm [X,G,XN,GG]=(D,K,L,E,X0)</li>
+<li><a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>	V_KMEANS Vector quantisation using K-means algorithm [X,ESQ,J]=(D,K,X0,L)</li>
+<li><a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>	V_RNSUBSET choose k distinct random integers from 1:n M=(K,N)</li>
+<li><a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>	V_VOICEBOX  set global parameters for Voicebox functions Y=(FIELD,VAL)</li>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [m,v,w,g,f,pp,gg]=v_gaussmix(x,c,l,m0,v0,w0,wx)</a>
+0002 <span class="comment">%V_GAUSSMIX fits a gaussian mixture pdf to a set of data observations [m,v,w,g,f]=(x,c,l,m0,v0,w0,wx)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:</span>
+0005 <span class="comment">%    (1) [m,v,w]=v_gaussmix(x,[],[],k);    % create GMM with k mixtures and diagonal covariances</span>
+0006 <span class="comment">%    (2) [m,v,w]=gaussmix(x,[],[],k,'v');    % create GMM with k mixtures and full covariances</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Inputs: n data values, k mixtures, p parameters, l loops</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%     X(n,p)   Input data vectors, one per row.</span>
+0011 <span class="comment">%     C(1)     Minimum variance of normalized data (Use [] to take default value of n^-2)</span>
+0012 <span class="comment">%     L        The integer portion of l gives a maximum loop count. The fractional portion gives</span>
+0013 <span class="comment">%              an optional stopping threshold. Iteration will cease if the increase in</span>
+0014 <span class="comment">%              log likelihood density per data point is less than this value. Thus l=10.001 will</span>
+0015 <span class="comment">%              stop after 10 iterations or when the increase in log likelihood falls below</span>
+0016 <span class="comment">%              0.001.</span>
+0017 <span class="comment">%              As a special case, if L=0, then the first three outputs are omitted.</span>
+0018 <span class="comment">%              Use [] to take default value of 100.0001</span>
+0019 <span class="comment">%     M0       Number of mixtures required (or initial mixture means, M0(k,p), - see below)</span>
+0020 <span class="comment">%     V0       Initialization mode:</span>
+0021 <span class="comment">%                'f'    Initialize with K randomly selected data points [default]</span>
+0022 <span class="comment">%                'p'    Initialize with centroids and variances of random partitions</span>
+0023 <span class="comment">%                'k'    k-means algorithm ('kf' and 'kp' determine initialization)</span>
+0024 <span class="comment">%                'h'    k-harmonic means algorithm ('hf' and 'hp' determine initialization) [default]</span>
+0025 <span class="comment">%                's'    use unscaled data during initialization phase instead of scaling it first</span>
+0026 <span class="comment">%                'm'    M0(k,p) contains the initial centres</span>
+0027 <span class="comment">%                'v'    full covariance matrices</span>
+0028 <span class="comment">%              Mode 'hf' [the default] generally gives the best results but 'f' is faster and often OK</span>
+0029 <span class="comment">%     W0(n,1)  Data point weights (need not sum to unity)</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   Alternatively, initial values for M0, V0 and W0 can be given  explicitly:</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%     M0(k,p)       Initial mixture means, one row per mixture.</span>
+0034 <span class="comment">%     V0(k,p)       Initial mixture variances, one row per mixture.</span>
+0035 <span class="comment">%      or V0(p,p,k)    one full-covariance matrix per mixture</span>
+0036 <span class="comment">%     W0(k,1)       Initial mixture weights, one per mixture. The weights must sum to unity.</span>
+0037 <span class="comment">%     WX(n,1)       Data point weights (need not sum to unity)</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% Outputs: (Note that M, V and W are omitted if L==0)</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%     M(k,p)   Mixture means, one row per mixture. (omitted if L==0)</span>
+0042 <span class="comment">%     V(k,p)   Mixture variances, one row per mixture. (omitted if L==0)</span>
+0043 <span class="comment">%       or V(p,p,k) if full covariance matrices in use (i.e. either 'v' option or V0(p,p,k) specified)</span>
+0044 <span class="comment">%     W(k,1)   Mixture weights, one per mixture. The weights will sum to unity. (omitted if L==0)</span>
+0045 <span class="comment">%     G        Average log probability of the input data points.</span>
+0046 <span class="comment">%     F        Fisher's Discriminant measures how well the data divides into classes.</span>
+0047 <span class="comment">%                   It is the ratio of the between-mixture variance to the average mixture variance: a</span>
+0048 <span class="comment">%                   high value means the classes (mixtures) are well separated.</span>
+0049 <span class="comment">%     PP(n,1)  Log probability of each data point</span>
+0050 <span class="comment">%     GG(l+1,1) Average log probabilities at the beginning of each iteration and at the end of the last</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">% The fitting procedure uses one of several initialization methods to create an initial guess</span>
+0053 <span class="comment">% for the mixture centres and then uses the EM (expectation-maximization) algorithm to refine</span>
+0054 <span class="comment">% the guess. Although the EM algorithm is deterministic, the initialization procedures use</span>
+0055 <span class="comment">% random numbers and so the routine will not give identical answers if you call it multiple</span>
+0056 <span class="comment">% times with the same input data. See v_randvec() for generating GMM data vectors.</span>
+0057 
+0058 <span class="comment">%  Bugs/Suggestions</span>
+0059 <span class="comment">%     (1) Allow processing in chunks by outputting/reinputting an array of sufficient statistics</span>
+0060 <span class="comment">%     (2) Other initialization options:</span>
+0061 <span class="comment">%              'l'    LBG algorithm</span>
+0062 <span class="comment">%              'm'    Move-means (dog-rabbit) algorithm</span>
+0063 <span class="comment">%     (3) Allow updating of weights-only, not means/variances</span>
+0064 <span class="comment">%     (4) Allow freezing of means and/or variances</span>
+0065 <span class="comment">%     (5) Allow initialization of means only</span>
+0066 
+0067 <span class="comment">%      Copyright (C) Mike Brookes 2000-2009</span>
+0068 <span class="comment">%      Version: $Id: v_gaussmix.m 10865 2018-09-21 17:22:45Z dmb $</span>
+0069 <span class="comment">%</span>
+0070 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0071 <span class="comment">%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0074 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0075 <span class="comment">%   it under the terms of the GNU Lesser General Public License as published by</span>
+0076 <span class="comment">%   the Free Software Foundation; either version 3 of the License, or</span>
+0077 <span class="comment">%   (at your option) any later version.</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0080 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0081 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0082 <span class="comment">%   GNU Lesser General Public License for more details.</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%   You can obtain a copy of the GNU Lesser General Public License from</span>
+0085 <span class="comment">%   https://www.gnu.org/licenses/ .</span>
+0086 <span class="comment">%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.</span>
+0087 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0088 [n,p]=size(x);                      <span class="comment">% n = number of training values, p = dimension of data vector</span>
+0089 wn=ones(n,1);
+0090 memsize=<a href="v_voicebox.html" class="code" title="function y=v_voicebox(f,v)">v_voicebox</a>(<span class="string">'memsize'</span>);      <span class="comment">% set memory size to use</span>
+0091 <span class="keyword">if</span> isempty(c)                       <span class="comment">% no minimum variance is specified</span>
+0092     c=1/n^2;
+0093 <span class="keyword">else</span>
+0094     c=c(1);                         <span class="comment">% just to prevent legacy code failing</span>
+0095 <span class="keyword">end</span>
+0096 fulliv=0;                           <span class="comment">% initial variance is not full</span>
+0097 <span class="keyword">if</span> isempty(l)
+0098     l=100+1e-4;                     <span class="comment">% max loop count + stopping threshold</span>
+0099 <span class="keyword">end</span>
+0100 <span class="keyword">if</span> nargin&lt;5 || isempty(v0) || ischar(v0)             <span class="comment">% no initial values specified for m0, v0, w0</span>
+0101     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0102     <span class="comment">%  No initial values given, so we must use k-means or equivalent  %</span>
+0103     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0104     <span class="keyword">if</span> nargin&lt;6
+0105         <span class="keyword">if</span> nargin&lt;5 || isempty(v0)
+0106             v0=<span class="string">'hf'</span>;                <span class="comment">% default initialization mode: hf</span>
+0107         <span class="keyword">end</span>
+0108         wx=wn;                      <span class="comment">% no data point weights</span>
+0109     <span class="keyword">else</span>
+0110         wx=w0(:);                   <span class="comment">% data point weights</span>
+0111     <span class="keyword">end</span>
+0112     wx=wx(:)/sum(wx);               <span class="comment">% normalize and force to be a column vector</span>
+0113     <span class="keyword">if</span> any(v0==<span class="string">'m'</span>)
+0114         k=size(m0,1);
+0115     <span class="keyword">else</span>
+0116         k=m0;
+0117     <span class="keyword">end</span>
+0118     fv=any(v0==<span class="string">'v'</span>);                <span class="comment">% full covariance matrices requested</span>
+0119     mx0=wx'*x;                      <span class="comment">% calculate mean of input data in each dimension</span>
+0120     vx0=wx'*x.^2-mx0.^2;            <span class="comment">% calculate variance of input data in each dimension</span>
+0121     sx0=sqrt(vx0)+(vx0==0);         <span class="comment">% scale factor: std of input data in each dimension (or 1 if std==0)</span>
+0122     <span class="keyword">if</span> n&lt;=k                         <span class="comment">% each data point can have its own mixture</span>
+0123         xs=(x-mx0(wn,:))./sx0(wn,:);          <span class="comment">% scale the data</span>
+0124         m=xs(mod((1:k)-1,n)+1,:);   <span class="comment">% just include all points several times</span>
+0125         v=zeros(k,p);               <span class="comment">% will be set to floor later</span>
+0126         w=zeros(k,1);
+0127         w(1:n)=1/n;
+0128         <span class="keyword">if</span> l&gt;0
+0129             l=0.1;                  <span class="comment">% no point in iterating</span>
+0130         <span class="keyword">end</span>
+0131     <span class="keyword">else</span>                            <span class="comment">% more points than mixtures</span>
+0132         <span class="keyword">if</span> any(v0==<span class="string">'s'</span>)
+0133             xs=x;                   <span class="comment">% do not scale data during initialization</span>
+0134         <span class="keyword">else</span>
+0135             xs=(x-mx0(wn,:))./sx0(wn,:);  <span class="comment">% else scale now</span>
+0136             <span class="keyword">if</span> any(v0==<span class="string">'m'</span>)
+0137                 m=(m0-mx0(ones(k,1),:))./sx0(ones(k,1),:);  <span class="comment">% scale specified means as well</span>
+0138             <span class="keyword">end</span>
+0139         <span class="keyword">end</span>
+0140         w=repmat(1/k,k,1);                      <span class="comment">% all mixtures equally likely</span>
+0141         <span class="keyword">if</span> any(v0==<span class="string">'k'</span>)                         <span class="comment">% k-means initialization</span>
+0142             <span class="keyword">if</span> any(v0==<span class="string">'m'</span>)
+0143                 [m,e,j]=<a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>(xs,k,m);
+0144             <span class="keyword">elseif</span> any(v0==<span class="string">'p'</span>)
+0145                 [m,e,j]=<a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>(xs,k,<span class="string">'p'</span>);
+0146             <span class="keyword">else</span>
+0147                 [m,e,j]=<a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>(xs,k,<span class="string">'f'</span>);
+0148             <span class="keyword">end</span>
+0149         <span class="keyword">elseif</span> any(v0==<span class="string">'h'</span>)                     <span class="comment">% k-harmonic means initialization</span>
+0150             <span class="keyword">if</span> any(v0==<span class="string">'m'</span>)
+0151                 [m,e,j]=<a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>(xs,k,[],4,m);
+0152             <span class="keyword">else</span>
+0153                 <span class="keyword">if</span> any(v0==<span class="string">'p'</span>)
+0154                     [m,e,j]=<a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>(xs,k,[],4,<span class="string">'p'</span>);
+0155                 <span class="keyword">else</span>
+0156                     [m,e,j]=<a href="v_kmeanhar.html" class="code" title="function [x,g,xn,gg] = v_kmeanhar(d,k,l,e,x0)">v_kmeanhar</a>(xs,k,[],4,<span class="string">'f'</span>);
+0157                 <span class="keyword">end</span>
+0158             <span class="keyword">end</span>
+0159         <span class="keyword">elseif</span> any(v0==<span class="string">'p'</span>)                     <span class="comment">% Initialize using a random partition</span>
+0160             j=ceil(rand(n,1)*k);                <span class="comment">% allocate to random clusters</span>
+0161             j(<a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>(k,n))=1:k;             <span class="comment">% but force at least one point per cluster</span>
+0162             <span class="keyword">for</span> i=1:k
+0163                 m(i,:)=mean(xs(j==i,:),1);
+0164             <span class="keyword">end</span>
+0165         <span class="keyword">else</span>
+0166             <span class="keyword">if</span> any(v0==<span class="string">'m'</span>)
+0167                 m=m0;                           <span class="comment">% use specified centres</span>
+0168             <span class="keyword">else</span>
+0169                 m=xs(<a href="v_rnsubset.html" class="code" title="function m = v_rnsubset(k,n)">v_rnsubset</a>(k,n),:);          <span class="comment">% Forgy initialization: sample k centres without replacement [default]</span>
+0170             <span class="keyword">end</span>
+0171             [e,j]=<a href="v_kmeans.html" class="code" title="function [x,g,j,gg] = v_kmeans(d,k,x0,l)">v_kmeans</a>(xs,k,m,0);             <span class="comment">% find out the cluster allocation</span>
+0172         <span class="keyword">end</span>
+0173         <span class="keyword">if</span> any(v0==<span class="string">'s'</span>)
+0174             xs=(x-mx0(wn,:))./sx0(wn,:);      <span class="comment">% scale data now if not done previously</span>
+0175         <span class="keyword">end</span>
+0176         v=zeros(k,p);                   <span class="comment">% initialise diagonal covariances</span>
+0177         w=zeros(k,1);                   <span class="comment">% initialise mixture weights</span>
+0178         <span class="keyword">for</span> i=1:k
+0179             ni=sum(j==i);               <span class="comment">% number assigned to this centre</span>
+0180             w(i)=(ni+1)/(n+k);          <span class="comment">% weight of this mixture</span>
+0181             <span class="keyword">if</span> ni                       <span class="comment">% if any data points are assined to this mixture</span>
+0182                 v(i,:)=sum((xs(j==i,:)-repmat(m(i,:),ni,1)).^2,1)/ni; <span class="comment">% initialize mixture variance</span>
+0183             <span class="keyword">else</span>                        <span class="comment">% else if no points assigned to this mixture</span>
+0184                 v(i,:)=zeros(1,p);      <span class="comment">% set mixture variance to zero (will be set to the global floor later)</span>
+0185             <span class="keyword">end</span>
+0186         <span class="keyword">end</span>
+0187     <span class="keyword">end</span>
+0188 <span class="keyword">else</span>
+0189     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0190     <span class="comment">% use initial values given as input parameters %</span>
+0191     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0192     <span class="keyword">if</span> nargin&lt;7
+0193         wx=wn;                          <span class="comment">% no data point weights specified so use uniform weights</span>
+0194     <span class="keyword">end</span>
+0195     wx=wx(:)/sum(wx);                   <span class="comment">% normalize weights and force a column vector</span>
+0196     mx0=wx'*x;                          <span class="comment">% calculate mean of input data in each dimension</span>
+0197     vx0=wx'*x.^2-mx0.^2;                <span class="comment">% calculate variance of input data in each dimension</span>
+0198     sx0=sqrt(vx0);
+0199     sx0(sx0==0)=1;                      <span class="comment">% do not divide by zero when scaling</span>
+0200     [k,p]=size(m0);
+0201     xs=(x-mx0(wn,:))./sx0(wn,:);                    <span class="comment">% scale the data</span>
+0202     m=(m0-mx0(ones(k,1),:))./sx0(ones(k,1),:);      <span class="comment">% and the means</span>
+0203     v=v0;
+0204     w=w0;
+0205     fv=ndims(v)&gt;2 || size(v,1)&gt;k;                   <span class="comment">% full covariance matrix is supplied: v(p,p,k)</span>
+0206     <span class="keyword">if</span> fv                                           <span class="comment">% if full covariance matrix is supplied</span>
+0207         mk=eye(p)==0;                               <span class="comment">% create mask for off-diagonal elements</span>
+0208         fulliv=any(v(repmat(mk,[1 1 k]))~=0);       <span class="comment">% check if any are non-zero</span>
+0209         <span class="keyword">if</span> ~fulliv                                  <span class="comment">% supplied full covariance matrices are actually diagonal</span>
+0210             v=reshape(v(repmat(~mk,[1 1 k])),p,k)'./repmat(sx0.^2,k,1);     <span class="comment">% just pick out and scale the diagonal elements for now</span>
+0211         <span class="keyword">else</span>
+0212             v=v./repmat(sx0'*sx0,[1 1 k]);          <span class="comment">% scale the full covariance matrix for each mixture</span>
+0213         <span class="keyword">end</span>
+0214     <span class="keyword">else</span>                                            <span class="comment">% diagonal covariance matrix is supplied: v(k,p)</span>
+0215         v = v ./ repmat(sx0.^2,k,1);                <span class="comment">% scale the diagonal covariance matrix for each mixture</span>
+0216     <span class="keyword">end</span>
+0217 <span class="keyword">end</span>
+0218 <span class="keyword">if</span> length(wx)~=n
+0219     error(<span class="string">'%d datapoints but %d weights'</span>,n,length(wx));
+0220 <span class="keyword">end</span>
+0221 lsx=sum(log(sx0));
+0222 xsw=xs.*repmat(wx,1,p);                             <span class="comment">% weighted data points</span>
+0223 <span class="keyword">if</span> ~fulliv                                          <span class="comment">% initializing with diagonal covariance if v0 is either unspecified or diagonal</span>
+0224     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0225     <span class="comment">% Diagonal Covariance matrices  %</span>
+0226     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0227     v=max(v,c);         <span class="comment">% apply the lower bound</span>
+0228     xs2=xs.^2.*repmat(wx,1,p);          <span class="comment">% square and weight the data for variance calculations</span>
+0229     
+0230     <span class="comment">% If data size is large then do calculations in chunks</span>
+0231     
+0232     nb=min(n,max(1,floor(memsize/(8*p*k))));    <span class="comment">% chunk size for testing data points</span>
+0233     nl=ceil(n/nb);                  <span class="comment">% number of chunks</span>
+0234     jx0=n-(nl-1)*nb;                <span class="comment">% size of first chunk</span>
+0235     
+0236     im=repmat(1:k,1,nb); im=im(:);
+0237     th=(l-floor(l))*n;
+0238     sd=(nargout &gt; 3*(l~=0)); <span class="comment">% = 1 if we are outputting log likelihood values</span>
+0239     lp=floor(l)+sd;   <span class="comment">% extra loop needed to calculate final G value</span>
+0240     
+0241     lpx=zeros(1,n);             <span class="comment">% log probability of each data point</span>
+0242     wk=ones(k,1);
+0243     wp=ones(1,p);
+0244     wnb=ones(1,nb);
+0245     wnj=ones(1,jx0);
+0246     
+0247     <span class="comment">% EM loop</span>
+0248     
+0249     g=0;                            <span class="comment">% dummy initial value for comparison</span>
+0250     gg=zeros(lp+1,1);
+0251     ss=sd;                          <span class="comment">% initialize stopping count (0 or 1)</span>
+0252     <span class="keyword">for</span> j=1:lp
+0253         g1=g;                       <span class="comment">% save previous log likelihood (2*pi factor omitted)</span>
+0254         m1=m;                       <span class="comment">% save previous means, variances and weights</span>
+0255         v1=v;
+0256         w1=w;
+0257         vi=-0.5*v.^(-1);                <span class="comment">% data-independent scale factor in exponent</span>
+0258         lvm=log(w)-0.5*sum(log(v),2);   <span class="comment">% log of external scale factor (excluding -0.5*p*log(2pi) term)</span>
+0259         
+0260         <span class="comment">% first do partial chunk (of length jx0)</span>
+0261         
+0262         jx=jx0;
+0263         ii=1:jx;                        <span class="comment">% indices of data points in this chunk</span>
+0264         kk=repmat(ii,k,1);              <span class="comment">% kk(k,jx): data point index</span>
+0265         km=repmat(1:k,1,jx);            <span class="comment">% km(k,jx): mixture index</span>
+0266         py=reshape(sum((xs(kk(:),:)-m(km(:),:)).^2.*vi(km(:),:),2),k,jx)+lvm(:,wnj); <span class="comment">% py(k,jx) pdf of each point with each mixture</span>
+0267         mx=max(py,[],1);                <span class="comment">% mx(1,jx) find normalizing factor for each data point to prevent underflow when using exp()</span>
+0268         px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0269         ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0270         px=px./ps(wk,:);                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0271         lpx(ii)=log(ps)+mx;
+0272         pk=px*wx(ii);                   <span class="comment">% pk(k,1) effective fraction of data points for each mixture (could be zero due to underflow)</span>
+0273         sx=px*xsw(ii,:);
+0274         sx2=px*xs2(ii,:);
+0275         <span class="keyword">for</span> il=2:nl                     <span class="comment">% process the data points in chunks</span>
+0276             ix=jx+1;
+0277             jx=jx+nb;                   <span class="comment">% increment upper limit</span>
+0278             ii=ix:jx;                   <span class="comment">% indices of data points in this chunk</span>
+0279             kk=repmat(ii,k,1);
+0280             py=reshape(sum((xs(kk(:),:)-m(im,:)).^2.*vi(im,:),2),k,nb)+lvm(:,wnb);
+0281             mx=max(py,[],1);            <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0282             px=exp(py-mx(wk,:));        <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0283             ps=sum(px,1);               <span class="comment">% total normalized likelihood of each data point</span>
+0284             px=px./ps(wk,:);            <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0285             lpx(ii)=log(ps)+mx;
+0286             pk=pk+px*wx(ii);            <span class="comment">% pk(k,1) effective fraction of data points for each mixture (could be zero due to underflow)</span>
+0287             sx=sx+px*xsw(ii,:);
+0288             sx2=sx2+px*xs2(ii,:);
+0289         <span class="keyword">end</span>
+0290         g=lpx*wx;                       <span class="comment">% total log probability summed over all data points</span>
+0291         gg(j)=g;                        <span class="comment">% save log prob at each iteration</span>
+0292         w=pk;                           <span class="comment">% normalize to get the weights</span>
+0293         <span class="keyword">if</span> pk                           <span class="comment">% if all elements of pk are non-zero</span>
+0294             m=sx./pk(:,wp);             <span class="comment">% calculate mixture means</span>
+0295             v=sx2./pk(:,wp);            <span class="comment">% and raw second moments</span>
+0296         <span class="keyword">else</span>
+0297             wm=pk==0;                   <span class="comment">% mask indicating mixtures with zero weights</span>
+0298             nz=sum(wm);                  <span class="comment">% number of zero-weight mixtures</span>
+0299             [vv,mk]=sort(lpx);          <span class="comment">% find the lowest probability data points</span>
+0300             m=zeros(k,p);               <span class="comment">% initialize means and variances to zero (variances are floored later)</span>
+0301             v=m;
+0302             m(wm,:)=xs(mk(1:nz),:);     <span class="comment">% set zero-weight mixture means to worst-fitted data points</span>
+0303             w(wm)=1/n;                   <span class="comment">% set these weights non-zero</span>
+0304             w=w*n/(n+nz);                <span class="comment">% normalize so the weights sum to unity</span>
+0305             wm=~wm;                     <span class="comment">% mask for non-zero weights</span>
+0306             m(wm,:)=sx(wm,:)./pk(wm,wp);  <span class="comment">% recalculate means and raw second moments for mixtures with a non-zero weight</span>
+0307             v(wm,:)=sx2(wm,:)./pk(wm,wp);
+0308         <span class="keyword">end</span>
+0309         v=max(v-m.^2,c);                <span class="comment">% convert raw second moments to variances and apply floor</span>
+0310         <span class="keyword">if</span> g-g1&lt;=th &amp;&amp; j&gt;1
+0311             <span class="keyword">if</span> ~ss, <span class="keyword">break</span>; <span class="keyword">end</span>          <span class="comment">%  stop</span>
+0312             ss=ss-1;                    <span class="comment">% stop next time</span>
+0313         <span class="keyword">end</span>
+0314     <span class="keyword">end</span>
+0315     <span class="keyword">if</span> sd &amp;&amp; ~fv                        <span class="comment">% we need to calculate the final probabilities</span>
+0316         pp=lpx'-0.5*p*log(2*pi)-lsx;    <span class="comment">% log of total probability of each data point</span>
+0317         gg=gg(1:j)-0.5*p*log(2*pi)-lsx; <span class="comment">% average log prob at each iteration</span>
+0318         g=gg(end);
+0319         m=m1;                           <span class="comment">% back up to previous iteration</span>
+0320         v=v1;
+0321         w=w1;
+0322         mm=sum(m,1)/k;
+0323         f=(m(:)'*m(:)-k*mm(:)'*mm(:))/sum(v(:));
+0324     <span class="keyword">end</span>
+0325     <span class="keyword">if</span> ~fv
+0326         m=m.*sx0(ones(k,1),:)+mx0(ones(k,1),:);    <span class="comment">% unscale means</span>
+0327         v=v.*repmat(sx0.^2,k,1);                <span class="comment">% and variances</span>
+0328     <span class="keyword">else</span>
+0329         v1=v;
+0330         v=zeros(p,p,k);
+0331         mk=eye(p)==1;                           <span class="comment">% mask for diagonal elements</span>
+0332         v(repmat(mk,[1 1 k]))=v1';              <span class="comment">% set from v1</span>
+0333     <span class="keyword">end</span>
+0334 <span class="keyword">end</span>
+0335 <span class="keyword">if</span> fv              <span class="comment">% check if full covariance matrices were requested</span>
+0336     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0337     <span class="comment">% Full Covariance matrices  %</span>
+0338     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0339     pl=p*(p+1)/2;                                           <span class="comment">% number of non-trivial elements in lower triangular matrix</span>
+0340     lix=1:p^2;
+0341     cix=repmat(1:p,p,1);
+0342     rix=cix';
+0343     lix(cix&gt;rix)=[];                                        <span class="comment">% index of lower triangular elements</span>
+0344     cix=cix(lix);                                           <span class="comment">% index of lower triangular columns</span>
+0345     rix=rix(lix);                                           <span class="comment">% index of lower triangular rows</span>
+0346     <span class="comment">% dix=find(rix==cix);                                   % index of lower triangular diagonal elements [unused]</span>
+0347     lixi=zeros(p,p);
+0348     lixi(lix)=1:pl;
+0349     lixi=lixi';
+0350     lixi(lix)=1:pl;                                         <span class="comment">% reverse index to build full matrices</span>
+0351     v=reshape(v,p^2,k);
+0352     v=v(lix,:)';                                            <span class="comment">% lower triangular in rows (k,p*(p+1)/2)</span>
+0353     
+0354     <span class="comment">% If data size is large then do calculations in chunks</span>
+0355     
+0356     nb=min(n,max(1,floor(memsize/(24*p*k))));   <span class="comment">% chunk size for testing data points</span>
+0357     nl=ceil(n/nb);                              <span class="comment">% number of chunks</span>
+0358     jx0=n-(nl-1)*nb;                            <span class="comment">% size of first chunk</span>
+0359     <span class="comment">%</span>
+0360     th=(l-floor(l))*n;
+0361     sd=(nargout &gt; 3*(l~=0));                    <span class="comment">% = 1 if we are outputting log likelihood values</span>
+0362     lp=floor(l)+sd;                             <span class="comment">% extra loop needed to calculate final G value</span>
+0363     <span class="comment">%</span>
+0364     lpx=zeros(1,n);                             <span class="comment">% log probability of each data point</span>
+0365     wk=ones(k,1);
+0366     wp=ones(1,p);
+0367     wpl=ones(1,pl);                             <span class="comment">% 1 index for lower triangular matrix</span>
+0368     wnb=ones(1,nb);
+0369     wnj=ones(1,jx0);
+0370     
+0371     <span class="comment">% EM loop</span>
+0372     
+0373     g=0;                        <span class="comment">% dummy initial value for comparison</span>
+0374     gg=zeros(lp+1,1);
+0375     ss=sd;                      <span class="comment">% initialize stopping count (0 or 1)</span>
+0376     vi=zeros(p*k,p);            <span class="comment">% stack of k inverse cov matrices each size p*p</span>
+0377     vim=zeros(p*k,1);           <span class="comment">% stack of k vectors of the form inv(v)*m</span>
+0378     mtk=vim;                      <span class="comment">% stack of k vectors of the form m</span>
+0379     lvm=zeros(k,1);
+0380     wpk=repmat((1:p)',k,1);
+0381     <span class="keyword">for</span> j=1:lp
+0382         g1=g;                   <span class="comment">% save previous log likelihood (2*pi factor omitted)</span>
+0383         m1=m;                    <span class="comment">% save previous means, variances and weights</span>
+0384         v1=v;
+0385         w1=w;
+0386         <span class="keyword">for</span> ik=1:k            
+0387             <span class="comment">% these lines added for debugging only</span>
+0388             <span class="comment">%             vk=reshape(v(k,lixi),p,p);</span>
+0389             <span class="comment">%             condk(ik)=cond(vk);</span>
+0390             <span class="comment">%%%%%%%%%%%%%%%%%%%%</span>
+0391             [uvk,dvk]=eig(reshape(v(ik,lixi),p,p));    <span class="comment">% convert lower triangular to full and find eigenvalues</span>
+0392             dvk=max(diag(dvk),c);                    <span class="comment">% apply variance floor to eigenvalues</span>
+0393             vik=-0.5*uvk*diag(dvk.^(-1))*uvk';      <span class="comment">% calculate inverse</span>
+0394             vi((ik-1)*p+(1:p),:)=vik;               <span class="comment">% vi contains all mixture inverses stacked on top of each other</span>
+0395             vim((ik-1)*p+(1:p))=vik*m(ik,:)';       <span class="comment">% vim contains vi*m for all mixtures stacked on top of each other</span>
+0396             mtk((ik-1)*p+(1:p))=m(ik,:)';           <span class="comment">% mtk contains all mixture means stacked on top of each other</span>
+0397             lvm(ik)=log(w(ik))-0.5*sum(log(dvk));       <span class="comment">% vm contains the weighted sqrt of det(vi) for each mixture</span>
+0398         <span class="keyword">end</span>
+0399         <span class="comment">%</span>
+0400         <span class="comment">%         % first do partial chunk</span>
+0401         <span class="comment">%</span>
+0402         jx=jx0;
+0403         ii=1:jx;
+0404         xii=xs(ii,:).';
+0405         py=reshape(sum(reshape((vi*xii-vim(:,wnj)).*(xii(wpk,:)-mtk(:,wnj)),p,jx*k),1),k,jx)+lvm(:,wnj);
+0406         mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0407         px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0408         ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0409         px=px./ps(wk,:);                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0410         lpx(ii)=log(ps)+mx;
+0411         pk=px*wx(ii);                       <span class="comment">% effective fraction of data points for each mixture (could be zero due to underflow)</span>
+0412         sx=px*xsw(ii,:);
+0413         sx2=px*(xsw(ii,rix).*xs(ii,cix));    <span class="comment">% accumulator for variance calculation (lower tri cov matrix as a row)</span>
+0414         <span class="keyword">for</span> il=2:nl
+0415             ix=jx+1;
+0416             jx=jx+nb;                       <span class="comment">% increment upper limit</span>
+0417             ii=ix:jx;
+0418             xii=xs(ii,:).';
+0419             py=reshape(sum(reshape((vi*xii-vim(:,wnb)).*(xii(wpk,:)-mtk(:,wnb)),p,nb*k),1),k,nb)+lvm(:,wnb);
+0420             mx=max(py,[],1);                <span class="comment">% find normalizing factor for each data point to prevent underflow when using exp()</span>
+0421             px=exp(py-mx(wk,:));            <span class="comment">% find normalized probability of each mixture for each datapoint</span>
+0422             ps=sum(px,1);                   <span class="comment">% total normalized likelihood of each data point</span>
+0423             px=px./ps(wk,:);                <span class="comment">% relative mixture probabilities for each data point (columns sum to 1)</span>
+0424             lpx(ii)=log(ps)+mx;
+0425             pk=pk+px*wx(ii);                <span class="comment">% effective fraction of data points for each mixture (could be zero due to underflow)</span>
+0426             sx=sx+px*xsw(ii,:);             <span class="comment">% accumulator for mean calculation</span>
+0427             sx2=sx2+px*(xsw(ii,rix).*xs(ii,cix));    <span class="comment">% accumulator for variance calculation</span>
+0428         <span class="keyword">end</span>
+0429         g=lpx*wx;                           <span class="comment">% total log probability summed over all data points</span>
+0430         gg(j)=g;                            <span class="comment">% save convergence history</span>
+0431         w=pk;                               <span class="comment">% w(k,1) normalize to get the column of weights</span>
+0432         <span class="keyword">if</span> pk                               <span class="comment">% if all elements of pk are non-zero</span>
+0433             m=sx./pk(:,wp);                 <span class="comment">% find mean and mean square</span>
+0434             v=sx2./pk(:,wpl);
+0435         <span class="keyword">else</span>
+0436             wm=pk==0;                       <span class="comment">% mask indicating mixtures with zero weights</span>
+0437             nz=sum(wm);                     <span class="comment">% number of zero-weight mixtures</span>
+0438             [vv,mk]=sort(lpx);              <span class="comment">% find the lowest probability data points</span>
+0439             m=zeros(k,p);                   <span class="comment">% initialize means and variances to zero (variances are floored later)</span>
+0440             v=zeros(k,pl);
+0441             m(wm,:)=xs(mk(1:nz),:);         <span class="comment">% set zero-weight mixture means to worst-fitted data points</span>
+0442             w(wm)=1/n;                      <span class="comment">% set these weights non-zero</span>
+0443             w=w*n/(n+nz);                   <span class="comment">% normalize so the weights sum to unity</span>
+0444             wm=~wm;                         <span class="comment">% mask for non-zero weights</span>
+0445             m(wm,:)=sx(wm,:)./pk(wm,wp);    <span class="comment">% recalculate means and variances for mixtures with a non-zero weight</span>
+0446             v(wm,:)=sx2(wm,:)./pk(wm,wpl);
+0447         <span class="keyword">end</span>
+0448         v=v-m(:,cix).*m(:,rix);             <span class="comment">% subtract off mean squared</span>
+0449         <span class="keyword">if</span> g-g1&lt;=th &amp;&amp; j&gt;1
+0450             <span class="keyword">if</span> ~ss, <span class="keyword">break</span>; <span class="keyword">end</span>              <span class="comment">%  stop</span>
+0451             ss=ss-1;                        <span class="comment">% stop next time</span>
+0452         <span class="keyword">end</span>
+0453     <span class="keyword">end</span>
+0454     <span class="keyword">if</span> sd                                   <span class="comment">% we need to calculate the final probabilities</span>
+0455         pp=lpx'-0.5*p*log(2*pi)-lsx;        <span class="comment">% log of total probability of each data point</span>
+0456         gg=gg(1:j)-0.5*p*log(2*pi)-lsx;     <span class="comment">% average log prob at each iteration</span>
+0457         g=gg(end);
+0458         <span class="comment">%             gg' % *** DEBUG ONLY ***</span>
+0459         m=m1;                                           <span class="comment">% back up to previous iteration</span>
+0460         v=zeros(p,p,k);                                 <span class="comment">% reserve spave for k full covariance matrices</span>
+0461         trv=0;                                          <span class="comment">% sum of variance matrix traces</span>
+0462         <span class="keyword">for</span> ik=1:k                                      <span class="comment">% loop for each mixture to apply variance floor</span>
+0463             [uvk,dvk]=eig(reshape(v1(ik,lixi),p,p));    <span class="comment">% convert lower triangular to full and find eigenvectors</span>
+0464             dvk=max(diag(dvk),c);                       <span class="comment">% apply variance floor to eigenvalues</span>
+0465             v(:,:,ik)=uvk*diag(dvk)*uvk';               <span class="comment">% reconstitute full matrix</span>
+0466             trv=trv+sum(dvk);                           <span class="comment">% add trace to the sum</span>
+0467         <span class="keyword">end</span>
+0468         w=w1;
+0469         mm=sum(m,1)/k;
+0470         f=(m(:)'*m(:)-k*mm(:)'*mm(:))/trv;
+0471     <span class="keyword">else</span>
+0472         v1=v;                                           <span class="comment">% lower triangular form</span>
+0473         v=zeros(p,p,k);                                 <span class="comment">% reserve space for k full covariance matrices</span>
+0474         <span class="keyword">for</span> ik=1:k                                      <span class="comment">% loop for each mixture to apply variance floor</span>
+0475             [uvk,dvk]=eig(reshape(v1(ik,lixi),p,p));    <span class="comment">% convert lower triangular to full and find eigenvectors</span>
+0476             dvk=max(diag(dvk),c);                       <span class="comment">% apply variance floor</span>
+0477             v(:,:,ik)=uvk*diag(dvk)*uvk';               <span class="comment">% reconstitute full matrix</span>
+0478         <span class="keyword">end</span>
+0479     <span class="keyword">end</span>
+0480     m=m.*sx0(ones(k,1),:)+mx0(ones(k,1),:);             <span class="comment">% unscale means</span>
+0481     v=v.*repmat(sx0'*sx0,[1 1 k]);
+0482 <span class="keyword">end</span>
+0483 <span class="keyword">if</span> l==0                                                 <span class="comment">% suppress the first three output arguments if l==0</span>
+0484     m=g;
+0485     v=f;
+0486     w=pp;
+0487 <span class="keyword">end</span>
+0488</pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
