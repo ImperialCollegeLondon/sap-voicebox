@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of v_clipline</title>
+  <meta name="keywords" content="v_clipline">
+  <meta name="description" content="clip lines to rectangle">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+
+<!-- index.html v_mfiles -->
+<h1>v_clipline
+
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>clip lines to rectangle</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function xy=v_clipline(ln,ax,lspec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> clip lines to rectangle
+
+ Usage: (1) v_clipline([1 -1 0; 0 1 -0.5]',[-1 1 -1 1]);       % plot lines y=x and y=0.5 in square bounded by x=+-1 and y=+-1
+        (2) xy=v_clipline([1 -1 0; 0 1 -0.5]',[-1 1 -1 1]);    % calculate the line segments without plotting
+            plot(xy(1:2:3,:),xy(2:2:4,:));                     % plot the line segments (equivalent to (1) above
+
+  Inputs:  ln(3,n)     Coefficients for n lines: ln(1,*)*x + ln(2,*)*y + ln(3,*) = 0
+           ax(1,4)     Axis limits: [xmin xmax ymin ymax] [default: limits of the current plot]
+           lspec       Line Specification for plotting [default: '-']
+
+ Outputs:  xy(4,n)     For each line xy(:,*)=[x1 y1 x2 y2]' where (x1,y1) and (x2,y2) are the line-rectangle intersections (or NaN if no intersection exists)
+                       The clipped line segment will be plotted if nargin==3 or if nargout==0</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+
+<li><a href="v_conic.html" class="code" title="function [p,sc,tc,xy]=v_conic(s,m,ax,np,thr)">v_conic</a>	V_CONIC Calculate conic parameters and/or plot conic</li>
+</ul>
+<!-- crossreference -->
+
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function xy=v_clipline(ln,ax,lspec)</a>
+0002 <span class="comment">% clip lines to rectangle</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage: (1) v_clipline([1 -1 0; 0 1 -0.5]',[-1 1 -1 1]);       % plot lines y=x and y=0.5 in square bounded by x=+-1 and y=+-1</span>
+0005 <span class="comment">%        (2) xy=v_clipline([1 -1 0; 0 1 -0.5]',[-1 1 -1 1]);    % calculate the line segments without plotting</span>
+0006 <span class="comment">%            plot(xy(1:2:3,:),xy(2:2:4,:));                     % plot the line segments (equivalent to (1) above</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%  Inputs:  ln(3,n)     Coefficients for n lines: ln(1,*)*x + ln(2,*)*y + ln(3,*) = 0</span>
+0009 <span class="comment">%           ax(1,4)     Axis limits: [xmin xmax ymin ymax] [default: limits of the current plot]</span>
+0010 <span class="comment">%           lspec       Line Specification for plotting [default: '-']</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Outputs:  xy(4,n)     For each line xy(:,*)=[x1 y1 x2 y2]' where (x1,y1) and (x2,y2) are the line-rectangle intersections (or NaN if no intersection exists)</span>
+0013 <span class="comment">%                       The clipped line segment will be plotted if nargin==3 or if nargout==0</span>
+0014 <span class="comment">%</span>
+0015 
+0016 <span class="comment">%      Copyright (C) Mike Brookes 2026</span>
+0017 <span class="comment">%      Version Date: 2026-11-18</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   VOICEBOX is a MATLAB toolbox for speech processing.</span>
+0020 <span class="comment">%   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0023 <span class="comment">%   This program is free software; you can redistribute it and/or modify</span>
+0024 <span class="comment">%   it under the terms of the GNU Lesser General Public License as published by</span>
+0025 <span class="comment">%   the Free Software Foundation; either version 3 of the License, or</span>
+0026 <span class="comment">%   (at your option) any later version.</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">%   This program is distributed in the hope that it will be useful,</span>
+0029 <span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+0030 <span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+0031 <span class="comment">%   GNU Lesser General Public License for more details.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   You can obtain a copy of the GNU Lesser General Public License from</span>
+0034 <span class="comment">%   https://www.gnu.org/licenses/ .</span>
+0035 <span class="comment">%    See files gpl-3.0.txt and lgpl-3.0.txt included in this distribution.</span>
+0036 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0037 <span class="keyword">persistent</span> ijx corn
+0038 <span class="keyword">if</span> isempty(ijx)
+0039     ix=[0 0; 1 4; 1 2; 2 4; 2 3; 0 0; 1 3; 3 4; 3 4; 1 3; 0 0; 2 3; 2 4; 1 2; 1 4; 0 0]; <span class="comment">% edges that are intersected</span>
+0040     jx=[1 3 2 1 4 1; 1 4 3 2 4 2; 2 4 4 2 3 3; 2 3 1 1 3 4]; <span class="comment">% interpolation indices for each edge</span>
+0041     ijx=zeros(16,12);
+0042     <span class="keyword">for</span> i=1:16
+0043         <span class="keyword">if</span> ix(i,1)
+0044             ijx(i,:)=[jx(ix(i,1),:) jx(ix(i,2),:)];
+0045         <span class="keyword">end</span>
+0046     <span class="keyword">end</span>
+0047     corn=[1 1 2 2; 3 4 4 3];
+0048 <span class="keyword">end</span>
+0049 <span class="keyword">if</span> nargin&lt;2
+0050     h=gca;
+0051     ax=[get(h,<span class="string">'XLim'</span>) get(h,<span class="string">'YLim'</span>)]';      <span class="comment">% get axis limits of current plot</span>
+0052 <span class="keyword">else</span>
+0053     ax=ax(:);                               <span class="comment">% force ax to be a column vector</span>
+0054 <span class="keyword">end</span>
+0055 n=size(ln,2);                               <span class="comment">% number of lines</span>
+0056 xch=[ax(corn); ones(1,4)];    <span class="comment">% homogeneous corner coordinates: BL, TL, TR, BR</span>
+0057 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0058 <span class="comment">%  We first calculate the signed distance of each corner for the clipping rectangle from the line. If all       %</span>
+0059 <span class="comment">%  distances have the same sign then the line doesn't intersect the rectangle. Otherwise, it intersects         %</span>
+0060 <span class="comment">%  those edges whose corners have distances with opposite signs. The point of intersection with an edge         %</span>
+0061 <span class="comment">%  is a weighted average of the corner locations where the weights of the inverse distances of the line         %</span>
+0062 <span class="comment">%  from the corners. We use a lookup table, ijx(16,12), to convert from the 16 possible corner-distance sign    %</span>
+0063 <span class="comment">%  possibilities to the indices into the corner coordinates, ax(1,4), and corner-line distances, d(4,n), that   %</span>
+0064 <span class="comment">%  are needed to calculate the two intersection points.                                                         %</span>
+0065 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0066 d=xch'*ln;                                  <span class="comment">% scaled signed distance of corners from each line: (4,n)</span>
+0067 dx=1+pow2(0:3)*(d&gt;0);                       <span class="comment">% index into ijx array: code in range 1 to 16 indicating which boundaries of the clipping rectangle are crossed (1,n)</span>
+0068 xy=nan(4,n);                                <span class="comment">% space for output boundary coordinates ([x1 x2 y1 y2],n)</span>
+0069 kx=ijx(dx,:)';                              <span class="comment">% list of indices needed for intersection calculation (12,n)</span>
+0070 kvm=kx(1,:)&gt;0;                              <span class="comment">% mask is true for &quot;valid&quot; lines i.e. ones that intersect the clipping rectangle: (1,n)</span>
+0071 <span class="keyword">if</span> any(kvm)                                 <span class="comment">% check if any lines are valid</span>
+0072     kv4r=repmat((find(kvm)-1)*4,4,1);       <span class="comment">% each row is the indexing offset into d(4,n) for each valid line's column</span>
+0073     xy(:,kvm)=(ax(kx([1 2 7 8],kvm)).*d(kx([3 3 9 9],kvm)+kv4r)-ax(kx([4 5 10 11],kvm)).*d(kx([6 6 12 12],kvm)+kv4r))./(d(kx([3 3 9 9],kvm)+kv4r)-d(kx([6 6 12 12],kvm)+kv4r));
+0074 <span class="keyword">end</span>
+0075 <span class="keyword">if</span> ~nargout || nargin&gt;2
+0076     <span class="keyword">if</span> nargin&lt;3
+0077         plot(xy(1:2:3,:),xy(2:2:4,:),<span class="string">'-'</span>);
+0078     <span class="keyword">else</span>
+0079         plot(xy(1:2:3,:),xy(2:2:4,:),lspec);
+0080     <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082</pre></div>
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
