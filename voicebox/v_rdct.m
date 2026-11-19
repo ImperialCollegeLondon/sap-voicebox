@@ -24,7 +24,7 @@ function y=v_rdct(x,n,a,b)
 %   (3) should cope with multi-dimensional input array
 
 %      Copyright (C) Mike Brookes 1998-2026
-%      Version Date: 2026-11-13
+%      Version Date: 2026-11-19
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html

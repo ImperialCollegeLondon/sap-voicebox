@@ -21,7 +21,7 @@ function x=v_irdct(y,n,a,b)
 % See v_rdct for the forward transform
 
 %      Copyright (C) Mike Brookes 1998-2026
-%      Version Date: 2026-11-13
+%      Version Date: 2026-11-19
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
