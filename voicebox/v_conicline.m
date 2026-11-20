@@ -1,5 +1,5 @@
 function [xy,ty,dxy]=v_conicline(s,l,th)
-% Find intersection of conic with one or more lines
+%V_CONICLINE Determine the intersection points of a line and a conic 
 %
 %   Usage: xy=v_conicline([1 0 0 0 -1 0],[0 1 -2]'); % find both intersections of y=x^2 with the line y=2
 %

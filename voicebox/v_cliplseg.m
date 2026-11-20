@@ -1,5 +1,5 @@
 function xy=v_cliplseg(lseg,ax,lspec)
-% clip a line segment to a bounding rectangle
+%V_CLIPSEG Clip a line segment to a bounding rectangle and optionally plot it
 %
 % Usage: (1) ax=[-1 1 -1 1];                            % define clipping rectangle
 %            v_cliplseg([-0.3 -0.4; 2 1]',ax,'-ko');    % plot portion of line within rectangle

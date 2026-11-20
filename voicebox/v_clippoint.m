@@ -1,5 +1,5 @@
 function xy=v_clippoint(xyin,ax,pspec)
-% Plot points that lie within a bounding rectangle
+%V_CLIPPOINT Determine if a point is within a bounding rectangle and optionally plot it
 %
 %   Usage: ax=[-1 1 -1 1];                                      % define the boundaries of the clipping rectangle
 %          v_clippoint([-2 0; 0.3 0.4; 0.5 3; -0.2 0.6]',ax);   % plot the points that lie within the rectangle

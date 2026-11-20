@@ -1,5 +1,5 @@
 function xy=v_clipline(ln,ax,lspec)
-% clip lines to rectangle
+%V_CLIPLINE Clip an infinite line to a bounding rectangle and optionally plot it
 %
 % Usage: (1) v_clipline([1 -1 0; 0 1 -0.5]',[-1 1 -1 1]);       % plot lines y=x and y=0.5 in square bounded by x=+-1 and y=+-1
 %        (2) xy=v_clipline([1 -1 0; 0 1 -0.5]',[-1 1 -1 1]);    % calculate the line segments without plotting
