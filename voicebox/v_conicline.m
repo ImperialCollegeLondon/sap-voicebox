@@ -21,7 +21,7 @@ function [xy,ty,dxy]=v_conicline(s,l,th)
 %
 
 %      Copyright (C) Mike Brookes 2026
-%      Version Date: 2026-11-18
+%      Version Date: 2026-11-20
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: https://imperialcollegelondon.github.io/sap-voicebox/index.html
